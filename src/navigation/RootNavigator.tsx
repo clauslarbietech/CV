@@ -2,6 +2,7 @@ import { Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AnimationDemoScreen from "../screens/AnimationDemoScreen";
 import BookScreen from "../screens/BookScreen";
 import BrowseScreen from "../screens/BrowseScreen";
 import ChapterPlayerScreen from "../screens/ChapterPlayerScreen";
@@ -79,6 +80,7 @@ export default function RootNavigator() {
         <Stack.Screen name="MainTabs" component={MainTabs} />
         <Stack.Screen name="Book" component={BookScreen} />
         <Stack.Screen name="ChapterPlayer" component={ChapterPlayerScreen} />
+        <Stack.Screen name="AnimationDemo" component={AnimationDemoScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

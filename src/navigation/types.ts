@@ -9,4 +9,5 @@ export type RootStackParamList = {
   MainTabs: undefined;
   Book: { bookId: string };
   ChapterPlayer: { bookId: string; chapterNumber: number };
+  AnimationDemo: undefined;
 };

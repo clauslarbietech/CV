@@ -34,6 +34,15 @@ export default function BrowseScreen({ navigation }: Props) {
             <Text className="mt-1 text-xs text-parchment-ink/55">
               Free forever · comics + narration
             </Text>
+            <Pressable
+              accessibilityRole="button"
+              className="mt-3 rounded-full bg-teal-ink px-4 py-2"
+              onPress={() => navigation.navigate("AnimationDemo")}
+            >
+              <Text className="text-xs font-bold text-white">
+                Watch Fall animation demo →
+              </Text>
+            </Pressable>
           </View>
 
           <SectionHeader
