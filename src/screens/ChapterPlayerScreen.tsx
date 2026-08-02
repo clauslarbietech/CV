@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import ChapterComicPanels from "../components/comics/ChapterComicPanels";
+import EmotionalStoryboard from "../components/comics/EmotionalStoryboard";
 import AudioGuidePlayer from "../components/player/AudioGuidePlayer";
 import VoiceReflectionRecorder from "../components/player/VoiceReflectionRecorder";
 import { getBook, getChapter } from "../data/library";
@@ -188,10 +189,19 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             ~10 minute habit · tap play and follow the comics + scripture
           </Text>
 
-          <ChapterComicPanels
-            panels={chapter.panels}
-            activeIndex={activePanelIndex}
-          />
+          {chapter.number === 3 ? (
+            <EmotionalStoryboard
+              panels={chapter.panels}
+              activeIndex={activePanelIndex}
+              title="Emotional storyboard"
+              subtitle="The Fall — scene by scene"
+            />
+          ) : (
+            <ChapterComicPanels
+              panels={chapter.panels}
+              activeIndex={activePanelIndex}
+            />
+          )}
 
           <View className="mb-5 rounded-2xl bg-parchment px-4 py-4">
             <Text className="mb-2 text-xs font-semibold uppercase tracking-wide text-teal-deep">

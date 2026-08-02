@@ -44,6 +44,9 @@ export type Journey = {
 
 const day1 = require("../../assets/panels/genesis-day1-light.jpg");
 const waters = require("../../assets/panels/genesis-waters-dawn.jpg");
+const fallEveBites = require("../../assets/panels/fall-01-eve-bites.jpg");
+const fallHandsApple = require("../../assets/panels/fall-02-eve-hands-adam.jpg");
+const fallSerpent = require("../../assets/panels/fall-03-serpent-smirk.jpg");
 const genesisCover = require("../../assets/covers/genesis.jpg");
 const journeyStart = require("../../assets/journeys/start.jpg");
 
@@ -131,24 +134,33 @@ export const BOOKS: BibleBook[] = [
           durationSeconds: 510,
           script: [
             "Genesis 3 is the hinge of the Bible — the moment trust is traded for fear.",
-            "The serpent twists God’s words; the first humans reach for what was forbidden.",
-            "Shame enters the story. They hide. Relationships fracture.",
+            "Watch Eve reach for the fruit while Adam’s back is turned — desire before discernment.",
+            "Then she offers it to Adam… and he bites too. The break becomes shared.",
+            "Notice the serpent lingering with a smirk — evil loves when trust collapses.",
             "Yet even here, God seeks them out — and a promise of rescue begins to glow.",
-            "As you listen, look for both the wound and the first thread of hope.",
           ],
         },
         panels: [
           {
             id: "g3-1",
-            title: "The whisper",
-            caption: "A twisted question under the trees — “Did God really say?”",
-            image: day1,
+            title: "Eve bites",
+            caption:
+              "While Adam’s back is turned, Eve tastes the forbidden fruit — a quiet choice that shakes the garden.",
+            image: fallEveBites,
           },
           {
             id: "g3-2",
-            title: "Promise in the dusk",
-            caption: "Even in exile, a future Redeemer is whispered into the night.",
-            image: genesisCover,
+            title: "She offers it",
+            caption:
+              "Eve hands the apple to Adam… and he bites too. What began alone becomes a shared fall.",
+            image: fallHandsApple,
+          },
+          {
+            id: "g3-3",
+            title: "The serpent smirks",
+            caption:
+              "Coiled in the tree, the serpent lingers with a smirk — watching trust unravel.",
+            image: fallSerpent,
           },
         ],
       },
@@ -164,6 +176,15 @@ export const JOURNEYS: Journey[] = [
     booksLabel: "Genesis · Creation arc",
     days: 7,
     cover: journeyStart,
+    bookIds: ["genesis"],
+  },
+  {
+    id: "journey-2",
+    number: 2,
+    title: "The Big Picture",
+    booksLabel: "Key chapters overview",
+    days: 24,
+    cover: waters,
     bookIds: ["genesis"],
   },
   {

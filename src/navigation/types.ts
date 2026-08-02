@@ -1,5 +1,12 @@
+export type MainTabParamList = {
+  Browse: undefined;
+  MyPlans: undefined;
+  Groups: undefined;
+  More: undefined;
+};
+
 export type RootStackParamList = {
-  Home: undefined;
+  MainTabs: undefined;
   Book: { bookId: string };
   ChapterPlayer: { bookId: string; chapterNumber: number };
 };

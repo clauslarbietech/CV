@@ -1,11 +1,70 @@
+import { Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import BookScreen from "../screens/BookScreen";
+import BrowseScreen from "../screens/BrowseScreen";
 import ChapterPlayerScreen from "../screens/ChapterPlayerScreen";
-import HomeScreen from "../screens/HomeScreen";
-import type { RootStackParamList } from "./types";
+import GroupsScreen from "../screens/GroupsScreen";
+import MoreScreen from "../screens/MoreScreen";
+import MyPlansScreen from "../screens/MyPlansScreen";
+import type { MainTabParamList, RootStackParamList } from "./types";
 
+const Tab = createBottomTabNavigator<MainTabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+function TabIcon({ label, focused }: { label: string; focused: boolean }) {
+  const icons: Record<string, string> = {
+    Browse: "⌕",
+    MyPlans: "▤",
+    Groups: "☺",
+    More: "≡",
+  };
+  return (
+    <Text
+      style={{
+        fontSize: 18,
+        color: focused ? "#E4572E" : "#9AA0A6",
+        fontWeight: focused ? "700" : "500",
+      }}
+    >
+      {icons[label] ?? "•"}
+    </Text>
+  );
+}
+
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Browse"
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: "#E4572E",
+        tabBarInactiveTintColor: "#9AA0A6",
+        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
+        tabBarStyle: {
+          backgroundColor: "#FFFFFF",
+          borderTopColor: "#EEF0F3",
+          height: 62,
+          paddingTop: 6,
+          paddingBottom: 8,
+        },
+        tabBarIcon: ({ focused }) => (
+          <TabIcon label={route.name} focused={focused} />
+        ),
+      })}
+    >
+      <Tab.Screen
+        name="MyPlans"
+        component={MyPlansScreen}
+        options={{ title: "My Plans" }}
+      />
+      <Tab.Screen name="Groups" component={GroupsScreen} />
+      <Tab.Screen name="Browse" component={BrowseScreen} />
+      <Tab.Screen name="More" component={MoreScreen} />
+    </Tab.Navigator>
+  );
+}
 
 export default function RootNavigator() {
   return (
@@ -17,7 +76,7 @@ export default function RootNavigator() {
           contentStyle: { backgroundColor: "#FFFFFF" },
         }}
       >
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="MainTabs" component={MainTabs} />
         <Stack.Screen name="Book" component={BookScreen} />
         <Stack.Screen name="ChapterPlayer" component={ChapterPlayerScreen} />
       </Stack.Navigator>
