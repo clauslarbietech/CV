@@ -10,9 +10,9 @@ module.exports = {
     extend: {
       colors: {
         terracotta: {
-          DEFAULT: "#C46B4A",
-          dark: "#9A4E34",
-          soft: "#E8A88A",
+          DEFAULT: "#E4572E",
+          dark: "#C2410C",
+          soft: "#F3A07A",
         },
         ochre: {
           DEFAULT: "#D4A017",
@@ -20,14 +20,14 @@ module.exports = {
           deep: "#B8860B",
         },
         teal: {
-          ink: "#0F3D3E",
-          deep: "#1A5F61",
-          mist: "#D6EDEA",
+          ink: "#15233F",
+          deep: "#1E3A6E",
+          mist: "#E7EEF8",
         },
         parchment: {
-          DEFAULT: "#F7F0E4",
-          warm: "#EFE4D2",
-          ink: "#2C2416",
+          DEFAULT: "#F7F4EF",
+          warm: "#F1EBE2",
+          ink: "#1F2430",
         },
       },
     },
