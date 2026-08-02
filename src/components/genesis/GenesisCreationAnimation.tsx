@@ -87,7 +87,6 @@ function MotionPanel({ title, caption, source, delayMs, width }: PanelProps) {
           />
         </Animated.View>
         <Animated.View
-          pointerEvents="none"
           style={[
             {
               position: "absolute",
@@ -96,6 +95,7 @@ function MotionPanel({ title, caption, source, delayMs, width }: PanelProps) {
               bottom: 0,
               left: 0,
               backgroundColor: "#F0D78C",
+              pointerEvents: "none",
             },
             washStyle,
           ]}
