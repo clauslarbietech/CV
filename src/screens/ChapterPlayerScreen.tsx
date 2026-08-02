@@ -115,9 +115,12 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
   }, [bookId, chapterNumber]);
 
   useEffect(() => {
-    void updateChapterProgress(bookId, chapterNumber, {
-      lastPositionSeconds: audio.position,
-    });
+    // Persist sparsely so AsyncStorage writes don't thrash every second.
+    if (audio.position === 0 || audio.position % 5 === 0) {
+      void updateChapterProgress(bookId, chapterNumber, {
+        lastPositionSeconds: audio.position,
+      });
+    }
   }, [audio.position, bookId, chapterNumber]);
 
   useEffect(() => {

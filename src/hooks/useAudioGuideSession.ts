@@ -14,7 +14,9 @@ export function estimateLineSeconds(text: string): number {
 }
 
 export function estimateGuideDuration(script: string[]): number {
-  return Math.ceil(script.reduce((sum, line) => sum + estimateLineSeconds(line), 0));
+  return Math.ceil(
+    script.reduce((sum, line) => sum + estimateLineSeconds(line), 0)
+  );
 }
 
 type Options = {
@@ -22,10 +24,19 @@ type Options = {
   chapterKey: string;
 };
 
+/**
+ * Through the Word–style chapter audio session:
+ * play/pause, ±15s, persistent speed, synced narration lines.
+ * Uses expo-speech for guide narration (teacher-style recording stand-in)
+ * and keeps a transport clock for comics/UI sync.
+ */
 export function useAudioGuideSession({ guide, chapterKey }: Options) {
   const script = guide?.script ?? [];
   const naturalDuration = useMemo(
-    () => (script.length ? estimateGuideDuration(script) : guide?.durationSeconds ?? 0),
+    () =>
+      script.length
+        ? estimateGuideDuration(script)
+        : (guide?.durationSeconds ?? 0),
     [guide?.durationSeconds, script]
   );
 
@@ -33,14 +44,17 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
   const [position, setPosition] = useState(0);
   const [speed, setSpeed] = useState(1);
   const [activeLineIndex, setActiveLineIndex] = useState(0);
-  const [isReady, setIsReady] = useState(false);
 
   const playingRef = useRef(false);
   const positionRef = useRef(0);
   const speedRef = useRef(1);
   const lineIndexRef = useRef(0);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const chapterKeyRef = useRef(chapterKey);
+  const scriptRef = useRef(script);
+  const durationRef = useRef(naturalDuration);
+
+  scriptRef.current = script;
+  durationRef.current = naturalDuration;
 
   const clearTick = useCallback(() => {
     if (tickRef.current) {
@@ -49,134 +63,156 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
     }
   }, []);
 
-  const stopSpeech = useCallback(async () => {
+  const stopTransport = useCallback(() => {
     clearTick();
     playingRef.current = false;
     setIsPlaying(false);
-    await Speech.stop();
+    void Speech.stop();
   }, [clearTick]);
 
-  const speakFrom = useCallback(
-    async (startIndex: number) => {
-      if (!script.length) {
+  const startTick = useCallback(() => {
+    clearTick();
+    tickRef.current = setInterval(() => {
+      if (!playingRef.current) {
+        return;
+      }
+      positionRef.current += speedRef.current;
+      const next = Math.min(durationRef.current, positionRef.current);
+      setPosition(Math.floor(next));
+
+      // Keep active line aligned to the transport clock.
+      const lines = scriptRef.current;
+      let cumulative = 0;
+      let index = 0;
+      for (let i = 0; i < lines.length; i += 1) {
+        const lineDur = estimateLineSeconds(lines[i]);
+        if (cumulative + lineDur > positionRef.current) {
+          index = i;
+          break;
+        }
+        cumulative += lineDur;
+        index = i;
+      }
+      if (index !== lineIndexRef.current) {
+        lineIndexRef.current = index;
+        setActiveLineIndex(index);
+      }
+
+      if (next >= durationRef.current) {
+        stopTransport();
+      }
+    }, 1000);
+  }, [clearTick, stopTransport]);
+
+  const speakLine = useCallback(
+    (index: number) => {
+      const lines = scriptRef.current;
+      if (!playingRef.current || index < 0 || index >= lines.length) {
         return;
       }
 
-      await Speech.stop();
-      clearTick();
+      lineIndexRef.current = index;
+      setActiveLineIndex(index);
 
-      const clamped = Math.max(0, Math.min(script.length - 1, startIndex));
-      lineIndexRef.current = clamped;
-      setActiveLineIndex(clamped);
-
-      // Align position to the start of the selected line.
-      let offset = 0;
-      for (let i = 0; i < clamped; i += 1) {
-        offset += estimateLineSeconds(script[i]);
-      }
-      positionRef.current = offset;
-      setPosition(Math.floor(offset));
-
-      playingRef.current = true;
-      setIsPlaying(true);
-
-      tickRef.current = setInterval(() => {
-        if (!playingRef.current) {
-          return;
-        }
-        positionRef.current += speedRef.current;
-        const next = Math.min(naturalDuration, positionRef.current);
-        setPosition(Math.floor(next));
-        if (next >= naturalDuration) {
-          void stopSpeech();
-        }
-      }, 1000);
-
-      const speakLine = (index: number) => {
-        if (!playingRef.current || index >= script.length) {
-          void stopSpeech();
-          return;
-        }
-
-        lineIndexRef.current = index;
-        setActiveLineIndex(index);
-
-        Speech.speak(script[index], {
+      // Important: call Speech.speak synchronously from the user gesture path
+      // (no awaits beforehand) so web speechSynthesis is allowed.
+      try {
+        Speech.speak(lines[index], {
           rate: Math.min(1.2, Math.max(0.75, speedRef.current)),
           pitch: 1,
           onDone: () => {
             if (!playingRef.current) {
               return;
             }
-            if (index + 1 < script.length) {
+            if (index + 1 < lines.length) {
               speakLine(index + 1);
-            } else {
-              positionRef.current = naturalDuration;
-              setPosition(naturalDuration);
-              void stopSpeech();
             }
           },
-          onStopped: () => {
-            // pause / seek handled by callers
-          },
           onError: () => {
-            void stopSpeech();
+            // Keep transport running even if TTS is unavailable.
           },
         });
-      };
+      } catch {
+        // Transport clock still advances comics/UI.
+      }
+    },
+    []
+  );
 
+  const speakFrom = useCallback(
+    (startIndex: number) => {
+      const lines = scriptRef.current;
+      if (!lines.length) {
+        return;
+      }
+
+      // Cancel any prior utterance without awaiting (preserve user gesture).
+      void Speech.stop();
+      clearTick();
+
+      const clamped = Math.max(0, Math.min(lines.length - 1, startIndex));
+      lineIndexRef.current = clamped;
+      setActiveLineIndex(clamped);
+
+      let offset = 0;
+      for (let i = 0; i < clamped; i += 1) {
+        offset += estimateLineSeconds(lines[i]);
+      }
+      positionRef.current = offset;
+      setPosition(Math.floor(offset));
+
+      playingRef.current = true;
+      setIsPlaying(true);
+      startTick();
       speakLine(clamped);
     },
-    [clearTick, naturalDuration, script, stopSpeech]
+    [clearTick, speakLine, startTick]
   );
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function boot() {
-      await setAudioModeAsync({
-        playsInSilentMode: true,
-        shouldPlayInBackground: true,
-        interruptionMode: "doNotMix",
-        allowsRecording: true,
-      });
-      const savedSpeed = await getPlaybackSpeed();
-      if (!cancelled) {
-        speedRef.current = savedSpeed;
-        setSpeed(savedSpeed);
-        setIsReady(true);
+    void (async () => {
+      try {
+        await setAudioModeAsync({
+          playsInSilentMode: true,
+          shouldPlayInBackground: true,
+          interruptionMode: "doNotMix",
+          allowsRecording: true,
+        });
+      } catch {
+        // Web/native stubs may not support every mode flag.
       }
-    }
-
-    void boot();
+      const savedSpeed = await getPlaybackSpeed();
+      speedRef.current = savedSpeed;
+      setSpeed(savedSpeed);
+    })();
 
     return () => {
-      cancelled = true;
-      void Speech.stop();
-      clearTick();
+      stopTransport();
     };
-  }, [clearTick]);
+  }, [stopTransport]);
 
   useEffect(() => {
-    chapterKeyRef.current = chapterKey;
-    void stopSpeech();
+    // Reset transport only when the chapter changes — not when callback
+    // identities refresh — so Play isn't cancelled mid-session.
+    stopTransport();
     positionRef.current = 0;
     setPosition(0);
     lineIndexRef.current = 0;
     setActiveLineIndex(0);
-  }, [chapterKey, stopSpeech]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chapterKey only
+  }, [chapterKey]);
 
   const play = useCallback(() => {
     const index =
-      positionRef.current >= naturalDuration - 0.5
+      positionRef.current >= durationRef.current - 0.5
         ? 0
         : lineIndexRef.current;
-    void speakFrom(index);
-  }, [naturalDuration, speakFrom]);
+    speakFrom(index);
+  }, [speakFrom]);
 
   const pause = useCallback(() => {
-    void stopSpeech();
-  }, [stopSpeech]);
+    stopTransport();
+  }, [stopTransport]);
 
   const toggle = useCallback(() => {
     if (playingRef.current) {
@@ -189,16 +225,17 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
   const skip = useCallback(
     (deltaSeconds: number) => {
       const target = Math.min(
-        naturalDuration,
+        durationRef.current,
         Math.max(0, positionRef.current + deltaSeconds)
       );
       positionRef.current = target;
       setPosition(Math.floor(target));
 
+      const lines = scriptRef.current;
       let cumulative = 0;
       let index = 0;
-      for (let i = 0; i < script.length; i += 1) {
-        const lineDur = estimateLineSeconds(script[i]);
+      for (let i = 0; i < lines.length; i += 1) {
+        const lineDur = estimateLineSeconds(lines[i]);
         if (cumulative + lineDur > target) {
           index = i;
           break;
@@ -210,13 +247,13 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
       setActiveLineIndex(index);
 
       if (playingRef.current) {
-        void speakFrom(index);
+        speakFrom(index);
       }
     },
-    [naturalDuration, script, speakFrom]
+    [speakFrom]
   );
 
-  const cycleSpeed = useCallback(async () => {
+  const cycleSpeed = useCallback(() => {
     const options = [0.75, 1, 1.25, 1.5, 1.75];
     const currentIndex = options.findIndex(
       (value) => Math.abs(value - speedRef.current) < 0.01
@@ -224,14 +261,13 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
     const next = options[(currentIndex + 1) % options.length];
     speedRef.current = next;
     setSpeed(next);
-    await persistPlaybackSpeed(next);
+    void persistPlaybackSpeed(next);
     if (playingRef.current) {
-      void speakFrom(lineIndexRef.current);
+      speakFrom(lineIndexRef.current);
     }
   }, [speakFrom]);
 
   return {
-    isReady,
     isPlaying,
     position,
     duration: naturalDuration,
@@ -242,6 +278,6 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
     pause,
     skip,
     cycleSpeed,
-    stop: stopSpeech,
+    stop: stopTransport,
   };
 }
