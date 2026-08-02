@@ -179,9 +179,9 @@ export default function HomeScreen({ navigation }: Props) {
               How it works
             </Text>
             {[
-              "01  Pick a journey or Bible book",
-              "02  Open a chapter — comics + narration play together",
-              "03  Come back tomorrow for the next chapter",
+              "01  Pick your plan — journey or Bible book",
+              "02  One chapter today — tap play; guide narrates while comics + scripture stay on screen",
+              "03  Next chapter tomorrow — streaks, downloads, and voice reflections keep you going",
             ].map((step) => (
               <Text
                 key={step}

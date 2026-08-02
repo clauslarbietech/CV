@@ -11,12 +11,14 @@ A free, non-commercial Bible mobile app (Genesis through Revelation) featuring a
 - React Native Reanimated
 - Crossway ESV API (`api.esv.org`) with AsyncStorage caching
 
-## Phase 1 (current)
+## Current experience (Through the Word–style)
 
-- Project rules (`.cursorrules`)
-- Environment template (`.env.example`)
-- ESV scripture service with local cache + mandatory attribution
-- Genesis 1 webtoon reader screen with sticky ESV copyright footer and AI drawer placeholder
+- Home → Book plan → Chapter player navigation
+- Audio guide session: play/pause, ±15s skip, persistent speed, background audio mode
+- Anime comic panels synced to narration
+- Offline download flags, complete/favorite progress (press-and-hold on chapters)
+- Voice reflection recording/playback per chapter (`expo-audio`)
+- ESV scripture fetch with local cache + mandatory attribution
 
 ## Setup
 
