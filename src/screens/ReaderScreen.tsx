@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import GenesisCreationAnimation from "../components/genesis/GenesisCreationAnimation";
 import {
   ESV_COPYRIGHT_NOTICE,
   ESV_WEBSITE_URL,
@@ -64,35 +65,19 @@ export default function ReaderScreen() {
           contentContainerClassName="px-5 pb-36 pt-4"
           showsVerticalScrollIndicator={false}
         >
-          <Text className="mb-1 font-serif text-xs uppercase tracking-[3px] text-teal-deep">
+          <Text className="mb-1 text-center text-xs font-semibold uppercase tracking-[3px] text-teal-deep">
             Anime Audio Bible
           </Text>
-          <Text className="mb-6 text-3xl font-bold text-parchment-ink">
+          <Text className="mb-6 text-center text-3xl font-bold text-parchment-ink">
             {passage?.canonical ?? PASSAGE_QUERY}
           </Text>
 
-          {/* Comic panel placeholder — ink & watercolor storybook frame */}
-          <View className="mb-6 overflow-hidden rounded-2xl border-2 border-terracotta-dark bg-parchment-warm shadow-md">
-            <View className="border-b border-ochre/40 bg-teal-mist px-4 py-3">
-              <Text className="text-sm font-semibold uppercase tracking-wide text-teal-ink">
-                Panel · Creation Dawn
-              </Text>
-            </View>
-            <View className="min-h-[220px] items-center justify-center bg-parchment px-6 py-10">
-              <View className="mb-4 h-28 w-28 items-center justify-center rounded-full border-2 border-dashed border-terracotta bg-ochre-soft/40">
-                <Text className="text-center text-xs font-medium text-terracotta-dark">
-                  Watercolor{"\n"}Art Soon
-                </Text>
-              </View>
-              <Text className="text-center text-base leading-6 text-parchment-ink/80">
-                Whimsical ink-and-watercolor motion comic panels will appear
-                here — warm terracotta, golden ochre, and deep teal washes with
-                crisp dark outlines.
-              </Text>
-            </View>
-          </View>
+          <GenesisCreationAnimation />
 
-          <View className="rounded-2xl border border-teal-deep/20 bg-parchment-warm px-5 py-6">
+          <View className="mt-2 border-t border-ochre/35 pt-5">
+            <Text className="mb-3 text-xs font-semibold uppercase tracking-[2px] text-teal-deep">
+              Scripture · ESV
+            </Text>
             {loading ? (
               <View className="items-center py-10">
                 <ActivityIndicator size="large" color="#1A5F61" />
@@ -101,7 +86,7 @@ export default function ReaderScreen() {
                 </Text>
               </View>
             ) : error ? (
-              <View className="py-6">
+              <View className="py-4">
                 <Text className="mb-2 text-base font-semibold text-terracotta-dark">
                   Could not load passage
                 </Text>
@@ -117,8 +102,7 @@ export default function ReaderScreen() {
           </View>
         </ScrollView>
 
-        {/* Sticky footer: mandatory ESV attribution + AI drawer entry point */}
-        <View className="absolute bottom-0 left-0 right-0 border-t border-ochre/30 bg-parchment px-4 pb-3 pt-3 shadow-lg">
+        <View className="absolute bottom-0 left-0 right-0 border-t border-ochre/30 bg-parchment px-4 pb-3 pt-3">
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Ask AI about Genesis 1"
