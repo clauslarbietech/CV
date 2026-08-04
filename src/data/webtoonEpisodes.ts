@@ -30,7 +30,9 @@ const g1Darkness = require("../../assets/webtoon/genesis-1/01-darkness.jpg");
 const g1Light = require("../../assets/webtoon/genesis-1/02-light.jpg");
 const g1DayNight = require("../../assets/webtoon/genesis-1/03-day-night.jpg");
 
-const g2EveFromRib = require("../../assets/webtoon/genesis-2/01-eve-from-rib.jpg");
+const g2AdamSleep = require("../../assets/webtoon/genesis-2/01-adam-sleep-light.jpg");
+const g2EdenTogether = require("../../assets/webtoon/genesis-2/02-eden-together.jpg");
+const g2EveAwakens = require("../../assets/webtoon/genesis-2/03-eve-awakens.jpg");
 
 const g3Garden = require("../../assets/webtoon/genesis-3/01-garden.jpg");
 const g3Whisper = require("../../assets/webtoon/genesis-3/02-whisper.jpg");
@@ -96,17 +98,40 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
     seriesTitle: "Genesis",
     episodeLabel: "Storyline · Eve",
     title: "Eve from Adam’s Side",
-    subtitle: "God forms woman from the man’s rib — modest, sacred, family-safe",
+    subtitle:
+      "Unclothed without shame — tasteful angles only (family-safe, no explicit anatomy)",
     panels: [
       {
         id: "g2-eve-1",
-        image: g2EveFromRib,
-        scriptureRef: "Genesis 2:21–22",
+        image: g2AdamSleep,
+        scriptureRef: "Genesis 2:21",
         scriptureText:
-          "So the Lord God caused a deep sleep to fall upon the man, and while he slept took one of his ribs and closed up its place with flesh. And the rib that the Lord God had taken from the man he made into a woman and brought her to the man.",
+          "So the Lord God caused a deep sleep to fall upon the man, and while he slept took one of his ribs and closed up its place with flesh.",
         bubble: {
           tone: "scripture",
-          text: "…the rib that the Lord God had taken from the man he made into a woman…",
+          text: "…the Lord God caused a deep sleep to fall upon the man…",
+        },
+      },
+      {
+        id: "g2-eve-2",
+        image: g2EveAwakens,
+        scriptureRef: "Genesis 2:22",
+        scriptureText:
+          "And the rib that the Lord God had taken from the man he made into a woman and brought her to the man.",
+        bubble: {
+          tone: "narration",
+          text: "From his side, God made woman — and she stood in the garden.",
+        },
+      },
+      {
+        id: "g2-eve-3",
+        image: g2EdenTogether,
+        scriptureRef: "Genesis 2:25",
+        scriptureText:
+          "And the man and his wife were both naked and were not ashamed.",
+        bubble: {
+          tone: "scripture",
+          text: "And the man and his wife were both naked and were not ashamed.",
         },
       },
     ],
