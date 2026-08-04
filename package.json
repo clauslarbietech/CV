@@ -33,7 +33,10 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "export:web": "expo export --platform web",
+    "deploy:pages": "expo export --platform web"
   },
+  "homepage": "https://clauslarbietech.github.io/CV",
   "private": true
 }
