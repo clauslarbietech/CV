@@ -21,6 +21,19 @@ A free, non-commercial Bible mobile app (Genesis through Revelation) featuring a
 - TTW-style tabs, listening progress, voice reflection
 - ESV passage fetch + mandatory Crossway attribution
 
+## Review on GitHub Pages
+
+Web preview build is on the **`gh-pages`** branch.
+
+**One-time setup** (repo owner):
+1. Open [Settings → Pages](https://github.com/clauslarbietech/CV/settings/pages)
+2. Under **Build and deployment → Source**, choose **Deploy from a branch**
+3. Branch: **`gh-pages`**, folder: **`/` (root)** → **Save**
+
+Then open: **https://clauslarbietech.github.io/CV/**
+
+> Note: Pages is currently set to `main`. Switching to `gh-pages` replaces the old static CV site at that URL (the old site is archived in `archive/personal-site/`).
+
 ## Setup
 
 ```bash
@@ -31,6 +44,11 @@ npx expo start
 ```
 
 Get an API key from [api.esv.org](https://api.esv.org/).
+
+Rebuild the GitHub Pages preview anytime with:
+```bash
+npx expo export --platform web
+```
 
 ## Legal
 
