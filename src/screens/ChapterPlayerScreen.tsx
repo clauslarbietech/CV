@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import * as Speech from "expo-speech";
+import ReadAloudButton from "../components/accessibility/ReadAloudButton";
 import ChapterComicPanels from "../components/comics/ChapterComicPanels";
 import EmotionalStoryboard from "../components/comics/EmotionalStoryboard";
 import AudioGuidePlayer from "../components/player/AudioGuidePlayer";
@@ -46,6 +48,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     downloaded: false,
     lastPositionSeconds: 0,
   });
+  const [readingScripture, setReadingScripture] = useState(false);
 
   const audio = useAudioGuideSession({
     guide: chapter?.guide,
@@ -133,6 +136,38 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     }
   }, [audio.duration, audio.position, bookId, chapterNumber]);
 
+  useEffect(() => {
+    return () => {
+      void Speech.stop();
+    };
+  }, []);
+
+  const verses = passage?.passages.join("\n\n").trim() ?? "";
+  const webtoon = getWebtoonEpisode(bookId, chapterNumber);
+
+  const toggleScriptureReadAloud = () => {
+    if (readingScripture) {
+      void Speech.stop();
+      setReadingScripture(false);
+      return;
+    }
+    const text = verses.trim();
+    if (!text) {
+      return;
+    }
+    void audio.stop();
+    setReadingScripture(true);
+    const intro = passage?.canonical
+      ? `${passage.canonical}, from the English Standard Version. `
+      : `${chapter?.passageQuery ?? ""}, from the English Standard Version. `;
+    Speech.speak(`${intro}${text}`, {
+      rate: 0.88,
+      onDone: () => setReadingScripture(false),
+      onStopped: () => setReadingScripture(false),
+      onError: () => setReadingScripture(false),
+    });
+  };
+
   if (!book || !chapter) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-white">
@@ -143,8 +178,6 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     );
   }
 
-  const verses = passage?.passages.join("\n\n").trim() ?? "";
-  const webtoon = getWebtoonEpisode(bookId, chapterNumber);
   const nextChapter = book.chapters.find(
     (item) => item.number === chapterNumber + 1
   );
@@ -157,6 +190,8 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             accessibilityRole="button"
             onPress={() => {
               void audio.stop();
+              void Speech.stop();
+              setReadingScripture(false);
               navigation.goBack();
             }}
             className="px-1 py-1"
@@ -267,9 +302,19 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             }}
           />
 
-          <Text className="mb-2 text-xl font-bold text-teal-ink">
-            {passage?.canonical ?? chapter.passageQuery}
-          </Text>
+          <View className="mb-3 flex-row items-center justify-between">
+            <Text className="text-xl font-bold text-teal-ink">
+              {passage?.canonical ?? chapter.passageQuery}
+            </Text>
+            {verses ? (
+              <ReadAloudButton
+                compact
+                isPlaying={readingScripture}
+                onPress={toggleScriptureReadAloud}
+                accessibilityHint="Reads the full ESV chapter text out loud for non-readers"
+              />
+            ) : null}
+          </View>
 
           {loading ? (
             <View className="items-center py-8">
@@ -288,9 +333,22 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
               </Text>
             </View>
           ) : (
-            <Text className="text-base leading-7 text-parchment-ink">
-              {verses}
-            </Text>
+            <>
+              <View className="mb-3">
+                <ReadAloudButton
+                  isPlaying={readingScripture}
+                  label={
+                    readingScripture
+                      ? "Stop reading scripture"
+                      : "Read ESV scripture aloud"
+                  }
+                  onPress={toggleScriptureReadAloud}
+                />
+              </View>
+              <Text className="text-base leading-7 text-parchment-ink">
+                {verses}
+              </Text>
+            </>
           )}
 
           {nextChapter ? (

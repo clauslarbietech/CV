@@ -394,11 +394,41 @@ export function listWebtoonEpisodes(bookId?: string): WebtoonEpisode[] {
   return WEBTOON_EPISODES.filter((episode) => episode.bookId === bookId);
 }
 
-/** Text spoken by TTS for a panel (prefer full ESV verse). */
+/** Text spoken by TTS for a panel — all on-screen text for non-readers. */
 export function getPanelAudioText(panel: WebtoonPanel): string {
-  if (panel.scriptureText) {
-    const ref = panel.scriptureRef ? `${panel.scriptureRef}. ` : "";
-    return `${ref}${panel.scriptureText}`;
+  const parts: string[] = [];
+
+  if (panel.scriptureRef && panel.scriptureText) {
+    parts.push(`${panel.scriptureRef}. ${panel.scriptureText}`);
+  } else if (panel.scriptureText) {
+    parts.push(panel.scriptureText);
   }
-  return panel.bubble?.text ?? "";
+
+  if (panel.bubble?.text) {
+    const bubble = panel.bubble.text.trim();
+    // Avoid repeating the same line if bubble is only a short quote already in scripture.
+    const alreadyCovered =
+      panel.scriptureText &&
+      panel.scriptureText.includes(bubble.replace(/[“”"]/g, "").slice(0, 24));
+    if (!alreadyCovered || panel.bubble.tone === "whisper") {
+      const lead =
+        panel.bubble.tone === "whisper"
+          ? "The whisper says: "
+          : panel.bubble.tone === "dialogue"
+            ? "God said: "
+            : panel.bubble.tone === "scripture"
+              ? ""
+              : "The story says: ";
+      if (lead || !panel.scriptureText) {
+        parts.push(`${lead}${bubble}`);
+      }
+    }
+  }
+
+  return parts.filter(Boolean).join(" ");
+}
+
+/** Shorter speech-only line (bubble) for kids who want dialogue alone. */
+export function getPanelSpeechOnlyText(panel: WebtoonPanel): string {
+  return panel.bubble?.text?.trim() ?? "";
 }
