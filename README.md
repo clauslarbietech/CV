@@ -13,14 +13,13 @@ A free, non-commercial Bible mobile app (Genesis through Revelation) featuring a
 
 ## Current experience (Through the Word–style)
 
-- Home → Book plan → Chapter player navigation
-- **Webtoon storylines** (one at a time): Genesis 1 Day 1, Eve from Adam’s side, Genesis 3 Fall
-- Vertical panels with **ESV scripture**, dialogue bubbles, and **per-scene audio** (tap Listen / Read scene)
-- Audio guide session: play/pause, ±15s skip, persistent speed, background audio mode
-- Anime comic panels synced to narration
-- Offline download flags, complete/favorite progress (press-and-hold on chapters)
-- Voice reflection recording/playback per chapter (`expo-audio`)
-- ESV scripture fetch with local cache + mandatory attribution
+- **Full Genesis 1–50** chapter journey (free) with ESV audio guides
+- Illustrated webtoon storylines: Creation Days 1–7, Eve from Adam’s side, The Fall
+- Vertical panels with **ESV scripture**, dialogue bubbles, and **per-scene audio**
+- Family-safe Eden framing (naked without shame · bush/branch covering)
+- Chapters 4–50 ready as ESV listening guides; anime art ships storyline-by-storyline
+- TTW-style tabs, listening progress, voice reflection
+- ESV passage fetch + mandatory Crossway attribution
 
 ## Setup
 

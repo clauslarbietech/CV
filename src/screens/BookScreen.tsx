@@ -1,15 +1,18 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import {
+  GENESIS_ARCS,
+  listGenesisByArc,
+} from "../data/genesisChapters";
 import { getBook } from "../data/library";
 import { getWebtoonEpisode, listWebtoonEpisodes } from "../data/webtoonEpisodes";
 import type { RootStackParamList } from "../navigation/types";
 import {
   getBookProgress,
   markPlanDownloaded,
-  updateChapterProgress,
   type BookProgressMap,
 } from "../services/listeningProgress";
 
@@ -32,6 +35,11 @@ export default function BookScreen({ navigation, route }: Props) {
     }, [refresh])
   );
 
+  const illustrated = useMemo(
+    () => (book ? listWebtoonEpisodes(book.id) : []),
+    [book]
+  );
+
   if (!book) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-white">
@@ -43,6 +51,7 @@ export default function BookScreen({ navigation, route }: Props) {
   const downloadedCount = book.chapters.filter(
     (chapter) => progressMap[String(chapter.number)]?.downloaded
   ).length;
+  const isGenesis = book.id === "genesis";
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
@@ -89,32 +98,32 @@ export default function BookScreen({ navigation, route }: Props) {
             />
             <View className="ml-4 flex-1">
               <Text className="text-xs font-semibold uppercase tracking-wide text-terracotta">
-                {book.testament === "OT" ? "Old Testament" : "New Testament"}
+                {book.testament === "OT" ? "Old Testament" : "New Testament"} · Free
               </Text>
               <Text className="text-3xl font-bold text-teal-ink">{book.name}</Text>
               <Text className="mt-1 text-sm leading-5 text-parchment-ink/70">
                 {book.tagline}
               </Text>
               <Text className="mt-2 text-xs font-semibold text-teal-deep">
-                {book.chapters.length} guides · {downloadedCount} downloaded
+                {book.chapters.length} chapters · {downloadedCount} downloaded · ESV
               </Text>
             </View>
           </View>
 
           <View className="mb-4 rounded-2xl bg-parchment px-4 py-3">
-            <Text className="text-sm font-bold text-teal-ink">How to listen</Text>
+            <Text className="text-sm font-bold text-teal-ink">How to read Genesis</Text>
             <Text className="mt-1 text-sm leading-5 text-parchment-ink/75">
-              Open a chapter → tap play → follow anime panels + scripture while
-              the guide narrates. Come back tomorrow for the next chapter.
+              Illustrated storylines first (Creation → Eden → Fall). Then continue
+              chapters 4–50 with ESV audio guides — art ships storyline by storyline.
             </Text>
           </View>
 
-          {listWebtoonEpisodes(book.id).length > 0 ? (
+          {illustrated.length > 0 ? (
             <>
               <Text className="mb-3 text-lg font-bold text-teal-ink">
-                Webtoon storylines · ESV audio
+                Illustrated storylines · ESV audio
               </Text>
-              {listWebtoonEpisodes(book.id).map((episode) => (
+              {illustrated.map((episode) => (
                 <Pressable
                   key={episode.id}
                   accessibilityRole="button"
@@ -141,94 +150,99 @@ export default function BookScreen({ navigation, route }: Props) {
             </>
           ) : null}
 
-          <Text className="mb-3 mt-2 text-lg font-bold text-teal-ink">
-            Chapters · comics & narration
+          <Text className="mb-3 mt-4 text-lg font-bold text-teal-ink">
+            All chapters · Genesis 1–{book.chapters.length}
           </Text>
 
-          {book.chapters.map((chapter) => {
-            const thumb = chapter.panels[0]?.image ?? book.cover;
-            const chapterProgress = progressMap[String(chapter.number)];
-            const webtoon = getWebtoonEpisode(book.id, chapter.number);
-            return (
-              <Pressable
-                key={chapter.number}
-                accessibilityRole="button"
-                className="mb-3 flex-row overflow-hidden rounded-2xl border border-teal-deep/10 bg-parchment active:bg-parchment-warm"
-                onPress={() => {
-                  if (webtoon) {
-                    navigation.navigate("WebtoonEpisode", {
-                      bookId: book.id,
-                      chapterNumber: chapter.number,
-                      storylineId: webtoon.storylineId,
-                    });
-                  } else {
-                    navigation.navigate("ChapterPlayer", {
-                      bookId: book.id,
-                      chapterNumber: chapter.number,
-                    });
-                  }
-                }}
-                onLongPress={() => {
-                  Alert.alert(
-                    `${book.name} ${chapter.number}`,
-                    "Mark progress like Through the Word (press & hold).",
-                    [
-                      { text: "Cancel", style: "cancel" },
-                      {
-                        text: chapterProgress?.completed
-                          ? "Mark incomplete"
-                          : "Mark complete",
-                        onPress: () => {
-                          void updateChapterProgress(book.id, chapter.number, {
-                            completed: !chapterProgress?.completed,
-                          }).then(refresh);
-                        },
-                      },
-                      {
-                        text: chapterProgress?.favorite
-                          ? "Unfavorite"
-                          : "Favorite",
-                        onPress: () => {
-                          void updateChapterProgress(book.id, chapter.number, {
-                            favorite: !chapterProgress?.favorite,
-                          }).then(refresh);
-                        },
-                      },
-                    ]
-                  );
-                }}
-              >
-                <Image
-                  source={thumb}
-                  style={{ width: 88, height: 88 }}
-                  resizeMode="cover"
-                />
-                <View className="flex-1 justify-center px-3 py-2">
-                  <Text className="text-xs font-semibold text-terracotta">
-                    Chapter {chapter.number}
-                    {webtoon ? ` · ${webtoon.episodeLabel}` : ""}
-                    {chapterProgress?.completed ? " · Done" : ""}
-                    {chapterProgress?.favorite ? " · ★" : ""}
-                    {chapterProgress?.downloaded ? " · Offline" : ""}
-                  </Text>
-                  <Text className="text-base font-bold text-teal-ink">
-                    {chapter.title}
-                  </Text>
-                  <Text
-                    className="mt-1 text-xs text-parchment-ink/65"
-                    numberOfLines={2}
+          {isGenesis
+            ? GENESIS_ARCS.map((arc) => {
+                const chapters = listGenesisByArc(arc);
+                return (
+                  <View key={arc} className="mb-4">
+                    <Text className="mb-2 text-xs font-bold uppercase tracking-[2px] text-terracotta">
+                      {arc}
+                    </Text>
+                    {chapters.map((meta) => {
+                      const chapterProgress = progressMap[String(meta.number)];
+                      const webtoon = getWebtoonEpisode(book.id, meta.number);
+                      return (
+                        <Pressable
+                          key={meta.number}
+                          accessibilityRole="button"
+                          className="mb-2 flex-row items-center rounded-xl border border-teal-deep/10 bg-parchment px-3 py-3 active:bg-parchment-warm"
+                          onPress={() => {
+                            if (webtoon) {
+                              navigation.navigate("WebtoonEpisode", {
+                                bookId: book.id,
+                                chapterNumber: meta.number,
+                                storylineId: webtoon.storylineId,
+                              });
+                            } else {
+                              navigation.navigate("ChapterPlayer", {
+                                bookId: book.id,
+                                chapterNumber: meta.number,
+                              });
+                            }
+                          }}
+                        >
+                          <View className="mr-3 h-9 w-9 items-center justify-center rounded-full bg-teal-mist">
+                            <Text className="text-xs font-bold text-teal-ink">
+                              {meta.number}
+                            </Text>
+                          </View>
+                          <View className="flex-1">
+                            <Text className="text-sm font-bold text-teal-ink">
+                              {meta.title}
+                              {chapterProgress?.completed ? " · Done" : ""}
+                            </Text>
+                            <Text
+                              className="mt-0.5 text-xs text-parchment-ink/60"
+                              numberOfLines={1}
+                            >
+                              {webtoon
+                                ? "Illustrated webtoon · ESV"
+                                : `${meta.keyVerseRef} · ESV audio guide`}
+                            </Text>
+                          </View>
+                          <Text className="text-lg text-terracotta">▶</Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                );
+              })
+            : book.chapters.map((chapter) => {
+                const thumb = chapter.panels[0]?.image ?? book.cover;
+                const chapterProgress = progressMap[String(chapter.number)];
+                return (
+                  <Pressable
+                    key={chapter.number}
+                    accessibilityRole="button"
+                    className="mb-3 flex-row overflow-hidden rounded-2xl border border-teal-deep/10 bg-parchment"
+                    onPress={() =>
+                      navigation.navigate("ChapterPlayer", {
+                        bookId: book.id,
+                        chapterNumber: chapter.number,
+                      })
+                    }
                   >
-                    {webtoon
-                      ? `Vertical webtoon · ${webtoon.panels.length} full panels`
-                      : `${chapter.guide.title} · ${chapter.panels.length} anime panels`}
-                  </Text>
-                </View>
-                <View className="justify-center pr-3">
-                  <Text className="text-xl text-terracotta">▶</Text>
-                </View>
-              </Pressable>
-            );
-          })}
+                    <Image
+                      source={thumb}
+                      style={{ width: 88, height: 88 }}
+                      resizeMode="cover"
+                    />
+                    <View className="flex-1 justify-center px-3 py-2">
+                      <Text className="text-xs font-semibold text-terracotta">
+                        Chapter {chapter.number}
+                        {chapterProgress?.completed ? " · Done" : ""}
+                      </Text>
+                      <Text className="text-base font-bold text-teal-ink">
+                        {chapter.title}
+                      </Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,3 +1,8 @@
+import {
+  GENESIS_CHAPTERS,
+  type GenesisChapterMeta,
+} from "./genesisChapters";
+
 export type ComicPanel = {
   id: string;
   title: string;
@@ -50,6 +55,118 @@ const fallSerpent = require("../../assets/panels/fall-03-serpent-smirk.jpg");
 const genesisCover = require("../../assets/covers/genesis.jpg");
 const journeyStart = require("../../assets/journeys/start.jpg");
 
+const ARC_THUMBS: Record<string, number> = {
+  Creation: day1,
+  Fall: fallSerpent,
+  Flood: waters,
+  Nations: genesisCover,
+  Abraham: journeyStart,
+  Isaac: genesisCover,
+  Jacob: waters,
+  Joseph: journeyStart,
+};
+
+function buildGuide(meta: GenesisChapterMeta): ChapterGuide {
+  return {
+    title: meta.title,
+    narrator: "Anime Audio Guide · ESV",
+    durationSeconds: 420,
+    script: [
+      `Welcome to ${meta.passageQuery} — ${meta.title}.`,
+      meta.summary,
+      `Key verse · ${meta.keyVerseRef}: ${meta.keyVerseEsV}`,
+      "Open the ESV text below, listen along, and come back tomorrow for the next chapter.",
+      "This free app walks Genesis end-to-end — one storyline at a time.",
+    ],
+  };
+}
+
+function buildPanels(meta: GenesisChapterMeta): ComicPanel[] {
+  if (meta.number === 1) {
+    return [
+      {
+        id: "g1-1",
+        title: "Day 1 · Let there be light",
+        caption:
+          "Darkness covered the deep — then a warm burst of light split the void.",
+        image: day1,
+      },
+      {
+        id: "g1-2",
+        title: "The waters · Dawn over the deep",
+        caption:
+          "Spirit hovered over the waters as golden dawn painted the horizon.",
+        image: waters,
+      },
+    ];
+  }
+  if (meta.number === 2) {
+    return [
+      {
+        id: "g2-1",
+        title: "Breath of life",
+        caption: "From dust and breath — a living soul awakens in the garden.",
+        image: genesisCover,
+      },
+      {
+        id: "g2-2",
+        title: "Tree of life",
+        caption: "Two trees stand at the center — gift, trust, and choice.",
+        image: waters,
+      },
+    ];
+  }
+  if (meta.number === 3) {
+    return [
+      {
+        id: "g3-1",
+        title: "Eve bites",
+        caption:
+          "While Adam’s back is turned, Eve tastes the forbidden fruit — a quiet choice that shakes the garden.",
+        image: fallEveBites,
+      },
+      {
+        id: "g3-2",
+        title: "She offers it",
+        caption:
+          "Eve hands the apple to Adam… and he bites too. What began alone becomes a shared fall.",
+        image: fallHandsApple,
+      },
+      {
+        id: "g3-3",
+        title: "The serpent smirks",
+        caption:
+          "Coiled in the tree, the serpent lingers with a smirk — watching trust unravel.",
+        image: fallSerpent,
+      },
+    ];
+  }
+
+  const thumb = ARC_THUMBS[meta.arc] ?? genesisCover;
+  return [
+    {
+      id: `g${meta.number}-1`,
+      title: meta.title,
+      caption: meta.summary,
+      image: thumb,
+    },
+    {
+      id: `g${meta.number}-2`,
+      title: meta.keyVerseRef,
+      caption: meta.keyVerseEsV,
+      image: thumb,
+    },
+  ];
+}
+
+const genesisChapters: BibleChapter[] = GENESIS_CHAPTERS.map((meta) => ({
+  number: meta.number,
+  title: meta.title,
+  passageQuery: meta.passageQuery,
+  guide: buildGuide(meta),
+  panels: buildPanels(meta),
+}));
+
 export const BOOKS: BibleBook[] = [
   {
     id: "genesis",
@@ -57,142 +174,37 @@ export const BOOKS: BibleBook[] = [
     abbreviation: "Ge",
     testament: "OT",
     days: 50,
-    tagline: "Beginnings — creation, promise, and family",
+    tagline: "Beginnings — creation through Joseph · all 50 chapters · ESV",
     cover: genesisCover,
-    chapters: [
-      {
-        number: 1,
-        title: "Creation Dawn",
-        passageQuery: "Genesis 1",
-        guide: {
-          title: "Let There Be Light",
-          narrator: "Anime Audio Guide",
-          durationSeconds: 540,
-          script: [
-            "Welcome to Genesis 1 — the opening chapter of the whole story.",
-            "Before anything else, God speaks. Darkness covers the deep, and then light breaks in.",
-            "Watch the comic panels as you listen: creation isn’t chaos — it’s craftsmanship.",
-            "Day by day, God shapes a world that is good, then very good.",
-            "As you read, ask: What does it mean that you are made in God’s image?",
-          ],
-        },
-        panels: [
-          {
-            id: "g1-1",
-            title: "Day 1 · Let there be light",
-            caption:
-              "Darkness covered the deep — then a warm burst of light split the void.",
-            image: day1,
-          },
-          {
-            id: "g1-2",
-            title: "The waters · Dawn over the deep",
-            caption:
-              "Spirit hovered over the waters as golden dawn painted the horizon.",
-            image: waters,
-          },
-        ],
-      },
-      {
-        number: 2,
-        title: "Garden Rest",
-        passageQuery: "Genesis 2",
-        guide: {
-          title: "The Garden Story",
-          narrator: "Anime Audio Guide",
-          durationSeconds: 480,
-          script: [
-            "Genesis 2 zooms in — from the wide canvas of creation to a garden and a friendship.",
-            "God forms humanity from dust and breathes life — intimate and personal.",
-            "The garden is a gift: work, rest, and relationship without shame.",
-            "Notice the river, the trees, and the call to keep and cultivate.",
-            "This chapter invites you into God’s nearness, not just His power.",
-          ],
-        },
-        panels: [
-          {
-            id: "g2-1",
-            title: "Breath of life",
-            caption: "From dust and breath — a living soul awakens in the garden.",
-            image: genesisCover,
-          },
-          {
-            id: "g2-2",
-            title: "Tree of life",
-            caption: "Two trees stand at the center — gift, trust, and choice.",
-            image: waters,
-          },
-        ],
-      },
-      {
-        number: 3,
-        title: "The Fall",
-        passageQuery: "Genesis 3",
-        guide: {
-          title: "When Trust Breaks",
-          narrator: "Anime Audio Guide",
-          durationSeconds: 510,
-          script: [
-            "Genesis 3 is the hinge of the Bible — the moment trust is traded for fear.",
-            "Watch Eve reach for the fruit while Adam’s back is turned — desire before discernment.",
-            "Then she offers it to Adam… and he bites too. The break becomes shared.",
-            "Notice the serpent lingering with a smirk — evil loves when trust collapses.",
-            "Yet even here, God seeks them out — and a promise of rescue begins to glow.",
-          ],
-        },
-        panels: [
-          {
-            id: "g3-1",
-            title: "Eve bites",
-            caption:
-              "While Adam’s back is turned, Eve tastes the forbidden fruit — a quiet choice that shakes the garden.",
-            image: fallEveBites,
-          },
-          {
-            id: "g3-2",
-            title: "She offers it",
-            caption:
-              "Eve hands the apple to Adam… and he bites too. What began alone becomes a shared fall.",
-            image: fallHandsApple,
-          },
-          {
-            id: "g3-3",
-            title: "The serpent smirks",
-            caption:
-              "Coiled in the tree, the serpent lingers with a smirk — watching trust unravel.",
-            image: fallSerpent,
-          },
-        ],
-      },
-    ],
+    chapters: genesisChapters,
   },
 ];
 
 export const JOURNEYS: Journey[] = [
   {
-    id: "journey-1",
+    id: "journey-genesis",
     number: 1,
-    title: "Start",
-    booksLabel: "Genesis · Creation arc",
-    days: 7,
+    title: "Genesis",
+    booksLabel: "All 50 chapters · ESV",
+    days: 50,
     cover: journeyStart,
     bookIds: ["genesis"],
   },
   {
-    id: "journey-2",
+    id: "journey-creation",
     number: 2,
-    title: "The Big Picture",
-    booksLabel: "Key chapters overview",
-    days: 24,
-    cover: waters,
+    title: "Creation Week",
+    booksLabel: "Genesis 1–2 · illustrated",
+    days: 8,
+    cover: day1,
     bookIds: ["genesis"],
   },
   {
-    id: "journey-3",
+    id: "journey-promise",
     number: 3,
-    title: "Foundations",
-    booksLabel: "Genesis, Daniel, Romans",
-    days: 92,
+    title: "Promise & Family",
+    booksLabel: "Abraham → Joseph",
+    days: 39,
     cover: genesisCover,
     bookIds: ["genesis"],
   },

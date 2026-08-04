@@ -46,22 +46,16 @@ export default function BrowseScreen({ navigation }: Props) {
               }
             >
               <Text className="text-xs font-bold text-white">
-                Start Genesis 1 · Day 1 storyline →
+                Start Genesis · Day 1 (ESV) →
               </Text>
             </Pressable>
             <Pressable
               accessibilityRole="button"
               className="mt-2 rounded-full bg-teal-ink px-4 py-2"
-              onPress={() =>
-                navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 2,
-                  storylineId: "eve-from-rib",
-                })
-              }
+              onPress={() => navigation.navigate("Book", { bookId: "genesis" })}
             >
               <Text className="text-xs font-bold text-white">
-                Eve from Adam’s side →
+                All Genesis 1–50 chapters →
               </Text>
             </Pressable>
             <Pressable
@@ -70,22 +64,13 @@ export default function BrowseScreen({ navigation }: Props) {
               onPress={() =>
                 navigation.navigate("WebtoonEpisode", {
                   bookId: "genesis",
-                  chapterNumber: 3,
-                  storylineId: "the-fall",
+                  chapterNumber: 2,
+                  storylineId: "eve-from-rib",
                 })
               }
             >
               <Text className="text-xs font-bold text-terracotta">
-                Genesis 3 · The Fall →
-              </Text>
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              className="mt-2 rounded-full bg-teal-deep/20 px-4 py-2"
-              onPress={() => navigation.navigate("AnimationDemo")}
-            >
-              <Text className="text-xs font-bold text-teal-ink">
-                Watch Fall animation demo →
+                Eve from Adam’s side →
               </Text>
             </Pressable>
           </View>
