@@ -1,4 +1,4 @@
-import { Text } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -15,25 +15,15 @@ import type { MainTabParamList, RootStackParamList } from "./types";
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function TabIcon({ label, focused }: { label: string; focused: boolean }) {
-  const icons: Record<string, string> = {
-    Browse: "⌕",
-    MyPlans: "▤",
-    Groups: "☺",
-    More: "≡",
-  };
-  return (
-    <Text
-      style={{
-        fontSize: 18,
-        color: focused ? "#E4572E" : "#9AA0A6",
-        fontWeight: focused ? "700" : "500",
-      }}
-    >
-      {icons[label] ?? "•"}
-    </Text>
-  );
-}
+const TAB_ICONS: Record<
+  keyof MainTabParamList,
+  keyof typeof MaterialIcons.glyphMap
+> = {
+  Browse: "explore",
+  MyPlans: "menu-book",
+  Groups: "groups",
+  More: "more-horiz",
+};
 
 function MainTabs() {
   return (
@@ -51,8 +41,12 @@ function MainTabs() {
           paddingTop: 6,
           paddingBottom: 8,
         },
-        tabBarIcon: ({ focused }) => (
-          <TabIcon label={route.name} focused={focused} />
+        tabBarIcon: ({ focused, color, size }) => (
+          <MaterialIcons
+            name={TAB_ICONS[route.name]}
+            size={focused ? size + 2 : size}
+            color={color}
+          />
         ),
       })}
     >
@@ -61,7 +55,11 @@ function MainTabs() {
         component={MyPlansScreen}
         options={{ title: "My Plans" }}
       />
-      <Tab.Screen name="Groups" component={GroupsScreen} />
+      <Tab.Screen
+        name="Groups"
+        component={GroupsScreen}
+        options={{ title: "Groups" }}
+      />
       <Tab.Screen name="Browse" component={BrowseScreen} />
       <Tab.Screen name="More" component={MoreScreen} />
     </Tab.Navigator>

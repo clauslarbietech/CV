@@ -11,6 +11,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { MaterialIcons } from "@expo/vector-icons";
 import Animated, {
   FadeInUp,
   interpolate,
@@ -37,7 +38,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "WebtoonEpisode">;
 /**
  * Mature anime webtoon storyline reader:
  * full-bleed vertical panels, ESV scripture + dialogue,
- * per-scene 🔊 read-aloud for non-readers (all text out loud).
+ * per-scene Material volume icon read-aloud for non-readers.
  */
 export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
   const { bookId, chapterNumber, storylineId } = route.params;
@@ -143,17 +144,20 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
 
   return (
     <SafeAreaView className="flex-1 bg-black" edges={["top", "left", "right"]}>
-      <View className="flex-row items-center justify-between border-b border-white/10 px-4 py-3">
+      <View className="flex-row items-center justify-between border-b border-white/10 px-3 py-3">
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel="Go back"
           onPress={() => {
             stopAudio();
             navigation.goBack();
           }}
+          className="h-10 w-10 items-center justify-center rounded-full bg-white/10"
+          hitSlop={8}
         >
-          <Text className="text-sm font-semibold text-white/80">← Back</Text>
+          <MaterialIcons name="arrow-back" size={22} color="#FFFFFF" />
         </Pressable>
-        <View className="items-center px-2">
+        <View className="mx-2 flex-1 items-center">
           <Text className="text-xs font-bold uppercase tracking-[2px] text-terracotta">
             {episode.seriesTitle} · {episode.episodeLabel}
           </Text>
@@ -179,10 +183,13 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
           className={`h-10 w-10 items-center justify-center rounded-full ${
             anyPlaying ? "bg-terracotta" : "bg-white/10"
           }`}
+          hitSlop={8}
         >
-          <Text className="text-base text-white">
-            {anyPlaying ? "⏹" : "🔊"}
-          </Text>
+          <MaterialIcons
+            name={anyPlaying ? "stop" : "volume-up"}
+            size={22}
+            color="#FFFFFF"
+          />
         </Pressable>
       </View>
 
@@ -195,16 +202,19 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
         <View className="px-4 py-5">
           <Text className="text-2xl font-bold text-white">{episode.title}</Text>
           <Text className="mt-1 text-sm text-white/60">{episode.subtitle}</Text>
-          <Text className="mt-3 text-xs uppercase tracking-[2px] text-terracotta">
-            ESV · tap 🔊 to hear every word
-          </Text>
+          <View className="mt-3 flex-row items-center">
+            <MaterialIcons name="volume-up" size={16} color="#E4572E" />
+            <Text className="ml-1 text-xs uppercase tracking-[1.5px] text-terracotta">
+              Tap the speaker to hear every word
+            </Text>
+          </View>
           <View className="mt-4">
             <ReadAloudButton
-              isPlaying={isReadingAll}
+              isPlaying={anyPlaying}
               label={
-                isReadingAll
+                anyPlaying
                   ? "Stop reading"
-                  : "Read all scenes aloud (ESV + speech)"
+                  : "Hear this whole story read aloud"
               }
               onPress={() => {
                 if (anyPlaying) {
@@ -216,8 +226,8 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
             />
           </View>
           <Text className="mt-2 text-[11px] leading-4 text-white/45">
-            Accessibility for non-readers: each scene has a speaker icon that
-            reads the scripture and speech bubbles out loud.
+            For kids who can’t read yet: each scene has a speaker button that
+            reads the Bible words and speech bubbles out loud.
           </Text>
         </View>
 
@@ -244,15 +254,21 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
           <Text className="mb-3 text-sm text-white/50">End of storyline</Text>
           <Pressable
             accessibilityRole="button"
-            className="mb-3 rounded-full bg-terracotta px-5 py-3"
+            className="mb-3 flex-row items-center rounded-full bg-terracotta px-5 py-3"
             onPress={() => {
               stopAudio();
               navigation.navigate("ChapterPlayer", { bookId, chapterNumber });
             }}
           >
             <Text className="text-sm font-bold text-white">
-              Continue with audio guide →
+              Continue with audio guide
             </Text>
+            <MaterialIcons
+              name="arrow-forward"
+              size={18}
+              color="#FFFFFF"
+              style={{ marginLeft: 6 }}
+            />
           </Pressable>
           <Pressable
             accessibilityRole="link"
@@ -268,10 +284,18 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
       </ScrollView>
 
       <View className="absolute bottom-4 left-0 right-0 items-center">
-        <View className="rounded-full bg-black/70 px-4 py-2">
+        <View className="flex-row items-center rounded-full bg-black/70 px-4 py-2">
+          {playingPanelId ? (
+            <MaterialIcons
+              name="volume-up"
+              size={14}
+              color="#F0D78C"
+              style={{ marginRight: 6 }}
+            />
+          ) : null}
           <Text className="text-xs font-semibold text-white/85">
             Scene {activeIndex + 1} / {episode.panels.length}
-            {playingPanelId ? " · 🔊 Reading aloud…" : ""}
+            {playingPanelId ? " · Reading aloud…" : ""}
           </Text>
         </View>
       </View>
@@ -330,6 +354,9 @@ function WebtoonFrame({
           ? panel.scriptureRef ?? "ESV"
           : "Narration";
 
+  const iconOnLight =
+    panel.bubble?.tone === "dialogue" || panel.bubble?.tone === "scripture";
+
   return (
     <Animated.View
       entering={FadeInUp.delay(index * 80).duration(450)}
@@ -344,7 +371,6 @@ function WebtoonFrame({
         }
       />
 
-      {/* Floating speaker icon — always visible for non-readers */}
       <View className="absolute right-3 top-3">
         <ReadAloudButton compact isPlaying={isPlaying} onPress={onPlay} />
       </View>
@@ -355,10 +381,7 @@ function WebtoonFrame({
             <View className="mb-1 flex-row items-center justify-between">
               <Text
                 className={`text-[11px] font-bold uppercase tracking-wide ${
-                  panel.bubble.tone === "dialogue" ||
-                  panel.bubble.tone === "scripture"
-                    ? "text-terracotta"
-                    : "text-ochre-soft"
+                  iconOnLight ? "text-terracotta" : "text-ochre-soft"
                 }`}
               >
                 {label}
@@ -371,9 +394,14 @@ function WebtoonFrame({
                     : "Read this speech aloud"
                 }
                 onPress={onPlay}
-                hitSlop={6}
+                hitSlop={8}
+                className="h-8 w-8 items-center justify-center rounded-full bg-black/10"
               >
-                <Text className="text-sm">{isPlaying ? "⏹" : "🔊"}</Text>
+                <MaterialIcons
+                  name={isPlaying ? "stop" : "volume-up"}
+                  size={18}
+                  color={iconOnLight ? "#E4572E" : "#F0D78C"}
+                />
               </Pressable>
             </View>
             <Text className={`text-sm leading-5 ${textClass}`}>
@@ -382,13 +410,10 @@ function WebtoonFrame({
             {panel.scriptureRef ? (
               <Text
                 className={`mt-2 text-[10px] ${
-                  panel.bubble.tone === "dialogue" ||
-                  panel.bubble.tone === "scripture"
-                    ? "text-parchment-ink/55"
-                    : "text-white/55"
+                  iconOnLight ? "text-parchment-ink/55" : "text-white/55"
                 }`}
               >
-                Tap 🔊 to hear full {panel.scriptureRef} + speech
+                Tap the speaker to hear {panel.scriptureRef} + speech
               </Text>
             ) : null}
           </View>
@@ -397,8 +422,8 @@ function WebtoonFrame({
             isPlaying={isPlaying}
             label={
               panel.scriptureRef
-                ? `Read ${panel.scriptureRef} aloud`
-                : "Read this scene aloud"
+                ? `Hear ${panel.scriptureRef} read aloud`
+                : "Hear this scene read aloud"
             }
             onPress={onPlay}
           />

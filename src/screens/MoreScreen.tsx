@@ -1,35 +1,40 @@
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { MaterialIcons } from "@expo/vector-icons";
 
-const MENU_ITEMS = [
-  { id: "progress", label: "Progress & Favorites", icon: "📖" },
-  { id: "settings", label: "Settings", icon: "⚙" },
-  { id: "support", label: "Info & Support", icon: "?" },
-  { id: "review", label: "Leave a Review", icon: "✎" },
-  { id: "share", label: "Share the App", icon: "⇧" },
-  { id: "store", label: "Store", icon: "BAG" },
-  { id: "donate", label: "Donate", icon: "♡" },
-] as const;
+const MENU_ITEMS: {
+  id: string;
+  label: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
+}[] = [
+  { id: "progress", label: "Progress & Favorites", icon: "auto-stories" },
+  { id: "settings", label: "Settings", icon: "settings" },
+  { id: "support", label: "Info & Support", icon: "help-outline" },
+  { id: "review", label: "Leave a Review", icon: "rate-review" },
+  { id: "share", label: "Share the App", icon: "ios-share" },
+  { id: "store", label: "Store", icon: "shopping-bag" },
+  { id: "donate", label: "Donate", icon: "favorite-border" },
+];
 
 export default function MoreScreen() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
       <View className="flex-1 px-4 pt-4">
         <Text className="mb-2 text-xl font-bold text-teal-ink">More</Text>
         <Text className="mb-6 text-sm text-parchment-ink/65">
-          Account tools, progress, and support — same menu pattern as Through the
-          Word.
+          Progress, settings, and support — open when you need them.
         </Text>
 
         <Pressable
           accessibilityRole="button"
-          className="self-start rounded-full bg-terracotta px-5 py-3"
+          className="self-start flex-row items-center rounded-full bg-terracotta px-5 py-3"
           onPress={() => setOpen(true)}
         >
-          <Text className="text-sm font-bold text-white">Open menu</Text>
+          <MaterialIcons name="menu" size={18} color="#FFFFFF" />
+          <Text className="ml-2 text-sm font-bold text-white">Open menu</Text>
         </Pressable>
       </View>
 
@@ -48,7 +53,7 @@ export default function MoreScreen() {
                 onPress={() => setOpen(false)}
                 className="h-8 w-8 items-center justify-center rounded-full bg-black/5"
               >
-                <Text className="text-base font-bold text-parchment-ink/70">×</Text>
+                <MaterialIcons name="close" size={18} color="#1F2430" />
               </Pressable>
             </View>
             <ScrollView>
@@ -61,7 +66,12 @@ export default function MoreScreen() {
                   }`}
                   onPress={() => setOpen(false)}
                 >
-                  <Text className="w-8 text-base text-parchment-ink">{item.icon}</Text>
+                  <MaterialIcons
+                    name={item.icon}
+                    size={22}
+                    color="#1F2430"
+                    style={{ width: 28 }}
+                  />
                   <Text className="text-base font-bold text-parchment-ink">
                     {item.label}
                   </Text>

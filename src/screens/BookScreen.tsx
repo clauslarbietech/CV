@@ -111,10 +111,11 @@ export default function BookScreen({ navigation, route }: Props) {
           </View>
 
           <View className="mb-4 rounded-2xl bg-parchment px-4 py-3">
-            <Text className="text-sm font-bold text-teal-ink">How to read Genesis</Text>
+            <Text className="text-sm font-bold text-teal-ink">How to use this book</Text>
             <Text className="mt-1 text-sm leading-5 text-parchment-ink/75">
-              Illustrated storylines first (Creation → Eden → Fall). Then continue
-              chapters 4–50 with ESV audio guides — art ships storyline by storyline.
+              1) Tap an illustrated storyline{"\n"}
+              2) Tap the speaker to hear scripture + speech{"\n"}
+              3) Keep going with chapters 4–50 audio guides
             </Text>
           </View>
 
