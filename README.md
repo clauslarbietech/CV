@@ -14,6 +14,7 @@ A free, non-commercial Bible mobile app (Genesis through Revelation) featuring a
 ## Current experience (Through the Word–style)
 
 - Home → Book plan → Chapter player navigation
+- **Webtoon episode reader** (Genesis 3 · Episode 1): vertical full-bleed panels, narration/whisper bubbles, scroll focus
 - Audio guide session: play/pause, ±15s skip, persistent speed, background audio mode
 - Anime comic panels synced to narration
 - Offline download flags, complete/favorite progress (press-and-hold on chapters)

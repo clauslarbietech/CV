@@ -14,6 +14,7 @@ import EmotionalStoryboard from "../components/comics/EmotionalStoryboard";
 import AudioGuidePlayer from "../components/player/AudioGuidePlayer";
 import VoiceReflectionRecorder from "../components/player/VoiceReflectionRecorder";
 import { getBook, getChapter } from "../data/library";
+import { getWebtoonEpisode } from "../data/webtoonEpisodes";
 import { useAudioGuideSession } from "../hooks/useAudioGuideSession";
 import { useVoiceReflection } from "../hooks/useVoiceReflection";
 import type { RootStackParamList } from "../navigation/types";
@@ -143,6 +144,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
   }
 
   const verses = passage?.passages.join("\n\n").trim() ?? "";
+  const webtoon = getWebtoonEpisode(bookId, chapterNumber);
   const nextChapter = book.chapters.find(
     (item) => item.number === chapterNumber + 1
   );
@@ -188,6 +190,30 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           <Text className="mb-4 text-sm text-parchment-ink/65">
             ~10 minute habit · tap play and follow the comics + scripture
           </Text>
+
+          {webtoon ? (
+            <Pressable
+              accessibilityRole="button"
+              className="mb-4 rounded-2xl bg-teal-ink px-4 py-3"
+              onPress={() => {
+                void audio.stop();
+                navigation.navigate("WebtoonEpisode", {
+                  bookId,
+                  chapterNumber,
+                });
+              }}
+            >
+              <Text className="text-xs font-bold uppercase tracking-[2px] text-ochre-soft">
+                {webtoon.seriesTitle} · {webtoon.episodeLabel}
+              </Text>
+              <Text className="mt-1 text-base font-bold text-white">
+                Read as webtoon episode →
+              </Text>
+              <Text className="mt-1 text-xs text-white/65">
+                Vertical scroll · full panels · speech bubbles
+              </Text>
+            </Pressable>
+          ) : null}
 
           {chapter.number === 3 ? (
             <EmotionalStoryboard

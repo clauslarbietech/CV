@@ -36,7 +36,21 @@ export default function BrowseScreen({ navigation }: Props) {
             </Text>
             <Pressable
               accessibilityRole="button"
-              className="mt-3 rounded-full bg-teal-ink px-4 py-2"
+              className="mt-3 rounded-full bg-terracotta px-4 py-2"
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 3,
+                })
+              }
+            >
+              <Text className="text-xs font-bold text-white">
+                Read Genesis 3 webtoon episode →
+              </Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              className="mt-2 rounded-full bg-teal-ink px-4 py-2"
               onPress={() => navigation.navigate("AnimationDemo")}
             >
               <Text className="text-xs font-bold text-white">

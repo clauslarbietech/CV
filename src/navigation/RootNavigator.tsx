@@ -9,6 +9,7 @@ import ChapterPlayerScreen from "../screens/ChapterPlayerScreen";
 import GroupsScreen from "../screens/GroupsScreen";
 import MoreScreen from "../screens/MoreScreen";
 import MyPlansScreen from "../screens/MyPlansScreen";
+import WebtoonEpisodeScreen from "../screens/WebtoonEpisodeScreen";
 import type { MainTabParamList, RootStackParamList } from "./types";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -80,6 +81,7 @@ export default function RootNavigator() {
         <Stack.Screen name="MainTabs" component={MainTabs} />
         <Stack.Screen name="Book" component={BookScreen} />
         <Stack.Screen name="ChapterPlayer" component={ChapterPlayerScreen} />
+        <Stack.Screen name="WebtoonEpisode" component={WebtoonEpisodeScreen} />
         <Stack.Screen name="AnimationDemo" component={AnimationDemoScreen} />
       </Stack.Navigator>
     </NavigationContainer>

@@ -4,6 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { getBook } from "../data/library";
+import { getWebtoonEpisode } from "../data/webtoonEpisodes";
 import type { RootStackParamList } from "../navigation/types";
 import {
   getBookProgress,
@@ -115,16 +116,20 @@ export default function BookScreen({ navigation, route }: Props) {
           {book.chapters.map((chapter) => {
             const thumb = chapter.panels[0]?.image ?? book.cover;
             const chapterProgress = progressMap[String(chapter.number)];
+            const webtoon = getWebtoonEpisode(book.id, chapter.number);
             return (
               <Pressable
                 key={chapter.number}
                 accessibilityRole="button"
                 className="mb-3 flex-row overflow-hidden rounded-2xl border border-teal-deep/10 bg-parchment active:bg-parchment-warm"
                 onPress={() =>
-                  navigation.navigate("ChapterPlayer", {
-                    bookId: book.id,
-                    chapterNumber: chapter.number,
-                  })
+                  navigation.navigate(
+                    webtoon ? "WebtoonEpisode" : "ChapterPlayer",
+                    {
+                      bookId: book.id,
+                      chapterNumber: chapter.number,
+                    }
+                  )
                 }
                 onLongPress={() => {
                   Alert.alert(
@@ -164,6 +169,7 @@ export default function BookScreen({ navigation, route }: Props) {
                 <View className="flex-1 justify-center px-3 py-2">
                   <Text className="text-xs font-semibold text-terracotta">
                     Chapter {chapter.number}
+                    {webtoon ? ` · ${webtoon.episodeLabel}` : ""}
                     {chapterProgress?.completed ? " · Done" : ""}
                     {chapterProgress?.favorite ? " · ★" : ""}
                     {chapterProgress?.downloaded ? " · Offline" : ""}
@@ -175,7 +181,9 @@ export default function BookScreen({ navigation, route }: Props) {
                     className="mt-1 text-xs text-parchment-ink/65"
                     numberOfLines={2}
                   >
-                    {chapter.guide.title} · {chapter.panels.length} anime panels
+                    {webtoon
+                      ? `Vertical webtoon · ${webtoon.panels.length} full panels`
+                      : `${chapter.guide.title} · ${chapter.panels.length} anime panels`}
                   </Text>
                 </View>
                 <View className="justify-center pr-3">
