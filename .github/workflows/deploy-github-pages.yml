@@ -1,19 +1,22 @@
-name: Deploy web preview to GitHub Pages
+name: Build web preview
 
 on:
   push:
     branches:
       - cursor/childrens-dev-anime-app-9573
       - main
+  pull_request:
   workflow_dispatch:
 
+# GitHub Pages Actions deploys are only allowed from `main` in this repo.
+# Feature-branch / PR CI validates the Expo web export only.
+# Deploy to Pages happens on `main` (or manual dispatch) via the gh-pages branch.
+
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: web-preview-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -32,26 +35,44 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Typecheck
+        run: npx tsc --noEmit
+
       - name: Export Expo web
         run: npx expo export --platform web
         env:
           EXPO_PUBLIC_ESV_API_KEY: ${{ secrets.EXPO_PUBLIC_ESV_API_KEY }}
 
-      - name: Add .nojekyll
-        run: touch dist/.nojekyll
+      - name: Prepare Pages bundle
+        run: |
+          touch dist/.nojekyll
+          cp dist/index.html dist/404.html
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload web artifact
+        uses: actions/upload-artifact@v4
         with:
+          name: web-dist
+          path: dist
+          retention-days: 7
+
+  deploy-gh-pages:
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download web artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
           path: dist
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Publish to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          force_orphan: true
+          commit_message: Deploy Anime Audio Bible web preview
