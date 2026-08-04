@@ -200,6 +200,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
                 navigation.navigate("WebtoonEpisode", {
                   bookId,
                   chapterNumber,
+                  storylineId: webtoon.storylineId,
                 });
               }}
             >
@@ -207,10 +208,10 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
                 {webtoon.seriesTitle} · {webtoon.episodeLabel}
               </Text>
               <Text className="mt-1 text-base font-bold text-white">
-                Read as webtoon episode →
+                Read webtoon storyline →
               </Text>
               <Text className="mt-1 text-xs text-white/65">
-                Vertical scroll · full panels · speech bubbles
+                ESV scenes · dialogue · tap to hear scripture
               </Text>
             </Pressable>
           ) : null}

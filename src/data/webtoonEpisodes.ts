@@ -1,11 +1,15 @@
 export type WebtoonBubble = {
   text: string;
-  tone: "narration" | "dialogue" | "whisper";
+  tone: "narration" | "dialogue" | "whisper" | "scripture";
 };
 
 export type WebtoonPanel = {
   id: string;
   image: number;
+  /** ESV reference shown on the panel (e.g. Genesis 1:3). */
+  scriptureRef?: string;
+  /** Exact ESV wording for this scene (read aloud + shown). */
+  scriptureText?: string;
   bubble?: WebtoonBubble;
 };
 
@@ -13,6 +17,8 @@ export type WebtoonEpisode = {
   id: string;
   bookId: string;
   chapterNumber: number;
+  /** One storyline chunk at a time (e.g. day-1, eve-from-rib). */
+  storylineId: string;
   seriesTitle: string;
   episodeLabel: string;
   title: string;
@@ -20,18 +26,96 @@ export type WebtoonEpisode = {
   panels: WebtoonPanel[];
 };
 
-const garden = require("../../assets/webtoon/genesis-3/01-garden.jpg");
-const whisper = require("../../assets/webtoon/genesis-3/02-whisper.jpg");
-const eveBites = require("../../assets/webtoon/genesis-3/03-eve-bites.jpg");
-const offer = require("../../assets/webtoon/genesis-3/04-offer.jpg");
-const serpent = require("../../assets/webtoon/genesis-3/05-serpent.jpg");
+const g1Darkness = require("../../assets/webtoon/genesis-1/01-darkness.jpg");
+const g1Light = require("../../assets/webtoon/genesis-1/02-light.jpg");
+const g1DayNight = require("../../assets/webtoon/genesis-1/03-day-night.jpg");
 
-/** Mature anime webtoon episodes (family-safe scripture). */
+const g2EveFromRib = require("../../assets/webtoon/genesis-2/01-eve-from-rib.jpg");
+
+const g3Garden = require("../../assets/webtoon/genesis-3/01-garden.jpg");
+const g3Whisper = require("../../assets/webtoon/genesis-3/02-whisper.jpg");
+const g3EveBites = require("../../assets/webtoon/genesis-3/03-eve-bites.jpg");
+const g3Offer = require("../../assets/webtoon/genesis-3/04-offer.jpg");
+const g3Serpent = require("../../assets/webtoon/genesis-3/05-serpent.jpg");
+
+/**
+ * Mature anime webtoon storylines (family-safe).
+ * Built one storyline at a time — ESV text attributed to Crossway.
+ */
 export const WEBTOON_EPISODES: WebtoonEpisode[] = [
+  {
+    id: "genesis-1-day-1",
+    bookId: "genesis",
+    chapterNumber: 1,
+    storylineId: "day-1",
+    seriesTitle: "Genesis",
+    episodeLabel: "Storyline 1",
+    title: "Day 1 · Let There Be Light",
+    subtitle: "In the beginning — heavens, earth, and the first light",
+    panels: [
+      {
+        id: "g1-d1-1",
+        image: g1Darkness,
+        scriptureRef: "Genesis 1:1–2",
+        scriptureText:
+          "In the beginning, God created the heavens and the earth. The earth was without form and void, and darkness was over the face of the deep. And the Spirit of God was hovering over the face of the waters.",
+        bubble: {
+          tone: "scripture",
+          text: "In the beginning, God created the heavens and the earth.",
+        },
+      },
+      {
+        id: "g1-d1-2",
+        image: g1Light,
+        scriptureRef: "Genesis 1:3–4",
+        scriptureText:
+          'And God said, “Let there be light,” and there was light. And God saw that the light was good. And God separated the light from the darkness.',
+        bubble: {
+          tone: "dialogue",
+          text: "“Let there be light.”",
+        },
+      },
+      {
+        id: "g1-d1-3",
+        image: g1DayNight,
+        scriptureRef: "Genesis 1:5",
+        scriptureText:
+          "God called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.",
+        bubble: {
+          tone: "narration",
+          text: "And there was evening and there was morning, the first day.",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-2-eve-from-rib",
+    bookId: "genesis",
+    chapterNumber: 2,
+    storylineId: "eve-from-rib",
+    seriesTitle: "Genesis",
+    episodeLabel: "Storyline · Eve",
+    title: "Eve from Adam’s Side",
+    subtitle: "God forms woman from the man’s rib — modest, sacred, family-safe",
+    panels: [
+      {
+        id: "g2-eve-1",
+        image: g2EveFromRib,
+        scriptureRef: "Genesis 2:21–22",
+        scriptureText:
+          "So the Lord God caused a deep sleep to fall upon the man, and while he slept took one of his ribs and closed up its place with flesh. And the rib that the Lord God had taken from the man he made into a woman and brought her to the man.",
+        bubble: {
+          tone: "scripture",
+          text: "…the rib that the Lord God had taken from the man he made into a woman…",
+        },
+      },
+    ],
+  },
   {
     id: "genesis-3-ep1",
     bookId: "genesis",
     chapterNumber: 3,
+    storylineId: "the-fall",
     seriesTitle: "Genesis",
     episodeLabel: "Episode 1",
     title: "The Fall",
@@ -39,7 +123,10 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
     panels: [
       {
         id: "p1",
-        image: garden,
+        image: g3Garden,
+        scriptureRef: "Genesis 3:1",
+        scriptureText:
+          "Now the serpent was more crafty than any other beast of the field that the Lord God had made. He said to the woman, “Did God actually say, ‘You shall not eat of any tree in the garden’?”",
         bubble: {
           tone: "narration",
           text: "In the cool of the garden, one tree glowed with a dangerous beauty…",
@@ -47,7 +134,10 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
       },
       {
         id: "p2",
-        image: whisper,
+        image: g3Whisper,
+        scriptureRef: "Genesis 3:1",
+        scriptureText:
+          "He said to the woman, “Did God actually say, ‘You shall not eat of any tree in the garden’?”",
         bubble: {
           tone: "whisper",
           text: "“Did God really say…?”",
@@ -55,7 +145,10 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
       },
       {
         id: "p3",
-        image: eveBites,
+        image: g3EveBites,
+        scriptureRef: "Genesis 3:6",
+        scriptureText:
+          "So when the woman saw that the tree was good for food, and that it was a delight to the eyes, and that the tree was to be desired to make one wise, she took of its fruit and ate…",
         bubble: {
           tone: "narration",
           text: "While Adam’s back was turned, Eve reached for what was forbidden.",
@@ -63,7 +156,9 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
       },
       {
         id: "p4",
-        image: offer,
+        image: g3Offer,
+        scriptureRef: "Genesis 3:6",
+        scriptureText: "…and she also gave some to her husband who was with her, and he ate.",
         bubble: {
           tone: "dialogue",
           text: "She offered it to Adam… and he also ate.",
@@ -71,7 +166,10 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
       },
       {
         id: "p5",
-        image: serpent,
+        image: g3Serpent,
+        scriptureRef: "Genesis 3:6–7",
+        scriptureText:
+          "Then the eyes of both were opened, and they knew that they were naked. And they sewed fig leaves together and made themselves loincloths.",
         bubble: {
           tone: "narration",
           text: "And the serpent watched — as trust unraveled in the garden.",
@@ -83,10 +181,31 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
 
 export function getWebtoonEpisode(
   bookId: string,
-  chapterNumber: number
+  chapterNumber: number,
+  storylineId?: string
 ): WebtoonEpisode | undefined {
-  return WEBTOON_EPISODES.find(
+  const matches = WEBTOON_EPISODES.filter(
     (episode) =>
       episode.bookId === bookId && episode.chapterNumber === chapterNumber
   );
+  if (storylineId) {
+    return matches.find((episode) => episode.storylineId === storylineId);
+  }
+  return matches[0];
+}
+
+export function listWebtoonEpisodes(bookId?: string): WebtoonEpisode[] {
+  if (!bookId) {
+    return WEBTOON_EPISODES;
+  }
+  return WEBTOON_EPISODES.filter((episode) => episode.bookId === bookId);
+}
+
+/** Text spoken by TTS for a panel (prefer full ESV verse). */
+export function getPanelAudioText(panel: WebtoonPanel): string {
+  if (panel.scriptureText) {
+    const ref = panel.scriptureRef ? `${panel.scriptureRef}. ` : "";
+    return `${ref}${panel.scriptureText}`;
+  }
+  return panel.bubble?.text ?? "";
 }

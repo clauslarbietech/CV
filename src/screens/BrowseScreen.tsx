@@ -40,20 +40,51 @@ export default function BrowseScreen({ navigation }: Props) {
               onPress={() =>
                 navigation.navigate("WebtoonEpisode", {
                   bookId: "genesis",
-                  chapterNumber: 3,
+                  chapterNumber: 1,
+                  storylineId: "day-1",
                 })
               }
             >
               <Text className="text-xs font-bold text-white">
-                Read Genesis 3 webtoon episode →
+                Start Genesis 1 · Day 1 storyline →
               </Text>
             </Pressable>
             <Pressable
               accessibilityRole="button"
               className="mt-2 rounded-full bg-teal-ink px-4 py-2"
-              onPress={() => navigation.navigate("AnimationDemo")}
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 2,
+                  storylineId: "eve-from-rib",
+                })
+              }
             >
               <Text className="text-xs font-bold text-white">
+                Eve from Adam’s side →
+              </Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              className="mt-2 rounded-full border border-terracotta/40 px-4 py-2"
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 3,
+                  storylineId: "the-fall",
+                })
+              }
+            >
+              <Text className="text-xs font-bold text-terracotta">
+                Genesis 3 · The Fall →
+              </Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              className="mt-2 rounded-full bg-teal-deep/20 px-4 py-2"
+              onPress={() => navigation.navigate("AnimationDemo")}
+            >
+              <Text className="text-xs font-bold text-teal-ink">
                 Watch Fall animation demo →
               </Text>
             </Pressable>

@@ -4,7 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { getBook } from "../data/library";
-import { getWebtoonEpisode } from "../data/webtoonEpisodes";
+import { getWebtoonEpisode, listWebtoonEpisodes } from "../data/webtoonEpisodes";
 import type { RootStackParamList } from "../navigation/types";
 import {
   getBookProgress,
@@ -109,7 +109,39 @@ export default function BookScreen({ navigation, route }: Props) {
             </Text>
           </View>
 
-          <Text className="mb-3 text-lg font-bold text-teal-ink">
+          {listWebtoonEpisodes(book.id).length > 0 ? (
+            <>
+              <Text className="mb-3 text-lg font-bold text-teal-ink">
+                Webtoon storylines · ESV audio
+              </Text>
+              {listWebtoonEpisodes(book.id).map((episode) => (
+                <Pressable
+                  key={episode.id}
+                  accessibilityRole="button"
+                  className="mb-3 overflow-hidden rounded-2xl border border-terracotta/20 bg-teal-ink px-4 py-3 active:opacity-90"
+                  onPress={() =>
+                    navigation.navigate("WebtoonEpisode", {
+                      bookId: episode.bookId,
+                      chapterNumber: episode.chapterNumber,
+                      storylineId: episode.storylineId,
+                    })
+                  }
+                >
+                  <Text className="text-xs font-bold uppercase tracking-[2px] text-ochre-soft">
+                    {episode.episodeLabel} · Ch. {episode.chapterNumber}
+                  </Text>
+                  <Text className="mt-1 text-base font-bold text-white">
+                    {episode.title}
+                  </Text>
+                  <Text className="mt-1 text-xs text-white/65" numberOfLines={2}>
+                    {episode.subtitle} · {episode.panels.length} scenes
+                  </Text>
+                </Pressable>
+              ))}
+            </>
+          ) : null}
+
+          <Text className="mb-3 mt-2 text-lg font-bold text-teal-ink">
             Chapters · comics & narration
           </Text>
 
@@ -122,15 +154,20 @@ export default function BookScreen({ navigation, route }: Props) {
                 key={chapter.number}
                 accessibilityRole="button"
                 className="mb-3 flex-row overflow-hidden rounded-2xl border border-teal-deep/10 bg-parchment active:bg-parchment-warm"
-                onPress={() =>
-                  navigation.navigate(
-                    webtoon ? "WebtoonEpisode" : "ChapterPlayer",
-                    {
+                onPress={() => {
+                  if (webtoon) {
+                    navigation.navigate("WebtoonEpisode", {
                       bookId: book.id,
                       chapterNumber: chapter.number,
-                    }
-                  )
-                }
+                      storylineId: webtoon.storylineId,
+                    });
+                  } else {
+                    navigation.navigate("ChapterPlayer", {
+                      bookId: book.id,
+                      chapterNumber: chapter.number,
+                    });
+                  }
+                }}
                 onLongPress={() => {
                   Alert.alert(
                     `${book.name} ${chapter.number}`,
