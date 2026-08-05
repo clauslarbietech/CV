@@ -32,8 +32,6 @@ export const BRAND = {
     "Modern",
     "Inspiring",
   ],
-  homeSubtitle:
-    "Illustrated Bible journeys with scripture-based art and audio—for kids, teens, and families.",
   plansSubtitle: "Invite friends to read a journey together",
   inviteAppLabel: "PixBible",
   audioGuideLabel: "PixBible Audio Guide · ESV",
