@@ -36,9 +36,6 @@ export default function BrowseScreen({ navigation }: Props) {
             <Text className="mt-2 text-center text-sm font-semibold text-ochre-soft">
               {BRAND.tagline}
             </Text>
-            <Text className="mt-2 text-center text-sm text-night-muted">
-              {BRAND.homeSubtitle}
-            </Text>
 
             <Pressable
               accessibilityRole="button"
@@ -50,23 +47,6 @@ export default function BrowseScreen({ navigation }: Props) {
               <Text className="ml-2 text-xs font-semibold text-ochre-soft">
                 About · mission & why it's free
               </Text>
-            </Pressable>
-
-            <Pressable
-              accessibilityRole="button"
-              accessibilityHint="Opens the full Genesis chapter list"
-              className="mt-3 flex-row items-center"
-              onPress={() =>
-                navigation.navigate("Book", {
-                  bookId: "genesis",
-                  chapterNumber: 1,
-                })
-              }
-            >
-              <Text className="text-sm font-semibold text-ochre-soft">
-                Browse all Genesis chapters
-              </Text>
-              <MaterialIcons name="chevron-right" size={20} color="#F0D78C" />
             </Pressable>
           </View>
 
