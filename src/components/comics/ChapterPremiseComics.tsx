@@ -35,7 +35,7 @@ export function uniqueComicPanels(panels: ComicPanel[]): ComicPanel[] {
 }
 
 /**
- * One composition: top-anchored premise image + narration.
+ * One composition: full uncropped premise image + narration.
  */
 export default function ChapterPremiseComics({
   panels,
@@ -49,7 +49,7 @@ export default function ChapterPremiseComics({
     Math.max(0, unique.length - 1)
   );
   const panel = unique[clampedActive] ?? unique[0];
-  const height = premiseHeroHeight(width);
+  const height = panel ? premiseHeroHeight(width, panel.image) : 0;
   const motion = useSharedValue(0);
 
   useEffect(() => {
@@ -57,14 +57,15 @@ export default function ChapterPremiseComics({
       return;
     }
     motion.value = 0;
+    // Gentle fade pulse only — no scale crop that would hide faces.
     motion.value = withRepeat(
       withSequence(
         withTiming(1, {
-          duration: 5200,
+          duration: 4200,
           easing: Easing.inOut(Easing.quad),
         }),
         withTiming(0, {
-          duration: 5200,
+          duration: 4200,
           easing: Easing.inOut(Easing.quad),
         })
       ),
@@ -74,10 +75,7 @@ export default function ChapterPremiseComics({
   }, [motion, panel?.id]);
 
   const frameStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: interpolate(motion.value, [0, 1], [1.01, 1.05]) },
-      { translateY: interpolate(motion.value, [0, 1], [0, 3]) },
-    ],
+    opacity: interpolate(motion.value, [0, 1], [0.96, 1]),
   }));
 
   if (!panel) {
@@ -86,15 +84,13 @@ export default function ChapterPremiseComics({
 
   return (
     <View className="mb-2">
-      <Animated.View entering={FadeIn.duration(350)}>
-        <View style={{ width, height, overflow: "hidden" }}>
-          <Animated.View style={[{ width, height }, frameStyle]}>
-            <PremiseHeroImage
-              source={panel.image}
-              width={width}
-              accessibilityLabel={panel.caption}
-            />
-          </Animated.View>
+      <Animated.View entering={FadeIn.duration(350)} style={frameStyle}>
+        <View style={{ width, height }}>
+          <PremiseHeroImage
+            source={panel.image}
+            width={width}
+            accessibilityLabel={panel.caption}
+          />
         </View>
       </Animated.View>
       <View className="mx-5 mt-3">

@@ -1,20 +1,33 @@
-import { Image, Platform, View, type ImageSourcePropType } from "react-native";
+import {
+  Image,
+  View,
+  type ImageSourcePropType,
+} from "react-native";
 
 type Props = {
   source: ImageSourcePropType;
   width: number;
   accessibilityLabel?: string;
-  /** Optional Ken-Burns / motion wrapper children instead of a plain Image. */
-  children?: never;
 };
 
 /**
- * Story premise hero — taller than 16:9 so portrait comics keep heads in frame.
- * Cover is top-anchored (not center-cropped).
+ * Full-view story premise — never crops faces.
+ * Uses contain + a frame sized to the art’s real aspect ratio.
  */
-export function premiseHeroHeight(width: number): number {
-  // ~5:6 portrait-leaning frame; caps so phone screens still leave room for text.
-  return Math.round(Math.min(width * 1.18, 460));
+export function premiseHeroHeight(
+  width: number,
+  source?: ImageSourcePropType
+): number {
+  if (typeof source === "number") {
+    const resolved = Image.resolveAssetSource(source);
+    if (resolved?.width && resolved?.height && resolved.width > 0) {
+      const aspect = resolved.height / resolved.width;
+      // Fit the full image; soft cap so very tall art doesn’t dominate the phone.
+      return Math.round(Math.min(width * aspect, width * 1.45, 580));
+    }
+  }
+  // Default portrait comic frame (~4:5) when dimensions are unknown.
+  return Math.round(Math.min(width * 1.25, 520));
 }
 
 export default function PremiseHeroImage({
@@ -22,42 +35,23 @@ export default function PremiseHeroImage({
   width,
   accessibilityLabel,
 }: Props) {
-  const height = premiseHeroHeight(width);
+  const height = premiseHeroHeight(width, source);
 
   return (
     <View
       style={{
         width,
         height,
-        overflow: "hidden",
         backgroundColor: "#1A1A1A",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      {/*
-        Native: oversized image pinned to top so cover crops the bottom, not faces.
-        Web: object-position top for the same effect.
-      */}
       <Image
         source={source}
         accessibilityLabel={accessibilityLabel}
-        resizeMode="cover"
-        style={[
-          Platform.OS === "web"
-            ? {
-                width: "100%",
-                height: "100%",
-                // @ts-expect-error objectPosition is valid on react-native-web
-                objectPosition: "center top",
-              }
-            : {
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width,
-                // Slightly taller than the frame → bottom crops first
-                height: Math.round(height * 1.12),
-              },
-        ]}
+        resizeMode="contain"
+        style={{ width, height }}
       />
     </View>
   );
