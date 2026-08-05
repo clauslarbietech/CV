@@ -39,7 +39,7 @@ export default function EmotionalStoryboard({
       <Text className="text-xs font-semibold uppercase tracking-[2px] text-terracotta">
         {title}
       </Text>
-      <Text className="mb-3 mt-1 text-lg font-bold text-teal-ink">{subtitle}</Text>
+      <Text className="mb-3 mt-1 text-lg font-bold text-night-text">{subtitle}</Text>
 
       {panels.map((panel, index) => (
         <StoryBeat
@@ -105,7 +105,7 @@ function StoryBeat({
     <Animated.View
       entering={FadeInRight.delay(index * 160).duration(500)}
       style={[{ width, alignSelf: "center", marginBottom: 14 }, frameStyle]}
-      className="overflow-hidden rounded-2xl border border-teal-deep/15 bg-white"
+      className="overflow-hidden rounded-2xl border border-night-border bg-night-card"
     >
       <View className="flex-row items-center justify-between bg-teal-ink px-3 py-2">
         <Text className="text-[11px] font-semibold uppercase tracking-[1.5px] text-ochre-soft">
@@ -145,8 +145,8 @@ function StoryBeat({
         />
       </View>
 
-      <View className="bg-parchment px-3 py-3">
-        <Text className="text-sm leading-5 text-parchment-ink">{panel.caption}</Text>
+      <View className="bg-night-elevated px-3 py-3">
+        <Text className="text-sm leading-5 text-night-text">{panel.caption}</Text>
       </View>
     </Animated.View>
   );

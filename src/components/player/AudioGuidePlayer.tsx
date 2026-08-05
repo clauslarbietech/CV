@@ -39,35 +39,35 @@ export default function AudioGuidePlayer({
   const progress = duration > 0 ? Math.min(1, position / duration) : 0;
 
   return (
-    <View className="border-t border-teal-deep/15 bg-white px-4 pb-3 pt-3">
+    <View className="border-t border-night-border bg-night-card px-4 pb-3 pt-3">
       <View className="mb-2 flex-row items-start justify-between">
         <View className="flex-1 pr-3">
-          <Text className="text-base font-bold text-teal-ink" numberOfLines={1}>
+          <Text className="text-base font-bold text-night-text" numberOfLines={1}>
             {title}
           </Text>
-          <Text className="text-sm text-teal-deep">{narrator}</Text>
+          <Text className="text-sm text-night-muted">{narrator}</Text>
         </View>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Change playback speed"
           onPress={onCycleSpeed}
-          className="rounded-full bg-teal-mist px-3 py-1.5"
+          className="rounded-full bg-night-elevated px-3 py-1.5"
         >
-          <Text className="text-xs font-bold text-teal-ink">{speed}x</Text>
+          <Text className="text-xs font-bold text-night-text">{speed}x</Text>
         </Pressable>
       </View>
 
-      <View className="mb-1 h-1.5 overflow-hidden rounded-full bg-teal-mist">
+      <View className="mb-1 h-1.5 overflow-hidden rounded-full bg-night-elevated">
         <View
           className="h-full rounded-full bg-terracotta"
           style={{ width: `${progress * 100}%` }}
         />
       </View>
       <View className="mb-3 flex-row justify-between">
-        <Text className="text-[11px] text-parchment-ink/60">
+        <Text className="text-[11px] text-night-soft">
           {formatClock(position)}
         </Text>
-        <Text className="text-[11px] text-parchment-ink/60">
+        <Text className="text-[11px] text-night-soft">
           {formatClock(duration)}
         </Text>
       </View>
@@ -77,9 +77,9 @@ export default function AudioGuidePlayer({
           accessibilityRole="button"
           accessibilityLabel="Skip back 15 seconds"
           onPress={() => onSkip(-15)}
-          className="h-11 w-11 items-center justify-center rounded-full border border-teal-deep/15"
+          className="h-11 w-11 items-center justify-center rounded-full border border-night-border"
         >
-          <Text className="text-sm font-bold text-teal-ink">−15</Text>
+          <Text className="text-sm font-bold text-night-text">−15</Text>
         </Pressable>
 
         <Pressable
@@ -97,9 +97,9 @@ export default function AudioGuidePlayer({
           accessibilityRole="button"
           accessibilityLabel="Skip forward 15 seconds"
           onPress={() => onSkip(15)}
-          className="h-11 w-11 items-center justify-center rounded-full border border-teal-deep/15"
+          className="h-11 w-11 items-center justify-center rounded-full border border-night-border"
         >
-          <Text className="text-sm font-bold text-teal-ink">+15</Text>
+          <Text className="text-sm font-bold text-night-text">+15</Text>
         </Pressable>
       </View>
 
@@ -109,7 +109,7 @@ export default function AudioGuidePlayer({
           onPress={onDownload}
           className="rounded-full px-2 py-1"
         >
-          <Text className="text-xs font-semibold text-teal-deep">
+          <Text className="text-xs font-semibold text-night-muted">
             {downloaded ? "Downloaded" : "Download"}
           </Text>
         </Pressable>
@@ -118,7 +118,7 @@ export default function AudioGuidePlayer({
           onPress={onToggleFavorite}
           className="rounded-full px-2 py-1"
         >
-          <Text className="text-xs font-semibold text-teal-deep">
+          <Text className="text-xs font-semibold text-night-muted">
             {favorite ? "Favorited" : "Favorite"}
           </Text>
         </Pressable>
@@ -127,7 +127,7 @@ export default function AudioGuidePlayer({
           onPress={onToggleComplete}
           className="rounded-full px-2 py-1"
         >
-          <Text className="text-xs font-semibold text-teal-deep">
+          <Text className="text-xs font-semibold text-night-muted">
             {completed ? "Completed" : "Mark done"}
           </Text>
         </Pressable>

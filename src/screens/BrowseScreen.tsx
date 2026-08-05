@@ -25,18 +25,17 @@ export default function BrowseScreen({ navigation }: Props) {
   const bookCard = Math.min(160, width * 0.42);
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
+    <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-4 pb-8 pt-2">
           <View className="mb-6 items-center">
             <Text className="text-2xl font-bold lowercase text-terracotta">
               anime audio bible
             </Text>
-            <Text className="mt-1 text-center text-sm text-parchment-ink/60">
+            <Text className="mt-1 text-center text-sm text-night-muted">
               Free Bible stories with comics + audio — made for families
             </Text>
 
-            {/* One clear primary start action */}
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Open Bible reader at Genesis Day 1"
@@ -55,10 +54,10 @@ export default function BrowseScreen({ navigation }: Props) {
               className="mt-3 flex-row items-center"
               onPress={() => navigation.navigate("Book", { bookId: "genesis" })}
             >
-              <Text className="text-sm font-semibold text-teal-deep">
+              <Text className="text-sm font-semibold text-ochre-soft">
                 Browse all Genesis chapters
               </Text>
-              <MaterialIcons name="chevron-right" size={20} color="#1E3A6E" />
+              <MaterialIcons name="chevron-right" size={20} color="#F0D78C" />
             </Pressable>
           </View>
 
@@ -124,25 +123,25 @@ export default function BrowseScreen({ navigation }: Props) {
                   navigation.navigate("Book", { bookId: journey.bookIds[0] })
                 }
               >
-                <View className="overflow-hidden rounded-2xl bg-parchment">
+                <View className="overflow-hidden rounded-2xl bg-night-card">
                   <Image
                     source={journey.cover}
                     style={{ width: journeyCard, height: journeyCard }}
                     resizeMode="cover"
                   />
                   {index === 0 ? (
-                    <View className="absolute right-2 top-2 h-6 w-6 items-center justify-center rounded-full bg-white">
-                      <MaterialIcons name="check" size={16} color="#15233F" />
+                    <View className="absolute right-2 top-2 h-6 w-6 items-center justify-center rounded-full bg-terracotta">
+                      <MaterialIcons name="check" size={16} color="#FFFFFF" />
                     </View>
                   ) : null}
                 </View>
                 <Text
-                  className="mt-2 text-sm font-semibold text-parchment-ink"
+                  className="mt-2 text-sm font-semibold text-night-text"
                   numberOfLines={2}
                 >
                   {journey.title}
                 </Text>
-                <Text className="text-[11px] text-parchment-ink/55" numberOfLines={1}>
+                <Text className="text-[11px] text-night-muted" numberOfLines={1}>
                   {journey.booksLabel}
                 </Text>
               </Pressable>
@@ -159,7 +158,7 @@ export default function BrowseScreen({ navigation }: Props) {
             <Pressable
               accessibilityRole="button"
               style={{ width: bookCard }}
-              className="overflow-hidden rounded-2xl bg-teal-deep"
+              className="overflow-hidden rounded-2xl bg-night-elevated"
               onPress={() => navigation.navigate("Book", { bookId: "genesis" })}
             >
               <Image
@@ -178,20 +177,20 @@ export default function BrowseScreen({ navigation }: Props) {
             </Pressable>
             <View
               style={{ width: bookCard }}
-              className="items-center justify-center overflow-hidden rounded-2xl bg-parchment"
+              className="items-center justify-center overflow-hidden rounded-2xl bg-night-card"
             >
-              <MaterialIcons name="schedule" size={28} color="#9AA0A6" />
-              <Text className="mt-2 text-center text-base font-bold text-parchment-ink/55">
+              <MaterialIcons name="schedule" size={28} color="#8E8E93" />
+              <Text className="mt-2 text-center text-base font-bold text-night-muted">
                 New Testament
               </Text>
-              <Text className="mt-1 text-xs text-parchment-ink/40">Coming later</Text>
+              <Text className="mt-1 text-xs text-night-soft">Coming later</Text>
             </View>
           </ScrollView>
 
           <SectionHeader title="Featured book" />
           <Pressable
             accessibilityRole="button"
-            className="mb-2 flex-row overflow-hidden rounded-2xl border border-teal-deep/10 bg-parchment"
+            className="mb-2 flex-row overflow-hidden rounded-2xl border border-night-border bg-night-card"
             onPress={() => navigation.navigate("Book", { bookId: "genesis" })}
           >
             <Image
@@ -203,8 +202,8 @@ export default function BrowseScreen({ navigation }: Props) {
               <Text className="text-xs font-bold uppercase tracking-wide text-terracotta">
                 Start the Bible here
               </Text>
-              <Text className="text-lg font-bold text-teal-ink">Genesis</Text>
-              <Text className="mt-1 text-xs text-parchment-ink/65" numberOfLines={2}>
+              <Text className="text-lg font-bold text-night-text">Genesis</Text>
+              <Text className="mt-1 text-xs text-night-muted" numberOfLines={2}>
                 50 chapters · comics, ESV audio, and storylines
               </Text>
             </View>
@@ -233,14 +232,14 @@ function QuickStoryCard({
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
-      className="flex-row items-center rounded-2xl border border-teal-deep/10 bg-parchment px-3 py-3 active:bg-parchment-warm"
+      className="flex-row items-center rounded-2xl border border-night-border bg-night-card px-3 py-3 active:bg-night-elevated"
     >
-      <View className="mr-3 h-11 w-11 items-center justify-center rounded-full bg-teal-mist">
-        <MaterialIcons name={icon} size={22} color="#1E3A6E" />
+      <View className="mr-3 h-11 w-11 items-center justify-center rounded-full bg-night-elevated">
+        <MaterialIcons name={icon} size={22} color="#F0D78C" />
       </View>
       <View className="flex-1">
-        <Text className="text-sm font-bold text-teal-ink">{title}</Text>
-        <Text className="mt-0.5 text-xs text-parchment-ink/60">{subtitle}</Text>
+        <Text className="text-sm font-bold text-night-text">{title}</Text>
+        <Text className="mt-0.5 text-xs text-night-muted">{subtitle}</Text>
       </View>
       <MaterialIcons name="volume-up" size={22} color="#E4572E" />
     </Pressable>
@@ -256,16 +255,14 @@ function SectionHeader({
 }) {
   return (
     <View className="mb-3 flex-row items-center justify-between">
-      <Text className="text-lg font-bold text-parchment-ink">{title}</Text>
+      <Text className="text-lg font-bold text-night-text">{title}</Text>
       {onSeeAll ? (
         <Pressable
           accessibilityRole="button"
           onPress={onSeeAll}
-          className="rounded-full bg-parchment px-3 py-1"
+          className="rounded-full bg-night-elevated px-3 py-1"
         >
-          <Text className="text-xs font-semibold text-parchment-ink/70">
-            See all
-          </Text>
+          <Text className="text-xs font-semibold text-night-muted">See all</Text>
         </Pressable>
       ) : null}
     </View>

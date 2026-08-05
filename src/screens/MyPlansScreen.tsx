@@ -119,7 +119,7 @@ export default function MyPlansScreen({ navigation }: Props) {
   }, [filter, plans]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
+    <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-4 pb-10 pt-2">
           <View className="mb-4 items-center">
@@ -160,12 +160,12 @@ export default function MyPlansScreen({ navigation }: Props) {
                   accessibilityRole="button"
                   onPress={() => setFilter(item)}
                   className={`rounded-full px-4 py-2 ${
-                    active ? "bg-parchment-ink" : "border border-black/10 bg-white"
+                    active ? "bg-night-elevated" : "border border-night-border bg-night-card"
                   }`}
                 >
                   <Text
                     className={`text-sm font-semibold ${
-                      active ? "text-white" : "text-parchment-ink/70"
+                      active ? "text-night-text" : "text-night-muted"
                     }`}
                   >
                     {item}
@@ -189,30 +189,30 @@ export default function MyPlansScreen({ navigation }: Props) {
                 style={{ width: 72, height: 72, borderRadius: 14 }}
               />
               <View className="ml-3 flex-1">
-                <Text className="text-base font-bold text-parchment-ink">
+                <Text className="text-base font-bold text-night-text">
                   {plan.title}
                 </Text>
-                <Text className="text-sm text-parchment-ink/55" numberOfLines={1}>
+                <Text className="text-sm text-night-muted" numberOfLines={1}>
                   {plan.subtitle}
                 </Text>
                 <View className="mt-2 flex-row gap-2">
-                  <View className="rounded bg-black/5 px-2 py-1">
-                    <Text className="text-[11px] font-semibold text-parchment-ink/70">
+                  <View className="rounded bg-night-elevated px-2 py-1">
+                    <Text className="text-[11px] font-semibold text-night-muted">
                       {plan.days} days
                     </Text>
                   </View>
                   <View
                     className={`rounded px-2 py-1 ${
-                      plan.progress > 0 ? "bg-teal-mist" : "bg-black/5"
+                      plan.progress > 0 ? "bg-teal-deep/40" : "bg-night-elevated"
                     }`}
                   >
-                    <Text className="text-[11px] font-semibold text-teal-ink">
+                    <Text className="text-[11px] font-semibold text-ochre-soft">
                       {plan.progress}%
                     </Text>
                   </View>
                 </View>
               </View>
-              <Text className="text-xl text-parchment-ink/30">›</Text>
+              <Text className="text-xl text-night-soft">›</Text>
             </Pressable>
           ))}
         </View>

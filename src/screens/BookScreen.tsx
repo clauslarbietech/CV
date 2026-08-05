@@ -42,7 +42,7 @@ export default function BookScreen({ navigation, route }: Props) {
 
   if (!book) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-white">
+      <SafeAreaView className="flex-1 items-center justify-center bg-night-bg">
         <Text className="text-base text-terracotta-dark">Book not found.</Text>
       </SafeAreaView>
     );
@@ -54,7 +54,7 @@ export default function BookScreen({ navigation, route }: Props) {
   const isGenesis = book.id === "genesis";
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
+    <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-5 pb-12 pt-2">
           <View className="mb-4 flex-row items-center justify-between">
@@ -63,11 +63,11 @@ export default function BookScreen({ navigation, route }: Props) {
               onPress={() => navigation.goBack()}
               className="py-1"
             >
-              <Text className="text-sm font-semibold text-teal-deep">← Home</Text>
+              <Text className="text-sm font-semibold text-ochre-soft">← Home</Text>
             </Pressable>
             <Pressable
               accessibilityRole="button"
-              className="rounded-full bg-teal-mist px-3 py-1.5"
+              className="rounded-full bg-night-elevated px-3 py-1.5"
               onPress={() => {
                 Alert.alert(
                   "Plan options",
@@ -87,7 +87,7 @@ export default function BookScreen({ navigation, route }: Props) {
                 );
               }}
             >
-              <Text className="text-xs font-bold text-teal-ink">⋯</Text>
+              <Text className="text-xs font-bold text-night-text">⋯</Text>
             </Pressable>
           </View>
 
@@ -100,19 +100,19 @@ export default function BookScreen({ navigation, route }: Props) {
               <Text className="text-xs font-semibold uppercase tracking-wide text-terracotta">
                 {book.testament === "OT" ? "Old Testament" : "New Testament"} · Free
               </Text>
-              <Text className="text-3xl font-bold text-teal-ink">{book.name}</Text>
-              <Text className="mt-1 text-sm leading-5 text-parchment-ink/70">
+              <Text className="text-3xl font-bold text-night-text">{book.name}</Text>
+              <Text className="mt-1 text-sm leading-5 text-night-muted">
                 {book.tagline}
               </Text>
-              <Text className="mt-2 text-xs font-semibold text-teal-deep">
+              <Text className="mt-2 text-xs font-semibold text-night-soft">
                 {book.chapters.length} chapters · {downloadedCount} downloaded · ESV
               </Text>
             </View>
           </View>
 
-          <View className="mb-4 rounded-2xl bg-parchment px-4 py-3">
-            <Text className="text-sm font-bold text-teal-ink">How to use this book</Text>
-            <Text className="mt-1 text-sm leading-5 text-parchment-ink/75">
+          <View className="mb-4 rounded-2xl bg-night-card px-4 py-3">
+            <Text className="text-sm font-bold text-night-text">How to use this book</Text>
+            <Text className="mt-1 text-sm leading-5 text-night-muted">
               1) Tap an illustrated storyline{"\n"}
               2) Tap the speaker to hear scripture + speech{"\n"}
               3) Keep going with chapters 4–50 audio guides
@@ -121,7 +121,7 @@ export default function BookScreen({ navigation, route }: Props) {
 
           {illustrated.length > 0 ? (
             <>
-              <Text className="mb-3 text-lg font-bold text-teal-ink">
+              <Text className="mb-3 text-lg font-bold text-night-text">
                 Illustrated storylines · ESV audio
               </Text>
               {illustrated.map((episode) => (
@@ -151,7 +151,7 @@ export default function BookScreen({ navigation, route }: Props) {
             </>
           ) : null}
 
-          <Text className="mb-3 mt-4 text-lg font-bold text-teal-ink">
+          <Text className="mb-3 mt-4 text-lg font-bold text-night-text">
             All chapters · Genesis 1–{book.chapters.length}
           </Text>
 
@@ -170,7 +170,7 @@ export default function BookScreen({ navigation, route }: Props) {
                         <Pressable
                           key={meta.number}
                           accessibilityRole="button"
-                          className="mb-2 flex-row items-center rounded-xl border border-teal-deep/10 bg-parchment px-3 py-3 active:bg-parchment-warm"
+                          className="mb-2 flex-row items-center rounded-xl border border-night-border bg-night-card px-3 py-3 active:bg-night-elevated"
                           onPress={() => {
                             if (webtoon) {
                               navigation.navigate("WebtoonEpisode", {
@@ -186,18 +186,18 @@ export default function BookScreen({ navigation, route }: Props) {
                             }
                           }}
                         >
-                          <View className="mr-3 h-9 w-9 items-center justify-center rounded-full bg-teal-mist">
-                            <Text className="text-xs font-bold text-teal-ink">
+                          <View className="mr-3 h-9 w-9 items-center justify-center rounded-full bg-night-elevated">
+                            <Text className="text-xs font-bold text-night-text">
                               {meta.number}
                             </Text>
                           </View>
                           <View className="flex-1">
-                            <Text className="text-sm font-bold text-teal-ink">
+                            <Text className="text-sm font-bold text-night-text">
                               {meta.title}
                               {chapterProgress?.completed ? " · Done" : ""}
                             </Text>
                             <Text
-                              className="mt-0.5 text-xs text-parchment-ink/60"
+                              className="mt-0.5 text-xs text-night-muted"
                               numberOfLines={1}
                             >
                               {webtoon
@@ -219,7 +219,7 @@ export default function BookScreen({ navigation, route }: Props) {
                   <Pressable
                     key={chapter.number}
                     accessibilityRole="button"
-                    className="mb-3 flex-row overflow-hidden rounded-2xl border border-teal-deep/10 bg-parchment"
+                    className="mb-3 flex-row overflow-hidden rounded-2xl border border-night-border bg-night-card"
                     onPress={() =>
                       navigation.navigate("ChapterPlayer", {
                         bookId: book.id,
@@ -237,7 +237,7 @@ export default function BookScreen({ navigation, route }: Props) {
                         Chapter {chapter.number}
                         {chapterProgress?.completed ? " · Done" : ""}
                       </Text>
-                      <Text className="text-base font-bold text-teal-ink">
+                      <Text className="text-base font-bold text-night-text">
                         {chapter.title}
                       </Text>
                     </View>

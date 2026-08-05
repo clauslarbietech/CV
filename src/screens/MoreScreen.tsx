@@ -21,10 +21,10 @@ export default function MoreScreen() {
   const [open, setOpen] = useState(false);
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
+    <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <View className="flex-1 px-4 pt-4">
-        <Text className="mb-2 text-xl font-bold text-teal-ink">More</Text>
-        <Text className="mb-6 text-sm text-parchment-ink/65">
+        <Text className="mb-2 text-xl font-bold text-night-text">More</Text>
+        <Text className="mb-6 text-sm text-night-muted">
           Progress, settings, and support — open when you need them.
         </Text>
 
@@ -45,15 +45,15 @@ export default function MoreScreen() {
         onRequestClose={() => setOpen(false)}
       >
         <View className="flex-1 items-center justify-center bg-black/45 px-6">
-          <View className="w-full max-w-sm overflow-hidden rounded-3xl bg-white">
+          <View className="w-full max-w-sm overflow-hidden rounded-3xl bg-night-card">
             <View className="items-end px-3 pt-3">
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Close menu"
                 onPress={() => setOpen(false)}
-                className="h-8 w-8 items-center justify-center rounded-full bg-black/5"
+                className="h-8 w-8 items-center justify-center rounded-full bg-night-elevated"
               >
-                <MaterialIcons name="close" size={18} color="#1F2430" />
+                <MaterialIcons name="close" size={18} color="#F5F5F7" />
               </Pressable>
             </View>
             <ScrollView>
@@ -62,17 +62,17 @@ export default function MoreScreen() {
                   key={item.id}
                   accessibilityRole="button"
                   className={`flex-row items-center px-5 py-4 ${
-                    index < MENU_ITEMS.length - 1 ? "border-b border-black/5" : ""
+                    index < MENU_ITEMS.length - 1 ? "border-b border-night-border" : ""
                   }`}
                   onPress={() => setOpen(false)}
                 >
                   <MaterialIcons
                     name={item.icon}
                     size={22}
-                    color="#1F2430"
+                    color="#F5F5F7"
                     style={{ width: 28 }}
                   />
-                  <Text className="text-base font-bold text-parchment-ink">
+                  <Text className="text-base font-bold text-night-text">
                     {item.label}
                   </Text>
                 </Pressable>

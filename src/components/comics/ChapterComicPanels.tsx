@@ -53,7 +53,7 @@ function PanelCard({
   return (
     <Animated.View
       entering={FadeInDown.delay(index * 180).duration(550)}
-      className="mb-4 overflow-hidden border-2 border-parchment-ink/80"
+      className="mb-4 overflow-hidden border-2 border-night-border"
       style={{
         width,
         opacity: active ? 1 : 0.72,
@@ -74,8 +74,8 @@ function PanelCard({
           />
         </Animated.View>
       </View>
-      <View className="bg-parchment-warm px-3 py-2.5">
-        <Text className="text-sm leading-5 text-parchment-ink">
+      <View className="bg-night-elevated px-3 py-2.5">
+        <Text className="text-sm leading-5 text-night-text">
           {panel.caption}
         </Text>
       </View>
@@ -103,10 +103,10 @@ export default function ChapterComicPanels({ panels, activeIndex }: Props) {
   return (
     <View className="mb-4 items-center">
       <Animated.View style={headerStyle} className="mb-3 w-full">
-        <Text className="text-xs font-semibold uppercase tracking-[2px] text-teal-deep">
+        <Text className="text-xs font-semibold uppercase tracking-[2px] text-ochre-soft">
           Anime comic panels
         </Text>
-        <Text className="mt-1 text-lg font-bold text-parchment-ink">
+        <Text className="mt-1 text-lg font-bold text-night-text">
           Motion visuals for this chapter
         </Text>
       </Animated.View>

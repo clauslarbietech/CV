@@ -170,7 +170,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
 
   if (!book || !chapter) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-white">
+      <SafeAreaView className="flex-1 items-center justify-center bg-night-bg">
         <Text className="text-base text-terracotta-dark">
           Chapter not found.
         </Text>
@@ -183,9 +183,9 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
+    <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <View className="flex-1">
-        <View className="flex-row items-center justify-between border-b border-teal-deep/10 px-4 py-3">
+        <View className="flex-row items-center justify-between border-b border-night-border px-4 py-3">
           <Pressable
             accessibilityRole="button"
             onPress={() => {
@@ -196,18 +196,18 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             }}
             className="px-1 py-1"
           >
-            <Text className="text-lg text-teal-ink">↓</Text>
+            <Text className="text-lg text-night-text">↓</Text>
           </Pressable>
           <View className="items-center">
-            <Text className="text-base font-bold text-teal-ink">
+            <Text className="text-base font-bold text-night-text">
               {book.name} {chapter.number}
             </Text>
-            <Text className="text-[11px] text-parchment-ink/55">
+            <Text className="text-[11px] text-night-muted">
               Bible on screen · guide in headphones
             </Text>
           </View>
-          <View className="rounded-full bg-teal-mist px-2.5 py-1">
-            <Text className="text-xs font-bold text-teal-ink">ESV</Text>
+          <View className="rounded-full bg-night-elevated px-2.5 py-1">
+            <Text className="text-xs font-bold text-night-text">ESV</Text>
           </View>
         </View>
 
@@ -219,10 +219,10 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           <Text className="mb-1 text-xs font-semibold uppercase tracking-[2px] text-terracotta">
             {chapter.guide.title}
           </Text>
-          <Text className="mb-1 text-2xl font-bold text-teal-ink">
+          <Text className="mb-1 text-2xl font-bold text-night-text">
             {chapter.title}
           </Text>
-          <Text className="mb-4 text-sm text-parchment-ink/65">
+          <Text className="mb-4 text-sm text-night-muted">
             ~10 minute habit · tap play and follow the comics + scripture
           </Text>
 
@@ -265,8 +265,8 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             />
           )}
 
-          <View className="mb-5 rounded-2xl bg-parchment px-4 py-4">
-            <Text className="mb-2 text-xs font-semibold uppercase tracking-wide text-teal-deep">
+          <View className="mb-5 rounded-2xl bg-night-card px-4 py-4">
+            <Text className="mb-2 text-xs font-semibold uppercase tracking-wide text-ochre-soft">
               Audio guide narration
             </Text>
             {chapter.guide.script.map((line, index) => (
@@ -274,8 +274,8 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
                 key={`${chapter.number}-${index}`}
                 className={`mb-2 text-sm leading-5 ${
                   index === audio.activeLineIndex
-                    ? "font-semibold text-teal-ink"
-                    : "text-parchment-ink/55"
+                    ? "font-semibold text-night-text"
+                    : "text-night-soft"
                 }`}
               >
                 {line}
@@ -303,7 +303,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           />
 
           <View className="mb-3 flex-row items-center justify-between">
-            <Text className="text-xl font-bold text-teal-ink">
+            <Text className="text-xl font-bold text-night-text">
               {passage?.canonical ?? chapter.passageQuery}
             </Text>
             {verses ? (
@@ -318,8 +318,8 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
 
           {loading ? (
             <View className="items-center py-8">
-              <ActivityIndicator size="large" color="#1E3A6E" />
-              <Text className="mt-3 text-sm text-teal-deep">
+              <ActivityIndicator size="large" color="#E4572E" />
+              <Text className="mt-3 text-sm text-night-muted">
                 Fetching {chapter.passageQuery}…
               </Text>
             </View>
@@ -328,7 +328,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
               <Text className="mb-2 text-base font-semibold text-terracotta-dark">
                 Could not load passage
               </Text>
-              <Text className="text-sm leading-5 text-parchment-ink/80">
+              <Text className="text-sm leading-5 text-night-muted">
                 {error}
               </Text>
             </View>
@@ -345,7 +345,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
                   onPress={toggleScriptureReadAloud}
                 />
               </View>
-              <Text className="text-base leading-7 text-parchment-ink">
+              <Text className="text-base leading-7 text-night-text">
                 {verses}
               </Text>
             </>
@@ -354,7 +354,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           {nextChapter ? (
             <Pressable
               accessibilityRole="button"
-              className="mt-8 items-center rounded-full border border-teal-deep/20 px-4 py-3"
+              className="mt-8 items-center rounded-full border border-night-border px-4 py-3"
               onPress={() => {
                 void audio.stop();
                 navigation.replace("ChapterPlayer", {
@@ -363,7 +363,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
                 });
               }}
             >
-              <Text className="text-sm font-bold text-teal-ink">
+              <Text className="text-sm font-bold text-night-text">
                 Next chapter tomorrow → {nextChapter.title}
               </Text>
             </Pressable>
@@ -376,7 +376,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
               void Linking.openURL(ESV_WEBSITE_URL);
             }}
           >
-            <Text className="text-center text-[10px] leading-4 text-parchment-ink/60">
+            <Text className="text-center text-[10px] leading-4 text-night-soft">
               {ESV_COPYRIGHT_NOTICE}
             </Text>
           </Pressable>

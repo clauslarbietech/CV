@@ -102,8 +102,8 @@ function MotionPanel({ title, caption, source, delayMs, width }: PanelProps) {
         />
       </View>
 
-      <View className="border-x-2 border-parchment-ink/80 bg-parchment-warm px-4 py-3">
-        <Text className="text-sm leading-5 text-parchment-ink">{caption}</Text>
+      <View className="border-x-2 border-night-border bg-night-elevated px-4 py-3">
+        <Text className="text-sm leading-5 text-night-text">{caption}</Text>
       </View>
     </Animated.View>
   );
@@ -148,14 +148,14 @@ export default function GenesisCreationAnimation() {
               sparkStyle,
             ]}
           />
-          <Text className="text-xs font-semibold uppercase tracking-[3px] text-teal-deep">
+          <Text className="text-xs font-semibold uppercase tracking-[3px] text-ochre-soft">
             Creation begins
           </Text>
         </View>
-        <Text className="mb-1 text-center text-2xl font-bold text-parchment-ink">
+        <Text className="mb-1 text-center text-2xl font-bold text-night-text">
           In the beginning…
         </Text>
-        <Text className="max-w-md text-center text-sm leading-5 text-parchment-ink/75">
+        <Text className="max-w-md text-center text-sm leading-5 text-night-muted">
           Watch light rise from the deep — a motion-comic prologue to Genesis 1.
         </Text>
       </Animated.View>

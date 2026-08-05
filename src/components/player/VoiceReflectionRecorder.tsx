@@ -27,11 +27,11 @@ export default function VoiceReflectionRecorder({
   onClear,
 }: Props) {
   return (
-    <View className="mb-5 rounded-2xl border border-teal-deep/15 bg-white px-4 py-4">
-      <Text className="mb-1 text-xs font-semibold uppercase tracking-wide text-teal-deep">
+    <View className="mb-5 rounded-2xl border border-night-border bg-night-card px-4 py-4">
+      <Text className="mb-1 text-xs font-semibold uppercase tracking-wide text-ochre-soft">
         Voice reflection
       </Text>
-      <Text className="mb-3 text-sm leading-5 text-parchment-ink/70">
+      <Text className="mb-3 text-sm leading-5 text-night-muted">
         Like Through the Word’s group messages — leave a short recorded note for
         this chapter and replay it anytime.
       </Text>
@@ -72,9 +72,9 @@ export default function VoiceReflectionRecorder({
             <Pressable
               accessibilityRole="button"
               onPress={onPlayToggle}
-              className="rounded-full border border-teal-deep/25 px-4 py-2.5"
+              className="rounded-full border border-night-border px-4 py-2.5"
             >
-              <Text className="text-sm font-bold text-teal-ink">
+              <Text className="text-sm font-bold text-night-text">
                 {isPlayingReflection ? "Pause note" : "Play note"}
               </Text>
             </Pressable>
