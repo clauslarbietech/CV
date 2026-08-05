@@ -13,7 +13,7 @@ export type RootStackParamList = {
   ChapterPlayer: {
     bookId: string;
     chapterNumber: number;
-    /** When true, start the audio guide (e.g. from webtoon Continue). */
+    /** When true, start the audio guide (e.g. from webtoon Back/Next). */
     autoPlay?: boolean;
   };
   WebtoonEpisode: {

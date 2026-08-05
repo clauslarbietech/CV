@@ -254,29 +254,6 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
         ))}
 
         <View className="items-center px-5 py-8">
-          <Pressable
-            accessibilityRole="button"
-            className="mb-3 w-full max-w-sm flex-row items-center justify-center rounded-full bg-terracotta px-5 py-3.5"
-            onPress={() => {
-              stopAudio();
-              navigation.navigate("ChapterPlayer", {
-                bookId,
-                chapterNumber,
-                autoPlay: true,
-              });
-            }}
-          >
-            <Text className="text-sm font-bold text-white">
-              Continue chapter
-            </Text>
-            <MaterialIcons
-              name="arrow-forward"
-              size={18}
-              color="#FFFFFF"
-              style={{ marginLeft: 6 }}
-            />
-          </Pressable>
-
           <View className="mb-4 w-full max-w-sm flex-row gap-3">
             <Pressable
               accessibilityRole="button"

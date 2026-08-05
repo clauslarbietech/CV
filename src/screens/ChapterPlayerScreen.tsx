@@ -195,7 +195,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     };
   }, []);
 
-  // Continue reading when arriving from a webtoon "Continue chapter" CTA.
+  // Auto-start audio when arriving with autoPlay (e.g. from webtoon Back/Next).
   useEffect(() => {
     if (!autoPlay || didAutoPlay || !chapter) {
       return;
