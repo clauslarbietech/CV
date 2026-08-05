@@ -20,8 +20,11 @@ import BibleSearchModal from "../components/bible/BibleSearchModal";
 import ScripturePickerModal from "../components/bible/ScripturePickerModal";
 import VersionPickerModal from "../components/bible/VersionPickerModal";
 import {
+  CATALOG_BOOKS,
   getCatalogBook,
+  libraryBookIdFor,
   passageQueryFor,
+  type CatalogBook,
 } from "../data/bibleCatalog";
 import { getGenesisChapter } from "../data/genesisChapters";
 import { getChapter } from "../data/library";
@@ -40,6 +43,10 @@ import {
   getDefaultBibleSource,
   normalizeBibleSource,
 } from "../services/scriptureService";
+import {
+  DEFAULT_YOUVERSION_VERSION_ID,
+  fetchBibleBooksForVersion,
+} from "../services/youversionService";
 import { readerColors } from "../theme/readerColors";
 import type { BibleSource } from "../types/bibleSource";
 
@@ -56,12 +63,14 @@ export default function BibleReaderScreen({ navigation }: Props) {
   const peekWidth = Math.min(width - 32, 360);
   const peekHeight = Math.round(peekWidth * 0.52);
 
-  const [bookId, setBookId] = useState("genesis");
+  const [bookId, setBookId] = useState("GEN");
   const [chapter, setChapter] = useState(1);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [versionOpen, setVersionOpen] = useState(false);
   const [source, setSource] = useState<BibleSource>(() => getDefaultBibleSource());
+  const [books, setBooks] = useState<CatalogBook[]>(CATALOG_BOOKS);
+  const [booksLoading, setBooksLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [verses, setVerses] = useState("");
@@ -75,10 +84,12 @@ export default function BibleReaderScreen({ navigation }: Props) {
   const [showFullCopyright, setShowFullCopyright] = useState(false);
   const [reading, setReading] = useState(false);
 
-  const book = getCatalogBook(bookId);
-  const libraryChapter = getChapter(bookId, chapter);
-  const genesisMeta = bookId === "genesis" ? getGenesisChapter(chapter) : undefined;
-  const webtoon = getWebtoonEpisode(bookId, chapter);
+  const libraryId = libraryBookIdFor(bookId);
+  const book = getCatalogBook(bookId, books);
+  const libraryChapter = getChapter(libraryId, chapter);
+  const genesisMeta =
+    libraryId === "genesis" ? getGenesisChapter(chapter) : undefined;
+  const webtoon = getWebtoonEpisode(libraryId, chapter);
 
   const comicPeek = useMemo(() => {
     if (webtoon?.panels?.[0]) {
@@ -127,8 +138,55 @@ export default function BibleReaderScreen({ navigation }: Props) {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    const versionId =
+      source.kind === "youversion"
+        ? source.versionId
+        : DEFAULT_YOUVERSION_VERSION_ID;
+
+    setBooksLoading(true);
+    void fetchBibleBooksForVersion(versionId)
+      .then((nextBooks) => {
+        if (cancelled) {
+          return;
+        }
+        setBooks(nextBooks);
+        const stillValid = nextBooks.some(
+          (item) => item.usfm === bookId || item.id === bookId
+        );
+        if (!stillValid && nextBooks[0]) {
+          setBookId(nextBooks[0].usfm);
+          setChapter(1);
+        } else {
+          const current = nextBooks.find(
+            (item) => item.usfm === bookId || item.id === bookId
+          );
+          if (current && chapter > current.chapters) {
+            setChapter(current.chapters);
+          }
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setBooks(CATALOG_BOOKS);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setBooksLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // Intentionally depend on version, not book/chapter (those adjust inside).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [source]);
+
   const loadPassage = useCallback(async () => {
-    const query = passageQueryFor(bookId, chapter);
+    const query = passageQueryFor(bookId, chapter, books);
     setLoading(true);
     setError(null);
     setShowFullCopyright(false);
@@ -169,7 +227,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
     } finally {
       setLoading(false);
     }
-  }, [bookId, chapter, genesisMeta, source]);
+  }, [bookId, books, chapter, genesisMeta, source]);
 
   useFocusEffect(
     useCallback(() => {
@@ -196,12 +254,15 @@ export default function BibleReaderScreen({ navigation }: Props) {
       return;
     }
     setReading(true);
-    Speech.speak(`${canonical || passageQueryFor(bookId, chapter)}. ${body}`, {
-      rate: 0.88,
-      onDone: () => setReading(false),
-      onStopped: () => setReading(false),
-      onError: () => setReading(false),
-    });
+    Speech.speak(
+      `${canonical || passageQueryFor(bookId, chapter, books)}. ${body}`,
+      {
+        rate: 0.88,
+        onDone: () => setReading(false),
+        onStopped: () => setReading(false),
+        onError: () => setReading(false),
+      }
+    );
   };
 
   const goChapter = (delta: number) => {
@@ -221,7 +282,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
       return;
     }
     navigation.navigate("WebtoonEpisode", {
-      bookId,
+      bookId: libraryId,
       chapterNumber: chapter,
       storylineId: comicPeek.storylineId,
     });
@@ -306,7 +367,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
             className="mb-1 text-xs font-semibold uppercase tracking-[1.5px]"
             style={{ color: readerColors.accentSoft }}
           >
-            {canonical || passageQueryFor(bookId, chapter)}
+            {canonical || passageQueryFor(bookId, chapter, books)}
           </Text>
           <Text
             className="mb-4 text-[22px] font-bold leading-7"
@@ -451,6 +512,8 @@ export default function BibleReaderScreen({ navigation }: Props) {
         visible={pickerOpen}
         bookId={bookId}
         chapter={chapter}
+        books={books}
+        loading={booksLoading}
         onClose={() => setPickerOpen(false)}
         onSelect={(nextBookId, nextChapter) => {
           stopReading();
@@ -460,6 +523,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
       />
       <BibleSearchModal
         visible={searchOpen}
+        books={books}
         onClose={() => setSearchOpen(false)}
         onJump={(nextBookId, nextChapter) => {
           stopReading();

@@ -7,10 +7,15 @@ import {
   View,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { parseScriptureQuery } from "../../data/bibleCatalog";
+import {
+  CATALOG_BOOKS,
+  parseScriptureQuery,
+  type CatalogBook,
+} from "../../data/bibleCatalog";
 
 type Props = {
   visible: boolean;
+  books?: CatalogBook[];
   onClose: () => void;
   onJump: (bookId: string, chapter: number) => void;
 };
@@ -18,12 +23,17 @@ type Props = {
 /**
  * Search / jump to a scripture location (e.g. "Genesis 3", "John 3:16").
  */
-export default function BibleSearchModal({ visible, onClose, onJump }: Props) {
+export default function BibleSearchModal({
+  visible,
+  books = CATALOG_BOOKS,
+  onClose,
+  onJump,
+}: Props) {
   const [query, setQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const submit = () => {
-    const parsed = parseScriptureQuery(query);
+    const parsed = parseScriptureQuery(query, books);
     if (!parsed) {
       setError('Try something like "Genesis 1" or "John 3"');
       return;

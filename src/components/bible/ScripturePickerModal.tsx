@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Modal,
   Pressable,
@@ -9,11 +10,14 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { CATALOG_BOOKS, type CatalogBook } from "../../data/bibleCatalog";
+import { readerColors } from "../../theme/readerColors";
 
 type Props = {
   visible: boolean;
   bookId: string;
   chapter: number;
+  books?: CatalogBook[];
+  loading?: boolean;
   onClose: () => void;
   onSelect: (bookId: string, chapter: number) => void;
 };
@@ -22,12 +26,14 @@ type Step = "book" | "chapter";
 
 /**
  * YouVersion-style scripture location picker:
- * choose book → choose chapter.
+ * choose book → choose chapter (full API catalog when provided).
  */
 export default function ScripturePickerModal({
   visible,
   bookId,
   chapter,
+  books = CATALOG_BOOKS,
+  loading = false,
   onClose,
   onSelect,
 }: Props) {
@@ -36,38 +42,76 @@ export default function ScripturePickerModal({
   const [pendingBook, setPendingBook] = useState<CatalogBook | null>(null);
 
   const ot = useMemo(
-    () => CATALOG_BOOKS.filter((book) => book.testament === "OT"),
-    []
+    () => books.filter((book) => book.testament === "OT"),
+    [books]
   );
   const nt = useMemo(
-    () => CATALOG_BOOKS.filter((book) => book.testament === "NT"),
-    []
+    () => books.filter((book) => book.testament === "NT"),
+    [books]
+  );
+  const dc = useMemo(
+    () => books.filter((book) => book.testament === "DC"),
+    [books]
   );
 
-  const open = () => {
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
     setStep("book");
     setPendingBook(null);
-  };
+  }, [visible]);
 
   const chapters = pendingBook
     ? Array.from({ length: pendingBook.chapters }, (_, i) => i + 1)
     : [];
+
+  const bookRows = useMemo(() => {
+    const rows: Array<
+      | { type: "header"; id: string; title: string }
+      | { type: "book"; id: string; book: CatalogBook }
+    > = [];
+    if (ot.length) {
+      rows.push({ type: "header", id: "ot", title: "Old Testament" });
+      for (const book of ot) {
+        rows.push({ type: "book", id: book.usfm, book });
+      }
+    }
+    if (nt.length) {
+      rows.push({ type: "header", id: "nt", title: "New Testament" });
+      for (const book of nt) {
+        rows.push({ type: "book", id: book.usfm, book });
+      }
+    }
+    if (dc.length) {
+      rows.push({ type: "header", id: "dc", title: "Deuterocanon" });
+      for (const book of dc) {
+        rows.push({ type: "book", id: book.usfm, book });
+      }
+    }
+    return rows;
+  }, [dc, nt, ot]);
 
   return (
     <Modal
       visible={visible}
       animationType="slide"
       transparent
-      onShow={open}
       onRequestClose={onClose}
     >
       <View className="flex-1 justify-end bg-black/55">
         <View
-          className="rounded-t-3xl bg-[#1C1C1E] px-4 pb-8 pt-3"
-          style={{ maxHeight: height * 0.82 }}
+          className="rounded-t-3xl px-4 pb-8 pt-3"
+          style={{
+            maxHeight: height * 0.82,
+            backgroundColor: readerColors.surface,
+          }}
         >
           <View className="mb-3 items-center">
-            <View className="mb-3 h-1 w-10 rounded-full bg-white/25" />
+            <View
+              className="mb-3 h-1 w-10 rounded-full"
+              style={{ backgroundColor: "rgba(255,255,255,0.25)" }}
+            />
             <View className="w-full flex-row items-center justify-between">
               {step === "chapter" ? (
                 <Pressable
@@ -75,13 +119,23 @@ export default function ScripturePickerModal({
                   onPress={() => setStep("book")}
                   className="flex-row items-center py-1"
                 >
-                  <MaterialIcons name="arrow-back" size={22} color="#FFFFFF" />
-                  <Text className="ml-1 text-sm font-semibold text-white">
+                  <MaterialIcons
+                    name="arrow-back"
+                    size={22}
+                    color={readerColors.text}
+                  />
+                  <Text
+                    className="ml-1 text-sm font-semibold"
+                    style={{ color: readerColors.text }}
+                  >
                     Books
                   </Text>
                 </Pressable>
               ) : (
-                <Text className="text-base font-bold text-white">
+                <Text
+                  className="text-base font-bold"
+                  style={{ color: readerColors.text }}
+                >
                   Choose scripture
                 </Text>
               )}
@@ -89,59 +143,98 @@ export default function ScripturePickerModal({
                 accessibilityRole="button"
                 accessibilityLabel="Close picker"
                 onPress={onClose}
-                className="h-9 w-9 items-center justify-center rounded-full bg-white/10"
+                className="h-9 w-9 items-center justify-center rounded-full"
+                style={{ backgroundColor: readerColors.elevated }}
               >
-                <MaterialIcons name="close" size={20} color="#FFFFFF" />
+                <MaterialIcons
+                  name="close"
+                  size={20}
+                  color={readerColors.text}
+                />
               </Pressable>
             </View>
-            <Text className="mt-1 self-start text-xs text-white/50">
+            <Text
+              className="mt-1 self-start text-xs"
+              style={{ color: readerColors.secondary }}
+            >
               {step === "book"
-                ? "Pick a book — Genesis has comics ready"
+                ? `${books.length} books · Genesis has comics ready`
                 : `${pendingBook?.name} · ${pendingBook?.chapters} chapters`}
             </Text>
           </View>
 
-          {step === "book" ? (
+          {loading ? (
+            <View className="items-center py-10">
+              <ActivityIndicator color={readerColors.accent} />
+              <Text
+                className="mt-3 text-sm"
+                style={{ color: readerColors.secondary }}
+              >
+                Loading Bible books…
+              </Text>
+            </View>
+          ) : step === "book" ? (
             <FlatList
-              data={[...ot, ...nt]}
+              data={bookRows}
               keyExtractor={(item) => item.id}
               showsVerticalScrollIndicator={false}
-              ListHeaderComponent={
-                <Text className="mb-2 mt-1 text-xs font-bold uppercase tracking-[2px] text-[#E4572E]">
-                  Bible books
-                </Text>
-              }
               renderItem={({ item }) => {
-                const selected = item.id === bookId;
+                if (item.type === "header") {
+                  return (
+                    <Text
+                      className="mb-2 mt-3 text-xs font-bold uppercase tracking-[2px]"
+                      style={{ color: readerColors.accent }}
+                    >
+                      {item.title}
+                    </Text>
+                  );
+                }
+                const book = item.book;
+                const selected = book.usfm === bookId || book.id === bookId;
                 return (
                   <Pressable
                     accessibilityRole="button"
                     onPress={() => {
-                      setPendingBook(item);
+                      setPendingBook(book);
                       setStep("chapter");
                     }}
-                    className={`mb-2 flex-row items-center rounded-2xl px-3 py-3 ${
-                      selected ? "bg-white/15" : "bg-white/5"
-                    }`}
+                    className="mb-2 flex-row items-center rounded-2xl px-3 py-3"
+                    style={{
+                      backgroundColor: selected
+                        ? readerColors.elevated
+                        : "rgba(255,255,255,0.04)",
+                    }}
                   >
-                    <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-white/10">
-                      <Text className="text-xs font-bold text-white">
-                        {item.abbreviation}
+                    <View
+                      className="mr-3 h-10 w-10 items-center justify-center rounded-full"
+                      style={{ backgroundColor: readerColors.elevated }}
+                    >
+                      <Text
+                        className="text-[10px] font-bold"
+                        style={{ color: readerColors.text }}
+                      >
+                        {book.abbreviation.slice(0, 3)}
                       </Text>
                     </View>
                     <View className="flex-1">
-                      <Text className="text-base font-bold text-white">
-                        {item.name}
+                      <Text
+                        className="text-base font-bold"
+                        style={{ color: readerColors.text }}
+                      >
+                        {book.name}
                       </Text>
-                      <Text className="text-xs text-white/45">
-                        {item.testament === "OT" ? "Old Testament" : "New Testament"}
-                        {item.illustrated ? " · comics" : ""}
+                      <Text
+                        className="text-xs"
+                        style={{ color: readerColors.secondary }}
+                      >
+                        {book.chapters} chapters
+                        {book.illustrated ? " · comics" : ""}
                       </Text>
                     </View>
                     <MaterialIcons
                       name="chevron-right"
                       size={22}
-                      color="#9AA0A6"
+                      color={readerColors.faint}
                     />
                   </Pressable>
                 );
@@ -157,7 +250,9 @@ export default function ScripturePickerModal({
               contentContainerStyle={{ gap: 8, paddingBottom: 12 }}
               renderItem={({ item }) => {
                 const selected =
-                  pendingBook?.id === bookId && item === chapter;
+                  (pendingBook?.usfm === bookId ||
+                    pendingBook?.id === bookId) &&
+                  item === chapter;
                 return (
                   <Pressable
                     accessibilityRole="button"
@@ -165,17 +260,19 @@ export default function ScripturePickerModal({
                       if (!pendingBook) {
                         return;
                       }
-                      onSelect(pendingBook.id, item);
+                      onSelect(pendingBook.usfm, item);
                       onClose();
                     }}
-                    className={`mb-1 h-12 flex-1 items-center justify-center rounded-xl ${
-                      selected ? "bg-[#E4572E]" : "bg-white/10"
-                    }`}
+                    className="mb-1 h-12 flex-1 items-center justify-center rounded-xl"
+                    style={{
+                      backgroundColor: selected
+                        ? readerColors.accent
+                        : readerColors.elevated,
+                    }}
                   >
                     <Text
-                      className={`text-base font-bold ${
-                        selected ? "text-white" : "text-white/85"
-                      }`}
+                      className="text-base font-bold"
+                      style={{ color: readerColors.text }}
                     >
                       {item}
                     </Text>

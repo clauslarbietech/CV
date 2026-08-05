@@ -5,9 +5,15 @@ import {
   DEFAULT_LICENSE_FREE_BIBLE_VERSION,
   type BibleVersion,
 } from "@youversion/platform-core";
+import {
+  CATALOG_BOOKS,
+  ILLUSTRATED_USFM,
+  type CatalogBook,
+} from "../data/bibleCatalog";
 
 const VERSIONS_CACHE_KEY = "yv:versions:en:v2";
 const VERSIONS_CACHE_AT_KEY = "yv:versions:en:v2:at";
+const BOOKS_CACHE_PREFIX = "yv:books:";
 const PASSAGE_CACHE_PREFIX = "yv:passage:";
 const INSTALL_ID_KEY = "yv:installation-id";
 const CACHE_TTL_MS = 1000 * 60 * 30; // 30 minutes
@@ -158,6 +164,60 @@ export async function getBibleVersion(
     const versions = await listEnglishBibleVersions().catch(() => []);
     return versions.find((item) => item.id === versionId) ?? null;
   }
+}
+
+/**
+ * Full book + chapter catalog for a Bible version (66+ books from the API).
+ * Falls back to the static catalog when the App Key is missing.
+ */
+export async function fetchBibleBooksForVersion(
+  versionId: number
+): Promise<CatalogBook[]> {
+  if (!hasYouVersionAppKey()) {
+    return CATALOG_BOOKS;
+  }
+
+  const cacheKey = `${BOOKS_CACHE_PREFIX}${versionId}`;
+  try {
+    const cached = await AsyncStorage.getItem(cacheKey);
+    if (cached) {
+      const parsed = JSON.parse(cached) as CatalogBook[];
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch {
+    // refresh below
+  }
+
+  const client = await getBibleClient();
+  const collection = await client.getBooks(versionId);
+  const books: CatalogBook[] = (collection.data ?? []).map((book) => {
+    const usfm = String(book.id).toUpperCase();
+    const testament =
+      book.canon === "new_testament"
+        ? "NT"
+        : book.canon === "deuterocanon"
+          ? "DC"
+          : "OT";
+    return {
+      id: usfm,
+      name: book.title || book.full_title || usfm,
+      abbreviation: book.abbreviation || usfm.slice(0, 3),
+      usfm,
+      testament,
+      chapters: Math.max(1, book.chapters?.length ?? 1),
+      illustrated: ILLUSTRATED_USFM.has(usfm),
+    };
+  });
+
+  try {
+    await AsyncStorage.setItem(cacheKey, JSON.stringify(books));
+  } catch {
+    // ignore
+  }
+
+  return books.length ? books : CATALOG_BOOKS;
 }
 
 /**
