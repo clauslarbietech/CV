@@ -14,6 +14,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BOOKS, JOURNEYS } from "../data/library";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 import { inviteToJourney } from "../services/journeyInvite";
+import { openBibleChapter } from "../services/openBibleChapter";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Home">,
@@ -41,7 +42,12 @@ export default function BrowseScreen({ navigation }: Props) {
               accessibilityRole="button"
               accessibilityHint="Opens the full Genesis chapter list"
               className="mt-3 flex-row items-center"
-              onPress={() => navigation.navigate("Book", { bookId: "genesis" })}
+              onPress={() =>
+                navigation.navigate("Book", {
+                  bookId: "genesis",
+                  chapterNumber: 1,
+                })
+              }
             >
               <Text className="text-sm font-semibold text-ochre-soft">
                 Browse all Genesis chapters
@@ -64,9 +70,20 @@ export default function BrowseScreen({ navigation }: Props) {
               <View key={journey.id} style={{ width: journeyCard }}>
                 <Pressable
                   accessibilityRole="button"
-                  onPress={() =>
-                    navigation.navigate("Book", { bookId: journey.bookIds[0] })
-                  }
+                  accessibilityLabel={`Open ${journey.title} at chapter ${journey.startChapter}`}
+                  onPress={() => {
+                    const bookId = journey.bookIds[0];
+                    navigation.navigate("Book", {
+                      bookId,
+                      chapterNumber: journey.startChapter,
+                    });
+                    openBibleChapter(
+                      navigation,
+                      bookId,
+                      journey.startChapter,
+                      { autoPlay: true }
+                    );
+                  }}
                 >
                   <View className="overflow-hidden rounded-2xl bg-night-card">
                     <Image
@@ -108,6 +125,7 @@ export default function BrowseScreen({ navigation }: Props) {
                       journeyTitle: journey.title,
                       booksLabel: journey.booksLabel,
                       bookId: journey.bookIds[0],
+                      chapterNumber: journey.startChapter,
                     });
                   }}
                 >
@@ -131,7 +149,12 @@ export default function BrowseScreen({ navigation }: Props) {
               accessibilityRole="button"
               style={{ width: bookCard }}
               className="overflow-hidden rounded-2xl bg-night-elevated"
-              onPress={() => navigation.navigate("Book", { bookId: "genesis" })}
+              onPress={() =>
+                navigation.navigate("Book", {
+                  bookId: "genesis",
+                  chapterNumber: 1,
+                })
+              }
             >
               <Image
                 source={BOOKS[0].cover}
@@ -163,7 +186,12 @@ export default function BrowseScreen({ navigation }: Props) {
           <Pressable
             accessibilityRole="button"
             className="mb-6 flex-row overflow-hidden rounded-2xl border border-night-border bg-night-card"
-            onPress={() => navigation.navigate("Book", { bookId: "genesis" })}
+            onPress={() =>
+              navigation.navigate("Book", {
+                bookId: "genesis",
+                chapterNumber: 1,
+              })
+            }
           >
             <Image
               source={BOOKS[0].cover}
@@ -186,7 +214,12 @@ export default function BrowseScreen({ navigation }: Props) {
 
           <SectionHeader
             title="Continue the story"
-            onSeeAll={() => navigation.navigate("Book", { bookId: "genesis" })}
+            onSeeAll={() =>
+              navigation.navigate("Book", {
+                bookId: "genesis",
+                chapterNumber: 1,
+              })
+            }
           />
           <View className="mb-2 gap-2">
             <QuickStoryCard

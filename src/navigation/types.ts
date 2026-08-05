@@ -9,7 +9,11 @@ export type MainTabParamList = {
 
 export type RootStackParamList = {
   MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
-  Book: { bookId: string };
+  Book: {
+    bookId: string;
+    /** Pre-select / open this chapter when entering the book journey. */
+    chapterNumber?: number;
+  };
   ChapterPlayer: {
     bookId: string;
     chapterNumber: number;

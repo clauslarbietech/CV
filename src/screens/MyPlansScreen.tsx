@@ -11,6 +11,7 @@ import { BOOKS, JOURNEYS } from "../data/library";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 import { inviteToJourney } from "../services/journeyInvite";
 import { getBookProgress } from "../services/listeningProgress";
+import { openBibleChapter } from "../services/openBibleChapter";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Plans">,
@@ -28,6 +29,7 @@ type PlanRow = {
   days: number;
   cover: number;
   bookId: string;
+  startChapter: number;
   progress: number;
   downloaded: boolean;
   finished: boolean;
@@ -70,6 +72,7 @@ export default function MyPlansScreen({ navigation }: Props) {
         days: journey.days,
         cover: journey.cover,
         bookId,
+        startChapter: journey.startChapter,
         progress: pct,
         downloaded,
         finished: pct === 100 && chapters.length > 0,
@@ -99,6 +102,7 @@ export default function MyPlansScreen({ navigation }: Props) {
         days: book.days,
         cover: book.cover,
         bookId: book.id,
+        startChapter: 1,
         progress: pct,
         downloaded,
         finished: pct === 100 && book.chapters.length > 0,
@@ -130,7 +134,13 @@ export default function MyPlansScreen({ navigation }: Props) {
   }, [filter, plans]);
 
   const openPlan = (plan: PlanRow) => {
-    navigation.navigate("Book", { bookId: plan.bookId });
+    navigation.navigate("Book", {
+      bookId: plan.bookId,
+      chapterNumber: plan.startChapter,
+    });
+    openBibleChapter(navigation, plan.bookId, plan.startChapter, {
+      autoPlay: true,
+    });
   };
 
   const sharePlan = (plan: PlanRow) => {
@@ -138,6 +148,7 @@ export default function MyPlansScreen({ navigation }: Props) {
       journeyTitle: plan.journeyTitle,
       booksLabel: plan.subtitle,
       bookId: plan.bookId,
+      chapterNumber: plan.startChapter,
     });
   };
 

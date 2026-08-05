@@ -50,6 +50,8 @@ export type Journey = {
   days: number;
   cover: number;
   bookIds: string[];
+  /** Chapter to open when this journey is started. */
+  startChapter: number;
 };
 
 const day1 = require("../../assets/panels/genesis-day1-light.jpg");
@@ -100,6 +102,7 @@ export const JOURNEYS: Journey[] = [
     days: 50,
     cover: journeyStart,
     bookIds: ["genesis"],
+    startChapter: 1,
   },
   {
     id: "journey-creation",
@@ -109,6 +112,7 @@ export const JOURNEYS: Journey[] = [
     days: 8,
     cover: day1,
     bookIds: ["genesis"],
+    startChapter: 1,
   },
   {
     id: "journey-promise",
@@ -118,6 +122,7 @@ export const JOURNEYS: Journey[] = [
     days: 39,
     cover: genesisCover,
     bookIds: ["genesis"],
+    startChapter: 12,
   },
 ];
 
