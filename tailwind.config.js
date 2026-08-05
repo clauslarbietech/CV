@@ -12,12 +12,16 @@ module.exports = {
         terracotta: {
           DEFAULT: "var(--app-accent, #E4572E)",
           dark: "var(--app-accent-soft, #C2410C)",
-          soft: "#F3A07A",
+          soft: "var(--app-brand-soft, #F07A4A)",
         },
+        /**
+         * Brand accent aliases — orange in both day and night (not tan/gold).
+         * Legacy `ochre` class names still work; values come from ThemeProvider.
+         */
         ochre: {
-          DEFAULT: "var(--app-highlight, #D4A017)",
-          soft: "#F0D78C",
-          deep: "#B8860B",
+          DEFAULT: "var(--app-brand, #E4572E)",
+          soft: "var(--app-brand-soft, #F07A4A)",
+          deep: "var(--app-accent, #E4572E)",
         },
         teal: {
           // Remapped from navy/blue to night gray so legacy bg-teal-* buttons stay on-brand.

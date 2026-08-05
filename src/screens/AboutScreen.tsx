@@ -52,7 +52,7 @@ export default function AboutScreen({ navigation }: Props) {
             </View>
             <View className="items-center">
               <Text
-                className="text-[28px] font-bold italic text-ochre"
+                className="text-[28px] font-bold italic text-terracotta"
                 accessibilityLabel={BRAND.name}
               >
                 {BRAND.namePix}
@@ -61,7 +61,7 @@ export default function AboutScreen({ navigation }: Props) {
                 {BRAND.nameBible}
               </Text>
             </View>
-            <Text className="mt-3 text-center text-base font-semibold text-ochre-soft">
+            <Text className="mt-3 text-center text-base font-semibold text-terracotta">
               {BRAND.tagline}
             </Text>
             <Text className="mt-4 text-center text-[15px] leading-6 text-night-text">
@@ -117,7 +117,7 @@ export default function AboutScreen({ navigation }: Props) {
           </View>
 
           <View className="rounded-2xl border border-night-border bg-parchment/10 px-4 py-4">
-            <Text className="text-xs font-bold uppercase tracking-[1.5px] text-ochre">
+            <Text className="text-xs font-bold uppercase tracking-[1.5px] text-terracotta">
               {BRAND.scriptureFirstTitle}
             </Text>
             <Text className="mt-2 text-sm leading-6 text-night-muted">

@@ -57,7 +57,9 @@ export default function MoreScreen({ navigation }: Props) {
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <ScrollView className="flex-1 px-4 pt-4" contentContainerStyle={{ paddingBottom: 32 }}>
         <BrandWordmark size="sm" centered={false} />
-        <Text className="mb-6 mt-1 text-sm text-night-muted">{BRAND.tagline}</Text>
+        <Text className="mb-6 mt-1 text-sm font-semibold text-terracotta">
+          {BRAND.tagline}
+        </Text>
 
         {LINKS.map((item) => (
           <Pressable
@@ -71,15 +73,17 @@ export default function MoreScreen({ navigation }: Props) {
             }}
           >
             <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-night-elevated">
-              <MaterialIcons name={item.icon} size={22} color="#F0D78C" />
+              <MaterialIcons name={item.icon} size={22} color="#E4572E" />
             </View>
             <View className="flex-1">
               <Text className="text-base font-bold text-night-text">
                 {item.label}
               </Text>
-              <Text className="text-xs text-night-muted">{item.hint}</Text>
+              <Text className="text-xs font-medium text-night-muted">
+                {item.hint}
+              </Text>
             </View>
-            <MaterialIcons name="chevron-right" size={22} color="#8E8E93" />
+            <MaterialIcons name="chevron-right" size={22} color="#3A3A3C" />
           </Pressable>
         ))}
       </ScrollView>

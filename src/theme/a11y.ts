@@ -30,7 +30,9 @@ export function withHighContrast(
       accent: "#FF7A4D",
       accentSoft: "#FFB088",
       warn: "#FFD4B8",
-      highlight: "#FFE9A8",
+      highlight: "#FFB088",
+      brand: "#FF7A4D",
+      brandSoft: "#FFB088",
     };
   }
   return {
@@ -38,13 +40,15 @@ export function withHighContrast(
     bg: "#FFFFFF",
     card: "#FFFFFF",
     elevated: "#F0F0F0",
-    border: "#1F2430",
+    border: "#1C1C1E",
     text: "#000000",
-    muted: "#3D4450",
-    soft: "#3D4450",
-    accent: "#9A3412",
-    accentSoft: "#9A3412",
-    warn: "#92400E",
-    highlight: "#854D0E",
+    muted: "#2C2C2E",
+    soft: "#3A3A3C",
+    accent: "#C2410C",
+    accentSoft: "#E4572E",
+    warn: "#9A3412",
+    highlight: "#E4572E",
+    brand: "#C2410C",
+    brandSoft: "#E4572E",
   };
 }

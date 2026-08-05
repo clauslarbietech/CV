@@ -89,7 +89,7 @@ export default function AudioGuidePlayer({
           <MaterialIcons
             name={favorite ? "star" : "star-border"}
             size={20}
-            color={favorite ? "#F0D78C" : "#AEAEB2"}
+            color={favorite ? colors.accent : colors.muted}
           />
         </Pressable>
         <Pressable

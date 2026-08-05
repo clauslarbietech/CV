@@ -16,6 +16,7 @@ import BrandWordmark from "../components/brand/BrandWordmark";
 import { BRAND } from "../content/brand";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 import { inviteToJourney } from "../services/journeyInvite";
+import { useTheme } from "../theme/ThemeProvider";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Home">,
@@ -24,6 +25,7 @@ type Props = CompositeScreenProps<
 
 export default function BrowseScreen({ navigation }: Props) {
   const { width } = useWindowDimensions();
+  const { colors } = useTheme();
   const journeyCard = Math.min(148, width * 0.38);
   const bookCard = Math.min(160, width * 0.42);
 
@@ -33,18 +35,28 @@ export default function BrowseScreen({ navigation }: Props) {
         <View className="px-4 pb-8 pt-2">
           <View className="mb-6 items-center">
             <BrandWordmark size="lg" />
-            <Text className="mt-2 text-center text-sm font-semibold text-ochre-soft">
+            <Text
+              className="mt-2 text-center text-sm font-semibold"
+              style={{ color: colors.brand }}
+            >
               {BRAND.tagline}
             </Text>
 
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="About PixBible — mission, story, and why it is free"
-              className="mt-3 flex-row items-center rounded-full border border-night-border bg-night-card px-4 py-2"
+              className="mt-3 flex-row items-center rounded-full border px-4 py-2"
+              style={{
+                borderColor: colors.brand,
+                backgroundColor: colors.card,
+              }}
               onPress={() => navigation.navigate("About")}
             >
-              <MaterialIcons name="info-outline" size={16} color="#F0D78C" />
-              <Text className="ml-2 text-xs font-semibold text-ochre-soft">
+              <MaterialIcons name="info-outline" size={16} color={colors.brand} />
+              <Text
+                className="ml-2 text-xs font-semibold"
+                style={{ color: colors.brand }}
+              >
                 About · mission & why it's free
               </Text>
             </Pressable>
@@ -83,20 +95,20 @@ export default function BrowseScreen({ navigation }: Props) {
                       </View>
                     ) : null}
                     <View className="absolute bottom-2 left-2 flex-row items-center rounded-full bg-black/55 px-2 py-1">
-                      <MaterialIcons name="groups" size={12} color="#F0D78C" />
-                      <Text className="ml-1 text-[10px] font-bold text-ochre-soft">
+                      <MaterialIcons name="groups" size={12} color="#FFFFFF" />
+                      <Text className="ml-1 text-xs font-bold text-white">
                         Together
                       </Text>
                     </View>
                   </View>
                   <Text
-                    className="mt-2 text-sm font-semibold text-night-text"
+                    className="mt-2 text-sm font-bold text-night-text"
                     numberOfLines={2}
                   >
                     {journey.title} Together
                   </Text>
                   <Text
-                    className="text-[11px] text-night-muted"
+                    className="text-xs font-medium text-night-muted"
                     numberOfLines={1}
                   >
                     {journey.booksLabel}
@@ -106,6 +118,7 @@ export default function BrowseScreen({ navigation }: Props) {
                   accessibilityRole="button"
                   accessibilityLabel={`Invite others to ${journey.title}`}
                   className="mt-2 flex-row items-center self-start rounded-full bg-terracotta/20 px-2.5 py-1.5"
+                  style={{ minHeight: 36 }}
                   onPress={() => {
                     void inviteToJourney({
                       journeyTitle: journey.title,
@@ -115,8 +128,11 @@ export default function BrowseScreen({ navigation }: Props) {
                     });
                   }}
                 >
-                  <MaterialIcons name="person-add" size={14} color="#E4572E" />
-                  <Text className="ml-1 text-[11px] font-bold text-terracotta">
+                  <MaterialIcons name="person-add" size={14} color={colors.brand} />
+                  <Text
+                    className="ml-1 text-xs font-bold"
+                    style={{ color: colors.brand }}
+                  >
                     Invite
                   </Text>
                 </Pressable>
@@ -160,11 +176,13 @@ export default function BrowseScreen({ navigation }: Props) {
               style={{ width: bookCard }}
               className="items-center justify-center overflow-hidden rounded-2xl bg-night-card"
             >
-              <MaterialIcons name="schedule" size={28} color="#8E8E93" />
-              <Text className="mt-2 text-center text-base font-bold text-night-muted">
+              <MaterialIcons name="schedule" size={28} color={colors.muted} />
+              <Text className="mt-2 text-center text-base font-bold text-night-text">
                 New Testament
               </Text>
-              <Text className="mt-1 text-xs text-night-soft">Coming later</Text>
+              <Text className="mt-1 text-xs font-medium text-night-muted">
+                Coming later
+              </Text>
             </View>
           </ScrollView>
 
@@ -185,11 +203,14 @@ export default function BrowseScreen({ navigation }: Props) {
               resizeMode="cover"
             />
             <View className="flex-1 justify-center px-3 py-2">
-              <Text className="text-xs font-bold uppercase tracking-wide text-terracotta">
+              <Text
+                className="text-xs font-bold uppercase tracking-wide"
+                style={{ color: colors.brand }}
+              >
                 Start the Bible here
               </Text>
               <Text className="text-lg font-bold text-night-text">Genesis</Text>
-              <Text className="mt-1 text-xs text-night-muted" numberOfLines={2}>
+              <Text className="mt-1 text-xs font-medium text-night-muted" numberOfLines={2}>
                 50 chapters · comics, ESV audio, and storylines
               </Text>
             </View>
@@ -293,11 +314,13 @@ function QuickStoryCard({
       className="flex-row items-center rounded-2xl border border-night-border bg-night-card px-3 py-3 active:bg-night-elevated"
     >
       <View className="mr-3 h-11 w-11 items-center justify-center rounded-full bg-night-elevated">
-        <MaterialIcons name={icon} size={22} color="#F0D78C" />
+        <MaterialIcons name={icon} size={22} color="#E4572E" />
       </View>
       <View className="flex-1">
         <Text className="text-sm font-bold text-night-text">{title}</Text>
-        <Text className="mt-0.5 text-xs text-night-muted">{subtitle}</Text>
+        <Text className="mt-0.5 text-xs font-medium text-night-muted">
+          {subtitle}
+        </Text>
       </View>
       <MaterialIcons name="volume-up" size={22} color="#E4572E" />
     </Pressable>
