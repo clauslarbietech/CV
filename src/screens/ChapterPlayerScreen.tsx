@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Speech from "expo-speech";
 import ChapterPickerModal from "../components/bible/ChapterPickerModal";
+import VersionPickerModal from "../components/bible/VersionPickerModal";
 import SelectableScripture, {
   splitScriptureSegments,
   type AppliedHighlight,
@@ -25,6 +26,10 @@ import { getWebtoonEpisode } from "../data/webtoonEpisodes";
 import { useAudioGuideSession } from "../hooks/useAudioGuideSession";
 import type { RootStackParamList } from "../navigation/types";
 import {
+  loadSelectedBibleSource,
+  saveSelectedBibleSource,
+} from "../services/biblePreferences";
+import {
   isChapterFavorited,
   listFavorites,
   toggleChapterFavorite,
@@ -38,7 +43,9 @@ import {
 import {
   fetchScriptureChapter,
   getDefaultBibleSource,
+  normalizeBibleSource,
 } from "../services/scriptureService";
+import type { BibleSource } from "../types/bibleSource";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ChapterPlayer">;
 
@@ -62,7 +69,9 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     lastPositionSeconds: 0,
   });
   const [chapterOpen, setChapterOpen] = useState(false);
+  const [versionOpen, setVersionOpen] = useState(false);
   const [playerMode, setPlayerMode] = useState<"guide" | "bible">("guide");
+  const [source, setSource] = useState<BibleSource>(() => getDefaultBibleSource());
   const [didAutoPlay, setDidAutoPlay] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [selectedSegment, setSelectedSegment] =
@@ -127,7 +136,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
         const result = await fetchScriptureChapter(
           bookId,
           chapterNumber,
-          getDefaultBibleSource()
+          source
         );
         if (!cancelled) {
           setPassage({
@@ -154,7 +163,17 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [bookId, chapter, chapterNumber]);
+  }, [bookId, chapter, chapterNumber, source]);
+
+  useEffect(() => {
+    void loadSelectedBibleSource().then((saved) => {
+      const next = normalizeBibleSource(saved);
+      setSource(next);
+      if (saved && JSON.stringify(normalizeBibleSource(saved)) !== JSON.stringify(saved)) {
+        void saveSelectedBibleSource(next);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -293,17 +312,30 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             <MaterialIcons name="keyboard-arrow-down" size={24} color="#F2F2F7" />
           </Pressable>
 
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Choose chapter"
-            className="flex-row items-center rounded-full bg-night-elevated px-3 py-2"
-            onPress={() => setChapterOpen(true)}
-          >
-            <Text className="text-sm font-bold text-night-text">
-              {book.name} {chapter.number}
-            </Text>
-            <MaterialIcons name="arrow-drop-down" size={20} color="#F2F2F7" />
-          </Pressable>
+          <View className="flex-1 flex-row items-center justify-center gap-2 px-1">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Choose chapter"
+              className="flex-row items-center rounded-full bg-night-elevated px-3 py-2"
+              onPress={() => setChapterOpen(true)}
+            >
+              <Text className="text-sm font-bold text-night-text">
+                {book.name} {chapter.number}
+              </Text>
+              <MaterialIcons name="arrow-drop-down" size={20} color="#F2F2F7" />
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Bible version ${source.abbreviation}`}
+              className="flex-row items-center rounded-full bg-night-elevated px-3 py-2"
+              onPress={() => setVersionOpen(true)}
+            >
+              <Text className="text-sm font-bold text-night-text">
+                {source.abbreviation}
+              </Text>
+              <MaterialIcons name="arrow-drop-down" size={20} color="#F2F2F7" />
+            </Pressable>
+          </View>
 
           <View className="flex-row items-center gap-1">
             <Pressable
@@ -454,12 +486,25 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             showsVerticalScrollIndicator={true}
           >
             <View className="mb-3 flex-row items-center justify-between">
-              <Text className="text-sm font-bold text-night-text">
+              <Text className="flex-1 text-sm font-bold text-night-text">
                 {passage?.canonical ?? chapter.passageQuery}
               </Text>
-              <View className="rounded-full bg-night-elevated px-3 py-1">
-                <Text className="text-xs font-bold text-night-muted">ESV</Text>
-              </View>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Bible version ${source.abbreviation}`}
+                onPress={() => setVersionOpen(true)}
+                className="ml-2 flex-row items-center rounded-full bg-night-elevated px-3 py-1.5"
+              >
+                <Text className="text-xs font-bold text-night-text">
+                  {source.abbreviation}
+                </Text>
+                <MaterialIcons
+                  name="arrow-drop-down"
+                  size={18}
+                  color="#F2F2F7"
+                  style={{ marginLeft: 2 }}
+                />
+              </Pressable>
             </View>
             {loading ? (
               <ActivityIndicator color="#E4572E" />
@@ -489,6 +534,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
         bookId={bookId}
         chapterNumber={chapterNumber}
         scriptureRef={passage?.canonical ?? chapter.passageQuery}
+        versionLabel={source.abbreviation}
         favoriteKind="story_highlight"
         onClose={() => {
           setSheetOpen(false);
@@ -518,6 +564,18 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           onSelect={(number) => goChapter(number, false)}
         />
       ) : null}
+
+      <VersionPickerModal
+        visible={versionOpen}
+        selected={source}
+        onClose={() => setVersionOpen(false)}
+        onSelect={(next) => {
+          void audio.stop();
+          void Speech.stop();
+          setSource(next);
+          void saveSelectedBibleSource(next);
+        }}
+      />
     </SafeAreaView>
   );
 }
