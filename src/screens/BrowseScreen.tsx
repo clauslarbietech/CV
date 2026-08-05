@@ -38,18 +38,6 @@ export default function BrowseScreen({ navigation }: Props) {
 
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Open Bible reader at Genesis Day 1"
-              className="mt-5 w-full max-w-sm flex-row items-center justify-center rounded-full bg-terracotta px-5 py-3.5"
-              onPress={() => navigation.navigate("Bible")}
-            >
-              <MaterialIcons name="menu-book" size={22} color="#FFFFFF" />
-              <Text className="ml-1 text-sm font-bold text-white">
-                Open Bible · comics + scripture
-              </Text>
-            </Pressable>
-
-            <Pressable
-              accessibilityRole="button"
               accessibilityHint="Opens the full Genesis chapter list"
               className="mt-3 flex-row items-center"
               onPress={() => navigation.navigate("Book", { bookId: "genesis" })}
@@ -59,73 +47,6 @@ export default function BrowseScreen({ navigation }: Props) {
               </Text>
               <MaterialIcons name="chevron-right" size={20} color="#F0D78C" />
             </Pressable>
-          </View>
-
-          <SectionHeader
-            title="Continue the story"
-            onSeeAll={() => navigation.navigate("Book", { bookId: "genesis" })}
-          />
-          <View className="mb-6 gap-2">
-            <QuickStoryCard
-              title="Day 1 · Let There Be Light"
-              subtitle="Creation begins · listen along"
-              icon="wb-sunny"
-              onPress={() =>
-                navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 1,
-                  storylineId: "day-1",
-                })
-              }
-            />
-            <QuickStoryCard
-              title="The Fall"
-              subtitle="Genesis 3 · trust breaks"
-              icon="spa"
-              onPress={() =>
-                navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 3,
-                  storylineId: "the-fall",
-                })
-              }
-            />
-            <QuickStoryCard
-              title="Noah & the Flood"
-              subtitle="Genesis 6–9 · ark and rainbow"
-              icon="water"
-              onPress={() =>
-                navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 6,
-                  storylineId: "noah-ark",
-                })
-              }
-            />
-            <QuickStoryCard
-              title="Abraham’s Call"
-              subtitle="Genesis 12 · go to the land"
-              icon="nights-stay"
-              onPress={() =>
-                navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 12,
-                  storylineId: "call-of-abraham",
-                })
-              }
-            />
-            <QuickStoryCard
-              title="Joseph’s Coat"
-              subtitle="Genesis 37 · toward Egypt"
-              icon="style"
-              onPress={() =>
-                navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 37,
-                  storylineId: "joseph-coat",
-                })
-              }
-            />
           </View>
 
           <SectionHeader
@@ -214,7 +135,7 @@ export default function BrowseScreen({ navigation }: Props) {
           <SectionHeader title="Featured book" />
           <Pressable
             accessibilityRole="button"
-            className="mb-2 flex-row overflow-hidden rounded-2xl border border-night-border bg-night-card"
+            className="mb-6 flex-row overflow-hidden rounded-2xl border border-night-border bg-night-card"
             onPress={() => navigation.navigate("Book", { bookId: "genesis" })}
           >
             <Image
@@ -235,6 +156,73 @@ export default function BrowseScreen({ navigation }: Props) {
               <MaterialIcons name="chevron-right" size={28} color="#E4572E" />
             </View>
           </Pressable>
+
+          <SectionHeader
+            title="Continue the story"
+            onSeeAll={() => navigation.navigate("Book", { bookId: "genesis" })}
+          />
+          <View className="mb-2 gap-2">
+            <QuickStoryCard
+              title="Day 1 · Let There Be Light"
+              subtitle="Creation begins · listen along"
+              icon="wb-sunny"
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 1,
+                  storylineId: "day-1",
+                })
+              }
+            />
+            <QuickStoryCard
+              title="The Fall"
+              subtitle="Genesis 3 · trust breaks"
+              icon="spa"
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 3,
+                  storylineId: "the-fall",
+                })
+              }
+            />
+            <QuickStoryCard
+              title="Noah & the Flood"
+              subtitle="Genesis 6–9 · ark and rainbow"
+              icon="water"
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 6,
+                  storylineId: "noah-ark",
+                })
+              }
+            />
+            <QuickStoryCard
+              title="Abraham’s Call"
+              subtitle="Genesis 12 · go to the land"
+              icon="nights-stay"
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 12,
+                  storylineId: "call-of-abraham",
+                })
+              }
+            />
+            <QuickStoryCard
+              title="Joseph’s Coat"
+              subtitle="Genesis 37 · toward Egypt"
+              icon="style"
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 37,
+                  storylineId: "joseph-coat",
+                })
+              }
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
