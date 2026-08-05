@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -34,6 +34,14 @@ export default function AboutScreen({ navigation }: Props) {
           showsVerticalScrollIndicator={false}
         >
           <View className="mb-6 items-center rounded-2xl border border-night-border bg-night-card px-5 py-6">
+            <View className="mb-4 items-center justify-center rounded-full bg-night-elevated p-3">
+              <Image
+                source={require("../../assets/brand/pixbible-logo-mark.png")}
+                style={{ width: 88, height: 88 }}
+                resizeMode="contain"
+                accessibilityLabel="PixBible logo"
+              />
+            </View>
             <BrandWordmark size="lg" />
             <Text className="mt-3 text-center text-base font-semibold text-ochre-soft">
               {BRAND.tagline}
