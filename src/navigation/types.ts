@@ -1,3 +1,5 @@
+import type { NavigatorScreenParams } from "@react-navigation/native";
+
 export type MainTabParamList = {
   Home: undefined;
   Bible: undefined;
@@ -6,7 +8,7 @@ export type MainTabParamList = {
 };
 
 export type RootStackParamList = {
-  MainTabs: undefined;
+  MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
   Book: { bookId: string };
   ChapterPlayer: {
     bookId: string;
@@ -20,4 +22,7 @@ export type RootStackParamList = {
     storylineId?: string;
   };
   AnimationDemo: undefined;
+  Settings: undefined;
+  Profile: undefined;
+  Favorites: undefined;
 };

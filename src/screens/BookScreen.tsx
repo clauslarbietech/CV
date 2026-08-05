@@ -14,6 +14,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import BibleSearchModal from "../components/bible/BibleSearchModal";
 import ChapterPickerModal from "../components/bible/ChapterPickerModal";
 import StorylinePickerModal from "../components/bible/StorylinePickerModal";
+import AppTabBar from "../components/navigation/AppTabBar";
 import { CATALOG_BOOKS, libraryBookIdFor } from "../data/bibleCatalog";
 import { listGenesisArcCards } from "../data/genesisArcs";
 import type { GenesisArc } from "../data/genesisChapters";
@@ -117,7 +118,8 @@ export default function BookScreen({ navigation, route }: Props) {
 
   return (
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <View className="flex-1">
+      <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
         <View className="pb-12 pt-2">
           {/* Top: chapter chip + search (no endless lists) */}
           <View className="mb-3 flex-row items-center justify-between px-4">
@@ -327,6 +329,9 @@ export default function BookScreen({ navigation, route }: Props) {
           navigation.navigate("MainTabs");
         }}
       />
+
+      <AppTabBar activeTab="Home" />
+      </View>
     </SafeAreaView>
   );
 }

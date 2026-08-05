@@ -7,8 +7,11 @@ import BibleReaderScreen from "../screens/BibleReaderScreen";
 import BookScreen from "../screens/BookScreen";
 import BrowseScreen from "../screens/BrowseScreen";
 import ChapterPlayerScreen from "../screens/ChapterPlayerScreen";
+import FavoritesScreen from "../screens/FavoritesScreen";
 import MoreScreen from "../screens/MoreScreen";
 import MyPlansScreen from "../screens/MyPlansScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 import WebtoonEpisodeScreen from "../screens/WebtoonEpisodeScreen";
 import type { MainTabParamList, RootStackParamList } from "./types";
 
@@ -77,6 +80,9 @@ export default function RootNavigator() {
         <Stack.Screen name="ChapterPlayer" component={ChapterPlayerScreen} />
         <Stack.Screen name="WebtoonEpisode" component={WebtoonEpisodeScreen} />
         <Stack.Screen name="AnimationDemo" component={AnimationDemoScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Favorites" component={FavoritesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

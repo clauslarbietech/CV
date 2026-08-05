@@ -25,12 +25,14 @@ import Animated, {
 import * as Speech from "expo-speech";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import ReadAloudButton from "../components/accessibility/ReadAloudButton";
+import AppTabBar from "../components/navigation/AppTabBar";
 import {
   getPanelAudioText,
   getWebtoonEpisode,
   type WebtoonPanel,
 } from "../data/webtoonEpisodes";
 import { getBook } from "../data/library";
+import HighlightModal from "../components/favorites/HighlightModal";
 import type { RootStackParamList } from "../navigation/types";
 import {
   ESV_COPYRIGHT_NOTICE,
@@ -59,6 +61,7 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [playingPanelId, setPlayingPanelId] = useState<string | null>(null);
   const [isReadingAll, setIsReadingAll] = useState(false);
+  const [highlightOpen, setHighlightOpen] = useState(false);
 
   const stopAudio = useCallback(() => {
     void Speech.stop();
@@ -155,6 +158,7 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
 
   return (
     <SafeAreaView className="flex-1 bg-black" edges={["top", "left", "right"]}>
+      <View className="flex-1">
       <View className="flex-row items-center justify-between border-b border-white/10 px-3 py-3">
         <Pressable
           accessibilityRole="button"
@@ -341,8 +345,8 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-4 left-0 right-0 items-center">
-        <View className="flex-row items-center rounded-full bg-black/70 px-4 py-2">
+      <View className="items-center border-t border-white/10 bg-black py-2">
+        <View className="mb-1 flex-row items-center rounded-full bg-white/10 px-4 py-2">
           {playingPanelId ? (
             <MaterialIcons
               name="volume-up"
@@ -355,7 +359,33 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
             Scene {activeIndex + 1} / {episode.panels.length}
             {playingPanelId ? " · Reading aloud…" : ""}
           </Text>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Highlight this story"
+            className="ml-3"
+            onPress={() => setHighlightOpen(true)}
+          >
+            <MaterialIcons name="border-color" size={16} color="#F0D78C" />
+          </Pressable>
         </View>
+      </View>
+
+      <AppTabBar activeTab="Home" />
+
+      <HighlightModal
+        visible={highlightOpen}
+        kind="story_highlight"
+        bookId={bookId}
+        chapterNumber={chapterNumber}
+        storylineId={episode.storylineId}
+        defaultExcerpt={
+          episode.panels[activeIndex]?.bubble?.text ??
+          episode.panels[activeIndex]?.scriptureText ??
+          episode.title
+        }
+        scriptureRef={episode.panels[activeIndex]?.scriptureRef}
+        onClose={() => setHighlightOpen(false)}
+      />
       </View>
     </SafeAreaView>
   );

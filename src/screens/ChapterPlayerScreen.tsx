@@ -14,11 +14,17 @@ import ChapterPickerModal from "../components/bible/ChapterPickerModal";
 import ChapterPremiseComics, {
   uniqueComicPanels,
 } from "../components/comics/ChapterPremiseComics";
+import HighlightModal from "../components/favorites/HighlightModal";
+import AppTabBar from "../components/navigation/AppTabBar";
 import AudioGuidePlayer from "../components/player/AudioGuidePlayer";
 import { getBook, getChapter } from "../data/library";
 import { getWebtoonEpisode } from "../data/webtoonEpisodes";
 import { useAudioGuideSession } from "../hooks/useAudioGuideSession";
 import type { RootStackParamList } from "../navigation/types";
+import {
+  isChapterFavorited,
+  toggleChapterFavorite,
+} from "../services/favoritesService";
 import {
   getChapterProgress,
   updateChapterProgress,
@@ -53,6 +59,8 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
   const [scriptureExpanded, setScriptureExpanded] = useState(false);
   const [chapterOpen, setChapterOpen] = useState(false);
   const [didAutoPlay, setDidAutoPlay] = useState(false);
+  const [highlightOpen, setHighlightOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const audio = useAudioGuideSession({
     guide: chapter?.guide,
@@ -140,6 +148,11 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     void getChapterProgress(bookId, chapterNumber).then((saved) => {
       if (!cancelled) {
         setProgress(saved);
+      }
+    });
+    void isChapterFavorited(bookId, chapterNumber).then((value) => {
+      if (!cancelled) {
+        setIsFavorite(value);
       }
     });
     return () => {
@@ -257,11 +270,19 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             )}
             <Pressable
               accessibilityRole="button"
+              accessibilityLabel="Highlight and comment"
+              className="h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
+              onPress={() => setHighlightOpen(true)}
+            >
+              <MaterialIcons name="border-color" size={18} color="#F0D78C" />
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
               accessibilityLabel="Open Bible reader"
               className="h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
               onPress={() => {
                 void audio.stop();
-                navigation.navigate("MainTabs");
+                navigation.navigate("MainTabs", { screen: "Bible" });
               }}
             >
               <MaterialIcons name="search" size={18} color="#AEAEB2" />
@@ -316,7 +337,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           duration={audio.duration}
           isPlaying={audio.isPlaying}
           speed={audio.speed}
-          favorite={progress.favorite}
+          favorite={isFavorite || progress.favorite}
           hasPrevious={Boolean(prevChapter)}
           hasNext={Boolean(nextChapter)}
           onToggle={audio.toggle}
@@ -325,9 +346,17 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             void audio.cycleSpeed();
           }}
           onToggleFavorite={() => {
-            void updateChapterProgress(bookId, chapterNumber, {
-              favorite: !progress.favorite,
-            }).then(setProgress);
+            void toggleChapterFavorite({
+              bookId,
+              chapterNumber,
+              title: `${book.name} ${chapter.number} · ${chapter.title}`,
+              note: "Favorite chapter",
+            }).then((result) => {
+              setIsFavorite(result.favorited);
+              void updateChapterProgress(bookId, chapterNumber, {
+                favorite: result.favorited,
+              }).then(setProgress);
+            });
           }}
           onPrevious={() => {
             if (prevChapter) {
@@ -340,7 +369,19 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             }
           }}
         />
+
+        <AppTabBar activeTab="Home" />
       </View>
+
+      <HighlightModal
+        visible={highlightOpen}
+        kind="story_highlight"
+        bookId={bookId}
+        chapterNumber={chapterNumber}
+        defaultExcerpt={activeNarration ?? chapter.title}
+        scriptureRef={passage?.canonical ?? chapter.passageQuery}
+        onClose={() => setHighlightOpen(false)}
+      />
 
       {book.id === "genesis" ? (
         <ChapterPickerModal
