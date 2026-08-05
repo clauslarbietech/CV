@@ -3,7 +3,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AppTabBar from "../components/navigation/AppTabBar";
-import BrandWordmark from "../components/brand/BrandWordmark";
 import { BRAND } from "../content/brand";
 import type { RootStackParamList } from "../navigation/types";
 
@@ -51,7 +50,17 @@ export default function AboutScreen({ navigation }: Props) {
                 accessibilityLabel="PixBible logo"
               />
             </View>
-            <BrandWordmark size="lg" />
+            <View className="items-center">
+              <Text
+                className="text-[28px] font-bold italic text-ochre"
+                accessibilityLabel={BRAND.name}
+              >
+                {BRAND.namePix}
+              </Text>
+              <Text className="-mt-1 text-[28px] font-bold tracking-[3px] text-night-text">
+                {BRAND.nameBible}
+              </Text>
+            </View>
             <Text className="mt-3 text-center text-base font-semibold text-ochre-soft">
               {BRAND.tagline}
             </Text>
