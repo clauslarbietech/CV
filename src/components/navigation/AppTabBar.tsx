@@ -2,7 +2,7 @@ import { Pressable, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useBottomMenuInset } from "../../hooks/useBottomMenuInset";
 import type { MainTabParamList, RootStackParamList } from "../../navigation/types";
 
 type TabName = keyof MainTabParamList;
@@ -30,12 +30,12 @@ type Props = {
 export default function AppTabBar({ activeTab }: Props) {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const insets = useSafeAreaInsets();
+  const bottomInset = useBottomMenuInset();
 
   return (
     <View
       className="flex-row border-t border-night-border bg-night-bg pt-1.5"
-      style={{ paddingBottom: Math.max(insets.bottom, 8) }}
+      style={{ paddingBottom: bottomInset }}
     >
       {TABS.map((tab) => {
         const focused = activeTab === tab.name;

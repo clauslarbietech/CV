@@ -8,6 +8,7 @@ import BookScreen from "../screens/BookScreen";
 import BrowseScreen from "../screens/BrowseScreen";
 import ChapterPlayerScreen from "../screens/ChapterPlayerScreen";
 import FavoritesScreen from "../screens/FavoritesScreen";
+import { useBottomMenuInset } from "../hooks/useBottomMenuInset";
 import MoreScreen from "../screens/MoreScreen";
 import MyPlansScreen from "../screens/MyPlansScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -28,7 +29,11 @@ const TAB_ICONS: Record<
   More: "person-outline",
 };
 
+const TAB_CONTENT_HEIGHT = 52;
+
 function MainTabs() {
+  const bottomInset = useBottomMenuInset();
+
   return (
     <Tab.Navigator
       initialRouteName="Bible"
@@ -37,12 +42,16 @@ function MainTabs() {
         tabBarActiveTintColor: "#E4572E",
         tabBarInactiveTintColor: "#8E8E93",
         tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
+        // We apply bottom inset ourselves (incl. mobile browser chrome on web).
+        safeAreaInsets: { bottom: 0 },
         tabBarStyle: {
           backgroundColor: "#121212",
           borderTopColor: "#2C2C2E",
-          height: 62,
+          height: TAB_CONTENT_HEIGHT + bottomInset,
           paddingTop: 6,
-          paddingBottom: 8,
+          paddingBottom: bottomInset,
+          position: "relative",
+          elevation: 0,
         },
         tabBarIcon: ({ focused, color, size }) => (
           <MaterialIcons
