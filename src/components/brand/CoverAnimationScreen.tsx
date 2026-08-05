@@ -12,6 +12,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { BRAND, BRAND_COLORS } from "../../content/brand";
+import { loadPreferences } from "../../services/userPreferences";
 import BrandWordmark from "./BrandWordmark";
 
 const LOGO_MARK = require("../../../assets/brand/pixbible-logo-mark.png");
@@ -32,6 +33,14 @@ export default function CoverAnimationScreen({ onComplete }: Props) {
   const breathe = useSharedValue(0);
   const tagline = useSharedValue(0);
   const exit = useSharedValue(0);
+
+  useEffect(() => {
+    void loadPreferences().then((prefs) => {
+      if (prefs.reduceMotion) {
+        onComplete();
+      }
+    });
+  }, [onComplete]);
 
   useEffect(() => {
     entrance.value = withTiming(1, {

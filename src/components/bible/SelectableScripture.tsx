@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { highlightHex } from "../../theme/highlightColors";
-import { useReaderColors } from "../../theme/ThemeProvider";
+import { scaledFontSize } from "../../theme/a11y";
+import { useReaderColors, useTheme } from "../../theme/ThemeProvider";
 
 export type ScriptureSegment = {
   id: string;
@@ -77,6 +78,9 @@ export default function SelectableScripture({
   onSelect,
 }: Props) {
   const readerColors = useReaderColors();
+  const { textScale } = useTheme();
+  const bodySize = scaledFontSize(18, textScale);
+  const hintSize = scaledFontSize(12, textScale);
   const segments = useMemo(() => splitScriptureSegments(text), [text]);
   const highlightBySegment = useMemo(() => {
     const map = new Map<string, string>();
@@ -88,7 +92,9 @@ export default function SelectableScripture({
 
   if (!segments.length) {
     return (
-      <Text className="text-[18px] leading-8" style={{ color: readerColors.text }}>
+      <Text
+        style={{ color: readerColors.text, fontSize: bodySize, lineHeight: bodySize * 1.45 }}
+      >
         {text}
       </Text>
     );
@@ -104,7 +110,7 @@ export default function SelectableScripture({
           <Pressable
             key={segment.id}
             accessibilityRole="button"
-            accessibilityLabel="Select scripture to highlight or save"
+            accessibilityLabel={`Select scripture: ${segment.text.slice(0, 80)}`}
             onPress={() => onSelect(segment)}
             className="mb-2 rounded-xl px-1 py-1"
             style={{
@@ -114,20 +120,26 @@ export default function SelectableScripture({
             }}
           >
             <Text
-              className="text-[18px] leading-8"
               style={{
                 color: readerColors.text,
+                fontSize: bodySize,
+                lineHeight: bodySize * 1.45,
                 textDecorationLine: underline || selected ? "underline" : "none",
                 textDecorationColor: underline ?? "rgba(255,255,255,0.55)",
                 textDecorationStyle: selected && !underline ? "dotted" : "solid",
               }}
+              allowFontScaling
             >
               {segment.text}
             </Text>
           </Pressable>
         );
       })}
-      <Text className="mt-2 text-[11px]" style={{ color: readerColors.faint }}>
+      <Text
+        className="mt-2"
+        style={{ color: readerColors.faint, fontSize: hintSize, lineHeight: hintSize * 1.4 }}
+        allowFontScaling
+      >
         Tap a verse or paragraph to highlight, save, note, or copy
       </Text>
     </View>

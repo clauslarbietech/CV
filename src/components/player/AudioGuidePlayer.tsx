@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { formatClock } from "../../data/library";
+import { MIN_TOUCH_TARGET } from "../../theme/a11y";
+import { useTheme } from "../../theme/ThemeProvider";
 
 type Props = {
   title: string;
@@ -48,6 +50,7 @@ export default function AudioGuidePlayer({
   onPrevious,
   onNext,
 }: Props) {
+  const { colors } = useTheme();
   const progress = duration > 0 ? Math.min(1, position / duration) : 0;
   const trackWidth = useRef(1);
 
@@ -80,7 +83,8 @@ export default function AudioGuidePlayer({
           accessibilityRole="button"
           accessibilityLabel={favorite ? "Remove favorite" : "Favorite chapter"}
           onPress={onToggleFavorite}
-          className="mr-2 h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
+          className="mr-2 items-center justify-center rounded-full bg-night-elevated"
+          style={{ minWidth: MIN_TOUCH_TARGET, minHeight: MIN_TOUCH_TARGET }}
         >
           <MaterialIcons
             name={favorite ? "star" : "star-border"}
@@ -92,9 +96,12 @@ export default function AudioGuidePlayer({
           accessibilityRole="button"
           accessibilityLabel="Change playback speed"
           onPress={onCycleSpeed}
-          className="rounded-full bg-night-elevated px-3 py-1.5"
+          className="items-center justify-center rounded-full bg-night-elevated px-4"
+          style={{ minHeight: MIN_TOUCH_TARGET }}
         >
-          <Text className="text-xs font-bold text-night-text">{speed}x</Text>
+          <Text className="text-sm font-bold text-night-text" allowFontScaling>
+            {speed}x
+          </Text>
         </Pressable>
       </View>
 
@@ -128,8 +135,12 @@ export default function AudioGuidePlayer({
         />
       </View>
       <View className="mb-3 flex-row justify-between">
-        <Text className="text-[11px] text-night-soft">{formatClock(position)}</Text>
-        <Text className="text-[11px] text-night-soft">{formatClock(duration)}</Text>
+        <Text className="text-xs text-night-muted" allowFontScaling>
+          {formatClock(position)}
+        </Text>
+        <Text className="text-xs text-night-muted" allowFontScaling>
+          {formatClock(duration)}
+        </Text>
       </View>
 
       <View className="flex-row items-center justify-between gap-3">
@@ -143,9 +154,11 @@ export default function AudioGuidePlayer({
           }`}
         >
           <Text
-            className={`text-sm font-bold ${
-              hasPrevious ? "text-white" : "text-night-soft"
-            }`}
+            className="text-sm font-bold"
+            style={{
+              color: hasPrevious ? "#FFFFFF" : colors.muted,
+            }}
+            allowFontScaling
           >
             ← Back
           </Text>
@@ -174,9 +187,11 @@ export default function AudioGuidePlayer({
           }`}
         >
           <Text
-            className={`text-sm font-bold ${
-              hasNext ? "text-white" : "text-night-soft"
-            }`}
+            className="text-sm font-bold"
+            style={{
+              color: hasNext ? "#FFFFFF" : colors.muted,
+            }}
+            allowFontScaling
           >
             Next →
           </Text>

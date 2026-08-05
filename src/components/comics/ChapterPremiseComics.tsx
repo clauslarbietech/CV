@@ -11,6 +11,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import type { ComicPanel } from "../../data/library";
+import { useTheme } from "../../theme/ThemeProvider";
 import PremiseHeroImage, { premiseHeroHeight } from "./PremiseHeroImage";
 
 type Props = {
@@ -45,6 +46,7 @@ export default function ChapterPremiseComics({
   onSelectSlide,
 }: Props) {
   const { width } = useWindowDimensions();
+  const { reduceMotion } = useTheme();
   const contentWidth = width - 32;
   const clampedActive = Math.min(
     Math.max(0, activeIndex),
@@ -55,7 +57,8 @@ export default function ChapterPremiseComics({
   const motion = useSharedValue(0);
 
   useEffect(() => {
-    if (!panel) {
+    if (!panel || reduceMotion) {
+      motion.value = 1;
       return;
     }
     motion.value = 0;
@@ -73,7 +76,7 @@ export default function ChapterPremiseComics({
       -1,
       false
     );
-  }, [motion, panel?.id]);
+  }, [motion, panel?.id, reduceMotion]);
 
   const frameStyle = useAnimatedStyle(() => ({
     opacity: interpolate(motion.value, [0, 1], [0.96, 1]),

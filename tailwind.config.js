@@ -10,12 +10,12 @@ module.exports = {
     extend: {
       colors: {
         terracotta: {
-          DEFAULT: "#E4572E",
-          dark: "#C2410C",
+          DEFAULT: "var(--app-accent, #E4572E)",
+          dark: "var(--app-accent-soft, #C2410C)",
           soft: "#F3A07A",
         },
         ochre: {
-          DEFAULT: "#D4A017",
+          DEFAULT: "var(--app-highlight, #D4A017)",
           soft: "#F0D78C",
           deep: "#B8860B",
         },

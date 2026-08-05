@@ -10,6 +10,7 @@ import BrowseScreen from "../screens/BrowseScreen";
 import ChapterPlayerScreen from "../screens/ChapterPlayerScreen";
 import FavoritesScreen from "../screens/FavoritesScreen";
 import { useBottomMenuInset } from "../hooks/useBottomMenuInset";
+import { MIN_TOUCH_TARGET } from "../theme/a11y";
 import JourneyDetailScreen from "../screens/JourneyDetailScreen";
 import MoreScreen from "../screens/MoreScreen";
 import MyPlansScreen from "../screens/MyPlansScreen";
@@ -32,7 +33,7 @@ const TAB_ICONS: Record<
   More: "person-outline",
 };
 
-const TAB_CONTENT_HEIGHT = 52;
+const TAB_CONTENT_HEIGHT = 56;
 
 function MainTabs() {
   const bottomInset = useBottomMenuInset();
@@ -45,7 +46,8 @@ function MainTabs() {
         headerShown: false,
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.soft,
-        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
+        tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
+        tabBarItemStyle: { minHeight: MIN_TOUCH_TARGET },
         // We apply bottom inset ourselves (incl. mobile browser chrome on web).
         safeAreaInsets: { bottom: 0 },
         tabBarStyle: {

@@ -2,6 +2,7 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import AccessibleIconButton from "../components/accessibility/AccessibleIconButton";
 import AppTabBar from "../components/navigation/AppTabBar";
 import { BRAND } from "../content/brand";
 import type { RootStackParamList } from "../navigation/types";
@@ -24,13 +25,12 @@ export default function AboutScreen({ navigation }: Props) {
     >
       <View className="flex-1">
         <View className="flex-row items-center px-4 py-3">
-          <Pressable
-            accessibilityRole="button"
+          <AccessibleIconButton
+            icon="arrow-back"
+            label="Go back"
             onPress={() => navigation.goBack()}
-            className="mr-3 h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
-          >
-            <MaterialIcons name="arrow-back" size={20} color="#F2F2F7" />
-          </Pressable>
+            className="mr-1"
+          />
           <Text className="text-xl font-bold text-night-text">
             About PixBible
           </Text>

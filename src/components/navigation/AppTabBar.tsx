@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useBottomMenuInset } from "../../hooks/useBottomMenuInset";
 import type { MainTabParamList, RootStackParamList } from "../../navigation/types";
+import { MIN_TOUCH_TARGET } from "../../theme/a11y";
 import { useTheme } from "../../theme/ThemeProvider";
 
 type TabName = keyof MainTabParamList;
@@ -52,7 +53,8 @@ export default function AppTabBar({ activeTab }: Props) {
             accessibilityRole="tab"
             accessibilityState={{ selected: focused }}
             accessibilityLabel={tab.label}
-            className="flex-1 items-center py-1"
+            className="flex-1 items-center justify-center py-2"
+            style={{ minHeight: MIN_TOUCH_TARGET }}
             onPress={() =>
               navigation.navigate("MainTabs", { screen: tab.name })
             }
@@ -63,8 +65,9 @@ export default function AppTabBar({ activeTab }: Props) {
               color={color}
             />
             <Text
-              className="mt-0.5 text-[11px] font-semibold"
+              className="mt-0.5 text-xs font-semibold"
               style={{ color }}
+              allowFontScaling
             >
               {tab.label}
             </Text>

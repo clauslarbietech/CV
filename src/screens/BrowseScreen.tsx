@@ -147,11 +147,11 @@ export default function BrowseScreen({ navigation }: Props) {
                 style={{ width: bookCard, height: bookCard, opacity: 0.35 }}
                 resizeMode="cover"
               />
-              <View className="absolute inset-0 items-center justify-center px-3">
+              <View className="absolute inset-0 items-center justify-center bg-black/65 px-3">
                 <Text className="text-center text-xl font-bold text-white">
                   Old{"\n"}Testament
                 </Text>
-                <Text className="mt-1 text-center text-[11px] text-white/75">
+                <Text className="mt-1 text-center text-xs font-semibold text-white">
                   Genesis ready
                 </Text>
               </View>
@@ -317,8 +317,10 @@ function SectionHeader({
       {onSeeAll ? (
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel={`See all ${title}`}
           onPress={onSeeAll}
-          className="rounded-full bg-night-elevated px-3 py-1"
+          className="items-center justify-center rounded-full bg-night-elevated px-4 py-2"
+          style={{ minHeight: 44 }}
         >
           <Text className="text-xs font-semibold text-night-muted">See all</Text>
         </Pressable>

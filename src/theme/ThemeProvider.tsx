@@ -13,7 +13,9 @@ import { StatusBar } from "expo-status-bar";
 import {
   loadPreferences,
   savePreferences,
+  type UserPreferences,
 } from "../services/userPreferences";
+import { LARGE_TEXT_SCALE, withHighContrast } from "./a11y";
 import {
   darkPalette,
   paletteFor,
@@ -25,22 +27,37 @@ import { toReaderColors } from "./readerColors";
 type ThemeContextValue = {
   ready: boolean;
   nightMode: boolean;
+  largerText: boolean;
+  reduceMotion: boolean;
+  highContrast: boolean;
+  /** Multiply base font sizes (Settings → Larger text). */
+  textScale: number;
   colors: AppPalette;
   setNightMode: (nightMode: boolean) => void;
+  setLargerText: (largerText: boolean) => void;
+  setReduceMotion: (reduceMotion: boolean) => void;
+  setHighContrast: (highContrast: boolean) => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue>({
   ready: false,
   nightMode: true,
+  largerText: false,
+  reduceMotion: false,
+  highContrast: false,
+  textScale: 1,
   colors: darkPalette,
   setNightMode: () => undefined,
+  setLargerText: () => undefined,
+  setReduceMotion: () => undefined,
+  setHighContrast: () => undefined,
 });
 
 export function useTheme() {
   return useContext(ThemeContext);
 }
 
-/** Reader / inline style palette that follows night mode. */
+/** Reader / inline style palette that follows night mode and contrast prefs. */
 export function useReaderColors() {
   const { colors } = useTheme();
   return useMemo(() => toReaderColors(colors), [colors]);
@@ -50,15 +67,26 @@ type Props = {
   children: ReactNode;
 };
 
+function resolveColors(nightMode: boolean, highContrast: boolean): AppPalette {
+  const base = paletteFor(nightMode);
+  return highContrast ? withHighContrast(base, nightMode) : base;
+}
+
 export function ThemeProvider({ children }: Props) {
   const [ready, setReady] = useState(false);
   const [nightMode, setNightModeState] = useState(true);
+  const [largerText, setLargerTextState] = useState(false);
+  const [reduceMotion, setReduceMotionState] = useState(false);
+  const [highContrast, setHighContrastState] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     void loadPreferences().then((prefs) => {
       if (!cancelled) {
         setNightModeState(prefs.nightMode);
+        setLargerTextState(prefs.largerText);
+        setReduceMotionState(prefs.reduceMotion);
+        setHighContrastState(prefs.highContrast);
         setReady(true);
       }
     });
@@ -67,12 +95,48 @@ export function ThemeProvider({ children }: Props) {
     };
   }, []);
 
-  const colors = useMemo(() => paletteFor(nightMode), [nightMode]);
+  const colors = useMemo(
+    () => resolveColors(nightMode, highContrast),
+    [nightMode, highContrast]
+  );
 
-  const setNightMode = useCallback((next: boolean) => {
-    setNightModeState(next);
-    void savePreferences({ nightMode: next });
+  const textScale = largerText ? LARGE_TEXT_SCALE : 1;
+
+  const persist = useCallback((patch: Partial<UserPreferences>) => {
+    void savePreferences(patch);
   }, []);
+
+  const setNightMode = useCallback(
+    (next: boolean) => {
+      setNightModeState(next);
+      persist({ nightMode: next });
+    },
+    [persist]
+  );
+
+  const setLargerText = useCallback(
+    (next: boolean) => {
+      setLargerTextState(next);
+      persist({ largerText: next });
+    },
+    [persist]
+  );
+
+  const setReduceMotion = useCallback(
+    (next: boolean) => {
+      setReduceMotionState(next);
+      persist({ reduceMotion: next });
+    },
+    [persist]
+  );
+
+  const setHighContrast = useCallback(
+    (next: boolean) => {
+      setHighContrastState(next);
+      persist({ highContrast: next });
+    },
+    [persist]
+  );
 
   const cssVars = useMemo(() => vars(themeCssVars(colors)), [colors]);
 
@@ -88,11 +152,38 @@ export function ThemeProvider({ children }: Props) {
     document.body.style.backgroundColor = colors.bg;
     root.style.backgroundColor = colors.bg;
     root.style.colorScheme = nightMode ? "dark" : "light";
-  }, [colors, nightMode]);
+    root.classList.toggle("reduce-motion", reduceMotion);
+    root.classList.toggle("high-contrast", highContrast);
+    root.classList.toggle("large-text", largerText);
+  }, [colors, nightMode, reduceMotion, highContrast, largerText]);
 
   const value = useMemo(
-    () => ({ ready, nightMode, colors, setNightMode }),
-    [ready, nightMode, colors, setNightMode]
+    () => ({
+      ready,
+      nightMode,
+      largerText,
+      reduceMotion,
+      highContrast,
+      textScale,
+      colors,
+      setNightMode,
+      setLargerText,
+      setReduceMotion,
+      setHighContrast,
+    }),
+    [
+      ready,
+      nightMode,
+      largerText,
+      reduceMotion,
+      highContrast,
+      textScale,
+      colors,
+      setNightMode,
+      setLargerText,
+      setReduceMotion,
+      setHighContrast,
+    ]
   );
 
   return (

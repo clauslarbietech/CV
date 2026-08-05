@@ -10,6 +10,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Speech from "expo-speech";
+import AccessibleIconButton from "../components/accessibility/AccessibleIconButton";
 import ChapterPickerModal from "../components/bible/ChapterPickerModal";
 import VersionPickerModal from "../components/bible/VersionPickerModal";
 import SelectableScripture, {
@@ -300,17 +301,16 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <View className="flex-1">
         <View className="flex-row items-center justify-between px-3 py-2">
-          <Pressable
-            accessibilityRole="button"
+          <AccessibleIconButton
+            icon="keyboard-arrow-down"
+            label="Close chapter"
+            hint="Returns to the previous screen"
             onPress={() => {
               void audio.stop();
               void Speech.stop();
               navigation.goBack();
             }}
-            className="h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
-          >
-            <MaterialIcons name="keyboard-arrow-down" size={24} color="#F2F2F7" />
-          </Pressable>
+          />
 
           <View className="flex-1 flex-row items-center justify-center gap-2 px-1">
             <Pressable
@@ -391,6 +391,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           <Pressable
             accessibilityRole="button"
             accessibilityState={{ selected: playerMode === "guide" }}
+            accessibilityLabel="Guide view"
             onPress={() => setPlayerMode("guide")}
             className={`flex-1 items-center rounded-full py-2 ${
               playerMode === "guide" ? "bg-terracotta/25" : ""
@@ -407,6 +408,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           <Pressable
             accessibilityRole="button"
             accessibilityState={{ selected: playerMode === "bible" }}
+            accessibilityLabel="Bible text view"
             onPress={() => setPlayerMode("bible")}
             className={`flex-1 items-center rounded-full py-2 ${
               playerMode === "bible" ? "bg-terracotta/25" : ""

@@ -29,19 +29,19 @@ export const darkPalette: AppPalette = {
   highlight: "#F0D78C",
 };
 
-/** Day / light — white surfaces, dark ink. */
+/** Day / light — white surfaces, dark ink (WCAG AA body text on bg). */
 export const lightPalette: AppPalette = {
   bg: "#FFFFFF",
   card: "#F7F4EF",
   elevated: "#F1EBE2",
-  border: "#E5E0D8",
+  border: "#C9C4BC",
   text: "#1F2430",
-  muted: "#5C6370",
-  soft: "#8A9099",
-  accent: "#E4572E",
-  accentSoft: "#C2410C",
-  warn: "#B45309",
-  highlight: "#B8860B",
+  muted: "#4B5563",
+  soft: "#4B5563",
+  accent: "#B8380E",
+  accentSoft: "#9A3412",
+  warn: "#92400E",
+  highlight: "#854D0E",
 };
 
 export function paletteFor(nightMode: boolean): AppPalette {
@@ -58,5 +58,9 @@ export function themeCssVars(colors: AppPalette): Record<`--${string}`, string> 
     "--app-text": colors.text,
     "--app-muted": colors.muted,
     "--app-soft": colors.soft,
+    "--app-accent": colors.accent,
+    "--app-accent-soft": colors.accentSoft,
+    "--app-warn": colors.warn,
+    "--app-highlight": colors.highlight,
   };
 }

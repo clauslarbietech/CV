@@ -63,7 +63,7 @@ async function getInstallationId(): Promise<string> {
     await AsyncStorage.setItem(INSTALL_ID_KEY, next);
     return next;
   } catch {
-    return "anime-audio-bible";
+    return "pix-bible";
   }
 }
 
