@@ -65,7 +65,7 @@ export default function MoreScreen({ navigation }: Props) {
           <Pressable
             key={item.id}
             accessibilityRole="button"
-            className="mb-3 flex-row items-center rounded-2xl border border-night-border bg-night-card px-4 py-4"
+            className="mb-3 flex-row items-center rounded-2xl bg-night-card px-4 py-4"
             onPress={() => {
               if (item.route) {
                 navigation.navigate(item.route);

@@ -10,6 +10,7 @@ import BrandWordmark from "../components/brand/BrandWordmark";
 import { JOURNEYS } from "../data/library";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 import { getJourneyProgressSummary } from "../services/journeyProgress";
+import { useTheme } from "../theme/ThemeProvider";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Plans">,
@@ -33,6 +34,7 @@ type JourneyRow = {
 const FILTERS: Filter[] = ["Started", "Finished", "Downloaded", "All"];
 
 export default function MyPlansScreen({ navigation }: Props) {
+  const { colors, nightMode } = useTheme();
   const [filter, setFilter] = useState<Filter>("All");
   const [journeys, setJourneys] = useState<JourneyRow[]>([]);
 
@@ -80,6 +82,12 @@ export default function MyPlansScreen({ navigation }: Props) {
     navigation.navigate("JourneyDetail", { journeyId });
   };
 
+  const chipInactive = nightMode ? colors.elevated : "#F2F2F7";
+  const chipActive = nightMode ? "#FFFFFF" : "#1C1C1E";
+  const chipActiveText = nightMode ? "#1C1C1E" : "#FFFFFF";
+  const badgeFill = nightMode ? colors.elevated : "#F2F2F7";
+  const metaGray = nightMode ? colors.muted : "#6B6B6B";
+
   return (
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -103,17 +111,19 @@ export default function MyPlansScreen({ navigation }: Props) {
                 <Pressable
                   key={item}
                   accessibilityRole="button"
+                  accessibilityState={{ selected: active }}
                   onPress={() => setFilter(item)}
-                  className={`rounded-full px-4 py-2 ${
-                    active
-                      ? "bg-white"
-                      : "border border-night-border bg-transparent"
-                  }`}
+                  className="rounded-full px-4 py-2.5"
+                  style={{
+                    backgroundColor: active ? chipActive : chipInactive,
+                    minHeight: 40,
+                  }}
                 >
                   <Text
-                    className={`text-sm font-semibold ${
-                      active ? "text-night-bg" : "text-night-text"
-                    }`}
+                    className="text-sm font-semibold"
+                    style={{
+                      color: active ? chipActiveText : colors.text,
+                    }}
                   >
                     {item}
                   </Text>
@@ -141,36 +151,61 @@ export default function MyPlansScreen({ navigation }: Props) {
                 >
                   {row.title}
                 </Text>
-                <Text className="text-sm text-night-muted" numberOfLines={1}>
+                <Text
+                  className="text-sm font-medium"
+                  style={{ color: metaGray }}
+                  numberOfLines={1}
+                >
                   {row.subtitle}
                 </Text>
                 <View className="mt-2 flex-row items-center gap-2">
-                  <View className="rounded bg-night-elevated px-2 py-1">
-                    <Text className="text-[11px] font-semibold text-night-muted">
+                  <View
+                    className="rounded px-2 py-1"
+                    style={{ backgroundColor: badgeFill }}
+                  >
+                    <Text
+                      className="text-xs font-semibold"
+                      style={{ color: metaGray }}
+                    >
                       {row.days} days
                     </Text>
                   </View>
                   {row.finished ? (
-                    <View className="rounded bg-emerald-600 px-2 py-1">
-                      <Text className="text-[11px] font-semibold text-white">
+                    <View
+                      className="rounded px-2 py-1"
+                      style={{ backgroundColor: "#D8F5D8" }}
+                    >
+                      <Text
+                        className="text-xs font-semibold"
+                        style={{ color: "#1B7A3A" }}
+                      >
                         Finished
                       </Text>
                     </View>
                   ) : (
-                    <View className="rounded bg-emerald-600/25 px-2 py-1">
-                      <Text className="text-[11px] font-semibold text-emerald-400">
+                    <View
+                      className="rounded px-2 py-1"
+                      style={{ backgroundColor: "#D8F5D8" }}
+                    >
+                      <Text
+                        className="text-xs font-semibold"
+                        style={{ color: "#1B7A3A" }}
+                      >
                         {row.progress}%
                       </Text>
                     </View>
                   )}
                 </View>
               </View>
-              <MaterialIcons name="chevron-right" size={24} color="#AEAEB2" />
+              <MaterialIcons name="chevron-right" size={24} color={metaGray} />
             </Pressable>
           ))}
 
           {visible.length === 0 ? (
-            <Text className="mt-4 text-center text-sm text-night-muted">
+            <Text
+              className="mt-4 text-center text-sm font-medium"
+              style={{ color: metaGray }}
+            >
               No journeys match this filter.
             </Text>
           ) : null}

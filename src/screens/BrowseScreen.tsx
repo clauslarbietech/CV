@@ -45,11 +45,8 @@ export default function BrowseScreen({ navigation }: Props) {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="About The Picture Bible — mission, story, and why it is free"
-              className="mt-3 flex-row items-center rounded-full border px-4 py-2"
-              style={{
-                borderColor: colors.brand,
-                backgroundColor: colors.card,
-              }}
+              className="mt-3 flex-row items-center rounded-full px-4 py-2.5"
+              style={{ backgroundColor: colors.elevated }}
               onPress={() => navigation.navigate("About")}
             >
               <MaterialIcons name="info-outline" size={16} color={colors.brand} />
@@ -338,15 +335,15 @@ function SectionHeader({
     <View className="mb-3 flex-row items-center justify-between">
       <Text className="text-lg font-bold text-night-text">{title}</Text>
       {onSeeAll ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`See all ${title}`}
-          onPress={onSeeAll}
-          className="items-center justify-center rounded-full bg-night-elevated px-4 py-2"
-          style={{ minHeight: 44 }}
-        >
-          <Text className="text-xs font-semibold text-night-muted">See all</Text>
-        </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`See all ${title}`}
+            onPress={onSeeAll}
+            className="items-center justify-center rounded-full bg-night-elevated px-4 py-2"
+            style={{ minHeight: 44 }}
+          >
+            <Text className="text-xs font-semibold text-night-text">See all</Text>
+          </Pressable>
       ) : null}
     </View>
   );
