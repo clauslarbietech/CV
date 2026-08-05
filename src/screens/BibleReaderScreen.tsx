@@ -56,12 +56,10 @@ type Props = CompositeScreenProps<
 >;
 
 /**
- * YouVersion-style Bible reader — scripture first, one comic peek, calm chrome.
+ * YouVersion-style Bible reader — comic premise on top, then scripture.
  */
 export default function BibleReaderScreen({ navigation }: Props) {
   const { width } = useWindowDimensions();
-  const peekWidth = Math.min(width - 32, 360);
-  const peekHeight = Math.round(peekWidth * 0.52);
 
   const [bookId, setBookId] = useState("GEN");
   const [chapter, setChapter] = useState(1);
