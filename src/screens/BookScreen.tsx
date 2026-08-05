@@ -1,14 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
 import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import {
-  GENESIS_ARCS,
-  listGenesisByArc,
-} from "../data/genesisChapters";
+import ChapterPickerModal from "../components/bible/ChapterPickerModal";
+import StorylinePickerModal from "../components/bible/StorylinePickerModal";
+import { getGenesisChapter } from "../data/genesisChapters";
 import { getBook } from "../data/library";
-import { getWebtoonEpisode, listWebtoonEpisodes } from "../data/webtoonEpisodes";
+import {
+  getWebtoonEpisode,
+  listWebtoonEpisodes,
+  type WebtoonEpisode,
+} from "../data/webtoonEpisodes";
 import type { RootStackParamList } from "../navigation/types";
 import {
   getBookProgress,
@@ -21,6 +25,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "Book">;
 export default function BookScreen({ navigation, route }: Props) {
   const book = getBook(route.params.bookId);
   const [progressMap, setProgressMap] = useState<BookProgressMap>({});
+  const [storylineOpen, setStorylineOpen] = useState(false);
+  const [chapterOpen, setChapterOpen] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!book) {
@@ -40,6 +46,33 @@ export default function BookScreen({ navigation, route }: Props) {
     [book]
   );
 
+  const openEpisode = (episode: WebtoonEpisode) => {
+    navigation.navigate("WebtoonEpisode", {
+      bookId: episode.bookId,
+      chapterNumber: episode.chapterNumber,
+      storylineId: episode.storylineId,
+    });
+  };
+
+  const openChapter = (chapterNumber: number) => {
+    if (!book) {
+      return;
+    }
+    const webtoon = getWebtoonEpisode(book.id, chapterNumber);
+    if (webtoon) {
+      navigation.navigate("WebtoonEpisode", {
+        bookId: book.id,
+        chapterNumber,
+        storylineId: webtoon.storylineId,
+      });
+      return;
+    }
+    navigation.navigate("ChapterPlayer", {
+      bookId: book.id,
+      chapterNumber,
+    });
+  };
+
   if (!book) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-night-bg">
@@ -52,6 +85,10 @@ export default function BookScreen({ navigation, route }: Props) {
     (chapter) => progressMap[String(chapter.number)]?.downloaded
   ).length;
   const isGenesis = book.id === "genesis";
+  const featured = illustrated[0];
+  const featuredMeta = featured
+    ? getGenesisChapter(featured.chapterNumber)
+    : undefined;
 
   return (
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
@@ -91,7 +128,7 @@ export default function BookScreen({ navigation, route }: Props) {
             </Pressable>
           </View>
 
-          <View className="mb-6 flex-row items-center">
+          <View className="mb-5 flex-row items-center">
             <Image
               source={book.cover}
               style={{ width: 96, height: 96, borderRadius: 16 }}
@@ -107,133 +144,85 @@ export default function BookScreen({ navigation, route }: Props) {
             </View>
           </View>
 
-          {illustrated.length > 0 ? (
-            <>
-              <Text className="mb-3 text-lg font-bold text-night-text">
-                Illustrated storylines
+          {/* Compact pickers — same pattern as Bible version / chapter chips */}
+          <View className="mb-5 flex-row flex-wrap gap-2">
+            {illustrated.length > 0 ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Choose illustrated storyline"
+                className="flex-row items-center rounded-full bg-night-elevated px-3.5 py-2.5"
+                onPress={() => setStorylineOpen(true)}
+              >
+                <MaterialIcons name="auto-stories" size={18} color="#F0D78C" />
+                <Text className="ml-1.5 text-sm font-bold text-night-text">
+                  Storylines
+                </Text>
+                <MaterialIcons
+                  name="arrow-drop-down"
+                  size={20}
+                  color="#F2F2F7"
+                />
+              </Pressable>
+            ) : null}
+
+            {isGenesis ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Choose Genesis chapter"
+                className="flex-row items-center rounded-full bg-night-elevated px-3.5 py-2.5"
+                onPress={() => setChapterOpen(true)}
+              >
+                <MaterialIcons name="menu-book" size={18} color="#F0D78C" />
+                <Text className="ml-1.5 text-sm font-bold text-night-text">
+                  Chapters 1–{book.chapters.length}
+                </Text>
+                <MaterialIcons
+                  name="arrow-drop-down"
+                  size={20}
+                  color="#F2F2F7"
+                />
+              </Pressable>
+            ) : null}
+          </View>
+
+          {featured ? (
+            <Pressable
+              accessibilityRole="button"
+              className="mb-3 overflow-hidden rounded-2xl border border-night-border bg-night-card px-4 py-4 active:bg-night-elevated"
+              onPress={() => openEpisode(featured)}
+            >
+              <Text className="text-[10px] font-bold uppercase tracking-[2px] text-terracotta">
+                Start here · {featured.episodeLabel}
               </Text>
-              {illustrated.map((episode) => (
-                <Pressable
-                  key={episode.id}
-                  accessibilityRole="button"
-                  className="mb-3 overflow-hidden rounded-2xl border border-night-border bg-night-card px-4 py-3 active:bg-night-elevated"
-                  onPress={() =>
-                    navigation.navigate("WebtoonEpisode", {
-                      bookId: episode.bookId,
-                      chapterNumber: episode.chapterNumber,
-                      storylineId: episode.storylineId,
-                    })
-                  }
-                >
-                  <Text className="text-xs font-bold uppercase tracking-[2px] text-terracotta">
-                    {episode.episodeLabel} · Ch. {episode.chapterNumber}
-                  </Text>
-                  <Text className="mt-1 text-base font-bold text-night-text">
-                    {episode.title}
-                  </Text>
-                  <Text className="mt-1 text-xs text-night-muted" numberOfLines={2}>
-                    {episode.subtitle} · {episode.panels.length} scenes
-                  </Text>
-                </Pressable>
-              ))}
-            </>
+              <Text className="mt-1 text-lg font-bold text-night-text">
+                {featured.title}
+              </Text>
+              <Text className="mt-1 text-xs text-night-muted" numberOfLines={2}>
+                {featuredMeta?.summary ?? featured.subtitle}
+              </Text>
+              <Text className="mt-3 text-sm font-semibold text-ochre-soft">
+                Open storyline →
+              </Text>
+            </Pressable>
           ) : null}
-
-          <Text className="mb-3 mt-4 text-lg font-bold text-night-text">
-            All chapters · Genesis 1–{book.chapters.length}
-          </Text>
-
-          {isGenesis
-            ? GENESIS_ARCS.map((arc) => {
-                const chapters = listGenesisByArc(arc);
-                return (
-                  <View key={arc} className="mb-4">
-                    <Text className="mb-2 text-xs font-bold uppercase tracking-[2px] text-terracotta">
-                      {arc}
-                    </Text>
-                    {chapters.map((meta) => {
-                      const chapterProgress = progressMap[String(meta.number)];
-                      const webtoon = getWebtoonEpisode(book.id, meta.number);
-                      return (
-                        <Pressable
-                          key={meta.number}
-                          accessibilityRole="button"
-                          className="mb-2 flex-row items-center rounded-xl border border-night-border bg-night-card px-3 py-3 active:bg-night-elevated"
-                          onPress={() => {
-                            if (webtoon) {
-                              navigation.navigate("WebtoonEpisode", {
-                                bookId: book.id,
-                                chapterNumber: meta.number,
-                                storylineId: webtoon.storylineId,
-                              });
-                            } else {
-                              navigation.navigate("ChapterPlayer", {
-                                bookId: book.id,
-                                chapterNumber: meta.number,
-                              });
-                            }
-                          }}
-                        >
-                          <View className="mr-3 h-9 w-9 items-center justify-center rounded-full bg-night-elevated">
-                            <Text className="text-xs font-bold text-night-text">
-                              {meta.number}
-                            </Text>
-                          </View>
-                          <View className="flex-1">
-                            <Text className="text-sm font-bold text-night-text">
-                              {meta.title}
-                              {chapterProgress?.completed ? " · Done" : ""}
-                            </Text>
-                            <Text
-                              className="mt-0.5 text-xs text-night-muted"
-                              numberOfLines={1}
-                            >
-                              {webtoon
-                                ? "Illustrated webtoon · listen along"
-                                : `${meta.keyVerseRef} · audio guide`}
-                            </Text>
-                          </View>
-                          <Text className="text-lg text-terracotta">▶</Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
-                );
-              })
-            : book.chapters.map((chapter) => {
-                const thumb = chapter.panels[0]?.image ?? book.cover;
-                const chapterProgress = progressMap[String(chapter.number)];
-                return (
-                  <Pressable
-                    key={chapter.number}
-                    accessibilityRole="button"
-                    className="mb-3 flex-row overflow-hidden rounded-2xl border border-night-border bg-night-card"
-                    onPress={() =>
-                      navigation.navigate("ChapterPlayer", {
-                        bookId: book.id,
-                        chapterNumber: chapter.number,
-                      })
-                    }
-                  >
-                    <Image
-                      source={thumb}
-                      style={{ width: 88, height: 88 }}
-                      resizeMode="cover"
-                    />
-                    <View className="flex-1 justify-center px-3 py-2">
-                      <Text className="text-xs font-semibold text-terracotta">
-                        Chapter {chapter.number}
-                        {chapterProgress?.completed ? " · Done" : ""}
-                      </Text>
-                      <Text className="text-base font-bold text-night-text">
-                        {chapter.title}
-                      </Text>
-                    </View>
-                  </Pressable>
-                );
-              })}
         </View>
       </ScrollView>
+
+      <StorylinePickerModal
+        visible={storylineOpen}
+        episodes={illustrated}
+        onClose={() => setStorylineOpen(false)}
+        onSelect={openEpisode}
+      />
+
+      {isGenesis ? (
+        <ChapterPickerModal
+          visible={chapterOpen}
+          chapterCount={book.chapters.length}
+          onClose={() => setChapterOpen(false)}
+          onSelect={openChapter}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }
