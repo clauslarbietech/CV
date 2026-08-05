@@ -18,9 +18,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Speech from "expo-speech";
 import BibleSearchModal from "../components/bible/BibleSearchModal";
 import ScripturePickerModal from "../components/bible/ScripturePickerModal";
-import VersionPickerModal, {
-  type BibleSource,
-} from "../components/bible/VersionPickerModal";
+import VersionPickerModal from "../components/bible/VersionPickerModal";
 import {
   getCatalogBook,
   passageQueryFor,
@@ -31,9 +29,12 @@ import { getChapter } from "../data/library";
 import {
   getPanelAudioText,
   getWebtoonEpisode,
-  listWebtoonEpisodes,
 } from "../data/webtoonEpisodes";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
+import {
+  loadSelectedBibleSource,
+  saveSelectedBibleSource,
+} from "../services/biblePreferences";
 import {
   ESV_COPYRIGHT_NOTICE,
   ESV_WEBSITE_URL,
@@ -45,6 +46,8 @@ import {
   fetchYouVersionPassage,
   hasYouVersionAppKey,
 } from "../services/youversionService";
+import { readerColors } from "../theme/readerColors";
+import type { BibleSource } from "../types/bibleSource";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Bible">,
@@ -52,13 +55,12 @@ type Props = CompositeScreenProps<
 >;
 
 /**
- * YouVersion-style Bible reader:
- * top location/version + search/speaker, comic panels, scripture text below.
+ * YouVersion-style Bible reader — scripture first, one comic peek, calm chrome.
  */
 export default function BibleReaderScreen({ navigation }: Props) {
   const { width } = useWindowDimensions();
-  const panelWidth = Math.min(width - 32, 380);
-  const panelHeight = Math.round(panelWidth * 1.15);
+  const peekWidth = Math.min(width - 32, 360);
+  const peekHeight = Math.round(peekWidth * 0.52);
 
   const [bookId, setBookId] = useState("genesis");
   const [chapter, setChapter] = useState(1);
@@ -80,35 +82,36 @@ export default function BibleReaderScreen({ navigation }: Props) {
   const [canonical, setCanonical] = useState("");
   const [copyright, setCopyright] = useState(ESV_COPYRIGHT_NOTICE);
   const [copyrightUrl, setCopyrightUrl] = useState(ESV_WEBSITE_URL);
+  const [showFullCopyright, setShowFullCopyright] = useState(false);
   const [reading, setReading] = useState(false);
-  const [activePanel, setActivePanel] = useState(0);
 
   const book = getCatalogBook(bookId);
   const libraryChapter = getChapter(bookId, chapter);
   const genesisMeta = bookId === "genesis" ? getGenesisChapter(chapter) : undefined;
   const webtoon = getWebtoonEpisode(bookId, chapter);
-  const illustratedOptions = listWebtoonEpisodes(bookId).filter(
-    (episode) => episode.chapterNumber === chapter
-  );
 
-  const comicPanels = useMemo(() => {
-    if (webtoon?.panels?.length) {
-      return webtoon.panels.map((panel) => ({
-        id: panel.id,
+  const comicPeek = useMemo(() => {
+    if (webtoon?.panels?.[0]) {
+      const panel = webtoon.panels[0];
+      return {
         image: panel.image,
         caption: panel.bubble?.text,
         audioText: getPanelAudioText(panel),
-      }));
+        count: webtoon.panels.length,
+        storylineId: webtoon.storylineId,
+      };
     }
-    if (libraryChapter?.panels?.length) {
-      return libraryChapter.panels.map((panel) => ({
-        id: panel.id,
+    if (libraryChapter?.panels?.[0]) {
+      const panel = libraryChapter.panels[0];
+      return {
         image: panel.image,
         caption: panel.caption,
         audioText: `${panel.title}. ${panel.caption}`,
-      }));
+        count: libraryChapter.panels.length,
+        storylineId: undefined as string | undefined,
+      };
     }
-    return [];
+    return null;
   }, [libraryChapter?.panels, webtoon]);
 
   const chapterTitle =
@@ -117,10 +120,23 @@ export default function BibleReaderScreen({ navigation }: Props) {
     libraryChapter?.title ??
     `${book?.name ?? "Bible"} ${chapter}`;
 
+  useEffect(() => {
+    let cancelled = false;
+    void loadSelectedBibleSource().then((saved) => {
+      if (!cancelled && saved) {
+        setSource(saved);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const loadPassage = useCallback(async () => {
     const query = passageQueryFor(bookId, chapter);
     setLoading(true);
     setError(null);
+    setShowFullCopyright(false);
     try {
       if (source.kind === "youversion") {
         const usfm = usfmChapterRef(bookId, chapter);
@@ -140,7 +156,6 @@ export default function BibleReaderScreen({ navigation }: Props) {
         setCopyrightUrl(ESV_WEBSITE_URL);
       }
     } catch (err) {
-      // Offline / no key: fall back to key verse + summary for Genesis.
       if (genesisMeta) {
         setCanonical(genesisMeta.passageQuery);
         setVerses(
@@ -170,17 +185,12 @@ export default function BibleReaderScreen({ navigation }: Props) {
   useFocusEffect(
     useCallback(() => {
       void loadPassage();
-      setActivePanel(0);
       return () => {
         void Speech.stop();
         setReading(false);
       };
     }, [loadPassage])
   );
-
-  useEffect(() => {
-    setActivePanel(0);
-  }, [bookId, chapter]);
 
   const stopReading = () => {
     void Speech.stop();
@@ -192,14 +202,12 @@ export default function BibleReaderScreen({ navigation }: Props) {
       stopReading();
       return;
     }
-    const panelLine = comicPanels[activePanel]?.audioText;
     const body = verses.trim();
-    const text = [panelLine, body].filter(Boolean).join("\n\n");
-    if (!text) {
+    if (!body) {
       return;
     }
     setReading(true);
-    Speech.speak(`${canonical || passageQueryFor(bookId, chapter)}. ${text}`, {
+    Speech.speak(`${canonical || passageQueryFor(bookId, chapter)}. ${body}`, {
       rate: 0.88,
       onDone: () => setReading(false),
       onStopped: () => setReading(false),
@@ -219,24 +227,45 @@ export default function BibleReaderScreen({ navigation }: Props) {
     setChapter(next);
   };
 
+  const openFullComic = () => {
+    if (!comicPeek) {
+      return;
+    }
+    navigation.navigate("WebtoonEpisode", {
+      bookId,
+      chapterNumber: chapter,
+      storylineId: comicPeek.storylineId,
+    });
+  };
+
+  const shortCopyright =
+    copyright.length > 90 ? `${copyright.slice(0, 87).trim()}…` : copyright;
+
   return (
-    <SafeAreaView className="flex-1 bg-black" edges={["top", "left", "right"]}>
-      {/* YouVersion-style top chrome */}
+    <SafeAreaView
+      className="flex-1"
+      edges={["top", "left", "right"]}
+      style={{ backgroundColor: readerColors.bg }}
+    >
       <View className="flex-row items-center justify-between px-3 pb-2 pt-1">
         <View className="flex-row items-center gap-2">
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Choose book and chapter"
             onPress={() => setPickerOpen(true)}
-            className="flex-row items-center rounded-full bg-white/12 px-3 py-2"
+            className="flex-row items-center rounded-full px-3 py-2"
+            style={{ backgroundColor: readerColors.elevated }}
           >
-            <Text className="text-sm font-bold text-white">
+            <Text
+              className="text-sm font-bold"
+              style={{ color: readerColors.text }}
+            >
               {book?.name ?? "Bible"} {chapter}
             </Text>
             <MaterialIcons
               name="arrow-drop-down"
               size={20}
-              color="#FFFFFF"
+              color={readerColors.text}
               style={{ marginLeft: 2 }}
             />
           </Pressable>
@@ -244,15 +273,19 @@ export default function BibleReaderScreen({ navigation }: Props) {
             accessibilityRole="button"
             accessibilityLabel={`Bible version ${source.abbreviation}`}
             onPress={() => setVersionOpen(true)}
-            className="flex-row items-center rounded-full bg-white/12 px-3 py-2"
+            className="flex-row items-center rounded-full px-3 py-2"
+            style={{ backgroundColor: readerColors.elevated }}
           >
-            <Text className="text-sm font-bold text-white">
+            <Text
+              className="text-sm font-bold"
+              style={{ color: readerColors.text }}
+            >
               {source.abbreviation}
             </Text>
             <MaterialIcons
               name="arrow-drop-down"
               size={20}
-              color="#FFFFFF"
+              color={readerColors.text}
               style={{ marginLeft: 2 }}
             />
           </Pressable>
@@ -270,146 +303,139 @@ export default function BibleReaderScreen({ navigation }: Props) {
             label="Search scripture"
             onPress={() => setSearchOpen(true)}
           />
-          <IconButton
-            name="more-horiz"
-            label="More options"
-            onPress={() =>
-              navigation.navigate("WebtoonEpisode", {
-                bookId,
-                chapterNumber: chapter,
-                storylineId: webtoon?.storylineId,
-              })
-            }
-          />
         </View>
       </View>
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: 110 }}
+        contentContainerStyle={{ paddingBottom: 108 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Comic / animation area */}
-        <View className="px-4 pb-3 pt-1">
-          {comicPanels.length > 0 ? (
-            <>
-              <Text className="mb-2 text-xs font-bold uppercase tracking-[2px] text-[#E4572E]">
-                Comic scene
-              </Text>
-              <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                decelerationRate="fast"
-                snapToInterval={panelWidth + 12}
-                onMomentumScrollEnd={(event) => {
-                  const index = Math.round(
-                    event.nativeEvent.contentOffset.x / (panelWidth + 12)
-                  );
-                  setActivePanel(
-                    Math.max(0, Math.min(comicPanels.length - 1, index))
-                  );
-                }}
-              >
-                {comicPanels.map((panel) => (
-                  <View
-                    key={panel.id}
-                    style={{ width: panelWidth, marginRight: 12 }}
-                    className="overflow-hidden rounded-2xl bg-[#111111]"
-                  >
-                    <Image
-                      source={panel.image}
-                      style={{ width: panelWidth, height: panelHeight }}
-                      resizeMode="cover"
-                    />
-                    {panel.caption ? (
-                      <View className="absolute bottom-0 left-0 right-0 bg-black/65 px-3 py-2">
-                        <Text className="text-xs leading-4 text-white/90">
-                          {panel.caption}
-                        </Text>
-                      </View>
-                    ) : null}
-                  </View>
-                ))}
-              </ScrollView>
-              <Text className="mt-2 text-center text-xs text-white/45">
-                Scene {activePanel + 1} / {comicPanels.length}
-                {illustratedOptions.length > 1
-                  ? " · swipe for more panels"
-                  : ""}
-              </Text>
-            </>
-          ) : (
-            <View className="mb-2 items-center rounded-2xl bg-white/8 px-4 py-8">
-              <MaterialIcons name="auto-awesome" size={28} color="#F0D78C" />
-              <Text className="mt-2 text-center text-sm font-semibold text-white">
-                Comics coming for this chapter
-              </Text>
-              <Text className="mt-1 text-center text-xs text-white/50">
-                Scripture below still reads like a Bible app — Genesis 1–3 have
-                illustrated scenes today.
-              </Text>
-            </View>
-          )}
-        </View>
-
-        {/* Bible text */}
-        <View className="px-5 pb-6 pt-2">
-          <Text className="mb-3 font-serif text-2xl italic text-white">
+        {/* Scripture first — one calm title + body */}
+        <View className="px-5 pb-4 pt-3">
+          <Text
+            className="mb-1 text-xs font-semibold uppercase tracking-[1.5px]"
+            style={{ color: readerColors.accentSoft }}
+          >
+            {canonical || passageQueryFor(bookId, chapter)}
+          </Text>
+          <Text
+            className="mb-4 text-[22px] font-bold leading-7"
+            style={{ color: readerColors.text }}
+          >
             {chapterTitle}
           </Text>
 
           {loading ? (
-            <View className="items-center py-10">
-              <ActivityIndicator color="#E4572E" />
-              <Text className="mt-3 text-sm text-white/55">
-                Loading {passageQueryFor(bookId, chapter)}…
+            <View className="items-center py-12">
+              <ActivityIndicator color={readerColors.accent} />
+              <Text
+                className="mt-3 text-sm"
+                style={{ color: readerColors.secondary }}
+              >
+                Loading…
               </Text>
             </View>
           ) : (
             <>
               {error ? (
-                <Text className="mb-3 text-xs leading-4 text-[#F3A07A]">
+                <Text
+                  className="mb-3 text-xs leading-4"
+                  style={{ color: readerColors.warn }}
+                >
                   {error}
                 </Text>
               ) : null}
-              <Text className="text-[17px] leading-7 text-white/92">
+              <Text
+                className="text-[18px] leading-8"
+                style={{ color: readerColors.text }}
+              >
                 {verses ||
-                  "Add EXPO_PUBLIC_YOUVERSION_APP_KEY or EXPO_PUBLIC_ESV_API_KEY to load full chapter text."}
+                  "Add EXPO_PUBLIC_YOUVERSION_APP_KEY to load full chapter text from the Bible API."}
               </Text>
             </>
           )}
 
           <Pressable
-            accessibilityRole="link"
-            className="mt-6"
+            accessibilityRole="button"
+            className="mt-5"
             onPress={() => {
-              void Linking.openURL(copyrightUrl);
+              if (copyright.length > 90) {
+                setShowFullCopyright((value) => !value);
+              } else {
+                void Linking.openURL(copyrightUrl);
+              }
             }}
           >
-            <Text className="text-center text-[10px] leading-4 text-white/35">
-              {copyright}
+            <Text
+              className="text-center text-[11px] leading-4"
+              style={{ color: readerColors.faint }}
+            >
+              {showFullCopyright ? copyright : shortCopyright}
             </Text>
           </Pressable>
         </View>
+
+        {/* One compact comic peek — not a full busy strip */}
+        {comicPeek ? (
+          <View className="px-4 pb-8 pt-1">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open full comic storyline"
+              onPress={openFullComic}
+              className="overflow-hidden rounded-2xl"
+              style={{
+                width: peekWidth,
+                alignSelf: "center",
+                backgroundColor: readerColors.surface,
+              }}
+            >
+              <Image
+                source={comicPeek.image}
+                style={{ width: peekWidth, height: peekHeight }}
+                resizeMode="cover"
+              />
+              <View className="flex-row items-center justify-between px-3 py-2.5">
+                <Text
+                  className="text-sm font-semibold"
+                  style={{ color: readerColors.text }}
+                >
+                  Open comic · {comicPeek.count} scenes
+                </Text>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={22}
+                  color={readerColors.accent}
+                />
+              </View>
+            </Pressable>
+          </View>
+        ) : null}
       </ScrollView>
 
-      {/* Floating transport — YouVersion-like */}
       <View className="absolute bottom-3 left-0 right-0 items-center">
-        <View className="flex-row items-center rounded-full bg-[#2C2C2E] px-2 py-2">
+        <View
+          className="flex-row items-center rounded-full px-2 py-2"
+          style={{ backgroundColor: readerColors.elevated }}
+        >
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Previous chapter"
             onPress={() => goChapter(-1)}
             className="h-12 w-12 items-center justify-center rounded-full"
           >
-            <MaterialIcons name="chevron-left" size={28} color="#FFFFFF" />
+            <MaterialIcons
+              name="chevron-left"
+              size={28}
+              color={readerColors.text}
+            />
           </Pressable>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={reading ? "Pause reading" : "Play reading"}
             onPress={readAloud}
-            className="mx-1 h-14 w-14 items-center justify-center rounded-full bg-white/15"
+            className="mx-1 h-14 w-14 items-center justify-center rounded-full"
+            style={{ backgroundColor: readerColors.accent }}
           >
             <MaterialIcons
               name={reading ? "pause" : "play-arrow"}
@@ -423,7 +449,11 @@ export default function BibleReaderScreen({ navigation }: Props) {
             onPress={() => goChapter(1)}
             className="h-12 w-12 items-center justify-center rounded-full"
           >
-            <MaterialIcons name="chevron-right" size={28} color="#FFFFFF" />
+            <MaterialIcons
+              name="chevron-right"
+              size={28}
+              color={readerColors.text}
+            />
           </Pressable>
         </View>
       </View>
@@ -455,6 +485,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
         onSelect={(next) => {
           stopReading();
           setSource(next);
+          void saveSelectedBibleSource(next);
         }}
       />
     </SafeAreaView>
@@ -477,12 +508,13 @@ function IconButton({
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
-      className={`ml-1 h-10 w-10 items-center justify-center rounded-full ${
-        active ? "bg-[#E4572E]" : "bg-transparent"
-      }`}
+      className="ml-1 h-10 w-10 items-center justify-center rounded-full"
+      style={{
+        backgroundColor: active ? readerColors.accent : "transparent",
+      }}
       hitSlop={6}
     >
-      <MaterialIcons name={name} size={22} color="#FFFFFF" />
+      <MaterialIcons name={name} size={22} color={readerColors.text} />
     </Pressable>
   );
 }

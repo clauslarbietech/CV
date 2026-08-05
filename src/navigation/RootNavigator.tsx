@@ -35,7 +35,7 @@ function MainTabs() {
         tabBarInactiveTintColor: "#8E8E93",
         tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
         tabBarStyle: {
-          backgroundColor: "#111111",
+          backgroundColor: "#121212",
           borderTopColor: "#2C2C2E",
           height: 62,
           paddingTop: 6,
@@ -69,7 +69,7 @@ export default function RootNavigator() {
         screenOptions={{
           headerShown: false,
           animation: "slide_from_right",
-          contentStyle: { backgroundColor: "#0B0B0C" },
+          contentStyle: { backgroundColor: "#121212" },
         }}
       >
         <Stack.Screen name="MainTabs" component={MainTabs} />

@@ -6,12 +6,22 @@ import {
   type BibleVersion,
 } from "@youversion/platform-core";
 
-const VERSIONS_CACHE_KEY = "yv:versions:en";
+const VERSIONS_CACHE_KEY = "yv:versions:en:v2";
+const VERSIONS_CACHE_AT_KEY = "yv:versions:en:v2:at";
 const PASSAGE_CACHE_PREFIX = "yv:passage:";
 const INSTALL_ID_KEY = "yv:installation-id";
+const CACHE_TTL_MS = 1000 * 60 * 30; // 30 minutes
 
 export const YOUVERSION_PLATFORM_URL = "https://platform.youversion.com/";
 export const DEFAULT_YOUVERSION_VERSION_ID = DEFAULT_LICENSE_FREE_BIBLE_VERSION;
+
+/** Common English version IDs from YouVersion quick reference. */
+export const POPULAR_YOUVERSION_IDS = {
+  ASV: 12,
+  NIV: 111,
+  WEBUS: 206,
+  BSB: 3034,
+} as const;
 
 export type YouVersionPassage = {
   id: string;
@@ -67,29 +77,75 @@ function passageCacheKey(versionId: number, usfm: string): string {
   return `${PASSAGE_CACHE_PREFIX}${versionId}:${usfm.trim().toUpperCase()}`;
 }
 
+async function readVersionsCache(): Promise<BibleVersion[] | null> {
+  try {
+    const [raw, atRaw] = await Promise.all([
+      AsyncStorage.getItem(VERSIONS_CACHE_KEY),
+      AsyncStorage.getItem(VERSIONS_CACHE_AT_KEY),
+    ]);
+    if (!raw || !atRaw) {
+      return null;
+    }
+    const age = Date.now() - Number(atRaw);
+    if (!Number.isFinite(age) || age > CACHE_TTL_MS) {
+      return null;
+    }
+    return JSON.parse(raw) as BibleVersion[];
+  } catch {
+    return null;
+  }
+}
+
+async function writeVersionsCache(versions: BibleVersion[]): Promise<void> {
+  try {
+    await AsyncStorage.multiSet([
+      [VERSIONS_CACHE_KEY, JSON.stringify(versions)],
+      [VERSIONS_CACHE_AT_KEY, String(Date.now())],
+    ]);
+  } catch {
+    // ignore
+  }
+}
+
 /**
- * Lists English Bible versions available to this App Key
- * (license acceptances on the Platform portal control what's returned).
+ * Lists English Bible versions available to this App Key.
+ * Paginates until exhausted. License acceptances on the Platform portal
+ * control whether NIV and other licensed texts appear.
  */
-export async function listEnglishBibleVersions(): Promise<BibleVersion[]> {
-  const cached = await AsyncStorage.getItem(VERSIONS_CACHE_KEY);
-  if (cached) {
-    try {
-      return JSON.parse(cached) as BibleVersion[];
-    } catch {
-      // refresh below
+export async function listEnglishBibleVersions(options?: {
+  forceRefresh?: boolean;
+}): Promise<BibleVersion[]> {
+  if (!options?.forceRefresh) {
+    const cached = await readVersionsCache();
+    if (cached?.length) {
+      return cached;
     }
   }
 
   const client = await getBibleClient();
-  const collection = await client.getVersions("en*");
-  const versions = collection.data ?? [];
-  try {
-    await AsyncStorage.setItem(VERSIONS_CACHE_KEY, JSON.stringify(versions));
-  } catch {
-    // ignore cache write failures
+  const versions: BibleVersion[] = [];
+  let pageToken: string | undefined;
+
+  do {
+    const collection = await client.getVersions("en*", undefined, {
+      page_size: 100,
+      page_token: pageToken,
+    });
+    versions.push(...(collection.data ?? []));
+    pageToken = collection.next_page_token || undefined;
+  } while (pageToken);
+
+  // De-dupe by id and sort alphabetically for the picker.
+  const byId = new Map<number, BibleVersion>();
+  for (const version of versions) {
+    byId.set(version.id, version);
   }
-  return versions;
+  const unique = [...byId.values()].sort((a, b) =>
+    (a.localized_title || a.title).localeCompare(b.localized_title || b.title)
+  );
+
+  await writeVersionsCache(unique);
+  return unique;
 }
 
 export async function getBibleVersion(
@@ -136,10 +192,12 @@ export async function fetchYouVersionPassage(
   const result: YouVersionPassage = {
     id: passage.id,
     reference: passage.reference || ref,
-    content: stripMarkup(passage.content),
+    content: formatReaderText(stripMarkup(passage.content)),
     versionId,
     abbreviation:
-      version?.localized_abbreviation || version?.abbreviation || String(versionId),
+      version?.localized_abbreviation ||
+      version?.abbreviation ||
+      String(versionId),
     copyright:
       version?.copyright?.trim() ||
       `${version?.title ?? "Bible text"} via YouVersion Platform.`,
@@ -163,6 +221,18 @@ function stripMarkup(input: string): string {
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+/**
+ * Light formatting so dense chapter text is easier to scan:
+ * put each verse number on a clearer line break when present.
+ */
+function formatReaderText(input: string): string {
+  return input
+    .replace(/\s*\[(\d+)\]\s*/g, "\n\n$1 ")
+    .replace(/\s+(\d+)\s+(?=[A-Z“"])/g, "\n\n$1 ")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
