@@ -45,9 +45,7 @@ jobs:
           EXPO_PUBLIC_YOUVERSION_APP_KEY: ${{ secrets.EXPO_PUBLIC_YOUVERSION_APP_KEY }}
 
       - name: Prepare Pages bundle
-        run: |
-          touch dist/.nojekyll
-          cp dist/index.html dist/404.html
+        run: bash scripts/prepare-pages-dist.sh
 
       - name: Upload web artifact
         uses: actions/upload-artifact@v4
