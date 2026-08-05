@@ -323,26 +323,31 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
       </ScrollView>
 
       <View className="items-center border-t border-white/10 bg-black py-2">
-        <View className="mb-1 flex-row items-center rounded-full bg-white/10 px-4 py-2">
-          {playingPanelId ? (
-            <MaterialIcons
-              name="volume-up"
-              size={14}
-              color="#F0D78C"
-              style={{ marginRight: 6 }}
-            />
-          ) : null}
-          <Text className="text-xs font-semibold text-white/85">
-            Scene {activeIndex + 1} / {episode.panels.length}
-            {playingPanelId ? " · Reading aloud…" : ""}
-          </Text>
+        <View className="mb-1 w-full max-w-sm flex-row items-center justify-center gap-2 px-4">
+          <View className="flex-row items-center rounded-full bg-white/10 px-4 py-2">
+            {playingPanelId ? (
+              <MaterialIcons
+                name="volume-up"
+                size={14}
+                color="#F0D78C"
+                style={{ marginRight: 6 }}
+              />
+            ) : null}
+            <Text className="text-xs font-semibold text-white/85">
+              Scene {activeIndex + 1} / {episode.panels.length}
+              {playingPanelId ? " · Reading aloud…" : ""}
+            </Text>
+          </View>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Highlight this story"
-            className="ml-3"
+            accessibilityLabel="Highlight or save a note on this scene"
+            className="flex-row items-center rounded-full bg-terracotta px-3 py-2"
             onPress={() => setHighlightOpen(true)}
           >
-            <MaterialIcons name="border-color" size={16} color="#F0D78C" />
+            <MaterialIcons name="auto-awesome" size={16} color="#FFFFFF" />
+            <Text className="ml-1.5 text-xs font-bold text-white">
+              Highlight
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -387,6 +392,14 @@ function WebtoonFrame({
 }) {
   const focus = useSharedValue(active ? 1 : 0.94);
   const kenBurns = useSharedValue(0);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    // Collapse when leaving the scene so the next panel starts compact.
+    if (!active) {
+      setExpanded(false);
+    }
+  }, [active]);
 
   useEffect(() => {
     focus.value = withTiming(active ? 1 : 0.94, { duration: 280 });
@@ -460,6 +473,13 @@ function WebtoonFrame({
   const iconOnLight =
     panel.bubble?.tone === "dialogue" || panel.bubble?.tone === "scripture";
 
+  const previewText = panel.bubble?.text?.trim() ?? "";
+  const fullScripture = panel.scriptureText?.trim() ?? "";
+  const hasMoreText =
+    Boolean(fullScripture) &&
+    fullScripture.replace(/\s+/g, " ") !== previewText.replace(/\s+/g, " ") &&
+    fullScripture.length > previewText.length + 8;
+
   return (
     <Animated.View
       entering={FadeInUp.delay(index * 80).duration(450)}
@@ -492,6 +512,7 @@ function WebtoonFrame({
                 }`}
               >
                 {label}
+                {panel.scriptureRef ? ` · ${panel.scriptureRef}` : ""}
               </Text>
               <Pressable
                 accessibilityRole="button"
@@ -511,16 +532,52 @@ function WebtoonFrame({
                 />
               </Pressable>
             </View>
-            <Text className={`text-sm leading-5 ${textClass}`}>
-              {panel.bubble.text}
+
+            <Text
+              className={`text-sm leading-5 ${textClass}`}
+              numberOfLines={expanded ? undefined : 3}
+            >
+              {expanded && fullScripture ? fullScripture : previewText}
             </Text>
-            {panel.scriptureRef ? (
+
+            {hasMoreText || previewText.length > 90 ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={
+                  expanded ? "Show less text" : "Expand to read more"
+                }
+                accessibilityState={{ expanded }}
+                onPress={() => setExpanded((value) => !value)}
+                className="mt-2 items-center pt-1"
+                hitSlop={8}
+              >
+                <View
+                  className={`mb-1 h-1 w-8 rounded-full ${
+                    iconOnLight ? "bg-parchment-ink/25" : "bg-white/30"
+                  }`}
+                />
+                <MaterialIcons
+                  name={expanded ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+                  size={26}
+                  color={iconOnLight ? "#E4572E" : "#F0D78C"}
+                />
+                <Text
+                  className={`text-[10px] font-semibold ${
+                    iconOnLight ? "text-terracotta" : "text-ochre-soft"
+                  }`}
+                >
+                  {expanded ? "Show less" : "Tap to read more"}
+                </Text>
+              </Pressable>
+            ) : null}
+
+            {!expanded && panel.scriptureRef ? (
               <Text
-                className={`mt-2 text-[10px] ${
+                className={`mt-1 text-[10px] ${
                   iconOnLight ? "text-parchment-ink/55" : "text-white/55"
                 }`}
               >
-                Tap the speaker to hear {panel.scriptureRef} + speech
+                Tap the speaker to hear {panel.scriptureRef}
               </Text>
             ) : null}
           </View>
