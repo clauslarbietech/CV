@@ -1,10 +1,11 @@
 /**
  * Genesis storyline catalog for Anime Audio Bible webtoon browsing.
- * Entries with hasArt map to illustrated storylines; others are placeholders.
+ * Every chapter has scripture-matched story slides (hasArt: true).
  */
 
 import type { GenesisArc } from "./genesisChapters";
-import { getGenesisChapter } from "./genesisChapters";
+import { GENESIS_CHAPTERS, getGenesisChapter } from "./genesisChapters";
+import { getGenesisChapterSlides } from "./genesisChapterSlides";
 
 export type StorylineCatalogEntry = {
   id: string;
@@ -123,223 +124,35 @@ const GENESIS_3_FALL: StorylineCatalogEntry = {
   panelCount: 5,
 };
 
-/** Key illustrated arcs across Genesis 4–45 (Ken-Burns webtoon packs). */
-const GENESIS_ARC_STORYLINES: StorylineCatalogEntry[] = [
-  {
-    id: "genesis-4-cain-abel",
-    bookId: "genesis",
-    chapterNumber: 4,
-    storylineId: "cain-abel",
-    title: "Cain and Abel",
-    subtitle: "Two brothers bring offerings — and jealousy rises",
-    arc: "Fall",
-    hasArt: true,
-    panelCount: 2,
-  },
-  {
-    id: "genesis-6-noah-ark",
-    bookId: "genesis",
-    chapterNumber: 6,
-    storylineId: "noah-ark",
-    title: "Noah Builds the Ark",
-    subtitle: "When the earth was filled with violence, God made a way",
-    arc: "Flood",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-7-the-flood",
-    bookId: "genesis",
-    chapterNumber: 7,
-    storylineId: "the-flood",
-    title: "The Flood Waters Rise",
-    subtitle: "Rain falls — and the ark carries life through the storm",
-    arc: "Flood",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-9-rainbow",
-    bookId: "genesis",
-    chapterNumber: 9,
-    storylineId: "rainbow-covenant",
-    title: "The Rainbow Covenant",
-    subtitle: "God sets a sign in the clouds — a promise of mercy",
-    arc: "Flood",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-11-babel",
-    bookId: "genesis",
-    chapterNumber: 11,
-    storylineId: "babel",
-    title: "The Tower of Babel",
-    subtitle: "One language, one city — then scattered across the earth",
-    arc: "Nations",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-12-call",
-    bookId: "genesis",
-    chapterNumber: 12,
-    storylineId: "call-of-abraham",
-    title: "The Call of Abraham",
-    subtitle: "Go to the land I will show you — and I will bless you",
-    arc: "Abraham",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-15-covenant",
-    bookId: "genesis",
-    chapterNumber: 15,
-    storylineId: "covenant-stars",
-    title: "Stars Without Number",
-    subtitle: "Abram believes the Lord — and it is counted as righteousness",
-    arc: "Abraham",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-21-isaac-born",
-    bookId: "genesis",
-    chapterNumber: 21,
-    storylineId: "isaac-born",
-    title: "Isaac Is Born",
-    subtitle: "The promised son arrives — laughter becomes joy",
-    arc: "Isaac",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-22-moriah",
-    bookId: "genesis",
-    chapterNumber: 22,
-    storylineId: "moriah",
-    title: "On Mount Moriah",
-    subtitle: "Abraham and Isaac climb — and God provides",
-    arc: "Isaac",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-25-birthright",
-    bookId: "genesis",
-    chapterNumber: 25,
-    storylineId: "birthright",
-    title: "Stew for a Birthright",
-    subtitle: "Esau and Jacob — hunger, haste, and a costly trade",
-    arc: "Jacob",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-28-bethel",
-    bookId: "genesis",
-    chapterNumber: 28,
-    storylineId: "bethel",
-    title: "Jacob’s Dream at Bethel",
-    subtitle: "A ladder between earth and heaven — and a promise repeated",
-    arc: "Jacob",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-37-coat",
-    bookId: "genesis",
-    chapterNumber: 37,
-    storylineId: "joseph-coat",
-    title: "The Coat and the Caravan",
-    subtitle: "Favored son, bitter brothers — and a road toward Egypt",
-    arc: "Joseph",
-    hasArt: true,
-    panelCount: 2,
-  },
-  {
-    id: "genesis-38-judah-tamar",
-    bookId: "genesis",
-    chapterNumber: 38,
-    storylineId: "judah-tamar",
-    title: "Judah and Tamar",
-    subtitle: "A broken family line — and a surprising turn toward mercy",
-    arc: "Joseph",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-39-potiphar",
-    bookId: "genesis",
-    chapterNumber: 39,
-    storylineId: "potiphar",
-    title: "In Potiphar’s House",
-    subtitle: "Joseph serves in Egypt — and the Lord is with him",
-    arc: "Joseph",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-41-dreams",
-    bookId: "genesis",
-    chapterNumber: 41,
-    storylineId: "pharaoh-dreams",
-    title: "Pharaoh’s Dreams",
-    subtitle: "Grain and cattle — Joseph speaks wisdom before the throne",
-    arc: "Joseph",
-    hasArt: true,
-    panelCount: 1,
-  },
-  {
-    id: "genesis-45-reunion",
-    bookId: "genesis",
-    chapterNumber: 45,
-    storylineId: "reunion",
-    title: "Joseph Revealed",
-    subtitle: "Tears, forgiveness, and a family made whole again",
-    arc: "Joseph",
-    hasArt: true,
-    panelCount: 1,
-  },
-];
-
-const ILLUSTRATED_CHAPTERS = new Set(
-  [
-    ...GENESIS_1_DAY_STORYLINES,
-    GENESIS_2_EVE,
-    GENESIS_3_FALL,
-    ...GENESIS_ARC_STORYLINES,
-  ].map((entry) => entry.chapterNumber)
-);
-
-function placeholderForChapter(n: number): StorylineCatalogEntry {
+function slideStorylineForChapter(n: number): StorylineCatalogEntry {
   const meta = getGenesisChapter(n);
   if (!meta) {
     throw new Error(`Missing Genesis chapter metadata for chapter ${n}`);
   }
+  const slides = getGenesisChapterSlides(n);
   return {
-    id: `genesis-${n}-ch-${n}`,
+    id: `genesis-${n}-slides`,
     bookId: "genesis",
     chapterNumber: n,
     storylineId: `ch-${n}`,
     title: meta.title,
     subtitle: meta.summary,
     arc: meta.arc,
-    hasArt: false,
-    panelCount: 0,
+    hasArt: slides.length > 0,
+    panelCount: slides.length,
   };
 }
 
-/** Full-book storyline catalog: illustrated chunks + chapter placeholders. */
+const SPECIAL_CHAPTERS = new Set([1, 2, 3]);
+
+/** Full-book storyline catalog: multi-day packs for 1–3 + slides for every chapter. */
 export const GENESIS_STORYLINES: StorylineCatalogEntry[] = [
   ...GENESIS_1_DAY_STORYLINES,
   GENESIS_2_EVE,
   GENESIS_3_FALL,
-  ...GENESIS_ARC_STORYLINES,
-  // Remaining chapters 4–50 without dedicated art packs
-  ...Array.from({ length: 47 }, (_, i) => i + 4)
-    .filter((n) => !ILLUSTRATED_CHAPTERS.has(n))
-    .map(placeholderForChapter),
+  ...GENESIS_CHAPTERS.filter((meta) => !SPECIAL_CHAPTERS.has(meta.number)).map(
+    (meta) => slideStorylineForChapter(meta.number)
+  ),
 ].sort((a, b) => {
   if (a.chapterNumber !== b.chapterNumber) {
     return a.chapterNumber - b.chapterNumber;

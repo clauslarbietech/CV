@@ -35,7 +35,7 @@ export function uniqueComicPanels(panels: ComicPanel[]): ComicPanel[] {
 }
 
 /**
- * One composition: full uncropped premise image + narration.
+ * One composition: full uncropped premise image + scripture-matched narration.
  */
 export default function ChapterPremiseComics({
   panels,
@@ -43,12 +43,11 @@ export default function ChapterPremiseComics({
   activeNarration,
 }: Props) {
   const { width } = useWindowDimensions();
-  const unique = uniqueComicPanels(panels);
   const clampedActive = Math.min(
     Math.max(0, activeIndex),
-    Math.max(0, unique.length - 1)
+    Math.max(0, panels.length - 1)
   );
-  const panel = unique[clampedActive] ?? unique[0];
+  const panel = panels[clampedActive] ?? panels[0];
   const height = panel ? premiseHeroHeight(width, panel.image) : 0;
   const motion = useSharedValue(0);
 
@@ -94,7 +93,22 @@ export default function ChapterPremiseComics({
         </View>
       </Animated.View>
       <View className="mx-5 mt-3">
-        <Text className="text-base leading-6 text-night-text">
+        {panel.scriptureRef ? (
+          <Text className="mb-1 text-[11px] font-bold uppercase tracking-[1.5px] text-terracotta">
+            {panel.scriptureRef}
+            {panels.length > 1
+              ? ` · Slide ${clampedActive + 1}/${panels.length}`
+              : ""}
+          </Text>
+        ) : panels.length > 1 ? (
+          <Text className="mb-1 text-[11px] font-bold uppercase tracking-[1.5px] text-terracotta">
+            Slide {clampedActive + 1}/{panels.length}
+          </Text>
+        ) : null}
+        <Text className="mb-1 text-base font-bold text-night-text">
+          {panel.title}
+        </Text>
+        <Text className="text-base leading-6 text-night-muted">
           {activeNarration?.trim() || panel.caption}
         </Text>
       </View>

@@ -1,3 +1,8 @@
+import {
+  getGenesisChapterSlides,
+} from "./genesisChapterSlides";
+import { getGenesisChapter } from "./genesisChapters";
+
 export type WebtoonBubble = {
   text: string;
   tone: "narration" | "dialogue" | "whisper" | "scripture";
@@ -791,16 +796,77 @@ export function getWebtoonEpisode(
       episode.bookId === bookId && episode.chapterNumber === chapterNumber
   );
   if (storylineId) {
-    return matches.find((episode) => episode.storylineId === storylineId);
+    const found = matches.find((episode) => episode.storylineId === storylineId);
+    if (found) {
+      return found;
+    }
   }
-  return matches[0];
+  if (matches[0]) {
+    return matches[0];
+  }
+  // Every Genesis chapter has scripture-matched slides — use them as a storyline.
+  if (bookId === "genesis") {
+    return slidesAsWebtoonEpisode(chapterNumber);
+  }
+  return undefined;
+}
+
+function slidesAsWebtoonEpisode(
+  chapterNumber: number
+): WebtoonEpisode | undefined {
+  const meta = getGenesisChapter(chapterNumber);
+  const slides = getGenesisChapterSlides(chapterNumber);
+  if (!meta || slides.length === 0) {
+    return undefined;
+  }
+  return {
+    id: `genesis-${chapterNumber}-slides`,
+    bookId: "genesis",
+    chapterNumber,
+    storylineId: `ch-${chapterNumber}`,
+    seriesTitle: "Genesis",
+    episodeLabel: `Ch. ${chapterNumber}`,
+    title: meta.title,
+    subtitle: meta.summary,
+    panels: slides.map((slide, index) => ({
+      id: `g${chapterNumber}-slide-${index + 1}`,
+      image: slide.image,
+      scriptureRef: slide.scriptureRef,
+      scriptureText: slide.scriptureText,
+      bubble: {
+        tone: "narration" as const,
+        text: slide.narration,
+      },
+    })),
+  };
 }
 
 export function listWebtoonEpisodes(bookId?: string): WebtoonEpisode[] {
-  if (!bookId) {
-    return WEBTOON_EPISODES;
+  const base = bookId
+    ? WEBTOON_EPISODES.filter((episode) => episode.bookId === bookId)
+    : WEBTOON_EPISODES;
+  if (bookId && bookId !== "genesis") {
+    return base;
   }
-  return WEBTOON_EPISODES.filter((episode) => episode.bookId === bookId);
+  const covered = new Set(
+    base.filter((episode) => episode.bookId === "genesis").map((episode) => episode.chapterNumber)
+  );
+  const fromSlides: WebtoonEpisode[] = [];
+  for (let chapter = 1; chapter <= 50; chapter += 1) {
+    if (covered.has(chapter)) {
+      continue;
+    }
+    const episode = slidesAsWebtoonEpisode(chapter);
+    if (episode) {
+      fromSlides.push(episode);
+    }
+  }
+  return [...base, ...fromSlides].sort((a, b) => {
+    if (a.chapterNumber !== b.chapterNumber) {
+      return a.chapterNumber - b.chapterNumber;
+    }
+    return a.id.localeCompare(b.id);
+  });
 }
 
 /** Text spoken by TTS for a panel — all on-screen text for non-readers. */

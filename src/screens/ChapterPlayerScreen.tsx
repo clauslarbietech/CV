@@ -17,9 +17,7 @@ import SelectableScripture, {
   type ScriptureSegment,
 } from "../components/bible/SelectableScripture";
 import SelectionActionSheet from "../components/bible/SelectionActionSheet";
-import ChapterPremiseComics, {
-  uniqueComicPanels,
-} from "../components/comics/ChapterPremiseComics";
+import ChapterPremiseComics from "../components/comics/ChapterPremiseComics";
 import HighlightModal from "../components/favorites/HighlightModal";
 import AppTabBar from "../components/navigation/AppTabBar";
 import AudioGuidePlayer from "../components/player/AudioGuidePlayer";
@@ -81,20 +79,23 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
   });
 
   const displayPanels = useMemo(
-    () => (chapter ? uniqueComicPanels(chapter.panels) : []),
+    () => (chapter ? chapter.panels : []),
     [chapter]
   );
 
+  // Guide script: welcome + summary, then (narration + scripture) per slide, then outro.
+  // Keep the visible slide aligned to the scripture beat being spoken.
   const activePanelIndex = useMemo(() => {
-    if (!chapter || audio.duration <= 0 || displayPanels.length === 0) {
+    if (!displayPanels.length) {
       return 0;
     }
-    const segment = audio.duration / Math.max(displayPanels.length, 1);
-    return Math.min(
-      displayPanels.length - 1,
-      Math.floor(audio.position / segment)
-    );
-  }, [audio.duration, audio.position, chapter, displayPanels.length]);
+    const line = audio.activeLineIndex;
+    if (line <= 1) {
+      return 0;
+    }
+    const slideIndex = Math.floor((line - 2) / 2);
+    return Math.min(displayPanels.length - 1, Math.max(0, slideIndex));
+  }, [audio.activeLineIndex, displayPanels.length]);
 
   const activeNarration = useMemo(() => {
     if (!chapter?.guide.script.length) {
