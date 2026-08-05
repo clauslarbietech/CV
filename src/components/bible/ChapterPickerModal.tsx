@@ -20,6 +20,8 @@ type Props = {
   visible: boolean;
   chapterCount: number;
   selectedChapter?: number;
+  /** When set, open directly on this arc’s chapter grid. */
+  initialArc?: GenesisArc | null;
   onClose: () => void;
   onSelect: (chapterNumber: number) => void;
 };
@@ -34,6 +36,7 @@ export default function ChapterPickerModal({
   visible,
   chapterCount,
   selectedChapter,
+  initialArc = null,
   onClose,
   onSelect,
 }: Props) {
@@ -51,9 +54,14 @@ export default function ChapterPickerModal({
     if (!visible) {
       return;
     }
-    setStep("arc");
-    setPendingArc(null);
-  }, [visible]);
+    if (initialArc) {
+      setPendingArc(initialArc);
+      setStep("chapter");
+    } else {
+      setStep("arc");
+      setPendingArc(null);
+    }
+  }, [initialArc, visible]);
 
   const chapters: GenesisChapterMeta[] = useMemo(() => {
     if (!pendingArc) {

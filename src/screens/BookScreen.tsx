@@ -1,11 +1,11 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
-  Alert,
   Image,
   Pressable,
   ScrollView,
   Text,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -15,7 +15,8 @@ import BibleSearchModal from "../components/bible/BibleSearchModal";
 import ChapterPickerModal from "../components/bible/ChapterPickerModal";
 import StorylinePickerModal from "../components/bible/StorylinePickerModal";
 import { CATALOG_BOOKS, libraryBookIdFor } from "../data/bibleCatalog";
-import { getGenesisChapter } from "../data/genesisChapters";
+import { listGenesisArcCards } from "../data/genesisArcs";
+import type { GenesisArc } from "../data/genesisChapters";
 import { getBook } from "../data/library";
 import {
   getWebtoonEpisode,
@@ -25,20 +26,23 @@ import {
 import type { RootStackParamList } from "../navigation/types";
 import {
   getBookProgress,
-  markPlanDownloaded,
   type BookProgressMap,
 } from "../services/listeningProgress";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Book">;
 
 export default function BookScreen({ navigation, route }: Props) {
+  const { width } = useWindowDimensions();
   const book = getBook(route.params.bookId);
   const [progressMap, setProgressMap] = useState<BookProgressMap>({});
   const [storylineOpen, setStorylineOpen] = useState(false);
   const [chapterOpen, setChapterOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [pickerArc, setPickerArc] = useState<GenesisArc | null>(null);
   const [selectedChapter, setSelectedChapter] = useState(1);
-  const chapterStripRef = useRef<ScrollView>(null);
+
+  const cardWidth = Math.min(width - 32, 520);
+  const cardHeight = Math.round(cardWidth * 0.56);
 
   const refresh = useCallback(async () => {
     if (!book) {
@@ -57,6 +61,8 @@ export default function BookScreen({ navigation, route }: Props) {
     () => (book ? listWebtoonEpisodes(book.id) : []),
     [book]
   );
+
+  const arcCards = useMemo(() => listGenesisArcCards(), []);
 
   const openEpisode = (episode: WebtoonEpisode) => {
     navigation.navigate("WebtoonEpisode", {
@@ -83,7 +89,20 @@ export default function BookScreen({ navigation, route }: Props) {
     navigation.navigate("ChapterPlayer", {
       bookId: book.id,
       chapterNumber,
+      autoPlay: true,
     });
+  };
+
+  const openArc = (arc: GenesisArc, startChapter: number) => {
+    // Jump straight into the arc’s first chapter (play), or open filtered picker.
+    setPickerArc(arc);
+    setSelectedChapter(startChapter);
+    setChapterOpen(true);
+  };
+
+  const playArc = (startChapter: number) => {
+    setPickerArc(null);
+    openChapter(startChapter);
   };
 
   if (!book) {
@@ -94,23 +113,13 @@ export default function BookScreen({ navigation, route }: Props) {
     );
   }
 
-  const downloadedCount = book.chapters.filter(
-    (chapter) => progressMap[String(chapter.number)]?.downloaded
-  ).length;
   const isGenesis = book.id === "genesis";
-  const featured =
-    illustrated.find((item) => item.chapterNumber === selectedChapter) ??
-    illustrated[0];
-  const featuredMeta = featured
-    ? getGenesisChapter(featured.chapterNumber)
-    : getGenesisChapter(selectedChapter);
-  const selectedMeta = getGenesisChapter(selectedChapter);
 
   return (
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="pb-12 pt-2">
-          {/* Top chrome — same pattern as Bible: chapter chip + search */}
+          {/* Top: chapter chip + search (no endless lists) */}
           <View className="mb-3 flex-row items-center justify-between px-4">
             <Pressable
               accessibilityRole="button"
@@ -126,7 +135,10 @@ export default function BookScreen({ navigation, route }: Props) {
                   accessibilityRole="button"
                   accessibilityLabel={`${book.name} chapter ${selectedChapter}`}
                   className="flex-row items-center rounded-full bg-night-elevated px-3 py-2"
-                  onPress={() => setChapterOpen(true)}
+                  onPress={() => {
+                    setPickerArc(null);
+                    setChapterOpen(true);
+                  }}
                 >
                   <Text className="text-sm font-bold text-night-text">
                     {book.name} {selectedChapter}
@@ -172,16 +184,15 @@ export default function BookScreen({ navigation, route }: Props) {
             </Pressable>
           </View>
 
-          {/* Chapter number carousel */}
+          {/* Compact chapter number strip */}
           {isGenesis ? (
             <ScrollView
-              ref={chapterStripRef}
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{
                 gap: 8,
                 paddingHorizontal: 16,
-                paddingBottom: 12,
+                paddingBottom: 14,
               }}
             >
               {book.chapters.map((chapter) => {
@@ -192,12 +203,8 @@ export default function BookScreen({ navigation, route }: Props) {
                     key={chapter.number}
                     accessibilityRole="button"
                     accessibilityLabel={`Chapter ${chapter.number}`}
-                    accessibilityState={{ selected }}
-                    onPress={() => {
-                      setSelectedChapter(chapter.number);
-                      openChapter(chapter.number);
-                    }}
-                    className={`h-11 min-w-[44px] items-center justify-center rounded-full px-3 ${
+                    onPress={() => openChapter(chapter.number)}
+                    className={`h-10 min-w-[40px] items-center justify-center rounded-full px-2.5 ${
                       selected ? "bg-terracotta" : "bg-night-elevated"
                     }`}
                   >
@@ -207,7 +214,7 @@ export default function BookScreen({ navigation, route }: Props) {
                       }`}
                     >
                       {chapter.number}
-                      {done && !selected ? " ✓" : ""}
+                      {done && !selected ? "·" : ""}
                     </Text>
                   </Pressable>
                 );
@@ -215,96 +222,69 @@ export default function BookScreen({ navigation, route }: Props) {
             </ScrollView>
           ) : null}
 
-          <View className="px-5">
-            <View className="mb-4 flex-row items-center">
-              <Image
-                source={book.cover}
-                style={{ width: 72, height: 72, borderRadius: 14 }}
-              />
-              <View className="ml-3 flex-1">
-                <Text className="text-xs font-semibold uppercase tracking-wide text-terracotta">
-                  {book.testament === "OT" ? "Old Testament" : "New Testament"} · Free
-                </Text>
-                <Text className="text-2xl font-bold text-night-text">
-                  {book.name}
-                </Text>
-                <Text className="mt-1 text-xs font-semibold text-night-soft">
-                  {selectedMeta
-                    ? `Ch. ${selectedChapter} · ${selectedMeta.title}`
-                    : `${book.chapters.length} chapters · ${downloadedCount} downloaded`}
-                </Text>
-              </View>
-              <Pressable
-                accessibilityRole="button"
-                className="h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
-                onPress={() => {
-                  Alert.alert(
-                    "Plan options",
-                    "Download this plan for offline listening.",
-                    [
-                      { text: "Cancel", style: "cancel" },
-                      {
-                        text: "Download plan",
-                        onPress: () => {
-                          void markPlanDownloaded(
-                            book.id,
-                            book.chapters.map((chapter) => chapter.number)
-                          ).then(refresh);
-                        },
-                      },
-                    ]
-                  );
-                }}
-              >
-                <MaterialIcons name="more-horiz" size={20} color="#F2F2F7" />
-              </Pressable>
-            </View>
+          {/* Image categories — title top-left, play to start */}
+          <View className="px-4">
+            <Text className="mb-3 text-lg font-bold text-night-text">
+              {book.name}
+            </Text>
 
-            {featured ? (
-              <Pressable
-                accessibilityRole="button"
-                className="mb-3 overflow-hidden rounded-2xl border border-night-border bg-night-card active:bg-night-elevated"
-                onPress={() => openEpisode(featured)}
-              >
-                {featured.panels[0] ? (
-                  <Image
-                    source={featured.panels[0].image}
-                    style={{ width: "100%", height: 180 }}
-                    resizeMode="cover"
-                  />
-                ) : null}
-                <View className="px-4 py-3">
-                  <Text className="text-[10px] font-bold uppercase tracking-[2px] text-terracotta">
-                    {featured.episodeLabel} · Ch. {featured.chapterNumber}
-                  </Text>
-                  <Text className="mt-1 text-lg font-bold text-night-text">
-                    {featured.title}
-                  </Text>
-                  <Text className="mt-1 text-xs text-night-muted" numberOfLines={2}>
-                    {featuredMeta?.summary ?? featured.subtitle}
-                  </Text>
-                </View>
-              </Pressable>
-            ) : selectedMeta ? (
-              <Pressable
-                accessibilityRole="button"
-                className="mb-3 rounded-2xl border border-night-border bg-night-card px-4 py-4"
-                onPress={() => openChapter(selectedChapter)}
-              >
-                <Text className="text-[10px] font-bold uppercase tracking-[2px] text-terracotta">
-                  Chapter {selectedChapter}
-                </Text>
-                <Text className="mt-1 text-lg font-bold text-night-text">
-                  {selectedMeta.title}
-                </Text>
-                <Text className="mt-1 text-xs text-night-muted" numberOfLines={2}>
-                  {selectedMeta.summary}
-                </Text>
-                <Text className="mt-3 text-sm font-semibold text-ochre-soft">
-                  Open chapter →
-                </Text>
-              </Pressable>
-            ) : null}
+            {isGenesis
+              ? arcCards.map((card) => (
+                  <Pressable
+                    key={card.arc}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${card.arc}. Chapters ${card.startChapter} to ${card.endChapter}`}
+                    onPress={() => openArc(card.arc, card.startChapter)}
+                    className="mb-3 overflow-hidden rounded-2xl bg-night-card"
+                    style={{ width: cardWidth, alignSelf: "center" }}
+                  >
+                    <View style={{ width: cardWidth, height: cardHeight }}>
+                      <Image
+                        source={card.image}
+                        style={{ width: cardWidth, height: cardHeight }}
+                        resizeMode="cover"
+                      />
+                      <View
+                        pointerEvents="none"
+                        style={{
+                          position: "absolute",
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                          backgroundColor: "rgba(0,0,0,0.28)",
+                        }}
+                      />
+                      <Text
+                        className="absolute left-3 top-3 text-lg font-bold text-white"
+                        style={{
+                          textShadowColor: "rgba(0,0,0,0.6)",
+                          textShadowOffset: { width: 0, height: 1 },
+                          textShadowRadius: 4,
+                        }}
+                      >
+                        {card.arc}
+                      </Text>
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel={`Play ${card.arc}`}
+                        hitSlop={8}
+                        onPress={() => playArc(card.startChapter)}
+                        className="absolute bottom-3 right-3 h-12 w-12 items-center justify-center rounded-full bg-terracotta"
+                      >
+                        <MaterialIcons
+                          name="play-arrow"
+                          size={28}
+                          color="#FFFFFF"
+                        />
+                      </Pressable>
+                      <Text className="absolute bottom-3 left-3 text-xs font-semibold text-white/85">
+                        Ch. {card.startChapter}–{card.endChapter}
+                      </Text>
+                    </View>
+                  </Pressable>
+                ))
+              : null}
           </View>
         </View>
       </ScrollView>
@@ -321,9 +301,13 @@ export default function BookScreen({ navigation, route }: Props) {
           visible={chapterOpen}
           chapterCount={book.chapters.length}
           selectedChapter={selectedChapter}
-          onClose={() => setChapterOpen(false)}
+          initialArc={pickerArc}
+          onClose={() => {
+            setChapterOpen(false);
+            setPickerArc(null);
+          }}
           onSelect={(number) => {
-            setSelectedChapter(number);
+            setPickerArc(null);
             openChapter(number);
           }}
         />
