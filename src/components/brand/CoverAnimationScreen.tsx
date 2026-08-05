@@ -147,7 +147,7 @@ export default function CoverAnimationScreen({ onComplete }: Props) {
             source={LOGO_MARK}
             style={{ width: logoSize * 0.88, height: logoSize * 0.88 }}
             resizeMode="contain"
-            accessibilityLabel="PixBible logo"
+            accessibilityLabel={`${BRAND.fullName} logo`}
           />
         </View>
       </Animated.View>

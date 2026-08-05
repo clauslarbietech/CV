@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "PixBible",
+    "name": "Pix Bible",
     "slug": "pix-bible",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -47,7 +47,7 @@
       [
         "expo-audio",
         {
-          "microphonePermission": "Allow PixBible to record chapter voice reflections.",
+          "microphonePermission": "Allow Pix Bible to record chapter voice reflections.",
           "recordAudioAndroid": true,
           "enableBackgroundPlayback": true
         }

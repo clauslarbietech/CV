@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AccessibleIconButton from "../components/accessibility/AccessibleIconButton";
 import AppTabBar from "../components/navigation/AppTabBar";
+import BrandWordmark from "../components/brand/BrandWordmark";
 import { BRAND } from "../content/brand";
 import type { RootStackParamList } from "../navigation/types";
 
@@ -32,7 +33,7 @@ export default function AboutScreen({ navigation }: Props) {
             className="mr-1"
           />
           <Text className="text-xl font-bold text-night-text">
-            About PixBible
+            About {BRAND.fullName}
           </Text>
         </View>
 
@@ -47,20 +48,13 @@ export default function AboutScreen({ navigation }: Props) {
                 source={require("../../assets/brand/pixbible-logo-mark.png")}
                 style={{ width: 88, height: 88 }}
                 resizeMode="contain"
-                accessibilityLabel="PixBible logo"
+                accessibilityLabel={`${BRAND.fullName} logo`}
               />
             </View>
-            <View className="items-center">
-              <Text
-                className="text-[28px] font-bold italic text-terracotta"
-                accessibilityLabel={BRAND.name}
-              >
-                {BRAND.namePix}
-              </Text>
-              <Text className="-mt-1 text-[28px] font-bold tracking-[3px] text-night-text">
-                {BRAND.nameBible}
-              </Text>
-            </View>
+            <BrandWordmark size="lg" />
+            <Text className="mt-2 text-center text-sm font-medium text-night-muted">
+              {BRAND.fullName}
+            </Text>
             <Text className="mt-3 text-center text-base font-semibold text-terracotta">
               {BRAND.tagline}
             </Text>

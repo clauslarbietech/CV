@@ -44,7 +44,7 @@ export default function BrowseScreen({ navigation }: Props) {
 
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="About PixBible — mission, story, and why it is free"
+              accessibilityLabel="About The Picture Bible — mission, story, and why it is free"
               className="mt-3 flex-row items-center rounded-full border px-4 py-2"
               style={{
                 borderColor: colors.brand,

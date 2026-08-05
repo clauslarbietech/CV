@@ -10,7 +10,8 @@ type Props = {
 };
 
 /**
- * Pix (orange) + BIBLE (ink) — matches Through-the-Word orange brand accent.
+ * Pix Bible wordmark — both words share the same bold weight and size.
+ * Pix uses the orange brand accent; Bible uses ink (or parchment on cover).
  */
 export default function BrandWordmark({
   size = "lg",
@@ -18,10 +19,8 @@ export default function BrandWordmark({
   variant = "default",
 }: Props) {
   const { colors } = useTheme();
-  const pixClass =
-    size === "lg" ? "text-[26px] leading-8" : "text-xl leading-6";
-  const bibleClass =
-    size === "lg" ? "text-[26px] leading-8" : "text-xl leading-6";
+  const wordClass =
+    size === "lg" ? "text-[26px] leading-8 font-bold" : "text-xl leading-6 font-bold";
 
   const pixColor =
     variant === "cover" ? BRAND_COLORS.gold : colors.brand;
@@ -30,19 +29,14 @@ export default function BrandWordmark({
 
   return (
     <View
-      className={`flex-row items-baseline ${centered ? "justify-center" : ""}`}
+      className={`flex-row items-center ${centered ? "justify-center" : ""}`}
+      accessibilityRole="header"
+      accessibilityLabel={BRAND.name}
     >
-      <Text
-        className={`${pixClass} font-bold italic`}
-        style={{ color: pixColor }}
-        accessibilityLabel={BRAND.name}
-      >
+      <Text className={wordClass} style={{ color: pixColor }}>
         {BRAND.namePix}
       </Text>
-      <Text
-        className={`${bibleClass} font-bold tracking-[2.5px]`}
-        style={{ color: bibleColor }}
-      >
+      <Text className={`${wordClass} ml-1.5`} style={{ color: bibleColor }}>
         {BRAND.nameBible}
       </Text>
     </View>

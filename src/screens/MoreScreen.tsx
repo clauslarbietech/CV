@@ -24,7 +24,7 @@ const LINKS: {
 }[] = [
   {
     id: "about",
-    label: "About PixBible",
+    label: "About The Picture Bible",
     hint: "Mission, our story, and why it's free",
     icon: "auto-stories",
     route: "About",
