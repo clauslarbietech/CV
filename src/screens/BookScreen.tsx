@@ -18,7 +18,7 @@ import AppTabBar from "../components/navigation/AppTabBar";
 import { CATALOG_BOOKS, libraryBookIdFor } from "../data/bibleCatalog";
 import { listGenesisArcCards } from "../data/genesisArcs";
 import type { GenesisArc } from "../data/genesisChapters";
-import { getBook } from "../data/library";
+import { getBook, JOURNEYS } from "../data/library";
 import {
   getWebtoonEpisode,
   listWebtoonEpisodes,
@@ -29,6 +29,7 @@ import {
   getBookProgress,
   type BookProgressMap,
 } from "../services/listeningProgress";
+import { inviteToJourney } from "../services/journeyInvite";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Book">;
 
@@ -176,14 +177,34 @@ export default function BookScreen({ navigation, route }: Props) {
               ) : null}
             </View>
 
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Search scripture"
-              className="h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
-              onPress={() => setSearchOpen(true)}
-            >
-              <MaterialIcons name="search" size={20} color="#AEAEB2" />
-            </Pressable>
+            <View className="flex-row items-center gap-2">
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Invite others to this journey"
+                className="h-9 w-9 items-center justify-center rounded-full bg-terracotta/25"
+                onPress={() => {
+                  const journey =
+                    JOURNEYS.find((item) => item.bookIds.includes(book.id)) ??
+                    JOURNEYS[0];
+                  void inviteToJourney({
+                    journeyTitle: journey?.title ?? book.name,
+                    booksLabel: journey?.booksLabel ?? book.tagline,
+                    bookId: book.id,
+                    chapterNumber: selectedChapter,
+                  });
+                }}
+              >
+                <MaterialIcons name="person-add" size={18} color="#E4572E" />
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Search scripture"
+                className="h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
+                onPress={() => setSearchOpen(true)}
+              >
+                <MaterialIcons name="search" size={20} color="#AEAEB2" />
+              </Pressable>
+            </View>
           </View>
 
           {/* Compact chapter number strip */}

@@ -21,7 +21,7 @@ import ChapterPremiseComics from "../components/comics/ChapterPremiseComics";
 import HighlightModal from "../components/favorites/HighlightModal";
 import AppTabBar from "../components/navigation/AppTabBar";
 import AudioGuidePlayer from "../components/player/AudioGuidePlayer";
-import { getBook, getChapter } from "../data/library";
+import { getBook, getChapter, JOURNEYS } from "../data/library";
 import { getWebtoonEpisode } from "../data/webtoonEpisodes";
 import { useAudioGuideSession } from "../hooks/useAudioGuideSession";
 import type { RootStackParamList } from "../navigation/types";
@@ -30,6 +30,7 @@ import {
   listFavorites,
   toggleChapterFavorite,
 } from "../services/favoritesService";
+import { inviteToJourney } from "../services/journeyInvite";
 import {
   getChapterProgress,
   updateChapterProgress,
@@ -307,6 +308,24 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           </Pressable>
 
           <View className="flex-row items-center gap-1">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Invite others to read this chapter"
+              className="h-9 w-9 items-center justify-center rounded-full bg-terracotta/25"
+              onPress={() => {
+                const journey =
+                  JOURNEYS.find((item) => item.bookIds.includes(bookId)) ??
+                  JOURNEYS[0];
+                void inviteToJourney({
+                  journeyTitle: journey?.title ?? book.name,
+                  booksLabel: journey?.booksLabel ?? `${book.name} journey`,
+                  bookId,
+                  chapterNumber,
+                });
+              }}
+            >
+              <MaterialIcons name="person-add" size={18} color="#E4572E" />
+            </Pressable>
             {webtoon ? (
               <Pressable
                 accessibilityRole="button"
@@ -323,9 +342,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
               >
                 <MaterialIcons name="auto-stories" size={18} color="#F0D78C" />
               </Pressable>
-            ) : (
-              <View className="h-9 w-9" />
-            )}
+            ) : null}
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Highlight and comment"

@@ -13,6 +13,7 @@ import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BOOKS, JOURNEYS } from "../data/library";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
+import { inviteToJourney } from "../services/journeyInvite";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Home">,
@@ -60,36 +61,62 @@ export default function BrowseScreen({ navigation }: Props) {
             className="mb-6"
           >
             {JOURNEYS.map((journey, index) => (
-              <Pressable
-                key={journey.id}
-                accessibilityRole="button"
-                style={{ width: journeyCard }}
-                onPress={() =>
-                  navigation.navigate("Book", { bookId: journey.bookIds[0] })
-                }
-              >
-                <View className="overflow-hidden rounded-2xl bg-night-card">
-                  <Image
-                    source={journey.cover}
-                    style={{ width: journeyCard, height: journeyCard }}
-                    resizeMode="cover"
-                  />
-                  {index === 0 ? (
-                    <View className="absolute right-2 top-2 h-6 w-6 items-center justify-center rounded-full bg-terracotta">
-                      <MaterialIcons name="check" size={16} color="#FFFFFF" />
-                    </View>
-                  ) : null}
-                </View>
-                <Text
-                  className="mt-2 text-sm font-semibold text-night-text"
-                  numberOfLines={2}
+              <View key={journey.id} style={{ width: journeyCard }}>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() =>
+                    navigation.navigate("Book", { bookId: journey.bookIds[0] })
+                  }
                 >
-                  {journey.title}
-                </Text>
-                <Text className="text-[11px] text-night-muted" numberOfLines={1}>
-                  {journey.booksLabel}
-                </Text>
-              </Pressable>
+                  <View className="overflow-hidden rounded-2xl bg-night-card">
+                    <Image
+                      source={journey.cover}
+                      style={{ width: journeyCard, height: journeyCard }}
+                      resizeMode="cover"
+                    />
+                    {index === 0 ? (
+                      <View className="absolute right-2 top-2 h-6 w-6 items-center justify-center rounded-full bg-terracotta">
+                        <MaterialIcons name="check" size={16} color="#FFFFFF" />
+                      </View>
+                    ) : null}
+                    <View className="absolute bottom-2 left-2 flex-row items-center rounded-full bg-black/55 px-2 py-1">
+                      <MaterialIcons name="groups" size={12} color="#F0D78C" />
+                      <Text className="ml-1 text-[10px] font-bold text-ochre-soft">
+                        Together
+                      </Text>
+                    </View>
+                  </View>
+                  <Text
+                    className="mt-2 text-sm font-semibold text-night-text"
+                    numberOfLines={2}
+                  >
+                    {journey.title} Together
+                  </Text>
+                  <Text
+                    className="text-[11px] text-night-muted"
+                    numberOfLines={1}
+                  >
+                    {journey.booksLabel}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`Invite others to ${journey.title}`}
+                  className="mt-2 flex-row items-center self-start rounded-full bg-terracotta/20 px-2.5 py-1.5"
+                  onPress={() => {
+                    void inviteToJourney({
+                      journeyTitle: journey.title,
+                      booksLabel: journey.booksLabel,
+                      bookId: journey.bookIds[0],
+                    });
+                  }}
+                >
+                  <MaterialIcons name="person-add" size={14} color="#E4572E" />
+                  <Text className="ml-1 text-[11px] font-bold text-terracotta">
+                    Invite
+                  </Text>
+                </Pressable>
+              </View>
             ))}
           </ScrollView>
 
