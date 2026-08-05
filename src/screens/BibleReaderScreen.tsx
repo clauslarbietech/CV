@@ -17,9 +17,16 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Speech from "expo-speech";
 import BibleSearchModal from "../components/bible/BibleSearchModal";
 import ScripturePickerModal from "../components/bible/ScripturePickerModal";
+import SelectableScripture, {
+  splitScriptureSegments,
+  type AppliedHighlight,
+  type ScriptureSegment,
+} from "../components/bible/SelectableScripture";
+import SelectionActionSheet from "../components/bible/SelectionActionSheet";
 import VersionPickerModal from "../components/bible/VersionPickerModal";
 import PremiseHeroImage from "../components/comics/PremiseHeroImage";
 import HighlightModal from "../components/favorites/HighlightModal";
+import { listFavorites } from "../services/favoritesService";
 import {
   CATALOG_BOOKS,
   getCatalogBook,
@@ -68,6 +75,12 @@ export default function BibleReaderScreen({ navigation }: Props) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [versionOpen, setVersionOpen] = useState(false);
   const [highlightOpen, setHighlightOpen] = useState(false);
+  const [selectedSegment, setSelectedSegment] =
+    useState<ScriptureSegment | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [appliedHighlights, setAppliedHighlights] = useState<
+    AppliedHighlight[]
+  >([]);
   const [source, setSource] = useState<BibleSource>(() => getDefaultBibleSource());
   const [books, setBooks] = useState<CatalogBook[]>(CATALOG_BOOKS);
   const [booksLoading, setBooksLoading] = useState(false);
@@ -238,6 +251,48 @@ export default function BibleReaderScreen({ navigation }: Props) {
       };
     }, [loadPassage])
   );
+
+  useEffect(() => {
+    setSelectedSegment(null);
+    setSheetOpen(false);
+  }, [bookId, chapter, source.abbreviation]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void listFavorites().then((items) => {
+      if (cancelled || !verses.trim()) {
+        return;
+      }
+      const segs = splitScriptureSegments(verses);
+      const applied: AppliedHighlight[] = [];
+      for (const item of items) {
+        if (
+          item.kind !== "bible_highlight" ||
+          item.bookId !== libraryId ||
+          item.chapterNumber !== chapter ||
+          !item.highlightColor
+        ) {
+          continue;
+        }
+        const match = segs.find(
+          (seg) =>
+            seg.text.includes(item.excerpt.slice(0, 48)) ||
+            item.excerpt.includes(seg.text.slice(0, 48))
+        );
+        if (match) {
+          applied.push({
+            segmentId: match.id,
+            colorId: item.highlightColor,
+            excerpt: item.excerpt,
+          });
+        }
+      }
+      setAppliedHighlights(applied);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [chapter, libraryId, verses]);
 
   const stopReading = () => {
     void Speech.stop();
@@ -444,13 +499,18 @@ export default function BibleReaderScreen({ navigation }: Props) {
                   {error}
                 </Text>
               ) : null}
-              <Text
-                className="text-[18px] leading-8"
-                style={{ color: readerColors.text }}
-              >
-                {verses ||
-                  "Add EXPO_PUBLIC_YOUVERSION_APP_KEY to load full chapter text from the Bible API."}
-              </Text>
+              <SelectableScripture
+                text={
+                  verses ||
+                  "Add EXPO_PUBLIC_YOUVERSION_APP_KEY to load full chapter text from the Bible API."
+                }
+                selectedId={selectedSegment?.id ?? null}
+                highlights={appliedHighlights}
+                onSelect={(segment) => {
+                  setSelectedSegment(segment);
+                  setSheetOpen(true);
+                }}
+              />
             </>
           )}
 
@@ -558,9 +618,37 @@ export default function BibleReaderScreen({ navigation }: Props) {
         kind="bible_highlight"
         bookId={libraryId}
         chapterNumber={chapter}
-        defaultExcerpt={verses.slice(0, 320)}
+        defaultExcerpt={
+          selectedSegment?.text ?? verses.slice(0, 320)
+        }
         scriptureRef={canonical || passageQueryFor(bookId, chapter, books)}
         onClose={() => setHighlightOpen(false)}
+      />
+      <SelectionActionSheet
+        visible={sheetOpen && Boolean(selectedSegment)}
+        selectedText={selectedSegment?.text ?? ""}
+        selectionLabel={`${book?.name ?? "Bible"} ${chapter}`}
+        bookId={libraryId}
+        chapterNumber={chapter}
+        scriptureRef={canonical || passageQueryFor(bookId, chapter, books)}
+        versionLabel={source.abbreviation}
+        onClose={() => {
+          setSheetOpen(false);
+          setSelectedSegment(null);
+        }}
+        onHighlightSaved={(colorId, excerpt) => {
+          if (!selectedSegment) {
+            return;
+          }
+          setAppliedHighlights((current) => [
+            ...current.filter((item) => item.segmentId !== selectedSegment.id),
+            {
+              segmentId: selectedSegment.id,
+              colorId,
+              excerpt,
+            },
+          ]);
+        }}
       />
     </SafeAreaView>
   );

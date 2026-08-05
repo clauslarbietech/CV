@@ -11,6 +11,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Speech from "expo-speech";
 import ChapterPickerModal from "../components/bible/ChapterPickerModal";
+import SelectableScripture, {
+  splitScriptureSegments,
+  type AppliedHighlight,
+  type ScriptureSegment,
+} from "../components/bible/SelectableScripture";
+import SelectionActionSheet from "../components/bible/SelectionActionSheet";
 import ChapterPremiseComics, {
   uniqueComicPanels,
 } from "../components/comics/ChapterPremiseComics";
@@ -23,6 +29,7 @@ import { useAudioGuideSession } from "../hooks/useAudioGuideSession";
 import type { RootStackParamList } from "../navigation/types";
 import {
   isChapterFavorited,
+  listFavorites,
   toggleChapterFavorite,
 } from "../services/favoritesService";
 import {
@@ -61,6 +68,12 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
   const [didAutoPlay, setDidAutoPlay] = useState(false);
   const [highlightOpen, setHighlightOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [selectedSegment, setSelectedSegment] =
+    useState<ScriptureSegment | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [appliedHighlights, setAppliedHighlights] = useState<
+    AppliedHighlight[]
+  >([]);
 
   const audio = useAudioGuideSession({
     guide: chapter?.guide,
@@ -199,6 +212,49 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     setDidAutoPlay(false);
   }, [chapterNumber]);
 
+  useEffect(() => {
+    setSelectedSegment(null);
+    setSheetOpen(false);
+  }, [bookId, chapterNumber]);
+
+  useEffect(() => {
+    const text = passage?.content.trim() ?? "";
+    let cancelled = false;
+    void listFavorites().then((items) => {
+      if (cancelled || !text) {
+        return;
+      }
+      const segs = splitScriptureSegments(text);
+      const applied: AppliedHighlight[] = [];
+      for (const item of items) {
+        if (
+          (item.kind !== "bible_highlight" && item.kind !== "story_highlight") ||
+          item.bookId !== bookId ||
+          item.chapterNumber !== chapterNumber ||
+          !item.highlightColor
+        ) {
+          continue;
+        }
+        const match = segs.find(
+          (seg) =>
+            seg.text.includes(item.excerpt.slice(0, 48)) ||
+            item.excerpt.includes(seg.text.slice(0, 48))
+        );
+        if (match) {
+          applied.push({
+            segmentId: match.id,
+            colorId: item.highlightColor,
+            excerpt: item.excerpt,
+          });
+        }
+      }
+      setAppliedHighlights(applied);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [bookId, chapterNumber, passage?.content]);
+
   const goChapter = (number: number, play = true) => {
     void audio.stop();
     void Speech.stop();
@@ -322,9 +378,15 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
                 ) : error ? (
                   <Text className="text-sm text-terracotta-dark">{error}</Text>
                 ) : (
-                  <Text className="text-base leading-7 text-night-text">
-                    {verses}
-                  </Text>
+                  <SelectableScripture
+                    text={verses}
+                    selectedId={selectedSegment?.id ?? null}
+                    highlights={appliedHighlights}
+                    onSelect={(segment) => {
+                      setSelectedSegment(segment);
+                      setSheetOpen(true);
+                    }}
+                  />
                 )}
               </View>
             ) : null}
@@ -378,9 +440,38 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
         kind="story_highlight"
         bookId={bookId}
         chapterNumber={chapterNumber}
-        defaultExcerpt={activeNarration ?? chapter.title}
+        defaultExcerpt={
+          selectedSegment?.text ?? activeNarration ?? chapter.title
+        }
         scriptureRef={passage?.canonical ?? chapter.passageQuery}
         onClose={() => setHighlightOpen(false)}
+      />
+
+      <SelectionActionSheet
+        visible={sheetOpen && Boolean(selectedSegment)}
+        selectedText={selectedSegment?.text ?? ""}
+        selectionLabel={`${book.name} ${chapter.number}`}
+        bookId={bookId}
+        chapterNumber={chapterNumber}
+        scriptureRef={passage?.canonical ?? chapter.passageQuery}
+        favoriteKind="story_highlight"
+        onClose={() => {
+          setSheetOpen(false);
+          setSelectedSegment(null);
+        }}
+        onHighlightSaved={(colorId, excerpt) => {
+          if (!selectedSegment) {
+            return;
+          }
+          setAppliedHighlights((current) => [
+            ...current.filter((item) => item.segmentId !== selectedSegment.id),
+            {
+              segmentId: selectedSegment.id,
+              colorId,
+              excerpt,
+            },
+          ]);
+        }}
       />
 
       {book.id === "genesis" ? (

@@ -12,6 +12,7 @@ import {
   removeFavorite,
   type FavoriteItem,
 } from "../services/favoritesService";
+import { highlightHex } from "../theme/highlightColors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Favorites">;
 
@@ -98,10 +99,20 @@ export default function FavoritesScreen({ navigation }: Props) {
                 }}
               >
                 <View className="mb-1 flex-row items-center justify-between">
-                  <Text className="text-[10px] font-bold uppercase tracking-[1.5px] text-terracotta">
-                    {favoriteKindLabel(item.kind)}
-                    {item.note ? ` · ${item.note}` : ""}
-                  </Text>
+                  <View className="flex-row items-center">
+                    {item.highlightColor ? (
+                      <View
+                        className="mr-2 h-3 w-3 rounded-full"
+                        style={{
+                          backgroundColor: highlightHex(item.highlightColor),
+                        }}
+                      />
+                    ) : null}
+                    <Text className="text-[10px] font-bold uppercase tracking-[1.5px] text-terracotta">
+                      {favoriteKindLabel(item.kind)}
+                      {item.note ? ` · ${item.note}` : ""}
+                    </Text>
+                  </View>
                   <MaterialIcons name="star" size={16} color="#F0D78C" />
                 </View>
                 <Text className="text-base font-bold text-night-text">

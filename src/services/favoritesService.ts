@@ -20,6 +20,8 @@ export type FavoriteItem = {
   excerpt: string;
   /** Optional comment left when highlighting. */
   comment: string;
+  /** Highlight swatch id (green, pink, orange, blue). */
+  highlightColor?: string;
   bookId: string;
   chapterNumber: number;
   storylineId?: string;
