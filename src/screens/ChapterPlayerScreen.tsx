@@ -244,7 +244,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           {webtoon ? (
             <Pressable
               accessibilityRole="button"
-              className="mb-4 rounded-2xl bg-teal-ink px-4 py-3"
+              className="mb-4 rounded-2xl border border-night-border bg-night-card px-4 py-3"
               onPress={() => {
                 void audio.stop();
                 navigation.navigate("WebtoonEpisode", {
@@ -254,14 +254,14 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
                 });
               }}
             >
-              <Text className="text-xs font-bold uppercase tracking-[2px] text-ochre-soft">
+              <Text className="text-xs font-bold uppercase tracking-[2px] text-terracotta">
                 {webtoon.seriesTitle} · {webtoon.episodeLabel}
               </Text>
-              <Text className="mt-1 text-base font-bold text-white">
+              <Text className="mt-1 text-base font-bold text-night-text">
                 Read webtoon storyline →
               </Text>
-              <Text className="mt-1 text-xs text-white/65">
-                ESV scenes · dialogue · tap to hear scripture
+              <Text className="mt-1 text-xs text-night-muted">
+                Scenes · dialogue · tap to hear scripture
               </Text>
             </Pressable>
           ) : null}

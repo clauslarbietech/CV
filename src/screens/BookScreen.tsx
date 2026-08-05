@@ -105,7 +105,7 @@ export default function BookScreen({ navigation, route }: Props) {
                 {book.tagline}
               </Text>
               <Text className="mt-2 text-xs font-semibold text-night-soft">
-                {book.chapters.length} chapters · {downloadedCount} downloaded · ESV
+                {book.chapters.length} chapters · {downloadedCount} downloaded
               </Text>
             </View>
           </View>
@@ -122,13 +122,13 @@ export default function BookScreen({ navigation, route }: Props) {
           {illustrated.length > 0 ? (
             <>
               <Text className="mb-3 text-lg font-bold text-night-text">
-                Illustrated storylines · ESV audio
+                Illustrated storylines
               </Text>
               {illustrated.map((episode) => (
                 <Pressable
                   key={episode.id}
                   accessibilityRole="button"
-                  className="mb-3 overflow-hidden rounded-2xl border border-terracotta/20 bg-teal-ink px-4 py-3 active:opacity-90"
+                  className="mb-3 overflow-hidden rounded-2xl border border-night-border bg-night-card px-4 py-3 active:bg-night-elevated"
                   onPress={() =>
                     navigation.navigate("WebtoonEpisode", {
                       bookId: episode.bookId,
@@ -137,13 +137,13 @@ export default function BookScreen({ navigation, route }: Props) {
                     })
                   }
                 >
-                  <Text className="text-xs font-bold uppercase tracking-[2px] text-ochre-soft">
+                  <Text className="text-xs font-bold uppercase tracking-[2px] text-terracotta">
                     {episode.episodeLabel} · Ch. {episode.chapterNumber}
                   </Text>
-                  <Text className="mt-1 text-base font-bold text-white">
+                  <Text className="mt-1 text-base font-bold text-night-text">
                     {episode.title}
                   </Text>
-                  <Text className="mt-1 text-xs text-white/65" numberOfLines={2}>
+                  <Text className="mt-1 text-xs text-night-muted" numberOfLines={2}>
                     {episode.subtitle} · {episode.panels.length} scenes
                   </Text>
                 </Pressable>
@@ -201,8 +201,8 @@ export default function BookScreen({ navigation, route }: Props) {
                               numberOfLines={1}
                             >
                               {webtoon
-                                ? "Illustrated webtoon · ESV"
-                                : `${meta.keyVerseRef} · ESV audio guide`}
+                                ? "Illustrated webtoon · listen along"
+                                : `${meta.keyVerseRef} · audio guide`}
                             </Text>
                           </View>
                           <Text className="text-lg text-terracotta">▶</Text>
