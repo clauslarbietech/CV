@@ -37,6 +37,12 @@ function getApiKey(): string {
   return key;
 }
 
+/** True when a real Crossway ESV key is configured (optional alternate source). */
+export function hasEsvApiKey(): boolean {
+  const key = process.env.EXPO_PUBLIC_ESV_API_KEY?.trim();
+  return Boolean(key && key !== "your_crossway_esv_api_key_here");
+}
+
 async function readCache(passage: string): Promise<EsvPassage | null> {
   try {
     const raw = await AsyncStorage.getItem(cacheKey(passage));

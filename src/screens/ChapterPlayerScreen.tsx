@@ -26,20 +26,25 @@ import {
   type ChapterProgress,
 } from "../services/listeningProgress";
 import {
-  ESV_COPYRIGHT_NOTICE,
-  ESV_WEBSITE_URL,
-  fetchPassage,
-  type EsvPassage,
-} from "../services/esvService";
+  fetchScriptureChapter,
+  getDefaultBibleSource,
+} from "../services/scriptureService";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ChapterPlayer">;
+
+type PassageState = {
+  canonical: string;
+  content: string;
+  copyright: string;
+  copyrightUrl: string;
+};
 
 export default function ChapterPlayerScreen({ navigation, route }: Props) {
   const { bookId, chapterNumber } = route.params;
   const book = getBook(bookId);
   const chapter = getChapter(bookId, chapterNumber);
 
-  const [passage, setPassage] = useState<EsvPassage | null>(null);
+  const [passage, setPassage] = useState<PassageState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState<ChapterProgress>({
@@ -73,21 +78,31 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
       return;
     }
 
-    const query = chapter.passageQuery;
     let cancelled = false;
 
     async function loadPassage() {
       setLoading(true);
       setError(null);
       try {
-        const result = await fetchPassage(query);
+        const result = await fetchScriptureChapter(
+          bookId,
+          chapterNumber,
+          getDefaultBibleSource()
+        );
         if (!cancelled) {
-          setPassage(result);
+          setPassage({
+            canonical: result.reference,
+            content: result.content,
+            copyright: result.copyright,
+            copyrightUrl: result.copyrightUrl,
+          });
         }
       } catch (err) {
         if (!cancelled) {
           setError(
-            err instanceof Error ? err.message : "Unable to load scripture."
+            err instanceof Error
+              ? err.message
+              : "Unable to load scripture. Add EXPO_PUBLIC_YOUVERSION_APP_KEY."
           );
         }
       } finally {
@@ -101,7 +116,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [chapter]);
+  }, [bookId, chapter, chapterNumber]);
 
   useEffect(() => {
     let cancelled = false;
@@ -142,7 +157,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     };
   }, []);
 
-  const verses = passage?.passages.join("\n\n").trim() ?? "";
+  const verses = passage?.content.trim() ?? "";
   const webtoon = getWebtoonEpisode(bookId, chapterNumber);
 
   const toggleScriptureReadAloud = () => {
@@ -158,8 +173,8 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     void audio.stop();
     setReadingScripture(true);
     const intro = passage?.canonical
-      ? `${passage.canonical}, from the English Standard Version. `
-      : `${chapter?.passageQuery ?? ""}, from the English Standard Version. `;
+      ? `${passage.canonical}. `
+      : `${chapter?.passageQuery ?? ""}. `;
     Speech.speak(`${intro}${text}`, {
       rate: 0.88,
       onDone: () => setReadingScripture(false),
@@ -206,9 +221,9 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
               Bible on screen · guide in headphones
             </Text>
           </View>
-          <View className="rounded-full bg-night-elevated px-2.5 py-1">
-            <Text className="text-xs font-bold text-night-text">ESV</Text>
-          </View>
+            <View className="rounded-full bg-night-elevated px-2.5 py-1">
+              <Text className="text-xs font-bold text-night-text">Bible</Text>
+            </View>
         </View>
 
         <ScrollView
@@ -311,7 +326,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
                 compact
                 isPlaying={readingScripture}
                 onPress={toggleScriptureReadAloud}
-                accessibilityHint="Reads the full ESV chapter text out loud for non-readers"
+                accessibilityHint="Reads the full chapter text out loud for non-readers"
               />
             ) : null}
           </View>
@@ -340,7 +355,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
                   label={
                     readingScripture
                       ? "Stop reading scripture"
-                      : "Read ESV scripture aloud"
+                      : "Read scripture aloud"
                   }
                   onPress={toggleScriptureReadAloud}
                 />
@@ -373,11 +388,14 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             accessibilityRole="link"
             className="mt-6"
             onPress={() => {
-              void Linking.openURL(ESV_WEBSITE_URL);
+              void Linking.openURL(
+                passage?.copyrightUrl ?? "https://platform.youversion.com/"
+              );
             }}
           >
             <Text className="text-center text-[10px] leading-4 text-night-soft">
-              {ESV_COPYRIGHT_NOTICE}
+              {passage?.copyright ??
+                "Add EXPO_PUBLIC_YOUVERSION_APP_KEY to load scripture from the Bible API."}
             </Text>
           </Pressable>
         </ScrollView>

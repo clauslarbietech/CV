@@ -15,6 +15,7 @@ import {
   loadCollectedVersionIds,
   toggleCollectedVersionId,
 } from "../../services/biblePreferences";
+import { hasEsvApiKey } from "../../services/esvService";
 import {
   POPULAR_YOUVERSION_IDS,
   hasYouVersionAppKey,
@@ -149,7 +150,10 @@ export default function VersionPickerModal({
         !popularOrder.includes(version.id)
     );
 
-    const next: Row[] = [{ type: "esv", id: "esv" }];
+    const next: Row[] = [];
+    if (hasEsvApiKey()) {
+      next.push({ type: "esv", id: "esv" });
+    }
 
     if (collectedVersions.length) {
       next.push({ type: "header", id: "h-collected", title: "My versions" });
@@ -259,9 +263,9 @@ export default function VersionPickerModal({
               className="mb-3 px-1 text-xs leading-4"
               style={{ color: readerColors.secondary }}
             >
-              Add your YouVersion App Key to pull NIV, BSB, and other licensed
-              versions from the Bible API. ESV below still works with the
-              Crossway key.
+              Add EXPO_PUBLIC_YOUVERSION_APP_KEY from platform.youversion.com to
+              load BSB, NIV (when licensed), and other Bible versions. Crossway
+              ESV is optional and only appears when its own key is set.
             </Text>
           ) : null}
 

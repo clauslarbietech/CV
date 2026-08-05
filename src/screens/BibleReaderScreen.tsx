@@ -22,7 +22,6 @@ import VersionPickerModal from "../components/bible/VersionPickerModal";
 import {
   getCatalogBook,
   passageQueryFor,
-  usfmChapterRef,
 } from "../data/bibleCatalog";
 import { getGenesisChapter } from "../data/genesisChapters";
 import { getChapter } from "../data/library";
@@ -35,17 +34,12 @@ import {
   loadSelectedBibleSource,
   saveSelectedBibleSource,
 } from "../services/biblePreferences";
+import { ESV_COPYRIGHT_NOTICE, ESV_WEBSITE_URL } from "../services/esvService";
 import {
-  ESV_COPYRIGHT_NOTICE,
-  ESV_WEBSITE_URL,
-  fetchPassage,
-} from "../services/esvService";
-import {
-  DEFAULT_YOUVERSION_VERSION_ID,
-  YOUVERSION_PLATFORM_URL,
-  fetchYouVersionPassage,
-  hasYouVersionAppKey,
-} from "../services/youversionService";
+  fetchScriptureChapter,
+  getDefaultBibleSource,
+  normalizeBibleSource,
+} from "../services/scriptureService";
 import { readerColors } from "../theme/readerColors";
 import type { BibleSource } from "../types/bibleSource";
 
@@ -67,21 +61,17 @@ export default function BibleReaderScreen({ navigation }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [versionOpen, setVersionOpen] = useState(false);
-  const [source, setSource] = useState<BibleSource>(() =>
-    hasYouVersionAppKey()
-      ? {
-          kind: "youversion",
-          versionId: DEFAULT_YOUVERSION_VERSION_ID,
-          abbreviation: "BSB",
-        }
-      : { kind: "esv", abbreviation: "ESV" }
-  );
+  const [source, setSource] = useState<BibleSource>(() => getDefaultBibleSource());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [verses, setVerses] = useState("");
   const [canonical, setCanonical] = useState("");
-  const [copyright, setCopyright] = useState(ESV_COPYRIGHT_NOTICE);
-  const [copyrightUrl, setCopyrightUrl] = useState(ESV_WEBSITE_URL);
+  const [copyright, setCopyright] = useState(
+    "Scripture via YouVersion Platform when configured."
+  );
+  const [copyrightUrl, setCopyrightUrl] = useState(
+    "https://platform.youversion.com/"
+  );
   const [showFullCopyright, setShowFullCopyright] = useState(false);
   const [reading, setReading] = useState(false);
 
@@ -123,8 +113,13 @@ export default function BibleReaderScreen({ navigation }: Props) {
   useEffect(() => {
     let cancelled = false;
     void loadSelectedBibleSource().then((saved) => {
-      if (!cancelled && saved) {
-        setSource(saved);
+      if (cancelled) {
+        return;
+      }
+      const next = normalizeBibleSource(saved);
+      setSource(next);
+      if (!saved || saved.kind !== next.kind) {
+        void saveSelectedBibleSource(next);
       }
     });
     return () => {
@@ -138,22 +133,18 @@ export default function BibleReaderScreen({ navigation }: Props) {
     setError(null);
     setShowFullCopyright(false);
     try {
-      if (source.kind === "youversion") {
-        const usfm = usfmChapterRef(bookId, chapter);
-        if (!usfm) {
-          throw new Error("Unknown book for YouVersion reference.");
-        }
-        const result = await fetchYouVersionPassage(source.versionId, usfm);
-        setVerses(result.content);
-        setCanonical(result.reference || query);
-        setCopyright(result.copyright);
-        setCopyrightUrl(YOUVERSION_PLATFORM_URL);
-      } else {
-        const result = await fetchPassage(query);
-        setVerses(result.passages.join("\n\n").trim());
-        setCanonical(result.canonical || query);
-        setCopyright(ESV_COPYRIGHT_NOTICE);
-        setCopyrightUrl(ESV_WEBSITE_URL);
+      const result = await fetchScriptureChapter(bookId, chapter, source);
+      setVerses(result.content);
+      setCanonical(result.reference || query);
+      setCopyright(result.copyright);
+      setCopyrightUrl(result.copyrightUrl);
+      if (
+        result.source.kind !== source.kind ||
+        (result.source.kind === "youversion" &&
+          source.kind === "youversion" &&
+          result.source.abbreviation !== source.abbreviation)
+      ) {
+        setSource(result.source);
       }
     } catch (err) {
       if (genesisMeta) {
@@ -164,9 +155,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
         setCopyright(ESV_COPYRIGHT_NOTICE);
         setCopyrightUrl(ESV_WEBSITE_URL);
         setError(
-          err instanceof Error
-            ? `${err.message} Showing key verse offline.`
-            : "Showing key verse offline."
+          "Showing a short offline preview. Add EXPO_PUBLIC_YOUVERSION_APP_KEY to load the full chapter from the Bible API."
         );
       } else {
         setVerses("");
@@ -174,7 +163,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
         setError(
           err instanceof Error
             ? err.message
-            : "Unable to load passage. Add a YouVersion or ESV API key."
+            : "Unable to load passage. Add EXPO_PUBLIC_YOUVERSION_APP_KEY."
         );
       }
     } finally {
