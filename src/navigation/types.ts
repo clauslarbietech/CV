@@ -30,4 +30,7 @@ export type RootStackParamList = {
   Profile: undefined;
   Favorites: undefined;
   About: undefined;
+  JourneyDetail: {
+    journeyId: string;
+  };
 };

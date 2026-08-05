@@ -53,6 +53,8 @@ export type Journey = {
   bookIds: string[];
   /** Chapter to open when this journey is started. */
   startChapter: number;
+  /** Last chapter in this journey (inclusive). Defaults to startChapter. */
+  endChapter?: number;
 };
 
 const day1 = require("../../assets/panels/genesis-day1-light.jpg");
@@ -104,6 +106,7 @@ export const JOURNEYS: Journey[] = [
     cover: journeyStart,
     bookIds: ["genesis"],
     startChapter: 1,
+    endChapter: 50,
   },
   {
     id: "journey-creation",
@@ -114,6 +117,7 @@ export const JOURNEYS: Journey[] = [
     cover: day1,
     bookIds: ["genesis"],
     startChapter: 1,
+    endChapter: 2,
   },
   {
     id: "journey-promise",
@@ -124,6 +128,7 @@ export const JOURNEYS: Journey[] = [
     cover: genesisCover,
     bookIds: ["genesis"],
     startChapter: 12,
+    endChapter: 50,
   },
 ];
 
@@ -131,6 +136,35 @@ export const FEATURED_BOOK_ID = "genesis";
 
 export function getBook(bookId: string): BibleBook | undefined {
   return BOOKS.find((book) => book.id === bookId);
+}
+
+export function getJourney(journeyId: string): Journey | undefined {
+  return JOURNEYS.find((journey) => journey.id === journeyId);
+}
+
+export function getJourneyChapterRange(journey: Journey): {
+  start: number;
+  end: number;
+} {
+  return {
+    start: journey.startChapter,
+    end: journey.endChapter ?? journey.startChapter,
+  };
+}
+
+export function getJourneyChapters(
+  journey: Journey,
+  bookId?: string
+): BibleChapter[] {
+  const id = bookId ?? journey.bookIds[0];
+  const book = getBook(id);
+  if (!book) {
+    return [];
+  }
+  const { start, end } = getJourneyChapterRange(journey);
+  return book.chapters.filter(
+    (chapter) => chapter.number >= start && chapter.number <= end
+  );
 }
 
 export function getChapter(

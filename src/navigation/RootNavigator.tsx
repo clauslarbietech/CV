@@ -10,6 +10,7 @@ import BrowseScreen from "../screens/BrowseScreen";
 import ChapterPlayerScreen from "../screens/ChapterPlayerScreen";
 import FavoritesScreen from "../screens/FavoritesScreen";
 import { useBottomMenuInset } from "../hooks/useBottomMenuInset";
+import JourneyDetailScreen from "../screens/JourneyDetailScreen";
 import MoreScreen from "../screens/MoreScreen";
 import MyPlansScreen from "../screens/MyPlansScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -105,6 +106,7 @@ export default function RootNavigator() {
       >
         <Stack.Screen name="MainTabs" component={MainTabs} />
         <Stack.Screen name="Book" component={BookScreen} />
+        <Stack.Screen name="JourneyDetail" component={JourneyDetailScreen} />
         <Stack.Screen name="ChapterPlayer" component={ChapterPlayerScreen} />
         <Stack.Screen name="WebtoonEpisode" component={WebtoonEpisodeScreen} />
         <Stack.Screen name="AnimationDemo" component={AnimationDemoScreen} />

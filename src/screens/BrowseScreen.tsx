@@ -16,7 +16,6 @@ import BrandWordmark from "../components/brand/BrandWordmark";
 import { BRAND } from "../content/brand";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 import { inviteToJourney } from "../services/journeyInvite";
-import { openBibleChapter } from "../services/openBibleChapter";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Home">,
@@ -87,17 +86,9 @@ export default function BrowseScreen({ navigation }: Props) {
                   accessibilityRole="button"
                   accessibilityLabel={`Open ${journey.title} at chapter ${journey.startChapter}`}
                   onPress={() => {
-                    const bookId = journey.bookIds[0];
-                    navigation.navigate("Book", {
-                      bookId,
-                      chapterNumber: journey.startChapter,
+                    navigation.navigate("JourneyDetail", {
+                      journeyId: journey.id,
                     });
-                    openBibleChapter(
-                      navigation,
-                      bookId,
-                      journey.startChapter,
-                      { autoPlay: true }
-                    );
                   }}
                 >
                   <View className="overflow-hidden rounded-2xl bg-night-card">
