@@ -9,7 +9,8 @@ A free, non-commercial Bible mobile app (Genesis through Revelation) featuring a
 - React Native + Expo (TypeScript)
 - NativeWind v4 (Tailwind CSS)
 - React Native Reanimated
-- Crossway ESV API (`api.esv.org`) with AsyncStorage caching
+- YouVersion Platform (`@youversion/platform-core`) for Bible versions + passages
+- Crossway ESV API (`api.esv.org`) as an optional alternate source
 
 ## Current experience (Through the Word–style)
 
@@ -39,11 +40,17 @@ Then open: **https://clauslarbietech.github.io/CV/**
 ```bash
 npm install
 cp .env.example .env
-# Add your Crossway ESV API key to .env as EXPO_PUBLIC_ESV_API_KEY
+# Required for multi-version Bible text:
+#   EXPO_PUBLIC_YOUVERSION_APP_KEY  → https://platform.youversion.com/
+# Optional Crossway ESV alternate:
+#   EXPO_PUBLIC_ESV_API_KEY         → https://api.esv.org/
 npx expo start
 ```
 
-Get an API key from [api.esv.org](https://api.esv.org/).
+Get a free YouVersion App Key at [platform.youversion.com](https://platform.youversion.com/).  
+Accept Bible licenses in the Platform portal for each version you want listed.
+
+> Note: The YouVersion **React UI SDK** (`@youversion/platform-react-ui`) is for Vite/web React apps. This Expo app uses the same App Key through **`@youversion/platform-core`** so we keep our custom night-mode reader.
 
 Rebuild the GitHub Pages preview anytime with:
 ```bash

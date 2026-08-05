@@ -8,6 +8,8 @@ export type CatalogBook = {
   id: string;
   name: string;
   abbreviation: string;
+  /** USFM 3-letter book code for YouVersion Platform APIs. */
+  usfm: string;
   testament: "OT" | "NT";
   chapters: number;
   /** True when we ship comic storylines / offline chapter meta. */
@@ -15,18 +17,18 @@ export type CatalogBook = {
 };
 
 export const CATALOG_BOOKS: CatalogBook[] = [
-  { id: "genesis", name: "Genesis", abbreviation: "Ge", testament: "OT", chapters: 50, illustrated: true },
-  { id: "exodus", name: "Exodus", abbreviation: "Ex", testament: "OT", chapters: 40, illustrated: false },
-  { id: "psalms", name: "Psalms", abbreviation: "Ps", testament: "OT", chapters: 150, illustrated: false },
-  { id: "proverbs", name: "Proverbs", abbreviation: "Pr", testament: "OT", chapters: 31, illustrated: false },
-  { id: "isaiah", name: "Isaiah", abbreviation: "Is", testament: "OT", chapters: 66, illustrated: false },
-  { id: "matthew", name: "Matthew", abbreviation: "Mt", testament: "NT", chapters: 28, illustrated: false },
-  { id: "mark", name: "Mark", abbreviation: "Mk", testament: "NT", chapters: 16, illustrated: false },
-  { id: "luke", name: "Luke", abbreviation: "Lk", testament: "NT", chapters: 24, illustrated: false },
-  { id: "john", name: "John", abbreviation: "Jn", testament: "NT", chapters: 21, illustrated: false },
-  { id: "acts", name: "Acts", abbreviation: "Ac", testament: "NT", chapters: 28, illustrated: false },
-  { id: "romans", name: "Romans", abbreviation: "Ro", testament: "NT", chapters: 16, illustrated: false },
-  { id: "revelation", name: "Revelation", abbreviation: "Re", testament: "NT", chapters: 22, illustrated: false },
+  { id: "genesis", name: "Genesis", abbreviation: "Ge", usfm: "GEN", testament: "OT", chapters: 50, illustrated: true },
+  { id: "exodus", name: "Exodus", abbreviation: "Ex", usfm: "EXO", testament: "OT", chapters: 40, illustrated: false },
+  { id: "psalms", name: "Psalms", abbreviation: "Ps", usfm: "PSA", testament: "OT", chapters: 150, illustrated: false },
+  { id: "proverbs", name: "Proverbs", abbreviation: "Pr", usfm: "PRO", testament: "OT", chapters: 31, illustrated: false },
+  { id: "isaiah", name: "Isaiah", abbreviation: "Is", usfm: "ISA", testament: "OT", chapters: 66, illustrated: false },
+  { id: "matthew", name: "Matthew", abbreviation: "Mt", usfm: "MAT", testament: "NT", chapters: 28, illustrated: false },
+  { id: "mark", name: "Mark", abbreviation: "Mk", usfm: "MRK", testament: "NT", chapters: 16, illustrated: false },
+  { id: "luke", name: "Luke", abbreviation: "Lk", usfm: "LUK", testament: "NT", chapters: 24, illustrated: false },
+  { id: "john", name: "John", abbreviation: "Jn", usfm: "JHN", testament: "NT", chapters: 21, illustrated: false },
+  { id: "acts", name: "Acts", abbreviation: "Ac", usfm: "ACT", testament: "NT", chapters: 28, illustrated: false },
+  { id: "romans", name: "Romans", abbreviation: "Ro", usfm: "ROM", testament: "NT", chapters: 16, illustrated: false },
+  { id: "revelation", name: "Revelation", abbreviation: "Re", usfm: "REV", testament: "NT", chapters: 22, illustrated: false },
 ];
 
 export function getCatalogBook(bookId: string): CatalogBook | undefined {
@@ -36,6 +38,15 @@ export function getCatalogBook(bookId: string): CatalogBook | undefined {
 export function passageQueryFor(bookId: string, chapter: number): string {
   const book = getCatalogBook(bookId);
   return `${book?.name ?? bookId} ${chapter}`;
+}
+
+/** YouVersion / USFM chapter reference, e.g. `GEN.1`. */
+export function usfmChapterRef(bookId: string, chapter: number): string | null {
+  const book = getCatalogBook(bookId);
+  if (!book) {
+    return null;
+  }
+  return `${book.usfm}.${chapter}`;
 }
 
 /** Parse simple queries like "Genesis 3", "John 3:16", "Ge 1". */

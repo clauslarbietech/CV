@@ -18,9 +18,13 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Speech from "expo-speech";
 import BibleSearchModal from "../components/bible/BibleSearchModal";
 import ScripturePickerModal from "../components/bible/ScripturePickerModal";
+import VersionPickerModal, {
+  type BibleSource,
+} from "../components/bible/VersionPickerModal";
 import {
   getCatalogBook,
   passageQueryFor,
+  usfmChapterRef,
 } from "../data/bibleCatalog";
 import { getGenesisChapter } from "../data/genesisChapters";
 import { getChapter } from "../data/library";
@@ -35,6 +39,12 @@ import {
   ESV_WEBSITE_URL,
   fetchPassage,
 } from "../services/esvService";
+import {
+  DEFAULT_YOUVERSION_VERSION_ID,
+  YOUVERSION_PLATFORM_URL,
+  fetchYouVersionPassage,
+  hasYouVersionAppKey,
+} from "../services/youversionService";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Bible">,
@@ -54,10 +64,22 @@ export default function BibleReaderScreen({ navigation }: Props) {
   const [chapter, setChapter] = useState(1);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [versionOpen, setVersionOpen] = useState(false);
+  const [source, setSource] = useState<BibleSource>(() =>
+    hasYouVersionAppKey()
+      ? {
+          kind: "youversion",
+          versionId: DEFAULT_YOUVERSION_VERSION_ID,
+          abbreviation: "BSB",
+        }
+      : { kind: "esv", abbreviation: "ESV" }
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [verses, setVerses] = useState("");
   const [canonical, setCanonical] = useState("");
+  const [copyright, setCopyright] = useState(ESV_COPYRIGHT_NOTICE);
+  const [copyrightUrl, setCopyrightUrl] = useState(ESV_WEBSITE_URL);
   const [reading, setReading] = useState(false);
   const [activePanel, setActivePanel] = useState(0);
 
@@ -100,9 +122,23 @@ export default function BibleReaderScreen({ navigation }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const result = await fetchPassage(query);
-      setVerses(result.passages.join("\n\n").trim());
-      setCanonical(result.canonical || query);
+      if (source.kind === "youversion") {
+        const usfm = usfmChapterRef(bookId, chapter);
+        if (!usfm) {
+          throw new Error("Unknown book for YouVersion reference.");
+        }
+        const result = await fetchYouVersionPassage(source.versionId, usfm);
+        setVerses(result.content);
+        setCanonical(result.reference || query);
+        setCopyright(result.copyright);
+        setCopyrightUrl(YOUVERSION_PLATFORM_URL);
+      } else {
+        const result = await fetchPassage(query);
+        setVerses(result.passages.join("\n\n").trim());
+        setCanonical(result.canonical || query);
+        setCopyright(ESV_COPYRIGHT_NOTICE);
+        setCopyrightUrl(ESV_WEBSITE_URL);
+      }
     } catch (err) {
       // Offline / no key: fall back to key verse + summary for Genesis.
       if (genesisMeta) {
@@ -110,6 +146,8 @@ export default function BibleReaderScreen({ navigation }: Props) {
         setVerses(
           `${genesisMeta.keyVerseRef}\n\n${genesisMeta.keyVerseEsV}\n\n${genesisMeta.summary}`
         );
+        setCopyright(ESV_COPYRIGHT_NOTICE);
+        setCopyrightUrl(ESV_WEBSITE_URL);
         setError(
           err instanceof Error
             ? `${err.message} Showing key verse offline.`
@@ -121,13 +159,13 @@ export default function BibleReaderScreen({ navigation }: Props) {
         setError(
           err instanceof Error
             ? err.message
-            : "Unable to load passage. Add your ESV API key to read full chapters."
+            : "Unable to load passage. Add a YouVersion or ESV API key."
         );
       }
     } finally {
       setLoading(false);
     }
-  }, [bookId, chapter, genesisMeta]);
+  }, [bookId, chapter, genesisMeta, source]);
 
   useFocusEffect(
     useCallback(() => {
@@ -204,10 +242,19 @@ export default function BibleReaderScreen({ navigation }: Props) {
           </Pressable>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Bible version ESV"
-            className="rounded-full bg-white/12 px-3 py-2"
+            accessibilityLabel={`Bible version ${source.abbreviation}`}
+            onPress={() => setVersionOpen(true)}
+            className="flex-row items-center rounded-full bg-white/12 px-3 py-2"
           >
-            <Text className="text-sm font-bold text-white">ESV</Text>
+            <Text className="text-sm font-bold text-white">
+              {source.abbreviation}
+            </Text>
+            <MaterialIcons
+              name="arrow-drop-down"
+              size={20}
+              color="#FFFFFF"
+              style={{ marginLeft: 2 }}
+            />
           </Pressable>
         </View>
 
@@ -327,7 +374,8 @@ export default function BibleReaderScreen({ navigation }: Props) {
                 </Text>
               ) : null}
               <Text className="text-[17px] leading-7 text-white/92">
-                {verses || "Add your ESV API key to load the full chapter text."}
+                {verses ||
+                  "Add EXPO_PUBLIC_YOUVERSION_APP_KEY or EXPO_PUBLIC_ESV_API_KEY to load full chapter text."}
               </Text>
             </>
           )}
@@ -336,11 +384,11 @@ export default function BibleReaderScreen({ navigation }: Props) {
             accessibilityRole="link"
             className="mt-6"
             onPress={() => {
-              void Linking.openURL(ESV_WEBSITE_URL);
+              void Linking.openURL(copyrightUrl);
             }}
           >
             <Text className="text-center text-[10px] leading-4 text-white/35">
-              {ESV_COPYRIGHT_NOTICE}
+              {copyright}
             </Text>
           </Pressable>
         </View>
@@ -398,6 +446,15 @@ export default function BibleReaderScreen({ navigation }: Props) {
           stopReading();
           setBookId(nextBookId);
           setChapter(nextChapter);
+        }}
+      />
+      <VersionPickerModal
+        visible={versionOpen}
+        selected={source}
+        onClose={() => setVersionOpen(false)}
+        onSelect={(next) => {
+          stopReading();
+          setSource(next);
         }}
       />
     </SafeAreaView>

@@ -42,6 +42,7 @@ jobs:
         run: npx expo export --platform web
         env:
           EXPO_PUBLIC_ESV_API_KEY: ${{ secrets.EXPO_PUBLIC_ESV_API_KEY }}
+          EXPO_PUBLIC_YOUVERSION_APP_KEY: ${{ secrets.EXPO_PUBLIC_YOUVERSION_APP_KEY }}
 
       - name: Prepare Pages bundle
         run: |
