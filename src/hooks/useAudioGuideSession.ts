@@ -222,12 +222,9 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
     }
   }, [pause, play]);
 
-  const skip = useCallback(
-    (deltaSeconds: number) => {
-      const target = Math.min(
-        durationRef.current,
-        Math.max(0, positionRef.current + deltaSeconds)
-      );
+  const seekTo = useCallback(
+    (seconds: number) => {
+      const target = Math.min(durationRef.current, Math.max(0, seconds));
       positionRef.current = target;
       setPosition(Math.floor(target));
 
@@ -251,6 +248,13 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
       }
     },
     [speakFrom]
+  );
+
+  const skip = useCallback(
+    (deltaSeconds: number) => {
+      seekTo(positionRef.current + deltaSeconds);
+    },
+    [seekTo]
   );
 
   const cycleSpeed = useCallback(() => {
@@ -277,6 +281,7 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
     play,
     pause,
     skip,
+    seekTo,
     cycleSpeed,
     stop: stopTransport,
   };

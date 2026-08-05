@@ -30,6 +30,7 @@ import {
   getWebtoonEpisode,
   type WebtoonPanel,
 } from "../data/webtoonEpisodes";
+import { getBook } from "../data/library";
 import type { RootStackParamList } from "../navigation/types";
 import {
   ESV_COPYRIGHT_NOTICE,
@@ -46,6 +47,13 @@ type Props = NativeStackScreenProps<RootStackParamList, "WebtoonEpisode">;
 export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
   const { bookId, chapterNumber, storylineId } = route.params;
   const episode = getWebtoonEpisode(bookId, chapterNumber, storylineId);
+  const book = getBook(bookId);
+  const nextChapter = book?.chapters.find(
+    (item) => item.number === chapterNumber + 1
+  );
+  const prevChapter = book?.chapters.find(
+    (item) => item.number === chapterNumber - 1
+  );
   const { width } = useWindowDimensions();
   const panelHeight = Math.round(width * 1.28);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -229,8 +237,7 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
             />
           </View>
           <Text className="mt-2 text-[11px] leading-4 text-white/45">
-            For kids who can’t read yet: each scene has a speaker button that
-            reads the Bible words and speech bubbles out loud.
+            Tap the speaker on each scene to hear the words aloud.
           </Text>
         </View>
 
@@ -253,18 +260,21 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
           />
         ))}
 
-        <View className="items-center px-6 py-8">
-          <Text className="mb-3 text-sm text-white/50">End of storyline</Text>
+        <View className="items-center px-5 py-8">
           <Pressable
             accessibilityRole="button"
-            className="mb-3 flex-row items-center rounded-full bg-terracotta px-5 py-3"
+            className="mb-3 w-full max-w-sm flex-row items-center justify-center rounded-full bg-terracotta px-5 py-3.5"
             onPress={() => {
               stopAudio();
-              navigation.navigate("ChapterPlayer", { bookId, chapterNumber });
+              navigation.navigate("ChapterPlayer", {
+                bookId,
+                chapterNumber,
+                autoPlay: true,
+              });
             }}
           >
             <Text className="text-sm font-bold text-white">
-              Continue with audio guide
+              Continue chapter
             </Text>
             <MaterialIcons
               name="arrow-forward"
@@ -273,6 +283,62 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
               style={{ marginLeft: 6 }}
             />
           </Pressable>
+
+          <View className="mb-4 w-full max-w-sm flex-row gap-3">
+            <Pressable
+              accessibilityRole="button"
+              disabled={!prevChapter}
+              className={`flex-1 items-center rounded-full px-4 py-3 ${
+                prevChapter ? "bg-terracotta" : "bg-white/10"
+              }`}
+              onPress={() => {
+                if (!prevChapter) {
+                  return;
+                }
+                stopAudio();
+                navigation.replace("ChapterPlayer", {
+                  bookId,
+                  chapterNumber: prevChapter.number,
+                  autoPlay: true,
+                });
+              }}
+            >
+              <Text
+                className={`text-sm font-bold ${
+                  prevChapter ? "text-white" : "text-white/35"
+                }`}
+              >
+                ← Back
+              </Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              disabled={!nextChapter}
+              className={`flex-1 items-center rounded-full px-4 py-3 ${
+                nextChapter ? "bg-terracotta" : "bg-white/10"
+              }`}
+              onPress={() => {
+                if (!nextChapter) {
+                  return;
+                }
+                stopAudio();
+                navigation.replace("ChapterPlayer", {
+                  bookId,
+                  chapterNumber: nextChapter.number,
+                  autoPlay: true,
+                });
+              }}
+            >
+              <Text
+                className={`text-sm font-bold ${
+                  nextChapter ? "text-white" : "text-white/35"
+                }`}
+              >
+                Next →
+              </Text>
+            </Pressable>
+          </View>
+
           <Pressable
             accessibilityRole="link"
             onPress={() => {

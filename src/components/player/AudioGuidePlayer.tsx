@@ -1,52 +1,84 @@
-import { Pressable, Text, View } from "react-native";
+import { useRef } from "react";
+import {
+  GestureResponderEvent,
+  LayoutChangeEvent,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { formatClock } from "../../data/library";
 
 type Props = {
   title: string;
-  narrator: string;
   position: number;
   duration: number;
   isPlaying: boolean;
   speed: number;
-  downloaded: boolean;
   favorite: boolean;
-  completed: boolean;
+  hasPrevious: boolean;
+  hasNext: boolean;
   onToggle: () => void;
-  onSkip: (deltaSeconds: number) => void;
+  onSeek: (seconds: number) => void;
   onCycleSpeed: () => void;
   onToggleFavorite: () => void;
-  onToggleComplete: () => void;
-  onDownload: () => void;
+  onPrevious: () => void;
+  onNext: () => void;
 };
 
+/**
+ * Compact chapter transport:
+ * scrub the play line to seek; orange Back / Next for chapters (no ±15).
+ */
 export default function AudioGuidePlayer({
   title,
-  narrator,
   position,
   duration,
   isPlaying,
   speed,
-  downloaded,
   favorite,
-  completed,
+  hasPrevious,
+  hasNext,
   onToggle,
-  onSkip,
+  onSeek,
   onCycleSpeed,
   onToggleFavorite,
-  onToggleComplete,
-  onDownload,
+  onPrevious,
+  onNext,
 }: Props) {
   const progress = duration > 0 ? Math.min(1, position / duration) : 0;
+  const trackWidth = useRef(1);
+
+  const seekFromEvent = (event: GestureResponderEvent) => {
+    if (duration <= 0) {
+      return;
+    }
+    const x = Math.max(0, Math.min(trackWidth.current, event.nativeEvent.locationX));
+    onSeek((x / trackWidth.current) * duration);
+  };
+
+  const onTrackLayout = (event: LayoutChangeEvent) => {
+    trackWidth.current = Math.max(1, event.nativeEvent.layout.width);
+  };
 
   return (
     <View className="border-t border-night-border bg-night-card px-4 pb-3 pt-3">
-      <View className="mb-2 flex-row items-start justify-between">
-        <View className="flex-1 pr-3">
-          <Text className="text-base font-bold text-night-text" numberOfLines={1}>
-            {title}
-          </Text>
-          <Text className="text-sm text-night-muted">{narrator}</Text>
-        </View>
+      <View className="mb-2 flex-row items-center justify-between">
+        <Text className="flex-1 pr-3 text-sm font-bold text-night-text" numberOfLines={1}>
+          {title}
+        </Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={favorite ? "Remove favorite" : "Favorite chapter"}
+          onPress={onToggleFavorite}
+          className="mr-2 h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
+        >
+          <MaterialIcons
+            name={favorite ? "star" : "star-border"}
+            size={20}
+            color={favorite ? "#F0D78C" : "#AEAEB2"}
+          />
+        </Pressable>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Change playback speed"
@@ -57,78 +89,87 @@ export default function AudioGuidePlayer({
         </Pressable>
       </View>
 
-      <View className="mb-1 h-1.5 overflow-hidden rounded-full bg-night-elevated">
+      {/* Scrubbable play line — drag/tap to seek */}
+      <View
+        accessibilityRole="adjustable"
+        accessibilityLabel="Playback position"
+        accessibilityHint="Drag left or right to rewind or fast forward"
+        className="mb-1 justify-center py-2"
+        onLayout={onTrackLayout}
+        onStartShouldSetResponder={() => true}
+        onMoveShouldSetResponder={() => true}
+        onResponderGrant={seekFromEvent}
+        onResponderMove={seekFromEvent}
+      >
+        <View className="h-1.5 overflow-hidden rounded-full bg-night-elevated">
+          <View
+            className="h-full rounded-full bg-terracotta"
+            style={{ width: `${progress * 100}%` }}
+          />
+        </View>
         <View
-          className="h-full rounded-full bg-terracotta"
-          style={{ width: `${progress * 100}%` }}
+          pointerEvents="none"
+          className="absolute h-3.5 w-3.5 rounded-full bg-terracotta"
+          style={{
+            left: `${progress * 100}%`,
+            marginLeft: -7,
+            top: "50%",
+            marginTop: -7,
+          }}
         />
       </View>
       <View className="mb-3 flex-row justify-between">
-        <Text className="text-[11px] text-night-soft">
-          {formatClock(position)}
-        </Text>
-        <Text className="text-[11px] text-night-soft">
-          {formatClock(duration)}
-        </Text>
+        <Text className="text-[11px] text-night-soft">{formatClock(position)}</Text>
+        <Text className="text-[11px] text-night-soft">{formatClock(duration)}</Text>
       </View>
 
-      <View className="mb-3 flex-row items-center justify-center gap-8">
+      <View className="flex-row items-center justify-between gap-3">
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Skip back 15 seconds"
-          onPress={() => onSkip(-15)}
-          className="h-11 w-11 items-center justify-center rounded-full border border-night-border"
+          accessibilityLabel="Previous chapter"
+          disabled={!hasPrevious}
+          onPress={onPrevious}
+          className={`min-w-[88px] flex-1 items-center rounded-full px-3 py-3 ${
+            hasPrevious ? "bg-terracotta" : "bg-night-elevated"
+          }`}
         >
-          <Text className="text-sm font-bold text-night-text">−15</Text>
+          <Text
+            className={`text-sm font-bold ${
+              hasPrevious ? "text-white" : "text-night-soft"
+            }`}
+          >
+            ← Back
+          </Text>
         </Pressable>
 
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={isPlaying ? "Pause narration" : "Play narration"}
           onPress={onToggle}
-          className="h-16 w-16 items-center justify-center rounded-full bg-terracotta active:bg-terracotta-dark"
+          className="h-14 w-14 items-center justify-center rounded-full bg-terracotta active:bg-terracotta-dark"
         >
-          <Text className="text-xl font-bold text-white">
-            {isPlaying ? "❚❚" : "▶"}
-          </Text>
+          <MaterialIcons
+            name={isPlaying ? "pause" : "play-arrow"}
+            size={32}
+            color="#FFFFFF"
+          />
         </Pressable>
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Skip forward 15 seconds"
-          onPress={() => onSkip(15)}
-          className="h-11 w-11 items-center justify-center rounded-full border border-night-border"
+          accessibilityLabel="Next chapter"
+          disabled={!hasNext}
+          onPress={onNext}
+          className={`min-w-[88px] flex-1 items-center rounded-full px-3 py-3 ${
+            hasNext ? "bg-terracotta" : "bg-night-elevated"
+          }`}
         >
-          <Text className="text-sm font-bold text-night-text">+15</Text>
-        </Pressable>
-      </View>
-
-      <View className="flex-row justify-between">
-        <Pressable
-          accessibilityRole="button"
-          onPress={onDownload}
-          className="rounded-full px-2 py-1"
-        >
-          <Text className="text-xs font-semibold text-night-muted">
-            {downloaded ? "Downloaded" : "Download"}
-          </Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          onPress={onToggleFavorite}
-          className="rounded-full px-2 py-1"
-        >
-          <Text className="text-xs font-semibold text-night-muted">
-            {favorite ? "Favorited" : "Favorite"}
-          </Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          onPress={onToggleComplete}
-          className="rounded-full px-2 py-1"
-        >
-          <Text className="text-xs font-semibold text-night-muted">
-            {completed ? "Completed" : "Mark done"}
+          <Text
+            className={`text-sm font-bold ${
+              hasNext ? "text-white" : "text-night-soft"
+            }`}
+          >
+            Next →
           </Text>
         </Pressable>
       </View>

@@ -8,7 +8,12 @@ export type MainTabParamList = {
 export type RootStackParamList = {
   MainTabs: undefined;
   Book: { bookId: string };
-  ChapterPlayer: { bookId: string; chapterNumber: number };
+  ChapterPlayer: {
+    bookId: string;
+    chapterNumber: number;
+    /** When true, start the audio guide (e.g. from webtoon Continue). */
+    autoPlay?: boolean;
+  };
   WebtoonEpisode: {
     bookId: string;
     chapterNumber: number;
