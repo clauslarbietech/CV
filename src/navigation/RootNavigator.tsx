@@ -3,10 +3,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AnimationDemoScreen from "../screens/AnimationDemoScreen";
+import BibleReaderScreen from "../screens/BibleReaderScreen";
 import BookScreen from "../screens/BookScreen";
 import BrowseScreen from "../screens/BrowseScreen";
 import ChapterPlayerScreen from "../screens/ChapterPlayerScreen";
-import GroupsScreen from "../screens/GroupsScreen";
 import MoreScreen from "../screens/MoreScreen";
 import MyPlansScreen from "../screens/MyPlansScreen";
 import WebtoonEpisodeScreen from "../screens/WebtoonEpisodeScreen";
@@ -19,24 +19,24 @@ const TAB_ICONS: Record<
   keyof MainTabParamList,
   keyof typeof MaterialIcons.glyphMap
 > = {
-  Browse: "explore",
-  MyPlans: "menu-book",
-  Groups: "groups",
-  More: "more-horiz",
+  Home: "home",
+  Bible: "menu-book",
+  Plans: "checklist",
+  More: "person-outline",
 };
 
 function MainTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="Browse"
+      initialRouteName="Bible"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: "#E4572E",
         tabBarInactiveTintColor: "#9AA0A6",
         tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
         tabBarStyle: {
-          backgroundColor: "#FFFFFF",
-          borderTopColor: "#EEF0F3",
+          backgroundColor: "#111111",
+          borderTopColor: "#2C2C2E",
           height: 62,
           paddingTop: 6,
           paddingBottom: 8,
@@ -50,17 +50,13 @@ function MainTabs() {
         ),
       })}
     >
+      <Tab.Screen name="Home" component={BrowseScreen} />
+      <Tab.Screen name="Bible" component={BibleReaderScreen} />
       <Tab.Screen
-        name="MyPlans"
+        name="Plans"
         component={MyPlansScreen}
-        options={{ title: "My Plans" }}
+        options={{ title: "Plans" }}
       />
-      <Tab.Screen
-        name="Groups"
-        component={GroupsScreen}
-        options={{ title: "Groups" }}
-      />
-      <Tab.Screen name="Browse" component={BrowseScreen} />
       <Tab.Screen name="More" component={MoreScreen} />
     </Tab.Navigator>
   );

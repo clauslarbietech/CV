@@ -1,7 +1,7 @@
 export type MainTabParamList = {
-  Browse: undefined;
-  MyPlans: undefined;
-  Groups: undefined;
+  Home: undefined;
+  Bible: undefined;
+  Plans: undefined;
   More: undefined;
 };
 

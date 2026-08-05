@@ -10,7 +10,7 @@ import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 import { getBookProgress } from "../services/listeningProgress";
 
 type Props = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, "MyPlans">,
+  BottomTabScreenProps<MainTabParamList, "Plans">,
   NativeStackScreenProps<RootStackParamList>
 >;
 

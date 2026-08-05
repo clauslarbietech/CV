@@ -15,7 +15,7 @@ import { BOOKS, JOURNEYS } from "../data/library";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 
 type Props = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, "Browse">,
+  BottomTabScreenProps<MainTabParamList, "Home">,
   NativeStackScreenProps<RootStackParamList>
 >;
 
@@ -39,19 +39,13 @@ export default function BrowseScreen({ navigation }: Props) {
             {/* One clear primary start action */}
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Start Genesis Day 1 story"
+              accessibilityLabel="Open Bible reader at Genesis Day 1"
               className="mt-5 w-full max-w-sm flex-row items-center justify-center rounded-full bg-terracotta px-5 py-3.5"
-              onPress={() =>
-                navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 1,
-                  storylineId: "day-1",
-                })
-              }
+              onPress={() => navigation.navigate("Bible")}
             >
-              <MaterialIcons name="play-arrow" size={22} color="#FFFFFF" />
+              <MaterialIcons name="menu-book" size={22} color="#FFFFFF" />
               <Text className="ml-1 text-sm font-bold text-white">
-                Start here · Genesis Day 1
+                Open Bible · comics + scripture
               </Text>
             </Pressable>
 
@@ -113,7 +107,7 @@ export default function BrowseScreen({ navigation }: Props) {
 
           <SectionHeader
             title="Bible Journeys"
-            onSeeAll={() => navigation.navigate("MyPlans")}
+            onSeeAll={() => navigation.navigate("Plans")}
           />
           <ScrollView
             horizontal

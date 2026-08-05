@@ -10,7 +10,7 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#111827" }}>
       <SafeAreaProvider>
-        <StatusBar style="dark" />
+        <StatusBar style="light" />
         {/* Mobile-first draft: phone frame on web; native fills the device. */}
         <View
           style={
@@ -20,10 +20,10 @@ export default function App() {
                   maxWidth: 430,
                   width: "100%",
                   alignSelf: "center",
-                  backgroundColor: "#FFFFFF",
+                  backgroundColor: "#111111",
                   overflow: "hidden",
                 }
-              : { flex: 1, backgroundColor: "#FFFFFF" }
+              : { flex: 1, backgroundColor: "#111111" }
           }
         >
           <RootNavigator />
