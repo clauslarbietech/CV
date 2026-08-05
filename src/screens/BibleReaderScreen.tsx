@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  Image,
   Linking,
   Pressable,
   ScrollView,
@@ -19,6 +18,7 @@ import * as Speech from "expo-speech";
 import BibleSearchModal from "../components/bible/BibleSearchModal";
 import ScripturePickerModal from "../components/bible/ScripturePickerModal";
 import VersionPickerModal from "../components/bible/VersionPickerModal";
+import PremiseHeroImage from "../components/comics/PremiseHeroImage";
 import {
   CATALOG_BOOKS,
   getCatalogBook,
@@ -370,10 +370,9 @@ export default function BibleReaderScreen({ navigation }: Props) {
               backgroundColor: readerColors.surface,
             }}
           >
-            <Image
+            <PremiseHeroImage
               source={comicPeek.image}
-              style={{ width, height: Math.round(width * 0.58) }}
-              resizeMode="cover"
+              width={width}
               accessibilityLabel={comicPeek.caption ?? chapterTitle}
             />
             <View

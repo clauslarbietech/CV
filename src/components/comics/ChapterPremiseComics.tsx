@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Image, Text, View, useWindowDimensions } from "react-native";
+import { Text, View, useWindowDimensions } from "react-native";
 import Animated, {
   Easing,
   FadeIn,
@@ -11,6 +11,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import type { ComicPanel } from "../../data/library";
+import PremiseHeroImage, { premiseHeroHeight } from "./PremiseHeroImage";
 
 type Props = {
   panels: ComicPanel[];
@@ -34,8 +35,7 @@ export function uniqueComicPanels(panels: ComicPanel[]): ComicPanel[] {
 }
 
 /**
- * One composition: animated image + narration.
- * Pages look the same; only the art and text change.
+ * One composition: top-anchored premise image + narration.
  */
 export default function ChapterPremiseComics({
   panels,
@@ -49,7 +49,36 @@ export default function ChapterPremiseComics({
     Math.max(0, unique.length - 1)
   );
   const panel = unique[clampedActive] ?? unique[0];
-  const heroHeight = Math.round(Math.min(width * 0.78, 380));
+  const height = premiseHeroHeight(width);
+  const motion = useSharedValue(0);
+
+  useEffect(() => {
+    if (!panel) {
+      return;
+    }
+    motion.value = 0;
+    motion.value = withRepeat(
+      withSequence(
+        withTiming(1, {
+          duration: 5200,
+          easing: Easing.inOut(Easing.quad),
+        }),
+        withTiming(0, {
+          duration: 5200,
+          easing: Easing.inOut(Easing.quad),
+        })
+      ),
+      -1,
+      false
+    );
+  }, [motion, panel?.id]);
+
+  const frameStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: interpolate(motion.value, [0, 1], [1.01, 1.05]) },
+      { translateY: interpolate(motion.value, [0, 1], [0, 3]) },
+    ],
+  }));
 
   if (!panel) {
     return null;
@@ -57,74 +86,22 @@ export default function ChapterPremiseComics({
 
   return (
     <View className="mb-2">
-      <HeroImage
-        key={panel.id}
-        image={panel.image}
-        label={panel.caption}
-        width={width}
-        height={heroHeight}
-      />
+      <Animated.View entering={FadeIn.duration(350)}>
+        <View style={{ width, height, overflow: "hidden" }}>
+          <Animated.View style={[{ width, height }, frameStyle]}>
+            <PremiseHeroImage
+              source={panel.image}
+              width={width}
+              accessibilityLabel={panel.caption}
+            />
+          </Animated.View>
+        </View>
+      </Animated.View>
       <View className="mx-5 mt-3">
         <Text className="text-base leading-6 text-night-text">
           {activeNarration?.trim() || panel.caption}
         </Text>
       </View>
     </View>
-  );
-}
-
-function HeroImage({
-  image,
-  label,
-  width,
-  height,
-}: {
-  image: number;
-  label: string;
-  width: number;
-  height: number;
-}) {
-  const motion = useSharedValue(0);
-
-  useEffect(() => {
-    motion.value = 0;
-    motion.value = withRepeat(
-      withSequence(
-        withTiming(1, {
-          duration: 4800,
-          easing: Easing.inOut(Easing.quad),
-        }),
-        withTiming(0, {
-          duration: 4800,
-          easing: Easing.inOut(Easing.quad),
-        })
-      ),
-      -1,
-      false
-    );
-  }, [image, motion]);
-
-  const imageStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: interpolate(motion.value, [0, 1], [1.04, 1.12]) },
-      { translateY: interpolate(motion.value, [0, 1], [0, -6]) },
-    ],
-  }));
-
-  return (
-    <Animated.View entering={FadeIn.duration(350)}>
-      <View
-        style={{ width, height, overflow: "hidden", backgroundColor: "#1A1A1A" }}
-      >
-        <Animated.View style={[{ width, height }, imageStyle]}>
-          <Image
-            source={image}
-            accessibilityLabel={label}
-            resizeMode="cover"
-            style={{ width, height }}
-          />
-        </Animated.View>
-      </View>
-    </Animated.View>
   );
 }
