@@ -203,7 +203,7 @@ export default function MyPlansScreen({ navigation }: Props) {
                   </View>
                   <View
                     className={`rounded px-2 py-1 ${
-                      plan.progress > 0 ? "bg-teal-deep/40" : "bg-night-elevated"
+                      plan.progress > 0 ? "bg-night-border" : "bg-night-elevated"
                     }`}
                   >
                     <Text className="text-[11px] font-semibold text-ochre-soft">

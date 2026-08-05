@@ -210,16 +210,8 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 48 }}
       >
-        <View className="px-4 py-5">
-          <Text className="text-2xl font-bold text-white">{episode.title}</Text>
-          <Text className="mt-1 text-sm text-white/60">{episode.subtitle}</Text>
-          <View className="mt-3 flex-row items-center">
-            <MaterialIcons name="volume-up" size={16} color="#E4572E" />
-            <Text className="ml-1 text-xs uppercase tracking-[1.5px] text-terracotta">
-              Tap the speaker to hear every word
-            </Text>
-          </View>
-          <View className="mt-4">
+        <View className="px-4 py-4">
+          <View className="mt-1">
             <ReadAloudButton
               isPlaying={anyPlaying}
               label={
@@ -236,9 +228,6 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
               }}
             />
           </View>
-          <Text className="mt-2 text-[11px] leading-4 text-white/45">
-            Tap the speaker on each scene to hear the words aloud.
-          </Text>
         </View>
 
         {episode.panels.map((panel, index) => (
@@ -440,7 +429,7 @@ function WebtoonFrame({
 
   const bubbleClass =
     panel.bubble?.tone === "whisper"
-      ? "bg-teal-ink/90"
+      ? "bg-night-elevated/95"
       : panel.bubble?.tone === "dialogue"
         ? "bg-white"
         : panel.bubble?.tone === "scripture"

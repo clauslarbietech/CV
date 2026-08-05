@@ -20,9 +20,10 @@ module.exports = {
           deep: "#B8860B",
         },
         teal: {
-          ink: "#15233F",
-          deep: "#1E3A6E",
-          mist: "#E7EEF8",
+          // Remapped from navy/blue to night gray so legacy bg-teal-* buttons stay on-brand.
+          ink: "#2C2C2E",
+          deep: "#3A3A3C",
+          mist: "#3A3A3C",
         },
         parchment: {
           DEFAULT: "#F7F4EF",

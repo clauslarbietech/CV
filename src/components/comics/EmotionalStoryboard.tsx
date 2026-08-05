@@ -107,7 +107,7 @@ function StoryBeat({
       style={[{ width, alignSelf: "center", marginBottom: 14 }, frameStyle]}
       className="overflow-hidden rounded-2xl border border-night-border bg-night-card"
     >
-      <View className="flex-row items-center justify-between bg-teal-ink px-3 py-2">
+      <View className="flex-row items-center justify-between bg-night-elevated px-3 py-2">
         <Text className="text-[11px] font-semibold uppercase tracking-[1.5px] text-ochre-soft">
           Scene {index + 1} · {panel.title}
         </Text>
@@ -120,7 +120,7 @@ function StoryBeat({
         ) : null}
       </View>
 
-      <View className="relative h-52 overflow-hidden bg-teal-ink">
+      <View className="relative h-52 overflow-hidden bg-night-card">
         <Animated.View style={[{ width: "100%", height: "100%" }, imageStyle]}>
           <Image
             source={panel.image}

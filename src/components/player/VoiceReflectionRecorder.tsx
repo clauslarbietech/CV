@@ -59,7 +59,7 @@ export default function VoiceReflectionRecorder({
             accessibilityRole="button"
             disabled={isBusy}
             onPress={onStart}
-            className="rounded-full bg-teal-ink px-4 py-2.5 active:bg-teal-deep"
+            className="rounded-full bg-night-elevated px-4 py-2.5 active:bg-night-border"
           >
             <Text className="text-sm font-bold text-white">
               {hasReflection ? "Re-record note" : "Record note"}

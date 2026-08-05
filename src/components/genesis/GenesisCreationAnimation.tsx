@@ -71,13 +71,13 @@ function MotionPanel({ title, caption, source, delayMs, width }: PanelProps) {
       className="mb-5 overflow-hidden border-b-4 border-parchment-ink/80"
       style={{ width }}
     >
-      <View className="border-x-2 border-t-2 border-parchment-ink/80 bg-teal-ink px-3 py-2">
+      <View className="border-x-2 border-t-2 border-parchment-ink/80 bg-night-elevated px-3 py-2">
         <Text className="text-xs font-semibold uppercase tracking-[2px] text-ochre-soft">
           {title}
         </Text>
       </View>
 
-      <View className="relative h-56 overflow-hidden border-x-2 border-parchment-ink/80 bg-teal-ink">
+      <View className="relative h-56 overflow-hidden border-x-2 border-parchment-ink/80 bg-night-elevated">
         <Animated.View style={[{ width: "100%", height: "100%" }, imageStyle]}>
           <Image
             source={source}

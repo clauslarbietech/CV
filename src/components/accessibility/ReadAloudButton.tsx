@@ -66,10 +66,10 @@ export default function ReadAloudButton({
       accessibilityState={{ selected: isPlaying }}
       onPress={onPress}
       className={`flex-row items-center rounded-full px-4 py-3 ${
-        isPlaying ? "bg-terracotta" : "bg-teal-ink"
+        isPlaying ? "bg-terracotta" : "bg-night-elevated"
       }`}
     >
-      <View className="mr-2.5 h-9 w-9 items-center justify-center rounded-full bg-white/15">
+      <View className="mr-2.5 h-9 w-9 items-center justify-center rounded-full bg-white/10">
         <MaterialIcons
           name={isPlaying ? "stop" : "volume-up"}
           size={22}
@@ -86,7 +86,7 @@ export default function ReadAloudButton({
         </Text>
         {!isPlaying ? (
           <Text className="mt-0.5 text-[10px] text-white/65">
-            Scripture + speech · great for kids who can’t read yet
+            Scripture + speech
           </Text>
         ) : null}
       </View>
