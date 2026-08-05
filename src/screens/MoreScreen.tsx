@@ -25,7 +25,7 @@ const LINKS: {
   {
     id: "about",
     label: "About PixBible",
-    hint: BRAND.tagline,
+    hint: "Mission, our story, and why it's free",
     icon: "auto-stories",
     route: "About",
   },

@@ -43,6 +43,18 @@ export default function BrowseScreen({ navigation }: Props) {
 
             <Pressable
               accessibilityRole="button"
+              accessibilityLabel="About PixBible — mission, story, and why it is free"
+              className="mt-3 flex-row items-center rounded-full border border-night-border bg-night-card px-4 py-2"
+              onPress={() => navigation.navigate("About")}
+            >
+              <MaterialIcons name="info-outline" size={16} color="#F0D78C" />
+              <Text className="ml-2 text-xs font-semibold text-ochre-soft">
+                About · mission & why it's free
+              </Text>
+            </Pressable>
+
+            <Pressable
+              accessibilityRole="button"
               accessibilityHint="Opens the full Genesis chapter list"
               className="mt-3 flex-row items-center"
               onPress={() =>

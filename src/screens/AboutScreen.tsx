@@ -1,6 +1,5 @@
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AppTabBar from "../components/navigation/AppTabBar";
@@ -9,6 +8,14 @@ import { BRAND } from "../content/brand";
 import type { RootStackParamList } from "../navigation/types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "About">;
+
+function SectionTitle({ children }: { children: string }) {
+  return (
+    <Text className="mb-2 text-xs font-bold uppercase tracking-[2px] text-terracotta">
+      {children}
+    </Text>
+  );
+}
 
 export default function AboutScreen({ navigation }: Props) {
   return (
@@ -25,7 +32,9 @@ export default function AboutScreen({ navigation }: Props) {
           >
             <MaterialIcons name="arrow-back" size={20} color="#F2F2F7" />
           </Pressable>
-          <Text className="text-xl font-bold text-night-text">About</Text>
+          <Text className="text-xl font-bold text-night-text">
+            About PixBible
+          </Text>
         </View>
 
         <ScrollView
@@ -51,9 +60,22 @@ export default function AboutScreen({ navigation }: Props) {
             </Text>
           </View>
 
-          <Text className="mb-2 text-xs font-bold uppercase tracking-[2px] text-terracotta">
-            Mission
-          </Text>
+          <View className="mb-6 rounded-2xl border border-terracotta/30 bg-terracotta/10 px-4 py-4">
+            <View className="mb-2 flex-row items-center">
+              <MaterialIcons name="volunteer-activism" size={20} color="#E4572E" />
+              <Text className="ml-2 text-sm font-bold text-terracotta">
+                {BRAND.freeTitle}
+              </Text>
+            </View>
+            <Text className="text-base font-bold leading-6 text-night-text">
+              {BRAND.freeHeadline}
+            </Text>
+            <Text className="mt-2 text-[15px] leading-6 text-night-muted">
+              {BRAND.freeBody}
+            </Text>
+          </View>
+
+          <SectionTitle>Mission</SectionTitle>
           <Text className="mb-1 text-sm font-semibold text-night-text">
             {BRAND.mission}
           </Text>
@@ -61,16 +83,17 @@ export default function AboutScreen({ navigation }: Props) {
             {BRAND.missionDetail}
           </Text>
 
-          <Text className="mb-2 text-xs font-bold uppercase tracking-[2px] text-terracotta">
-            {BRAND.whyTitle}
+          <SectionTitle>{BRAND.backstoryTitle}</SectionTitle>
+          <Text className="mb-6 text-[15px] leading-6 text-night-muted">
+            {BRAND.backstory}
           </Text>
+
+          <SectionTitle>{BRAND.whyTitle}</SectionTitle>
           <Text className="mb-6 text-[15px] leading-6 text-night-muted">
             {BRAND.whyBody}
           </Text>
 
-          <Text className="mb-3 text-xs font-bold uppercase tracking-[2px] text-terracotta">
-            What we stand for
-          </Text>
+          <SectionTitle>What we stand for</SectionTitle>
           <View className="mb-6 flex-row flex-wrap gap-2">
             {BRAND.personality.map((trait) => (
               <View
@@ -86,12 +109,10 @@ export default function AboutScreen({ navigation }: Props) {
 
           <View className="rounded-2xl border border-night-border bg-parchment/10 px-4 py-4">
             <Text className="text-xs font-bold uppercase tracking-[1.5px] text-ochre">
-              Scripture first
+              {BRAND.scriptureFirstTitle}
             </Text>
             <Text className="mt-2 text-sm leading-6 text-night-muted">
-              Art illustrates the text; the Bible remains the message. Every
-              chapter pairs faithful ESV wording with illustrations that help you
-              see the story—not replace it.
+              {BRAND.scriptureFirstBody}
             </Text>
           </View>
         </ScrollView>

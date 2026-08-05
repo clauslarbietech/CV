@@ -41,4 +41,14 @@ export const BRAND = {
     "Allow PixBible to record chapter voice reflections.",
   /** Animated cover splash duration (ms) before entering the app. */
   coverDurationMs: 2800,
+  backstoryTitle: "Our story",
+  backstory:
+    "PixBible began with a simple observation: many children and teens first meet the Bible through pictures—in Sunday school, story Bibles, and illustrated lessons. That visual wonder often fades as apps become text-only. We built PixBible to bring that experience back for the whole Bible: every chapter illustrated, every story grounded in Scripture, for families who want faith to feel alive—not distant.",
+  freeTitle: "Free for everyone",
+  freeHeadline: "Free because God is freeing.",
+  freeBody:
+    "The gospel is a gift. PixBible is free—no subscriptions, no paywalls on God's Word. We believe access to Scripture and faithful illustration should not be locked behind a price tag. Families, churches, and learners everywhere can open the Bible, see the story, and hear the text without cost.",
+  scriptureFirstTitle: "Scripture first",
+  scriptureFirstBody:
+    "Art illustrates the text; the Bible remains the message. Every chapter pairs faithful ESV wording with illustrations that help you see the story—not replace it.",
 } as const;
