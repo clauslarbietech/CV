@@ -38,7 +38,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "export:web": "expo export --platform web",
-    "deploy:pages": "expo export --platform web"
+    "prepare:pages": "bash scripts/prepare-pages-dist.sh",
+    "deploy:pages": "expo export --platform web && npm run prepare:pages"
   },
   "homepage": "https://clauslarbietech.github.io/CV",
   "private": true
