@@ -25,7 +25,6 @@ import SelectableScripture, {
 import SelectionActionSheet from "../components/bible/SelectionActionSheet";
 import VersionPickerModal from "../components/bible/VersionPickerModal";
 import PremiseHeroImage from "../components/comics/PremiseHeroImage";
-import HighlightModal from "../components/favorites/HighlightModal";
 import { listFavorites } from "../services/favoritesService";
 import {
   CATALOG_BOOKS,
@@ -75,7 +74,6 @@ export default function BibleReaderScreen({ navigation }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [versionOpen, setVersionOpen] = useState(false);
-  const [highlightOpen, setHighlightOpen] = useState(false);
   const [selectedSegment, setSelectedSegment] =
     useState<ScriptureSegment | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -399,11 +397,6 @@ export default function BibleReaderScreen({ navigation }: Props) {
 
         <View className="flex-row items-center">
           <IconButton
-            name="border-color"
-            label="Highlight Bible text"
-            onPress={() => setHighlightOpen(true)}
-          />
-          <IconButton
             name={reading ? "stop" : "volume-up"}
             label={reading ? "Stop reading" : "Read aloud"}
             onPress={readAloud}
@@ -613,17 +606,6 @@ export default function BibleReaderScreen({ navigation }: Props) {
           setSource(next);
           void saveSelectedBibleSource(next);
         }}
-      />
-      <HighlightModal
-        visible={highlightOpen}
-        kind="bible_highlight"
-        bookId={libraryId}
-        chapterNumber={chapter}
-        defaultExcerpt={
-          selectedSegment?.text ?? verses.slice(0, 320)
-        }
-        scriptureRef={canonical || passageQueryFor(bookId, chapter, books)}
-        onClose={() => setHighlightOpen(false)}
       />
       <SelectionActionSheet
         visible={sheetOpen && Boolean(selectedSegment)}

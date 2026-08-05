@@ -18,7 +18,6 @@ import SelectableScripture, {
 } from "../components/bible/SelectableScripture";
 import SelectionActionSheet from "../components/bible/SelectionActionSheet";
 import ChapterPremiseComics from "../components/comics/ChapterPremiseComics";
-import HighlightModal from "../components/favorites/HighlightModal";
 import AppTabBar from "../components/navigation/AppTabBar";
 import AudioGuidePlayer from "../components/player/AudioGuidePlayer";
 import { getBook, getChapter, JOURNEYS } from "../data/library";
@@ -65,7 +64,6 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
   const [scriptureExpanded, setScriptureExpanded] = useState(false);
   const [chapterOpen, setChapterOpen] = useState(false);
   const [didAutoPlay, setDidAutoPlay] = useState(false);
-  const [highlightOpen, setHighlightOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [selectedSegment, setSelectedSegment] =
     useState<ScriptureSegment | null>(null);
@@ -345,14 +343,6 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             ) : null}
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Highlight and comment"
-              className="h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
-              onPress={() => setHighlightOpen(true)}
-            >
-              <MaterialIcons name="border-color" size={18} color="#F0D78C" />
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
               accessibilityLabel="Open Bible reader"
               className="h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
               onPress={() => {
@@ -456,18 +446,6 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
 
         <AppTabBar activeTab="Home" />
       </View>
-
-      <HighlightModal
-        visible={highlightOpen}
-        kind="story_highlight"
-        bookId={bookId}
-        chapterNumber={chapterNumber}
-        defaultExcerpt={
-          selectedSegment?.text ?? activeNarration ?? chapter.title
-        }
-        scriptureRef={passage?.canonical ?? chapter.passageQuery}
-        onClose={() => setHighlightOpen(false)}
-      />
 
       <SelectionActionSheet
         visible={sheetOpen && Boolean(selectedSegment)}
