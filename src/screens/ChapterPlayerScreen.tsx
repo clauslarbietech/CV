@@ -11,7 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Speech from "expo-speech";
 import ReadAloudButton from "../components/accessibility/ReadAloudButton";
-import ChapterComicPanels from "../components/comics/ChapterComicPanels";
+import ChapterPremiseComics, {
+  uniqueComicPanels,
+} from "../components/comics/ChapterPremiseComics";
 import EmotionalStoryboard from "../components/comics/EmotionalStoryboard";
 import AudioGuidePlayer from "../components/player/AudioGuidePlayer";
 import VoiceReflectionRecorder from "../components/player/VoiceReflectionRecorder";
@@ -54,6 +56,8 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     lastPositionSeconds: 0,
   });
   const [readingScripture, setReadingScripture] = useState(false);
+  const [scriptureExpanded, setScriptureExpanded] = useState(false);
+  const [reflectionOpen, setReflectionOpen] = useState(false);
 
   const audio = useAudioGuideSession({
     guide: chapter?.guide,
@@ -62,16 +66,30 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
 
   const reflection = useVoiceReflection({ bookId, chapterNumber });
 
+  const displayPanels = useMemo(
+    () => (chapter ? uniqueComicPanels(chapter.panels) : []),
+    [chapter]
+  );
+
   const activePanelIndex = useMemo(() => {
-    if (!chapter || audio.duration <= 0) {
+    if (!chapter || audio.duration <= 0 || displayPanels.length === 0) {
       return 0;
     }
-    const segment = audio.duration / Math.max(chapter.panels.length, 1);
+    const segment = audio.duration / Math.max(displayPanels.length, 1);
     return Math.min(
-      chapter.panels.length - 1,
+      displayPanels.length - 1,
       Math.floor(audio.position / segment)
     );
-  }, [audio.duration, audio.position, chapter]);
+  }, [audio.duration, audio.position, chapter, displayPanels.length]);
+
+  const activeNarration = useMemo(() => {
+    if (!chapter?.guide.script.length) {
+      return undefined;
+    }
+    const line =
+      chapter.guide.script[audio.activeLineIndex] ?? chapter.guide.script[0];
+    return line;
+  }, [audio.activeLineIndex, chapter]);
 
   useEffect(() => {
     if (!chapter) {
@@ -83,6 +101,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     async function loadPassage() {
       setLoading(true);
       setError(null);
+      setScriptureExpanded(false);
       try {
         const result = await fetchScriptureChapter(
           bookId,
@@ -135,7 +154,6 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
   }, [bookId, chapterNumber]);
 
   useEffect(() => {
-    // Persist sparsely so AsyncStorage writes don't thrash every second.
     if (audio.position === 0 || audio.position % 5 === 0) {
       void updateChapterProgress(bookId, chapterNumber, {
         lastPositionSeconds: audio.position,
@@ -197,6 +215,19 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     (item) => item.number === chapterNumber + 1
   );
 
+  const goNextChapter = () => {
+    if (!nextChapter) {
+      return;
+    }
+    void audio.stop();
+    void Speech.stop();
+    setReadingScripture(false);
+    navigation.replace("ChapterPlayer", {
+      bookId: book.id,
+      chapterNumber: nextChapter.number,
+    });
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <View className="flex-1">
@@ -218,186 +249,193 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
               {book.name} {chapter.number}
             </Text>
             <Text className="text-[11px] text-night-muted">
-              Bible on screen · guide in headphones
+              Premise first · scripture on tap
             </Text>
           </View>
-            <View className="rounded-full bg-night-elevated px-2.5 py-1">
-              <Text className="text-xs font-bold text-night-text">Bible</Text>
-            </View>
+          <View className="rounded-full bg-night-elevated px-2.5 py-1">
+            <Text className="text-xs font-bold text-night-text">Bible</Text>
+          </View>
         </View>
 
         <ScrollView
           className="flex-1"
-          contentContainerClassName="px-5 pb-8 pt-4"
+          contentContainerClassName="pb-8"
           showsVerticalScrollIndicator={false}
         >
-          <Text className="mb-1 text-xs font-semibold uppercase tracking-[2px] text-terracotta">
-            {chapter.guide.title}
-          </Text>
-          <Text className="mb-1 text-2xl font-bold text-night-text">
-            {chapter.title}
-          </Text>
-          <Text className="mb-4 text-sm text-night-muted">
-            ~10 minute habit · tap play and follow the comics + scripture
-          </Text>
-
-          {webtoon ? (
-            <Pressable
-              accessibilityRole="button"
-              className="mb-4 rounded-2xl border border-night-border bg-night-card px-4 py-3"
-              onPress={() => {
-                void audio.stop();
-                navigation.navigate("WebtoonEpisode", {
-                  bookId,
-                  chapterNumber,
-                  storylineId: webtoon.storylineId,
-                });
-              }}
-            >
-              <Text className="text-xs font-bold uppercase tracking-[2px] text-terracotta">
-                {webtoon.seriesTitle} · {webtoon.episodeLabel}
-              </Text>
-              <Text className="mt-1 text-base font-bold text-night-text">
-                Read webtoon storyline →
-              </Text>
-              <Text className="mt-1 text-xs text-night-muted">
-                Scenes · dialogue · tap to hear scripture
-              </Text>
-            </Pressable>
-          ) : null}
-
+          {/* Comic premise at the very top of the Bible chapter view */}
           {chapter.number === 3 ? (
-            <EmotionalStoryboard
-              panels={chapter.panels}
-              activeIndex={activePanelIndex}
-              title="Emotional storyboard"
-              subtitle="The Fall — scene by scene"
-            />
-          ) : (
-            <ChapterComicPanels
-              panels={chapter.panels}
-              activeIndex={activePanelIndex}
-            />
-          )}
-
-          <View className="mb-5 rounded-2xl bg-night-card px-4 py-4">
-            <Text className="mb-2 text-xs font-semibold uppercase tracking-wide text-ochre-soft">
-              Audio guide narration
-            </Text>
-            {chapter.guide.script.map((line, index) => (
-              <Text
-                key={`${chapter.number}-${index}`}
-                className={`mb-2 text-sm leading-5 ${
-                  index === audio.activeLineIndex
-                    ? "font-semibold text-night-text"
-                    : "text-night-soft"
-                }`}
-              >
-                {line}
-              </Text>
-            ))}
-          </View>
-
-          <VoiceReflectionRecorder
-            isRecording={reflection.isRecording}
-            durationMillis={reflection.durationMillis}
-            hasReflection={Boolean(reflection.reflectionUri)}
-            isPlayingReflection={reflection.isPlayingReflection}
-            permissionDenied={reflection.permissionDenied}
-            isBusy={reflection.isBusy}
-            onStart={() => {
-              void reflection.startRecording();
-            }}
-            onStop={() => {
-              void reflection.stopRecording();
-            }}
-            onPlayToggle={reflection.togglePlayback}
-            onClear={() => {
-              void reflection.clearReflection();
-            }}
-          />
-
-          <View className="mb-3 flex-row items-center justify-between">
-            <Text className="text-xl font-bold text-night-text">
-              {passage?.canonical ?? chapter.passageQuery}
-            </Text>
-            {verses ? (
-              <ReadAloudButton
-                compact
-                isPlaying={readingScripture}
-                onPress={toggleScriptureReadAloud}
-                accessibilityHint="Reads the full chapter text out loud for non-readers"
+            <View className="px-5 pt-4">
+              <EmotionalStoryboard
+                panels={displayPanels}
+                activeIndex={activePanelIndex}
+                title="Emotional storyboard"
+                subtitle="The Fall — scene by scene"
               />
-            ) : null}
-          </View>
-
-          {loading ? (
-            <View className="items-center py-8">
-              <ActivityIndicator size="large" color="#E4572E" />
-              <Text className="mt-3 text-sm text-night-muted">
-                Fetching {chapter.passageQuery}…
-              </Text>
-            </View>
-          ) : error ? (
-            <View className="py-3">
-              <Text className="mb-2 text-base font-semibold text-terracotta-dark">
-                Could not load passage
-              </Text>
-              <Text className="text-sm leading-5 text-night-muted">
-                {error}
-              </Text>
             </View>
           ) : (
-            <>
-              <View className="mb-3">
-                <ReadAloudButton
-                  isPlaying={readingScripture}
-                  label={
-                    readingScripture
-                      ? "Stop reading scripture"
-                      : "Read scripture aloud"
-                  }
-                  onPress={toggleScriptureReadAloud}
-                />
-              </View>
-              <Text className="text-base leading-7 text-night-text">
-                {verses}
-              </Text>
-            </>
+            <ChapterPremiseComics
+              panels={displayPanels}
+              activeIndex={activePanelIndex}
+              chapterTitle={chapter.title}
+              premise={
+                displayPanels[0]?.caption ??
+                chapter.guide.script[1] ??
+                chapter.guide.script[0] ??
+                ""
+              }
+              activeNarration={activeNarration}
+            />
           )}
 
-          {nextChapter ? (
+          <View className="px-5">
+            {webtoon ? (
+              <Pressable
+                accessibilityRole="button"
+                className="mb-4 rounded-2xl border border-terracotta/40 bg-night-card px-4 py-3"
+                onPress={() => {
+                  void audio.stop();
+                  navigation.navigate("WebtoonEpisode", {
+                    bookId,
+                    chapterNumber,
+                    storylineId: webtoon.storylineId,
+                  });
+                }}
+              >
+                <Text className="text-xs font-bold uppercase tracking-[2px] text-terracotta">
+                  {webtoon.seriesTitle} · {webtoon.episodeLabel}
+                </Text>
+                <Text className="mt-1 text-base font-bold text-night-text">
+                  Open full webtoon →
+                </Text>
+              </Pressable>
+            ) : null}
+
+            {nextChapter ? (
+              <Pressable
+                accessibilityRole="button"
+                className="mb-4 items-center rounded-full bg-terracotta px-4 py-3"
+                onPress={goNextChapter}
+              >
+                <Text className="text-sm font-bold text-white">
+                  Next chapter → {nextChapter.title}
+                </Text>
+              </Pressable>
+            ) : null}
+
+            <View className="mb-4 overflow-hidden rounded-2xl border border-night-border bg-night-card">
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ expanded: scriptureExpanded }}
+                className="flex-row items-center justify-between px-4 py-3"
+                onPress={() => setScriptureExpanded((open) => !open)}
+              >
+                <View className="flex-1 pr-3">
+                  <Text className="text-xs font-bold uppercase tracking-[1.5px] text-ochre-soft">
+                    Full scripture
+                  </Text>
+                  <Text className="mt-0.5 text-base font-bold text-night-text">
+                    {passage?.canonical ?? chapter.passageQuery}
+                  </Text>
+                  <Text className="mt-0.5 text-xs text-night-muted">
+                    {scriptureExpanded
+                      ? "Tap to collapse"
+                      : "Tap to expand and read the chapter"}
+                  </Text>
+                </View>
+                <Text className="text-lg text-night-text">
+                  {scriptureExpanded ? "▴" : "▾"}
+                </Text>
+              </Pressable>
+
+              {scriptureExpanded ? (
+                <View className="border-t border-night-border px-4 py-3">
+                  {loading ? (
+                    <View className="items-center py-6">
+                      <ActivityIndicator size="large" color="#E4572E" />
+                      <Text className="mt-3 text-sm text-night-muted">
+                        Fetching {chapter.passageQuery}…
+                      </Text>
+                    </View>
+                  ) : error ? (
+                    <View className="py-2">
+                      <Text className="mb-2 text-base font-semibold text-terracotta-dark">
+                        Could not load passage
+                      </Text>
+                      <Text className="text-sm leading-5 text-night-muted">
+                        {error}
+                      </Text>
+                    </View>
+                  ) : (
+                    <>
+                      <View className="mb-3">
+                        <ReadAloudButton
+                          isPlaying={readingScripture}
+                          label={
+                            readingScripture
+                              ? "Stop reading scripture"
+                              : "Read scripture aloud"
+                          }
+                          onPress={toggleScriptureReadAloud}
+                        />
+                      </View>
+                      <Text className="text-base leading-7 text-night-text">
+                        {verses}
+                      </Text>
+                    </>
+                  )}
+                </View>
+              ) : null}
+            </View>
+
             <Pressable
               accessibilityRole="button"
-              className="mt-8 items-center rounded-full border border-night-border px-4 py-3"
-              onPress={() => {
-                void audio.stop();
-                navigation.replace("ChapterPlayer", {
-                  bookId: book.id,
-                  chapterNumber: nextChapter.number,
-                });
-              }}
+              className="mb-4 rounded-2xl border border-night-border bg-night-elevated px-4 py-3"
+              onPress={() => setReflectionOpen((open) => !open)}
             >
               <Text className="text-sm font-bold text-night-text">
-                Next chapter tomorrow → {nextChapter.title}
+                {reflectionOpen ? "Hide voice reflection" : "Voice reflection"}
+              </Text>
+              <Text className="mt-0.5 text-xs text-night-muted">
+                Optional · record a short prayer or takeaway
               </Text>
             </Pressable>
-          ) : null}
 
-          <Pressable
-            accessibilityRole="link"
-            className="mt-6"
-            onPress={() => {
-              void Linking.openURL(
-                passage?.copyrightUrl ?? "https://platform.youversion.com/"
-              );
-            }}
-          >
-            <Text className="text-center text-[10px] leading-4 text-night-soft">
-              {passage?.copyright ??
-                "Add EXPO_PUBLIC_YOUVERSION_APP_KEY to load scripture from the Bible API."}
-            </Text>
-          </Pressable>
+            {reflectionOpen ? (
+              <VoiceReflectionRecorder
+                isRecording={reflection.isRecording}
+                durationMillis={reflection.durationMillis}
+                hasReflection={Boolean(reflection.reflectionUri)}
+                isPlayingReflection={reflection.isPlayingReflection}
+                permissionDenied={reflection.permissionDenied}
+                isBusy={reflection.isBusy}
+                onStart={() => {
+                  void reflection.startRecording();
+                }}
+                onStop={() => {
+                  void reflection.stopRecording();
+                }}
+                onPlayToggle={reflection.togglePlayback}
+                onClear={() => {
+                  void reflection.clearReflection();
+                }}
+              />
+            ) : null}
+
+            <Pressable
+              accessibilityRole="link"
+              className="mt-2"
+              onPress={() => {
+                void Linking.openURL(
+                  passage?.copyrightUrl ?? "https://platform.youversion.com/"
+                );
+              }}
+            >
+              <Text className="text-center text-[10px] leading-4 text-night-soft">
+                {passage?.copyright ??
+                  "Add EXPO_PUBLIC_YOUVERSION_APP_KEY to load scripture from the Bible API."}
+              </Text>
+            </Pressable>
+          </View>
         </ScrollView>
 
         <AudioGuidePlayer

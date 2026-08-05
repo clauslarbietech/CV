@@ -67,6 +67,9 @@ const g25Stew = require("../../assets/webtoon/genesis-25/01-stew.jpg");
 const g37Caravan = require("../../assets/webtoon/genesis-37/02-caravan.jpg");
 const g41Dreams = require("../../assets/webtoon/genesis-41/01-dreams.jpg");
 const g45Reunion = require("../../assets/webtoon/genesis-45/01-reunion.jpg");
+const g21IsaacBorn = require("../../assets/webtoon/genesis-21/01-isaac-born.jpg");
+const g38JudahTamar = require("../../assets/webtoon/genesis-38/01-judah-tamar.jpg");
+const g39Potiphar = require("../../assets/webtoon/genesis-39/01-potiphar.jpg");
 
 const ARC_THUMBS: Record<string, number> = {
   Creation: day1,
@@ -88,8 +91,7 @@ function buildGuide(meta: GenesisChapterMeta): ChapterGuide {
       `Welcome to ${meta.passageQuery} — ${meta.title}.`,
       meta.summary,
       `Key verse · ${meta.keyVerseRef}: ${meta.keyVerseEsV}`,
-      "Open the ESV text below, listen along, and come back tomorrow for the next chapter.",
-      "This free app walks Genesis end-to-end — one storyline at a time.",
+      "Listen along — expand scripture anytime, then continue tomorrow.",
     ],
   };
 }
@@ -209,6 +211,18 @@ function buildPanels(meta: GenesisChapterMeta): ComicPanel[] {
         image: g15Covenant,
       },
     ],
+    21: [
+      {
+        title: "Isaac is born",
+        caption: "Sarah holds the promised son — laughter becomes joy.",
+        image: g21IsaacBorn,
+      },
+      {
+        title: "Mount Moriah awaits",
+        caption: "The child of promise grows under God’s care.",
+        image: arcIsaac,
+      },
+    ],
     22: [
       {
         title: "Mount Moriah",
@@ -242,6 +256,26 @@ function buildPanels(meta: GenesisChapterMeta): ComicPanel[] {
         image: g37Caravan,
       },
     ],
+    38: [
+      {
+        title: "Judah and Tamar",
+        caption:
+          "Judah’s family line falters until Tamar secures offspring — preserving the line toward future kings.",
+        image: g38JudahTamar,
+      },
+    ],
+    39: [
+      {
+        title: "In Potiphar’s house",
+        caption: "Joseph serves faithfully in Egypt — and the Lord is with him.",
+        image: g39Potiphar,
+      },
+      {
+        title: "From the pit",
+        caption: "What brothers meant for harm, God turns toward purpose.",
+        image: g37Caravan,
+      },
+    ],
     41: [
       {
         title: "Pharaoh’s dreams",
@@ -268,18 +302,13 @@ function buildPanels(meta: GenesisChapterMeta): ComicPanel[] {
     }));
   }
 
+  // One premise image only — never stack duplicate art for placeholder chapters.
   const thumb = ARC_THUMBS[meta.arc] ?? genesisCover;
   return [
     {
       id: `g${meta.number}-1`,
       title: meta.title,
       caption: meta.summary,
-      image: thumb,
-    },
-    {
-      id: `g${meta.number}-2`,
-      title: meta.keyVerseRef,
-      caption: meta.keyVerseEsV,
       image: thumb,
     },
   ];

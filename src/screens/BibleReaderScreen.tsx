@@ -361,7 +361,51 @@ export default function BibleReaderScreen({ navigation }: Props) {
         contentContainerStyle={{ paddingBottom: 108 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Scripture first — one calm title + body */}
+        {/* Premise comic at the very top — story before the scroll of text */}
+        {comicPeek ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open full comic storyline"
+            onPress={openFullComic}
+            style={{
+              width,
+              backgroundColor: readerColors.surface,
+            }}
+          >
+            <Image
+              source={comicPeek.image}
+              style={{ width, height: Math.round(width * 0.58) }}
+              resizeMode="cover"
+              accessibilityLabel={comicPeek.caption ?? chapterTitle}
+            />
+            <View
+              className="flex-row items-center justify-between px-4 py-2.5"
+              style={{ backgroundColor: readerColors.elevated }}
+            >
+              <View className="flex-1 pr-3">
+                <Text
+                  className="text-[10px] font-bold uppercase tracking-[1.5px]"
+                  style={{ color: readerColors.accentSoft }}
+                >
+                  Story premise
+                </Text>
+                <Text
+                  className="mt-0.5 text-sm font-semibold"
+                  style={{ color: readerColors.text }}
+                  numberOfLines={2}
+                >
+                  {comicPeek.caption ?? `Open comic · ${comicPeek.count} scenes`}
+                </Text>
+              </View>
+              <MaterialIcons
+                name="chevron-right"
+                size={22}
+                color={readerColors.accent}
+              />
+            </View>
+          </Pressable>
+        ) : null}
+
         <View className="px-5 pb-4 pt-3">
           <Text
             className="mb-1 text-xs font-semibold uppercase tracking-[1.5px]"
@@ -425,42 +469,6 @@ export default function BibleReaderScreen({ navigation }: Props) {
             </Text>
           </Pressable>
         </View>
-
-        {/* One compact comic peek — not a full busy strip */}
-        {comicPeek ? (
-          <View className="px-4 pb-8 pt-1">
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Open full comic storyline"
-              onPress={openFullComic}
-              className="overflow-hidden rounded-2xl"
-              style={{
-                width: peekWidth,
-                alignSelf: "center",
-                backgroundColor: readerColors.surface,
-              }}
-            >
-              <Image
-                source={comicPeek.image}
-                style={{ width: peekWidth, height: peekHeight }}
-                resizeMode="cover"
-              />
-              <View className="flex-row items-center justify-between px-3 py-2.5">
-                <Text
-                  className="text-sm font-semibold"
-                  style={{ color: readerColors.text }}
-                >
-                  Open comic · {comicPeek.count} scenes
-                </Text>
-                <MaterialIcons
-                  name="chevron-right"
-                  size={22}
-                  color={readerColors.accent}
-                />
-              </View>
-            </Pressable>
-          </View>
-        ) : null}
       </ScrollView>
 
       <View className="absolute bottom-3 left-0 right-0 items-center">

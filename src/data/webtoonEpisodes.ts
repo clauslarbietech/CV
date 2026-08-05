@@ -62,6 +62,9 @@ const g37Coat = require("../../assets/webtoon/genesis-37/01-coat.jpg");
 const g37Caravan = require("../../assets/webtoon/genesis-37/02-caravan.jpg");
 const g41Dreams = require("../../assets/webtoon/genesis-41/01-dreams.jpg");
 const g45Reunion = require("../../assets/webtoon/genesis-45/01-reunion.jpg");
+const g21IsaacBorn = require("../../assets/webtoon/genesis-21/01-isaac-born.jpg");
+const g38JudahTamar = require("../../assets/webtoon/genesis-38/01-judah-tamar.jpg");
+const g39Potiphar = require("../../assets/webtoon/genesis-39/01-potiphar.jpg");
 
 /**
  * Illustrated anime webtoon storylines (family-safe).
@@ -559,6 +562,29 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
     ],
   },
   {
+    id: "genesis-21-isaac-born",
+    bookId: "genesis",
+    chapterNumber: 21,
+    storylineId: "isaac-born",
+    seriesTitle: "Genesis",
+    episodeLabel: "Isaac",
+    title: "Isaac Is Born",
+    subtitle: "The promised son arrives — laughter becomes joy",
+    panels: [
+      {
+        id: "g21-1",
+        image: g21IsaacBorn,
+        scriptureRef: "Genesis 21:1–3",
+        scriptureText:
+          "The Lord visited Sarah as he had said, and the Lord did to Sarah as he had promised. And Sarah conceived and bore Abraham a son in his old age at the time of which God had spoken to him. Abraham called the name of his son who was born to him, whom Sarah bore him, Isaac.",
+        bubble: {
+          tone: "narration",
+          text: "Sarah bore Abraham a son — and he called his name Isaac.",
+        },
+      },
+    ],
+  },
+  {
     id: "genesis-22-moriah",
     bookId: "genesis",
     chapterNumber: 22,
@@ -657,6 +683,52 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
         bubble: {
           tone: "narration",
           text: "They sold Joseph — and the caravan carried him toward Egypt.",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-38-judah-tamar",
+    bookId: "genesis",
+    chapterNumber: 38,
+    storylineId: "judah-tamar",
+    seriesTitle: "Genesis",
+    episodeLabel: "Judah",
+    title: "Judah and Tamar",
+    subtitle: "A broken family line — and a surprising turn toward mercy",
+    panels: [
+      {
+        id: "g38-1",
+        image: g38JudahTamar,
+        scriptureRef: "Genesis 38:26",
+        scriptureText:
+          'Then Judah identified them and said, “She is more righteous than I, since I did not give her to my son Shelah.” And he did not know her again.',
+        bubble: {
+          tone: "dialogue",
+          text: "“She is more righteous than I…”",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-39-potiphar",
+    bookId: "genesis",
+    chapterNumber: 39,
+    storylineId: "potiphar",
+    seriesTitle: "Genesis",
+    episodeLabel: "Potiphar",
+    title: "In Potiphar’s House",
+    subtitle: "Joseph serves in Egypt — and the Lord is with him",
+    panels: [
+      {
+        id: "g39-1",
+        image: g39Potiphar,
+        scriptureRef: "Genesis 39:2–4",
+        scriptureText:
+          "The Lord was with Joseph, and he became a successful man, and he was in the house of his Egyptian master. His master saw that the Lord was with him and that the Lord caused all that he did to succeed in his hands. So Joseph found favor in his sight and attended him, and he made him overseer of his house and put him in charge of all that he had.",
+        bubble: {
+          tone: "scripture",
+          text: "The Lord was with Joseph, and he became a successful man…",
         },
       },
     ],
