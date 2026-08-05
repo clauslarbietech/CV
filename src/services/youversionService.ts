@@ -115,8 +115,7 @@ async function writeVersionsCache(versions: BibleVersion[]): Promise<void> {
 
 /**
  * Lists English Bible versions available to this App Key.
- * Paginates until exhausted. License acceptances on the Platform portal
- * control whether NIV and other licensed texts appear.
+ * License acceptances on the Platform portal control whether NIV etc. appear.
  */
 export async function listEnglishBibleVersions(options?: {
   forceRefresh?: boolean;
@@ -132,10 +131,12 @@ export async function listEnglishBibleVersions(options?: {
   const versions: BibleVersion[] = [];
   let pageToken: string | undefined;
 
+  // YouVersion rejects large page_size values (e.g. 100 → 400). Keep pages small.
   do {
     const collection = await client.getVersions("en*", undefined, {
-      page_size: 100,
+      page_size: 20,
       page_token: pageToken,
+      all_available: true,
     });
     versions.push(...(collection.data ?? []));
     pageToken = collection.next_page_token || undefined;
