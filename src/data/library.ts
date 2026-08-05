@@ -54,16 +54,29 @@ const fallHandsApple = require("../../assets/panels/fall-02-eve-hands-adam.jpg")
 const fallSerpent = require("../../assets/panels/fall-03-serpent-smirk.jpg");
 const genesisCover = require("../../assets/covers/genesis.jpg");
 const journeyStart = require("../../assets/journeys/start.jpg");
+const arcFallCain = require("../../assets/panels/arc-fall-cain.jpg");
+const arcFlood = require("../../assets/panels/arc-flood.jpg");
+const arcNations = require("../../assets/panels/arc-nations.jpg");
+const arcAbraham = require("../../assets/panels/arc-abraham.jpg");
+const arcIsaac = require("../../assets/panels/arc-isaac.jpg");
+const arcJacob = require("../../assets/panels/arc-jacob.jpg");
+const arcJoseph = require("../../assets/panels/arc-joseph.jpg");
+const g9Rainbow = require("../../assets/webtoon/genesis-9/01-rainbow.jpg");
+const g15Covenant = require("../../assets/webtoon/genesis-15/01-covenant.jpg");
+const g25Stew = require("../../assets/webtoon/genesis-25/01-stew.jpg");
+const g37Caravan = require("../../assets/webtoon/genesis-37/02-caravan.jpg");
+const g41Dreams = require("../../assets/webtoon/genesis-41/01-dreams.jpg");
+const g45Reunion = require("../../assets/webtoon/genesis-45/01-reunion.jpg");
 
 const ARC_THUMBS: Record<string, number> = {
   Creation: day1,
-  Fall: fallSerpent,
-  Flood: waters,
-  Nations: genesisCover,
-  Abraham: journeyStart,
-  Isaac: genesisCover,
-  Jacob: waters,
-  Joseph: journeyStart,
+  Fall: arcFallCain,
+  Flood: arcFlood,
+  Nations: arcNations,
+  Abraham: arcAbraham,
+  Isaac: arcIsaac,
+  Jacob: arcJacob,
+  Joseph: arcJoseph,
 };
 
 function buildGuide(meta: GenesisChapterMeta): ChapterGuide {
@@ -140,6 +153,119 @@ function buildPanels(meta: GenesisChapterMeta): ComicPanel[] {
         image: fallSerpent,
       },
     ];
+  }
+
+  // Dedicated comic beats for illustrated arc chapters (Ken-Burns storyboards).
+  const illustratedBeats: Record<
+    number,
+    { title: string; caption: string; image: number }[]
+  > = {
+    4: [
+      {
+        title: "Offerings",
+        caption: "Abel brings the flock; Cain brings fruit from the ground.",
+        image: arcFallCain,
+      },
+    ],
+    6: [
+      {
+        title: "Build the ark",
+        caption: "God tells Noah to make an ark of gopher wood.",
+        image: arcFlood,
+      },
+    ],
+    7: [
+      {
+        title: "Waters rise",
+        caption: "The ark floats on the face of the waters.",
+        image: arcFlood,
+      },
+    ],
+    9: [
+      {
+        title: "Bow in the cloud",
+        caption: "God sets a rainbow as the sign of His covenant.",
+        image: g9Rainbow,
+      },
+    ],
+    11: [
+      {
+        title: "Tower of Babel",
+        caption: "One language reaches for the heavens — then the nations scatter.",
+        image: arcNations,
+      },
+    ],
+    12: [
+      {
+        title: "Go to the land",
+        caption: "Abram leaves home under a sky full of promise.",
+        image: arcAbraham,
+      },
+    ],
+    15: [
+      {
+        title: "Number the stars",
+        caption: "Abram believes the Lord — counted as righteousness.",
+        image: g15Covenant,
+      },
+    ],
+    22: [
+      {
+        title: "Mount Moriah",
+        caption: "Abraham and Isaac climb — God will provide the lamb.",
+        image: arcIsaac,
+      },
+    ],
+    25: [
+      {
+        title: "Birthright stew",
+        caption: "Esau sells his birthright for a bowl of stew.",
+        image: g25Stew,
+      },
+    ],
+    28: [
+      {
+        title: "Ladder at Bethel",
+        caption: "Jacob dreams of a ladder between earth and heaven.",
+        image: arcJacob,
+      },
+    ],
+    37: [
+      {
+        title: "Coat of many colors",
+        caption: "Israel loves Joseph — and makes him a robe of many colors.",
+        image: arcJoseph,
+      },
+      {
+        title: "Sold to Egypt",
+        caption: "The caravan carries Joseph toward Egypt.",
+        image: g37Caravan,
+      },
+    ],
+    41: [
+      {
+        title: "Pharaoh’s dreams",
+        caption: "Joseph interprets seven years of plenty and famine.",
+        image: g41Dreams,
+      },
+    ],
+    45: [
+      {
+        title: "I am Joseph",
+        caption: "God sent me before you to preserve life.",
+        image: g45Reunion,
+      },
+    ],
+  };
+
+  const beats = illustratedBeats[meta.number];
+  if (beats) {
+    return beats.map((beat, index) => ({
+      id: `g${meta.number}-${index + 1}`,
+      title: beat.title,
+      caption: beat.caption,
+      image: beat.image,
+    }));
   }
 
   const thumb = ARC_THUMBS[meta.arc] ?? genesisCover;

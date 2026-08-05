@@ -79,18 +79,6 @@ export default function BrowseScreen({ navigation }: Props) {
               }
             />
             <QuickStoryCard
-              title="Eve from Adam’s side"
-              subtitle="Garden story · hear every word"
-              icon="park"
-              onPress={() =>
-                navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 2,
-                  storylineId: "eve-from-rib",
-                })
-              }
-            />
-            <QuickStoryCard
               title="The Fall"
               subtitle="Genesis 3 · trust breaks"
               icon="spa"
@@ -99,6 +87,42 @@ export default function BrowseScreen({ navigation }: Props) {
                   bookId: "genesis",
                   chapterNumber: 3,
                   storylineId: "the-fall",
+                })
+              }
+            />
+            <QuickStoryCard
+              title="Noah & the Flood"
+              subtitle="Genesis 6–9 · ark and rainbow"
+              icon="water"
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 6,
+                  storylineId: "noah-ark",
+                })
+              }
+            />
+            <QuickStoryCard
+              title="Abraham’s Call"
+              subtitle="Genesis 12 · go to the land"
+              icon="nights-stay"
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 12,
+                  storylineId: "call-of-abraham",
+                })
+              }
+            />
+            <QuickStoryCard
+              title="Joseph’s Coat"
+              subtitle="Genesis 37 · toward Egypt"
+              icon="style"
+              onPress={() =>
+                navigation.navigate("WebtoonEpisode", {
+                  bookId: "genesis",
+                  chapterNumber: 37,
+                  storylineId: "joseph-coat",
                 })
               }
             />

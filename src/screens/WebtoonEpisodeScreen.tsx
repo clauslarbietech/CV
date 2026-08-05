@@ -13,10 +13,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import Animated, {
+  Easing,
   FadeInUp,
   interpolate,
   useAnimatedStyle,
   useSharedValue,
+  withRepeat,
+  withSequence,
   withTiming,
 } from "react-native-reanimated";
 import * as Speech from "expo-speech";
@@ -321,15 +324,53 @@ function WebtoonFrame({
   onPlay: () => void;
 }) {
   const focus = useSharedValue(active ? 1 : 0.94);
+  const kenBurns = useSharedValue(0);
 
   useEffect(() => {
     focus.value = withTiming(active ? 1 : 0.94, { duration: 280 });
-  }, [active, focus]);
+    if (active) {
+      kenBurns.value = 0;
+      kenBurns.value = withRepeat(
+        withSequence(
+          withTiming(1, {
+            duration: 5200,
+            easing: Easing.inOut(Easing.quad),
+          }),
+          withTiming(0, {
+            duration: 5200,
+            easing: Easing.inOut(Easing.quad),
+          })
+        ),
+        -1,
+        false
+      );
+    } else {
+      kenBurns.value = withTiming(0, { duration: 400 });
+    }
+  }, [active, focus, kenBurns]);
 
   const frameStyle = useAnimatedStyle(() => ({
     opacity: interpolate(focus.value, [0.94, 1], [0.78, 1]),
     transform: [{ scale: interpolate(focus.value, [0.94, 1], [0.985, 1]) }],
   }));
+
+  const imageStyle = useAnimatedStyle(() => {
+    // Alternate drift direction per panel so consecutive scenes feel distinct.
+    const dir = index % 2 === 0 ? 1 : -1;
+    return {
+      transform: [
+        {
+          scale: interpolate(kenBurns.value, [0, 1], [1.05, 1.14]),
+        },
+        {
+          translateX: interpolate(kenBurns.value, [0, 1], [0, -10 * dir]),
+        },
+        {
+          translateY: interpolate(kenBurns.value, [0, 1], [0, -6]),
+        },
+      ],
+    };
+  });
 
   const bubbleClass =
     panel.bubble?.tone === "whisper"
@@ -362,14 +403,18 @@ function WebtoonFrame({
       entering={FadeInUp.delay(index * 80).duration(450)}
       style={[{ width, marginBottom: 10 }, frameStyle]}
     >
-      <Image
-        source={panel.image}
-        style={{ width, height }}
-        resizeMode="cover"
-        accessibilityLabel={
-          panel.scriptureText ?? panel.bubble?.text ?? `Scene ${index + 1}`
-        }
-      />
+      <View style={{ width, height, overflow: "hidden" }}>
+        <Animated.View style={[{ width, height }, imageStyle]}>
+          <Image
+            source={panel.image}
+            style={{ width, height }}
+            resizeMode="cover"
+            accessibilityLabel={
+              panel.scriptureText ?? panel.bubble?.text ?? `Scene ${index + 1}`
+            }
+          />
+        </Animated.View>
+      </View>
 
       <View className="absolute right-3 top-3">
         <ReadAloudButton compact isPlaying={isPlaying} onPress={onPlay} />

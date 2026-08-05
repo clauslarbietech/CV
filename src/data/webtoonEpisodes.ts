@@ -47,6 +47,22 @@ const g3EveBites = require("../../assets/webtoon/genesis-3/03-eve-bites.jpg");
 const g3Offer = require("../../assets/webtoon/genesis-3/04-offer.jpg");
 const g3Serpent = require("../../assets/webtoon/genesis-3/05-serpent.jpg");
 
+const g4Offerings = require("../../assets/webtoon/genesis-4/01-offerings.jpg");
+const g4Brothers = require("../../assets/webtoon/genesis-4/02-brothers.jpg");
+const g6Ark = require("../../assets/webtoon/genesis-6/01-ark.jpg");
+const g7Flood = require("../../assets/webtoon/genesis-7/01-flood.jpg");
+const g9Rainbow = require("../../assets/webtoon/genesis-9/01-rainbow.jpg");
+const g11Babel = require("../../assets/webtoon/genesis-11/01-babel.jpg");
+const g12Stars = require("../../assets/webtoon/genesis-12/01-stars.jpg");
+const g15Covenant = require("../../assets/webtoon/genesis-15/01-covenant.jpg");
+const g22Moriah = require("../../assets/webtoon/genesis-22/01-moriah.jpg");
+const g25Stew = require("../../assets/webtoon/genesis-25/01-stew.jpg");
+const g28Bethel = require("../../assets/webtoon/genesis-28/01-bethel.jpg");
+const g37Coat = require("../../assets/webtoon/genesis-37/01-coat.jpg");
+const g37Caravan = require("../../assets/webtoon/genesis-37/02-caravan.jpg");
+const g41Dreams = require("../../assets/webtoon/genesis-41/01-dreams.jpg");
+const g45Reunion = require("../../assets/webtoon/genesis-45/01-reunion.jpg");
+
 /**
  * Illustrated anime webtoon storylines (family-safe).
  * Genesis art ships storyline-by-storyline; ESV text attributed to Crossway.
@@ -366,6 +382,327 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
         bubble: {
           tone: "narration",
           text: "And the serpent watched — as trust unraveled in the garden.",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-4-cain-abel",
+    bookId: "genesis",
+    chapterNumber: 4,
+    storylineId: "cain-abel",
+    seriesTitle: "Genesis",
+    episodeLabel: "Cain & Abel",
+    title: "Cain and Abel",
+    subtitle: "Two brothers bring offerings — and jealousy rises",
+    panels: [
+      {
+        id: "g4-1",
+        image: g4Offerings,
+        scriptureRef: "Genesis 4:3–4",
+        scriptureText:
+          "In the course of time Cain brought to the Lord an offering of the fruit of the ground, and Abel also brought of the firstborn of his flock and of their fat portions. And the Lord had regard for Abel and his offering,",
+        bubble: {
+          tone: "narration",
+          text: "Abel brought the firstborn of his flock. Cain brought fruit from the ground.",
+        },
+      },
+      {
+        id: "g4-2",
+        image: g4Brothers,
+        scriptureRef: "Genesis 4:5–7",
+        scriptureText:
+          "but for Cain and his offering he had no regard. So Cain was very angry, and his face fell. The Lord said to Cain, “Why are you angry, and why has your face fallen? If you do well, will you not be accepted? And if you do not do well, sin is crouching at the door. Its desire is contrary to you, but you must rule over it.”",
+        bubble: {
+          tone: "dialogue",
+          text: "“Sin is crouching at the door… but you must rule over it.”",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-6-noah-ark",
+    bookId: "genesis",
+    chapterNumber: 6,
+    storylineId: "noah-ark",
+    seriesTitle: "Genesis",
+    episodeLabel: "The Ark",
+    title: "Noah Builds the Ark",
+    subtitle: "When the earth was filled with violence, God made a way",
+    panels: [
+      {
+        id: "g6-1",
+        image: g6Ark,
+        scriptureRef: "Genesis 6:13–14",
+        scriptureText:
+          'And God said to Noah, “I have determined to make an end of all flesh, for the earth is filled with violence through them. Behold, I will destroy them with the earth. Make yourself an ark of gopher wood. Make rooms in the ark, and cover it inside and out with pitch.”',
+        bubble: {
+          tone: "dialogue",
+          text: "“Make yourself an ark of gopher wood.”",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-7-the-flood",
+    bookId: "genesis",
+    chapterNumber: 7,
+    storylineId: "the-flood",
+    seriesTitle: "Genesis",
+    episodeLabel: "The Flood",
+    title: "The Flood Waters Rise",
+    subtitle: "Rain falls — and the ark carries life through the storm",
+    panels: [
+      {
+        id: "g7-1",
+        image: g7Flood,
+        scriptureRef: "Genesis 7:17–18",
+        scriptureText:
+          "The flood continued forty days on the earth. The waters increased and bore up the ark, and it rose high above the earth. The waters prevailed and increased greatly on the earth, and the ark floated on the face of the waters.",
+        bubble: {
+          tone: "narration",
+          text: "The waters prevailed — and the ark floated on the face of the waters.",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-9-rainbow",
+    bookId: "genesis",
+    chapterNumber: 9,
+    storylineId: "rainbow-covenant",
+    seriesTitle: "Genesis",
+    episodeLabel: "Rainbow",
+    title: "The Rainbow Covenant",
+    subtitle: "God sets a sign in the clouds — a promise of mercy",
+    panels: [
+      {
+        id: "g9-1",
+        image: g9Rainbow,
+        scriptureRef: "Genesis 9:12–13",
+        scriptureText:
+          'And God said, “This is the sign of the covenant that I make between me and you and every living creature that is with you, for all future generations: I have set my bow in the cloud, and it shall be a sign of the covenant between me and the earth.”',
+        bubble: {
+          tone: "dialogue",
+          text: "“I have set my bow in the cloud…”",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-11-babel",
+    bookId: "genesis",
+    chapterNumber: 11,
+    storylineId: "babel",
+    seriesTitle: "Genesis",
+    episodeLabel: "Babel",
+    title: "The Tower of Babel",
+    subtitle: "One language, one city — then scattered across the earth",
+    panels: [
+      {
+        id: "g11-1",
+        image: g11Babel,
+        scriptureRef: "Genesis 11:4",
+        scriptureText:
+          'Then they said, “Come, let us build ourselves a city and a tower with its top in the heavens, and let us make a name for ourselves, lest we be dispersed over the face of the whole earth.”',
+        bubble: {
+          tone: "dialogue",
+          text: "“Let us build ourselves a city and a tower…”",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-12-call",
+    bookId: "genesis",
+    chapterNumber: 12,
+    storylineId: "call-of-abraham",
+    seriesTitle: "Genesis",
+    episodeLabel: "Abraham",
+    title: "The Call of Abraham",
+    subtitle: "Go to the land I will show you — and I will bless you",
+    panels: [
+      {
+        id: "g12-1",
+        image: g12Stars,
+        scriptureRef: "Genesis 12:1–2",
+        scriptureText:
+          'Now the Lord said to Abram, “Go from your country and your kindred and your father’s house to the land that I will show you. And I will make of you a great nation, and I will bless you and make your name great, so that you will be a blessing.”',
+        bubble: {
+          tone: "dialogue",
+          text: "“Go… to the land that I will show you.”",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-15-covenant",
+    bookId: "genesis",
+    chapterNumber: 15,
+    storylineId: "covenant-stars",
+    seriesTitle: "Genesis",
+    episodeLabel: "Covenant",
+    title: "Stars Without Number",
+    subtitle: "Abram believes the Lord — and it is counted as righteousness",
+    panels: [
+      {
+        id: "g15-1",
+        image: g15Covenant,
+        scriptureRef: "Genesis 15:5–6",
+        scriptureText:
+          'And he brought him outside and said, “Look toward heaven, and number the stars, if you are able to number them.” Then he said to him, “So shall your offspring be.” And he believed the Lord, and he counted it to him as righteousness.',
+        bubble: {
+          tone: "dialogue",
+          text: "“Look toward heaven… So shall your offspring be.”",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-22-moriah",
+    bookId: "genesis",
+    chapterNumber: 22,
+    storylineId: "moriah",
+    seriesTitle: "Genesis",
+    episodeLabel: "Moriah",
+    title: "On Mount Moriah",
+    subtitle: "Abraham and Isaac climb — and God provides",
+    panels: [
+      {
+        id: "g22-1",
+        image: g22Moriah,
+        scriptureRef: "Genesis 22:7–8",
+        scriptureText:
+          'And Isaac said to his father Abraham, “My father!” And he said, “Here I am, my son.” He said, “Behold, the fire and the wood, but where is the lamb for a burnt offering?” Abraham said, “God will provide for himself the lamb for a burnt offering, my son.” So they went both of them together.',
+        bubble: {
+          tone: "dialogue",
+          text: "“God will provide for himself the lamb…”",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-25-birthright",
+    bookId: "genesis",
+    chapterNumber: 25,
+    storylineId: "birthright",
+    seriesTitle: "Genesis",
+    episodeLabel: "Birthright",
+    title: "Stew for a Birthright",
+    subtitle: "Esau and Jacob — hunger, haste, and a costly trade",
+    panels: [
+      {
+        id: "g25-1",
+        image: g25Stew,
+        scriptureRef: "Genesis 25:29–34",
+        scriptureText:
+          "Once when Jacob was cooking stew, Esau came in from the field, and he was exhausted. And Esau said to Jacob, “Let me eat some of that red stew, for I am exhausted!” … Jacob said, “Sell me your birthright now.” Esau said, “I am about to die; of what use is a birthright to me?” … So he swore to him and sold his birthright to Jacob. Then Jacob gave Esau bread and lentil stew, and he ate and drank and rose and went his way. Thus Esau despised his birthright.",
+        bubble: {
+          tone: "narration",
+          text: "For a bowl of stew, Esau sold his birthright.",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-28-bethel",
+    bookId: "genesis",
+    chapterNumber: 28,
+    storylineId: "bethel",
+    seriesTitle: "Genesis",
+    episodeLabel: "Bethel",
+    title: "Jacob’s Dream at Bethel",
+    subtitle: "A ladder between earth and heaven — and a promise repeated",
+    panels: [
+      {
+        id: "g28-1",
+        image: g28Bethel,
+        scriptureRef: "Genesis 28:12–13",
+        scriptureText:
+          'And he dreamed, and behold, there was a ladder set up on the earth, and the top of it reached to heaven. And behold, the angels of God were ascending and descending on it! And behold, the Lord stood above it and said, “I am the Lord, the God of Abraham your father and the God of Isaac. The land on which you lie I will give to you and to your offspring.”',
+        bubble: {
+          tone: "scripture",
+          text: "Behold, a ladder… and the angels of God ascending and descending.",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-37-coat",
+    bookId: "genesis",
+    chapterNumber: 37,
+    storylineId: "joseph-coat",
+    seriesTitle: "Genesis",
+    episodeLabel: "Joseph",
+    title: "The Coat and the Caravan",
+    subtitle: "Favored son, bitter brothers — and a road toward Egypt",
+    panels: [
+      {
+        id: "g37-1",
+        image: g37Coat,
+        scriptureRef: "Genesis 37:3",
+        scriptureText:
+          "Now Israel loved Joseph more than any other of his sons, because he was the son of his old age. And he made him a robe of many colors.",
+        bubble: {
+          tone: "narration",
+          text: "Israel loved Joseph — and made him a robe of many colors.",
+        },
+      },
+      {
+        id: "g37-2",
+        image: g37Caravan,
+        scriptureRef: "Genesis 37:28",
+        scriptureText:
+          "Then Midianite traders passed by. And they drew Joseph up and lifted him out of the pit, and sold him to the Ishmaelites for twenty shekels of silver. They took Joseph to Egypt.",
+        bubble: {
+          tone: "narration",
+          text: "They sold Joseph — and the caravan carried him toward Egypt.",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-41-dreams",
+    bookId: "genesis",
+    chapterNumber: 41,
+    storylineId: "pharaoh-dreams",
+    seriesTitle: "Genesis",
+    episodeLabel: "Dreams",
+    title: "Pharaoh’s Dreams",
+    subtitle: "Grain and cattle — Joseph speaks wisdom before the throne",
+    panels: [
+      {
+        id: "g41-1",
+        image: g41Dreams,
+        scriptureRef: "Genesis 41:25–30",
+        scriptureText:
+          'Then Joseph said to Pharaoh, “The dreams of Pharaoh are one; God has revealed to Pharaoh what he is about to do. The seven good cows are seven years, and the seven good ears are seven years; the dreams are one. The seven lean and ugly cows that came up after them are seven years, and the seven empty ears blighted by the east wind are also seven years of famine. … There will come seven years of great plenty throughout all the land of Egypt, but after them there will arise seven years of famine…”',
+        bubble: {
+          tone: "dialogue",
+          text: "“God has revealed to Pharaoh what he is about to do.”",
+        },
+      },
+    ],
+  },
+  {
+    id: "genesis-45-reunion",
+    bookId: "genesis",
+    chapterNumber: 45,
+    storylineId: "reunion",
+    seriesTitle: "Genesis",
+    episodeLabel: "Reunion",
+    title: "Joseph Revealed",
+    subtitle: "Tears, forgiveness, and a family made whole again",
+    panels: [
+      {
+        id: "g45-1",
+        image: g45Reunion,
+        scriptureRef: "Genesis 45:4–5",
+        scriptureText:
+          'So Joseph said to his brothers, “Come near to me, please.” And they came near. And he said, “I am your brother, Joseph, whom you sold into Egypt. And now do not be distressed or angry with yourselves because you sold me here, for God sent me before you to preserve life.”',
+        bubble: {
+          tone: "dialogue",
+          text: "“I am your brother, Joseph… God sent me before you to preserve life.”",
         },
       },
     ],
