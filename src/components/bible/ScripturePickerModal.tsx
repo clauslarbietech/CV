@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { CATALOG_BOOKS, type CatalogBook } from "../../data/bibleCatalog";
-import { readerColors } from "../../theme/readerColors";
+import { useReaderColors } from "../../theme/ThemeProvider";
 
 type Props = {
   visible: boolean;
@@ -37,6 +37,7 @@ export default function ScripturePickerModal({
   onClose,
   onSelect,
 }: Props) {
+  const readerColors = useReaderColors();
   const { height } = useWindowDimensions();
   const [step, setStep] = useState<Step>("book");
   const [pendingBook, setPendingBook] = useState<CatalogBook | null>(null);

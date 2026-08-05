@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AnimationDemoScreen from "../screens/AnimationDemoScreen";
@@ -14,6 +14,7 @@ import MyPlansScreen from "../screens/MyPlansScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import WebtoonEpisodeScreen from "../screens/WebtoonEpisodeScreen";
+import { useTheme } from "../theme/ThemeProvider";
 import type { MainTabParamList, RootStackParamList } from "./types";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -33,20 +34,21 @@ const TAB_CONTENT_HEIGHT = 52;
 
 function MainTabs() {
   const bottomInset = useBottomMenuInset();
+  const { colors } = useTheme();
 
   return (
     <Tab.Navigator
       initialRouteName="Bible"
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: "#E4572E",
-        tabBarInactiveTintColor: "#8E8E93",
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.soft,
         tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
         // We apply bottom inset ourselves (incl. mobile browser chrome on web).
         safeAreaInsets: { bottom: 0 },
         tabBarStyle: {
-          backgroundColor: "#121212",
-          borderTopColor: "#2C2C2E",
+          backgroundColor: colors.bg,
+          borderTopColor: colors.border,
           height: TAB_CONTENT_HEIGHT + bottomInset,
           paddingTop: 6,
           paddingBottom: bottomInset,
@@ -75,13 +77,29 @@ function MainTabs() {
 }
 
 export default function RootNavigator() {
+  const { colors, nightMode } = useTheme();
+
+  const navTheme = {
+    ...DefaultTheme,
+    dark: nightMode,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: colors.accent,
+      background: colors.bg,
+      card: colors.card,
+      text: colors.text,
+      border: colors.border,
+      notification: colors.accent,
+    },
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navTheme}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
           animation: "slide_from_right",
-          contentStyle: { backgroundColor: "#121212" },
+          contentStyle: { backgroundColor: colors.bg },
         }}
       >
         <Stack.Screen name="MainTabs" component={MainTabs} />

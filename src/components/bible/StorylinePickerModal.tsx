@@ -14,7 +14,7 @@ import {
   type GenesisArc,
 } from "../../data/genesisChapters";
 import type { WebtoonEpisode } from "../../data/webtoonEpisodes";
-import { readerColors } from "../../theme/readerColors";
+import { useReaderColors } from "../../theme/ThemeProvider";
 
 type Props = {
   visible: boolean;
@@ -35,6 +35,7 @@ export default function StorylinePickerModal({
   onClose,
   onSelect,
 }: Props) {
+  const readerColors = useReaderColors();
   const { height } = useWindowDimensions();
   const [step, setStep] = useState<Step>("arc");
   const [pendingArc, setPendingArc] = useState<GenesisArc | null>(null);

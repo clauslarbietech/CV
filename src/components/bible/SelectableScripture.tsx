@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { highlightHex } from "../../theme/highlightColors";
-import { readerColors } from "../../theme/readerColors";
+import { useReaderColors } from "../../theme/ThemeProvider";
 
 export type ScriptureSegment = {
   id: string;
@@ -76,6 +76,7 @@ export default function SelectableScripture({
   highlights,
   onSelect,
 }: Props) {
+  const readerColors = useReaderColors();
   const segments = useMemo(() => splitScriptureSegments(text), [text]);
   const highlightBySegment = useMemo(() => {
     const map = new Map<string, string>();

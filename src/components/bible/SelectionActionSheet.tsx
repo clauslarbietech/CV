@@ -15,7 +15,7 @@ import {
   HIGHLIGHT_COLORS,
   type HighlightColorId,
 } from "../../theme/highlightColors";
-import { readerColors } from "../../theme/readerColors";
+import { useReaderColors } from "../../theme/ThemeProvider";
 
 type Props = {
   visible: boolean;
@@ -62,6 +62,7 @@ export default function SelectionActionSheet({
   onClose,
   onHighlightSaved,
 }: Props) {
+  const readerColors = useReaderColors();
   const [noteOpen, setNoteOpen] = useState(false);
   const [note, setNote] = useState("");
   const [status, setStatus] = useState<string | null>(null);

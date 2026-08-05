@@ -1,16 +1,17 @@
 import "./global.css";
 
 import { Platform, View } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import RootNavigator from "./src/navigation/RootNavigator";
+import { ThemeProvider, useTheme } from "./src/theme/ThemeProvider";
 
-export default function App() {
+function AppShell() {
+  const { colors } = useTheme();
+
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#121212" }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg }}>
       <SafeAreaProvider>
-        <StatusBar style="light" />
         {/* Mobile-first draft: phone frame on web; native fills the device. */}
         <View
           style={
@@ -20,15 +21,23 @@ export default function App() {
                   maxWidth: 430,
                   width: "100%",
                   alignSelf: "center",
-                  backgroundColor: "#121212",
+                  backgroundColor: colors.bg,
                   overflow: "hidden",
                 }
-              : { flex: 1, backgroundColor: "#121212" }
+              : { flex: 1, backgroundColor: colors.bg }
           }
         >
           <RootNavigator />
         </View>
       </SafeAreaProvider>
     </GestureHandlerRootView>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppShell />
+    </ThemeProvider>
   );
 }

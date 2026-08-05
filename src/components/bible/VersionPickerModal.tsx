@@ -21,7 +21,7 @@ import {
   hasYouVersionAppKey,
   listEnglishBibleVersions,
 } from "../../services/youversionService";
-import { readerColors } from "../../theme/readerColors";
+import { useReaderColors } from "../../theme/ThemeProvider";
 import type { BibleSource } from "../../types/bibleSource";
 
 export type { BibleSource };
@@ -50,6 +50,7 @@ export default function VersionPickerModal({
   onClose,
   onSelect,
 }: Props) {
+  const readerColors = useReaderColors();
   const { height } = useWindowDimensions();
   const [versions, setVersions] = useState<BibleVersion[]>([]);
   const [collected, setCollected] = useState<number[]>([]);

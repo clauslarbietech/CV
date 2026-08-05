@@ -2,14 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Keep the app above iOS home indicator / mobile browser chrome. */
+/* Keep the app above iOS home indicator / mobile browser chrome.
+   Background follows ThemeProvider CSS vars (night ↔ day). */
 html,
 body,
 #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  background: #121212;
+  background: var(--app-bg, #121212);
+  color: var(--app-text, #f2f2f7);
 }
 
 @supports (padding: max(0px)) {
@@ -17,4 +19,3 @@ body,
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
-

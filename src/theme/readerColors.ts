@@ -1,27 +1,53 @@
 /**
- * Bible-reader usability palette.
+ * Bible-reader usability palette (dark default).
+ * Prefer `useReaderColors()` from ThemeProvider so light mode works.
+ *
  * Tuned for WCAG AA contrast on dark surfaces (kids + parents).
- *
- * Kept / improved:
- * - Body text near white on charcoal (≈15:1)
- * - Secondary labels ≥ #AEAEB2 on #121212 (≈5:1)
- * - Terracotta accent only for active/CTA (not body text)
- *
- * Avoided:
- * - Pure #000 eye-strain + crushed shadows → #121212
- * - white/35 copyright (fails AA) → reader.faint
- * - Warm cream / purple AI defaults
  */
+import { darkPalette, type AppPalette } from "./palettes";
+
+/** Static dark tokens — prefer useReaderColors() for theme-aware UI. */
 export const readerColors = {
-  bg: "#121212",
-  surface: "#1C1C1E",
-  elevated: "#2C2C2E",
-  border: "#3A3A3C",
-  text: "#F2F2F7",
-  secondary: "#AEAEB2",
-  faint: "#8E8E93",
-  accent: "#E4572E",
-  accentSoft: "#FF8A5B",
-  warn: "#FFB086",
-  highlight: "#F0D78C",
+  bg: darkPalette.bg,
+  surface: darkPalette.card,
+  elevated: darkPalette.elevated,
+  border: darkPalette.border,
+  text: darkPalette.text,
+  secondary: darkPalette.muted,
+  faint: darkPalette.soft,
+  accent: darkPalette.accent,
+  accentSoft: darkPalette.accentSoft,
+  warn: darkPalette.warn,
+  highlight: darkPalette.highlight,
 } as const;
+
+export type ReaderColorSet = {
+  bg: string;
+  surface: string;
+  elevated: string;
+  border: string;
+  text: string;
+  secondary: string;
+  faint: string;
+  accent: string;
+  accentSoft: string;
+  warn: string;
+  highlight: string;
+};
+
+/** Map AppPalette → the shape bible components expect. */
+export function toReaderColors(colors: AppPalette): ReaderColorSet {
+  return {
+    bg: colors.bg,
+    surface: colors.card,
+    elevated: colors.elevated,
+    border: colors.border,
+    text: colors.text,
+    secondary: colors.muted,
+    faint: colors.soft,
+    accent: colors.accent,
+    accentSoft: colors.accentSoft,
+    warn: colors.warn,
+    highlight: colors.highlight,
+  };
+}

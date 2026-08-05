@@ -11,6 +11,7 @@ import {
   savePreferences,
   type UserPreferences,
 } from "../services/userPreferences";
+import { useTheme } from "../theme/ThemeProvider";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
@@ -19,11 +20,15 @@ function SettingRow({
   hint,
   value,
   onChange,
+  trackOff,
+  thumb,
 }: {
   label: string;
   hint: string;
   value: boolean;
   onChange: (next: boolean) => void;
+  trackOff: string;
+  thumb: string;
 }) {
   return (
     <View className="mb-3 flex-row items-center rounded-2xl border border-night-border bg-night-card px-4 py-3">
@@ -34,14 +39,15 @@ function SettingRow({
       <Switch
         value={value}
         onValueChange={onChange}
-        trackColor={{ false: "#3A3A3C", true: "#E4572E" }}
-        thumbColor="#F2F2F7"
+        trackColor={{ false: trackOff, true: "#E4572E" }}
+        thumbColor={thumb}
       />
     </View>
   );
 }
 
 export default function SettingsScreen({ navigation }: Props) {
+  const { nightMode, setNightMode, colors } = useTheme();
   const [prefs, setPrefs] = useState<UserPreferences>({
     nightMode: true,
     largerText: false,
@@ -56,11 +62,20 @@ export default function SettingsScreen({ navigation }: Props) {
   );
 
   const update = (patch: Partial<UserPreferences>) => {
+    if (typeof patch.nightMode === "boolean") {
+      setNightMode(patch.nightMode);
+      setPrefs((prev) => ({ ...prev, nightMode: patch.nightMode! }));
+      return;
+    }
     void savePreferences(patch).then(setPrefs);
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
+    <SafeAreaView
+      className="flex-1 bg-night-bg"
+      edges={["top", "left", "right"]}
+      style={{ backgroundColor: colors.bg }}
+    >
       <View className="flex-1">
         <View className="flex-row items-center px-4 py-3">
           <Pressable
@@ -68,7 +83,7 @@ export default function SettingsScreen({ navigation }: Props) {
             onPress={() => navigation.goBack()}
             className="mr-3 h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
           >
-            <MaterialIcons name="arrow-back" size={20} color="#F2F2F7" />
+            <MaterialIcons name="arrow-back" size={20} color={colors.text} />
           </Pressable>
           <Text className="text-xl font-bold text-night-text">Settings</Text>
         </View>
@@ -82,9 +97,11 @@ export default function SettingsScreen({ navigation }: Props) {
           </Text>
           <SettingRow
             label="Night mode"
-            hint="On = dark charcoal screens. Off = keep current dark reading surfaces for now."
-            value={prefs.nightMode}
-            onChange={(nightMode) => update({ nightMode })}
+            hint="On = dark charcoal screens. Off = white background and light surfaces."
+            value={nightMode}
+            onChange={(next) => update({ nightMode: next })}
+            trackOff={colors.border}
+            thumb={colors.text}
           />
 
           <Text className="mb-2 mt-4 text-xs font-bold uppercase tracking-[2px] text-terracotta">
@@ -95,18 +112,24 @@ export default function SettingsScreen({ navigation }: Props) {
             hint="Prefer bigger type in readers when available."
             value={prefs.largerText}
             onChange={(largerText) => update({ largerText })}
+            trackOff={colors.border}
+            thumb={colors.text}
           />
           <SettingRow
             label="Reduce motion"
             hint="Ease Ken-Burns and decorative animation."
             value={prefs.reduceMotion}
             onChange={(reduceMotion) => update({ reduceMotion })}
+            trackOff={colors.border}
+            thumb={colors.text}
           />
           <SettingRow
             label="High contrast"
             hint="Stronger borders and text contrast."
             value={prefs.highContrast}
             onChange={(highContrast) => update({ highContrast })}
+            trackOff={colors.border}
+            thumb={colors.text}
           />
 
           <Pressable
@@ -114,14 +137,14 @@ export default function SettingsScreen({ navigation }: Props) {
             className="mt-4 flex-row items-center rounded-2xl border border-night-border bg-night-card px-4 py-4"
             onPress={() => navigation.navigate("Profile")}
           >
-            <MaterialIcons name="person" size={22} color="#F0D78C" />
+            <MaterialIcons name="person" size={22} color={colors.highlight} />
             <View className="ml-3 flex-1">
               <Text className="text-base font-bold text-night-text">Profile</Text>
               <Text className="text-xs text-night-muted">
                 Name and email for your portfolio
               </Text>
             </View>
-            <MaterialIcons name="chevron-right" size={22} color="#8E8E93" />
+            <MaterialIcons name="chevron-right" size={22} color={colors.soft} />
           </Pressable>
         </ScrollView>
 

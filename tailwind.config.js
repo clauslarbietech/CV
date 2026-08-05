@@ -30,15 +30,18 @@ module.exports = {
           warm: "#F1EBE2",
           ink: "#1F2430",
         },
-        /** App-wide night / dark mode — WCAG-friendlier charcoal, not pure black */
+        /**
+         * App surfaces — values come from ThemeProvider via CSS vars
+         * (`--app-*`). Fallbacks keep the classic night charcoal if unset.
+         */
         night: {
-          bg: "#121212",
-          card: "#1C1C1E",
-          elevated: "#2C2C2E",
-          border: "#3A3A3C",
-          text: "#F2F2F7",
-          muted: "#AEAEB2",
-          soft: "#8E8E93",
+          bg: "var(--app-bg, #121212)",
+          card: "var(--app-card, #1C1C1E)",
+          elevated: "var(--app-elevated, #2C2C2E)",
+          border: "var(--app-border, #3A3A3C)",
+          text: "var(--app-text, #F2F2F7)",
+          muted: "var(--app-muted, #AEAEB2)",
+          soft: "var(--app-soft, #8E8E93)",
         },
       },
     },

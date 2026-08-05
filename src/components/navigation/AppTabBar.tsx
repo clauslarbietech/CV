@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useBottomMenuInset } from "../../hooks/useBottomMenuInset";
 import type { MainTabParamList, RootStackParamList } from "../../navigation/types";
+import { useTheme } from "../../theme/ThemeProvider";
 
 type TabName = keyof MainTabParamList;
 
@@ -31,15 +32,20 @@ export default function AppTabBar({ activeTab }: Props) {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const bottomInset = useBottomMenuInset();
+  const { colors } = useTheme();
 
   return (
     <View
       className="flex-row border-t border-night-border bg-night-bg pt-1.5"
-      style={{ paddingBottom: bottomInset }}
+      style={{
+        paddingBottom: bottomInset,
+        backgroundColor: colors.bg,
+        borderTopColor: colors.border,
+      }}
     >
       {TABS.map((tab) => {
         const focused = activeTab === tab.name;
-        const color = focused ? "#E4572E" : "#8E8E93";
+        const color = focused ? colors.accent : colors.soft;
         return (
           <Pressable
             key={tab.name}

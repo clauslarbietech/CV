@@ -12,6 +12,7 @@ import {
   parseScriptureQuery,
   type CatalogBook,
 } from "../../data/bibleCatalog";
+import { useTheme } from "../../theme/ThemeProvider";
 
 type Props = {
   visible: boolean;
@@ -29,6 +30,7 @@ export default function BibleSearchModal({
   onClose,
   onJump,
 }: Props) {
+  const { colors } = useTheme();
   const [query, setQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -52,45 +54,58 @@ export default function BibleSearchModal({
       onRequestClose={onClose}
     >
       <View className="flex-1 justify-start bg-black/60 px-4 pt-24">
-        <View className="rounded-3xl bg-[#1C1C1E] px-4 py-4">
+        <View
+          className="rounded-3xl px-4 py-4"
+          style={{ backgroundColor: colors.card }}
+        >
           <View className="mb-3 flex-row items-center justify-between">
-            <Text className="text-base font-bold text-white">
+            <Text className="text-base font-bold" style={{ color: colors.text }}>
               Search scripture
             </Text>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Close search"
               onPress={onClose}
-              className="h-9 w-9 items-center justify-center rounded-full bg-white/10"
+              className="h-9 w-9 items-center justify-center rounded-full"
+              style={{ backgroundColor: colors.elevated }}
             >
-              <MaterialIcons name="close" size={20} color="#FFFFFF" />
+              <MaterialIcons name="close" size={20} color={colors.text} />
             </Pressable>
           </View>
 
-          <View className="mb-3 flex-row items-center rounded-2xl bg-white/10 px-3">
-            <MaterialIcons name="search" size={22} color="#9AA0A6" />
+          <View
+            className="mb-3 flex-row items-center rounded-2xl px-3"
+            style={{ backgroundColor: colors.elevated }}
+          >
+            <MaterialIcons name="search" size={22} color={colors.muted} />
             <TextInput
               value={query}
               onChangeText={(value) => {
                 setQuery(value);
                 setError(null);
               }}
-              placeholder='e.g. Genesis 3'
-              placeholderTextColor="#6B7280"
+              placeholder="e.g. Genesis 3"
+              placeholderTextColor={colors.soft}
               autoFocus
               autoCapitalize="words"
               returnKeyType="search"
               onSubmitEditing={submit}
-              className="ml-2 flex-1 py-3 text-base text-white"
-              style={{ outlineStyle: "none" } as object}
+              className="ml-2 flex-1 py-3 text-base"
+              style={
+                {
+                  color: colors.text,
+                  outlineStyle: "none",
+                } as object
+              }
             />
           </View>
 
           {error ? (
             <Text className="mb-3 text-xs text-[#F3A07A]">{error}</Text>
           ) : (
-            <Text className="mb-3 text-xs text-white/45">
-              Jump to a book and chapter — same idea as a Bible app location search.
+            <Text className="mb-3 text-xs" style={{ color: colors.muted }}>
+              Jump to a book and chapter — same idea as a Bible app location
+              search.
             </Text>
           )}
 

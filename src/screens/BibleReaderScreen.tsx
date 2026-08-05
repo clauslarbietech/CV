@@ -55,7 +55,7 @@ import {
   DEFAULT_YOUVERSION_VERSION_ID,
   fetchBibleBooksForVersion,
 } from "../services/youversionService";
-import { readerColors } from "../theme/readerColors";
+import { useReaderColors } from "../theme/ThemeProvider";
 import type { BibleSource } from "../types/bibleSource";
 
 type Props = CompositeScreenProps<
@@ -67,6 +67,7 @@ type Props = CompositeScreenProps<
  * YouVersion-style Bible reader — comic premise on top, then scripture.
  */
 export default function BibleReaderScreen({ navigation }: Props) {
+  const readerColors = useReaderColors();
   const { width } = useWindowDimensions();
 
   const [bookId, setBookId] = useState("GEN");
@@ -665,6 +666,7 @@ function IconButton({
   onPress: () => void;
   active?: boolean;
 }) {
+  const readerColors = useReaderColors();
   return (
     <Pressable
       accessibilityRole="button"

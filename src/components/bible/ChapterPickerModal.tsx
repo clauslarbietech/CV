@@ -14,7 +14,7 @@ import {
   type GenesisArc,
   type GenesisChapterMeta,
 } from "../../data/genesisChapters";
-import { readerColors } from "../../theme/readerColors";
+import { useReaderColors } from "../../theme/ThemeProvider";
 
 type Props = {
   visible: boolean;
@@ -40,6 +40,7 @@ export default function ChapterPickerModal({
   onClose,
   onSelect,
 }: Props) {
+  const readerColors = useReaderColors();
   const { height, width } = useWindowDimensions();
   const [step, setStep] = useState<Step>("arc");
   const [pendingArc, setPendingArc] = useState<GenesisArc | null>(null);
