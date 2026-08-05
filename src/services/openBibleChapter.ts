@@ -11,7 +11,8 @@ type NavigateFn = (
 ) => void;
 
 /**
- * Open a book chapter at the selected number (webtoon/slides when available).
+ * Open a book chapter in the illustrated player (art + synced speech + audio).
+ * Webtoon scroll mode is only used when a specific storylineId is requested.
  */
 export function openBibleChapter(
   navigation: { navigate: NavigateFn },
@@ -19,18 +20,20 @@ export function openBibleChapter(
   chapterNumber: number,
   options?: { autoPlay?: boolean; storylineId?: string }
 ) {
-  const webtoon = getWebtoonEpisode(
-    bookId,
-    chapterNumber,
-    options?.storylineId
-  );
-  if (webtoon) {
-    navigation.navigate("WebtoonEpisode", {
+  if (options?.storylineId) {
+    const webtoon = getWebtoonEpisode(
       bookId,
       chapterNumber,
-      storylineId: webtoon.storylineId,
-    });
-    return;
+      options.storylineId
+    );
+    if (webtoon) {
+      navigation.navigate("WebtoonEpisode", {
+        bookId,
+        chapterNumber,
+        storylineId: webtoon.storylineId,
+      });
+      return;
+    }
   }
   navigation.navigate("ChapterPlayer", {
     bookId,

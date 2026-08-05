@@ -61,8 +61,8 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     downloaded: false,
     lastPositionSeconds: 0,
   });
-  const [scriptureExpanded, setScriptureExpanded] = useState(false);
   const [chapterOpen, setChapterOpen] = useState(false);
+  const [playerMode, setPlayerMode] = useState<"guide" | "bible">("guide");
   const [didAutoPlay, setDidAutoPlay] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [selectedSegment, setSelectedSegment] =
@@ -123,7 +123,6 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     async function loadPassage() {
       setLoading(true);
       setError(null);
-      setScriptureExpanded(false);
       try {
         const result = await fetchScriptureChapter(
           bookId,
@@ -211,6 +210,7 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
 
   useEffect(() => {
     setDidAutoPlay(false);
+    setPlayerMode("guide");
   }, [chapterNumber]);
 
   useEffect(() => {
@@ -355,94 +355,129 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           </View>
         </View>
 
-        <ScrollView
-          className="flex-1"
-          contentContainerClassName="pb-6"
-          showsVerticalScrollIndicator={false}
-        >
-          <ChapterPremiseComics
-            panels={displayPanels}
-            activeIndex={activePanelIndex}
-            activeNarration={activeNarration}
-            onSelectSlide={(index) => {
-              audio.seekToLine(index);
-            }}
-          />
-
-          <View className="mx-5 mt-4 overflow-hidden rounded-2xl border border-night-border bg-night-card">
-            <Pressable
-              accessibilityRole="button"
-              accessibilityState={{ expanded: scriptureExpanded }}
-              className="flex-row items-center justify-between px-4 py-3"
-              onPress={() => setScriptureExpanded((open) => !open)}
+        <View className="mx-4 mb-2 flex-row rounded-full bg-night-elevated p-1">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ selected: playerMode === "guide" }}
+            onPress={() => setPlayerMode("guide")}
+            className={`flex-1 items-center rounded-full py-2 ${
+              playerMode === "guide" ? "bg-terracotta/25" : ""
+            }`}
+          >
+            <Text
+              className={`text-sm font-bold ${
+                playerMode === "guide" ? "text-night-text" : "text-night-muted"
+              }`}
             >
+              Guide
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ selected: playerMode === "bible" }}
+            onPress={() => setPlayerMode("bible")}
+            className={`flex-1 items-center rounded-full py-2 ${
+              playerMode === "bible" ? "bg-terracotta/25" : ""
+            }`}
+          >
+            <Text
+              className={`text-sm font-bold ${
+                playerMode === "bible" ? "text-night-text" : "text-night-muted"
+              }`}
+            >
+              Bible
+            </Text>
+          </Pressable>
+        </View>
+
+        {playerMode === "guide" ? (
+          <View className="flex-1">
+            <ScrollView
+              className="flex-1"
+              contentContainerClassName="pb-2"
+              showsVerticalScrollIndicator={false}
+            >
+              <ChapterPremiseComics
+                panels={displayPanels}
+                activeIndex={activePanelIndex}
+                activeNarration={activeNarration}
+                onSelectSlide={(index) => {
+                  audio.seekToLine(index);
+                }}
+              />
+            </ScrollView>
+
+            <AudioGuidePlayer
+              title={chapter.title}
+              subtitle={chapter.guide.narrator}
+              position={audio.position}
+              duration={audio.duration}
+              isPlaying={audio.isPlaying}
+              speed={audio.speed}
+              favorite={isFavorite || progress.favorite}
+              hasPrevious={Boolean(prevChapter)}
+              hasNext={Boolean(nextChapter)}
+              onToggle={audio.toggle}
+              onSeek={audio.seekTo}
+              onCycleSpeed={() => {
+                void audio.cycleSpeed();
+              }}
+              onToggleFavorite={() => {
+                void toggleChapterFavorite({
+                  bookId,
+                  chapterNumber,
+                  title: `${book.name} ${chapter.number} · ${chapter.title}`,
+                  note: "Favorite chapter",
+                }).then((result) => {
+                  setIsFavorite(result.favorited);
+                  void updateChapterProgress(bookId, chapterNumber, {
+                    favorite: result.favorited,
+                  }).then(setProgress);
+                });
+              }}
+              onPrevious={() => {
+                if (prevChapter) {
+                  goChapter(prevChapter.number, true);
+                }
+              }}
+              onNext={() => {
+                if (nextChapter) {
+                  goChapter(nextChapter.number, true);
+                }
+              }}
+            />
+          </View>
+        ) : (
+          <ScrollView
+            className="flex-1 px-4"
+            contentContainerClassName="pb-6"
+            showsVerticalScrollIndicator={true}
+          >
+            <View className="mb-3 flex-row items-center justify-between">
               <Text className="text-sm font-bold text-night-text">
                 {passage?.canonical ?? chapter.passageQuery}
               </Text>
-              <Text className="text-lg text-night-muted">
-                {scriptureExpanded ? "▴" : "▾"}
-              </Text>
-            </Pressable>
-            {scriptureExpanded ? (
-              <View className="border-t border-night-border px-4 py-3">
-                {loading ? (
-                  <ActivityIndicator color="#E4572E" />
-                ) : error ? (
-                  <Text className="text-sm text-terracotta-dark">{error}</Text>
-                ) : (
-                  <SelectableScripture
-                    text={verses}
-                    selectedId={selectedSegment?.id ?? null}
-                    highlights={appliedHighlights}
-                    onSelect={(segment) => {
-                      setSelectedSegment(segment);
-                      setSheetOpen(true);
-                    }}
-                  />
-                )}
+              <View className="rounded-full bg-night-elevated px-3 py-1">
+                <Text className="text-xs font-bold text-night-muted">ESV</Text>
               </View>
-            ) : null}
-          </View>
-        </ScrollView>
-
-        <AudioGuidePlayer
-          title={chapter.title}
-          position={audio.position}
-          duration={audio.duration}
-          isPlaying={audio.isPlaying}
-          speed={audio.speed}
-          favorite={isFavorite || progress.favorite}
-          hasPrevious={Boolean(prevChapter)}
-          hasNext={Boolean(nextChapter)}
-          onToggle={audio.toggle}
-          onSeek={audio.seekTo}
-          onCycleSpeed={() => {
-            void audio.cycleSpeed();
-          }}
-          onToggleFavorite={() => {
-            void toggleChapterFavorite({
-              bookId,
-              chapterNumber,
-              title: `${book.name} ${chapter.number} · ${chapter.title}`,
-              note: "Favorite chapter",
-            }).then((result) => {
-              setIsFavorite(result.favorited);
-              void updateChapterProgress(bookId, chapterNumber, {
-                favorite: result.favorited,
-              }).then(setProgress);
-            });
-          }}
-          onPrevious={() => {
-            if (prevChapter) {
-              goChapter(prevChapter.number, true);
-            }
-          }}
-          onNext={() => {
-            if (nextChapter) {
-              goChapter(nextChapter.number, true);
-            }
-          }}
-        />
+            </View>
+            {loading ? (
+              <ActivityIndicator color="#E4572E" />
+            ) : error ? (
+              <Text className="text-sm text-terracotta-dark">{error}</Text>
+            ) : (
+              <SelectableScripture
+                text={verses}
+                selectedId={selectedSegment?.id ?? null}
+                highlights={appliedHighlights}
+                onSelect={(segment) => {
+                  setSelectedSegment(segment);
+                  setSheetOpen(true);
+                }}
+              />
+            )}
+          </ScrollView>
+        )}
 
         <AppTabBar activeTab="Home" />
       </View>

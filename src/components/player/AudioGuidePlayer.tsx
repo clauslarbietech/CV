@@ -11,6 +11,7 @@ import { formatClock } from "../../data/library";
 
 type Props = {
   title: string;
+  subtitle?: string;
   position: number;
   duration: number;
   isPlaying: boolean;
@@ -32,6 +33,7 @@ type Props = {
  */
 export default function AudioGuidePlayer({
   title,
+  subtitle,
   position,
   duration,
   isPlaying,
@@ -64,9 +66,16 @@ export default function AudioGuidePlayer({
   return (
     <View className="border-t border-night-border bg-night-card px-4 pb-3 pt-3">
       <View className="mb-2 flex-row items-center justify-between">
-        <Text className="flex-1 pr-3 text-sm font-bold text-night-text" numberOfLines={1}>
-          {title}
-        </Text>
+        <View className="flex-1 pr-3">
+          <Text className="text-base font-bold text-night-text" numberOfLines={1}>
+            {title}
+          </Text>
+          {subtitle ? (
+            <Text className="text-xs text-night-muted" numberOfLines={1}>
+              {subtitle}
+            </Text>
+          ) : null}
+        </View>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={favorite ? "Remove favorite" : "Favorite chapter"}

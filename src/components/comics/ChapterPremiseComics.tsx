@@ -36,7 +36,7 @@ export function uniqueComicPanels(panels: ComicPanel[]): ComicPanel[] {
 }
 
 /**
- * Scripture slideshow: image for the beat + ESV text only.
+ * Genesis-style chapter view: large hero art, speech below (not overlaid on art).
  */
 export default function ChapterPremiseComics({
   panels,
@@ -45,12 +45,13 @@ export default function ChapterPremiseComics({
   onSelectSlide,
 }: Props) {
   const { width } = useWindowDimensions();
+  const contentWidth = width - 32;
   const clampedActive = Math.min(
     Math.max(0, activeIndex),
     Math.max(0, panels.length - 1)
   );
   const panel = panels[clampedActive] ?? panels[0];
-  const height = panel ? premiseHeroHeight(width, panel.image) : 0;
+  const height = panel ? premiseHeroHeight(contentWidth, panel.image) : 0;
   const motion = useSharedValue(0);
 
   useEffect(() => {
@@ -83,14 +84,19 @@ export default function ChapterPremiseComics({
   }
 
   const scriptureBody = activeNarration?.trim() || panel.caption;
+  const scriptureRef = panel.scriptureRef ?? "ESV";
 
   return (
-    <View className="mb-2">
-      <Animated.View entering={FadeIn.duration(350)} style={frameStyle}>
-        <View style={{ width, height }}>
+    <View className="px-4">
+      <Animated.View
+        entering={FadeIn.duration(350)}
+        style={frameStyle}
+        className="overflow-hidden rounded-2xl bg-night-card"
+      >
+        <View style={{ width: contentWidth, height }}>
           <PremiseHeroImage
             source={panel.image}
-            width={width}
+            width={contentWidth}
             accessibilityLabel={
               panel.scriptureRef
                 ? `${panel.scriptureRef}. ${scriptureBody}`
@@ -101,43 +107,32 @@ export default function ChapterPremiseComics({
       </Animated.View>
 
       {panels.length > 1 ? (
-        <View className="mx-5 mt-3 flex-row flex-wrap gap-2">
+        <View className="mt-3 flex-row items-center justify-center gap-2">
           {panels.map((item, index) => {
             const selected = index === clampedActive;
             return (
               <Pressable
                 key={item.id}
                 accessibilityRole="button"
-                accessibilityLabel={`Slide ${index + 1}: ${item.scriptureRef ?? item.title}`}
+                accessibilityLabel={`Scene ${index + 1} of ${panels.length}`}
                 onPress={() => onSelectSlide?.(index)}
-                className={`rounded-full px-3 py-1.5 ${
-                  selected ? "bg-terracotta" : "bg-night-elevated"
+                className={`h-2 rounded-full ${
+                  selected ? "w-6 bg-terracotta" : "w-2 bg-night-border"
                 }`}
-              >
-                <Text
-                  className={`text-[10px] font-bold ${
-                    selected ? "text-white" : "text-night-muted"
-                  }`}
-                >
-                  {index + 1}
-                </Text>
-              </Pressable>
+              />
             );
           })}
+          <Text className="ml-2 text-[11px] font-semibold text-night-muted">
+            Scene {clampedActive + 1} / {panels.length}
+          </Text>
         </View>
       ) : null}
 
-      <View className="mx-5 mt-3">
-        <Text className="mb-1 text-[11px] font-bold uppercase tracking-[1.5px] text-terracotta">
-          {panel.scriptureRef ?? "ESV"}
-          {panels.length > 1
-            ? ` · ${clampedActive + 1}/${panels.length}`
-            : ""}
+      <View className="mt-4 rounded-2xl bg-night-card px-4 py-3">
+        <Text className="mb-1 text-[11px] font-bold uppercase tracking-wide text-terracotta">
+          {scriptureRef}
         </Text>
-        <Text className="mb-2 text-base font-bold text-night-text">
-          {panel.title}
-        </Text>
-        <Text className="text-[17px] leading-7 text-night-text">
+        <Text className="text-[16px] leading-7 text-night-text">
           {scriptureBody}
         </Text>
       </View>
