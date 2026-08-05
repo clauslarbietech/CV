@@ -12,6 +12,8 @@ import type { CompositeScreenProps } from "@react-navigation/native";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BOOKS, JOURNEYS } from "../data/library";
+import BrandWordmark from "../components/brand/BrandWordmark";
+import { BRAND } from "../content/brand";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 import { inviteToJourney } from "../services/journeyInvite";
 import { openBibleChapter } from "../services/openBibleChapter";
@@ -31,11 +33,12 @@ export default function BrowseScreen({ navigation }: Props) {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-4 pb-8 pt-2">
           <View className="mb-6 items-center">
-            <Text className="text-2xl font-bold lowercase text-terracotta">
-              anime audio bible
+            <BrandWordmark size="lg" />
+            <Text className="mt-2 text-center text-sm font-semibold text-ochre-soft">
+              {BRAND.tagline}
             </Text>
-            <Text className="mt-1 text-center text-sm text-night-muted">
-              Free Bible stories with comics + audio — made for families
+            <Text className="mt-2 text-center text-sm text-night-muted">
+              {BRAND.homeSubtitle}
             </Text>
 
             <Pressable

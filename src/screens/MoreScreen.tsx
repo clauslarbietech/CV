@@ -5,13 +5,15 @@ import type { CompositeScreenProps } from "@react-navigation/native";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
+import BrandWordmark from "../components/brand/BrandWordmark";
+import { BRAND } from "../content/brand";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "More">,
   NativeStackScreenProps<RootStackParamList>
 >;
 
-type MoreLinkRoute = "Favorites" | "Profile" | "Settings";
+type MoreLinkRoute = "Favorites" | "Profile" | "Settings" | "About";
 
 const LINKS: {
   id: string;
@@ -20,6 +22,13 @@ const LINKS: {
   icon: keyof typeof MaterialIcons.glyphMap;
   route: MoreLinkRoute;
 }[] = [
+  {
+    id: "about",
+    label: "About PixBible",
+    hint: BRAND.tagline,
+    icon: "auto-stories",
+    route: "About",
+  },
   {
     id: "favorites",
     label: "Favorites",
@@ -47,10 +56,8 @@ export default function MoreScreen({ navigation }: Props) {
   return (
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <ScrollView className="flex-1 px-4 pt-4" contentContainerStyle={{ paddingBottom: 32 }}>
-        <Text className="mb-1 text-xl font-bold text-night-text">More</Text>
-        <Text className="mb-6 text-sm text-night-muted">
-          Profile, favorites, and settings
-        </Text>
+        <BrandWordmark size="sm" centered={false} />
+        <Text className="mb-6 mt-1 text-sm text-night-muted">{BRAND.tagline}</Text>
 
         {LINKS.map((item) => (
           <Pressable

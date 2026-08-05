@@ -6,6 +6,7 @@ import {
   buildGenesisComicPanels,
   buildGenesisGuideScript,
 } from "./genesisChapterSlides";
+import { BRAND } from "../content/brand";
 
 export type ComicPanel = {
   id: string;
@@ -62,7 +63,7 @@ function buildGuide(meta: GenesisChapterMeta): ChapterGuide {
   const script = buildGenesisGuideScript(meta);
   return {
     title: meta.title,
-    narrator: "Anime Audio Guide · ESV",
+    narrator: BRAND.audioGuideLabel,
     durationSeconds: Math.max(420, script.length * 18),
     script,
   };

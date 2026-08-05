@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "anime-audio-bible",
-    "slug": "anime-audio-bible",
+    "name": "PixBible",
+    "slug": "pix-bible",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -40,7 +40,7 @@
       [
         "expo-audio",
         {
-          "microphonePermission": "Allow Anime Audio Bible to record chapter voice reflections.",
+          "microphonePermission": "Allow PixBible to record chapter voice reflections.",
           "recordAudioAndroid": true,
           "enableBackgroundPlayback": true
         }

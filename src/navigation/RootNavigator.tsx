@@ -2,6 +2,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AboutScreen from "../screens/AboutScreen";
 import AnimationDemoScreen from "../screens/AnimationDemoScreen";
 import BibleReaderScreen from "../screens/BibleReaderScreen";
 import BookScreen from "../screens/BookScreen";
@@ -110,6 +111,7 @@ export default function RootNavigator() {
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Favorites" component={FavoritesScreen} />
+        <Stack.Screen name="About" component={AboutScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

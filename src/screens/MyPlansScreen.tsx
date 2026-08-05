@@ -7,6 +7,8 @@ import type { CompositeScreenProps } from "@react-navigation/native";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import JourneyMenuModal from "../components/journeys/JourneyMenuModal";
+import BrandWordmark from "../components/brand/BrandWordmark";
+import { BRAND } from "../content/brand";
 import { BOOKS, JOURNEYS } from "../data/library";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 import { inviteToJourney } from "../services/journeyInvite";
@@ -157,11 +159,9 @@ export default function MyPlansScreen({ navigation }: Props) {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-4 pb-10 pt-2">
           <View className="mb-4 items-center">
-            <Text className="text-xl font-bold lowercase text-terracotta">
-              anime audio bible
-            </Text>
-            <Text className="mt-1 text-center text-sm text-night-muted">
-              Invite friends to read a journey together
+            <BrandWordmark size="sm" />
+            <Text className="mt-2 text-center text-sm text-night-muted">
+              {BRAND.plansSubtitle}
             </Text>
           </View>
 

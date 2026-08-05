@@ -1,5 +1,7 @@
 import { Platform, Share } from "react-native";
 
+import { BRAND } from "../content/brand";
+
 export type JourneyInviteInput = {
   journeyTitle: string;
   booksLabel: string;
@@ -35,7 +37,7 @@ export function buildJourneyInviteMessage(input: JourneyInviteInput): string {
     ? ` We’re on chapter ${input.chapterNumber}.`
     : "";
   return (
-    `Join me on “${input.journeyTitle} Together” in Anime Audio Bible — ${input.booksLabel}.${chapterBit} ` +
+    `Join me on “${input.journeyTitle} Together” in ${BRAND.inviteAppLabel} — ${input.booksLabel}.${chapterBit} ` +
     `Let’s read and listen together!\n\n${link}`
   );
 }
