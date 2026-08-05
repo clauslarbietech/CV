@@ -101,22 +101,10 @@ export default function BookScreen({ navigation, route }: Props) {
                 {book.testament === "OT" ? "Old Testament" : "New Testament"} · Free
               </Text>
               <Text className="text-3xl font-bold text-night-text">{book.name}</Text>
-              <Text className="mt-1 text-sm leading-5 text-night-muted">
-                {book.tagline}
-              </Text>
               <Text className="mt-2 text-xs font-semibold text-night-soft">
                 {book.chapters.length} chapters · {downloadedCount} downloaded
               </Text>
             </View>
-          </View>
-
-          <View className="mb-4 rounded-2xl bg-night-card px-4 py-3">
-            <Text className="text-sm font-bold text-night-text">How to use this book</Text>
-            <Text className="mt-1 text-sm leading-5 text-night-muted">
-              1) Tap an illustrated storyline{"\n"}
-              2) Tap the speaker to hear scripture + speech{"\n"}
-              3) Keep going with chapters 4–50 audio guides
-            </Text>
           </View>
 
           {illustrated.length > 0 ? (
