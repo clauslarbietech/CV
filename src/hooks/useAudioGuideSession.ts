@@ -257,6 +257,13 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
     [seekTo]
   );
 
+  const seekToLine = useCallback(
+    (lineIndex: number) => {
+      speakFrom(lineIndex);
+    },
+    [speakFrom]
+  );
+
   const cycleSpeed = useCallback(() => {
     const options = [0.75, 1, 1.25, 1.5, 1.75];
     const currentIndex = options.findIndex(
@@ -282,6 +289,7 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
     pause,
     skip,
     seekTo,
+    seekToLine,
     cycleSpeed,
     stop: stopTransport,
   };

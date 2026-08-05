@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Text, View, useWindowDimensions } from "react-native";
+import { Pressable, Text, View, useWindowDimensions } from "react-native";
 import Animated, {
   Easing,
   FadeIn,
@@ -16,8 +16,9 @@ import PremiseHeroImage, { premiseHeroHeight } from "./PremiseHeroImage";
 type Props = {
   panels: ComicPanel[];
   activeIndex: number;
-  /** Narration line synced to the audio guide. */
+  /** ESV line synced to the audio guide / current slide. */
   activeNarration?: string;
+  onSelectSlide?: (index: number) => void;
 };
 
 /** Prefer unique images so the chapter feed never stacks duplicate art. */
@@ -35,12 +36,13 @@ export function uniqueComicPanels(panels: ComicPanel[]): ComicPanel[] {
 }
 
 /**
- * One composition: full uncropped premise image + scripture-matched narration.
+ * Scripture slideshow: image for the beat + ESV text only.
  */
 export default function ChapterPremiseComics({
   panels,
   activeIndex,
   activeNarration,
+  onSelectSlide,
 }: Props) {
   const { width } = useWindowDimensions();
   const clampedActive = Math.min(
@@ -56,7 +58,6 @@ export default function ChapterPremiseComics({
       return;
     }
     motion.value = 0;
-    // Gentle fade pulse only — no scale crop that would hide faces.
     motion.value = withRepeat(
       withSequence(
         withTiming(1, {
@@ -81,6 +82,8 @@ export default function ChapterPremiseComics({
     return null;
   }
 
+  const scriptureBody = activeNarration?.trim() || panel.caption;
+
   return (
     <View className="mb-2">
       <Animated.View entering={FadeIn.duration(350)} style={frameStyle}>
@@ -88,28 +91,54 @@ export default function ChapterPremiseComics({
           <PremiseHeroImage
             source={panel.image}
             width={width}
-            accessibilityLabel={panel.caption}
+            accessibilityLabel={
+              panel.scriptureRef
+                ? `${panel.scriptureRef}. ${scriptureBody}`
+                : scriptureBody
+            }
           />
         </View>
       </Animated.View>
+
+      {panels.length > 1 ? (
+        <View className="mx-5 mt-3 flex-row flex-wrap gap-2">
+          {panels.map((item, index) => {
+            const selected = index === clampedActive;
+            return (
+              <Pressable
+                key={item.id}
+                accessibilityRole="button"
+                accessibilityLabel={`Slide ${index + 1}: ${item.scriptureRef ?? item.title}`}
+                onPress={() => onSelectSlide?.(index)}
+                className={`rounded-full px-3 py-1.5 ${
+                  selected ? "bg-terracotta" : "bg-night-elevated"
+                }`}
+              >
+                <Text
+                  className={`text-[10px] font-bold ${
+                    selected ? "text-white" : "text-night-muted"
+                  }`}
+                >
+                  {index + 1}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : null}
+
       <View className="mx-5 mt-3">
-        {panel.scriptureRef ? (
-          <Text className="mb-1 text-[11px] font-bold uppercase tracking-[1.5px] text-terracotta">
-            {panel.scriptureRef}
-            {panels.length > 1
-              ? ` · Slide ${clampedActive + 1}/${panels.length}`
-              : ""}
-          </Text>
-        ) : panels.length > 1 ? (
-          <Text className="mb-1 text-[11px] font-bold uppercase tracking-[1.5px] text-terracotta">
-            Slide {clampedActive + 1}/{panels.length}
-          </Text>
-        ) : null}
-        <Text className="mb-1 text-base font-bold text-night-text">
+        <Text className="mb-1 text-[11px] font-bold uppercase tracking-[1.5px] text-terracotta">
+          {panel.scriptureRef ?? "ESV"}
+          {panels.length > 1
+            ? ` · ${clampedActive + 1}/${panels.length}`
+            : ""}
+        </Text>
+        <Text className="mb-2 text-base font-bold text-night-text">
           {panel.title}
         </Text>
-        <Text className="text-base leading-6 text-night-muted">
-          {activeNarration?.trim() || panel.caption}
+        <Text className="text-[17px] leading-7 text-night-text">
+          {scriptureBody}
         </Text>
       </View>
     </View>

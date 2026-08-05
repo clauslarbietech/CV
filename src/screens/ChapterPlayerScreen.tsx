@@ -83,28 +83,29 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     [chapter]
   );
 
-  // Guide script: welcome + summary, then (narration + scripture) per slide, then outro.
-  // Keep the visible slide aligned to the scripture beat being spoken.
+  // One ESV audio line per slide — keep image + text locked together.
   const activePanelIndex = useMemo(() => {
     if (!displayPanels.length) {
       return 0;
     }
-    const line = audio.activeLineIndex;
-    if (line <= 1) {
-      return 0;
-    }
-    const slideIndex = Math.floor((line - 2) / 2);
-    return Math.min(displayPanels.length - 1, Math.max(0, slideIndex));
+    return Math.min(
+      displayPanels.length - 1,
+      Math.max(0, audio.activeLineIndex)
+    );
   }, [audio.activeLineIndex, displayPanels.length]);
 
   const activeNarration = useMemo(() => {
+    const panel = displayPanels[activePanelIndex];
+    if (panel?.caption) {
+      return panel.caption;
+    }
     if (!chapter?.guide.script.length) {
       return undefined;
     }
     return (
       chapter.guide.script[audio.activeLineIndex] ?? chapter.guide.script[0]
     );
-  }, [audio.activeLineIndex, chapter]);
+  }, [activePanelIndex, audio.activeLineIndex, chapter, displayPanels]);
 
   const prevChapter = book?.chapters.find(
     (item) => item.number === chapterNumber - 1
@@ -356,6 +357,9 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
             panels={displayPanels}
             activeIndex={activePanelIndex}
             activeNarration={activeNarration}
+            onSelectSlide={(index) => {
+              audio.seekToLine(index);
+            }}
           />
 
           <View className="mx-5 mt-4 overflow-hidden rounded-2xl border border-night-border bg-night-card">

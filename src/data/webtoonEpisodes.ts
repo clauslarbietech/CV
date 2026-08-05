@@ -310,8 +310,8 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
         scriptureText:
           "And the rib that the Lord God had taken from the man he made into a woman and brought her to the man.",
         bubble: {
-          tone: "narration",
-          text: "From his side, God made woman — and she stood in the garden.",
+          tone: "scripture",
+          text: "And the rib that the Lord God had taken from the man he made into a woman and brought her to the man.",
         },
       },
       {
@@ -344,8 +344,8 @@ export const WEBTOON_EPISODES: WebtoonEpisode[] = [
         scriptureText:
           "Now the serpent was more crafty than any other beast of the field that the Lord God had made. He said to the woman, “Did God actually say, ‘You shall not eat of any tree in the garden’?”",
         bubble: {
-          tone: "narration",
-          text: "In the cool of the garden, one tree glowed with a dangerous beauty…",
+          tone: "scripture",
+          text: "Now the serpent was more crafty than any other beast of the field that the Lord God had made.",
         },
       },
       {
@@ -834,8 +834,8 @@ function slidesAsWebtoonEpisode(
       scriptureRef: slide.scriptureRef,
       scriptureText: slide.scriptureText,
       bubble: {
-        tone: "narration" as const,
-        text: slide.narration,
+        tone: "scripture" as const,
+        text: slide.scriptureText,
       },
     })),
   };
