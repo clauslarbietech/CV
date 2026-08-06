@@ -19,6 +19,8 @@ type Props = {
   isPlaying: boolean;
   speed: number;
   favorite: boolean;
+  messageCount?: number;
+  onOpenMessages?: () => void;
   hasPrevious: boolean;
   hasNext: boolean;
   onToggle: () => void;
@@ -41,6 +43,8 @@ export default function AudioGuidePlayer({
   isPlaying,
   speed,
   favorite,
+  messageCount = 0,
+  onOpenMessages,
   hasPrevious,
   hasNext,
   onToggle,
@@ -79,6 +83,28 @@ export default function AudioGuidePlayer({
             </Text>
           ) : null}
         </View>
+        {onOpenMessages ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Chapter messages"
+            accessibilityHint="Open chat and voice notes for this chapter"
+            onPress={onOpenMessages}
+            className="relative mr-2 items-center justify-center rounded-full bg-night-elevated"
+            style={{ minWidth: MIN_TOUCH_TARGET, minHeight: MIN_TOUCH_TARGET }}
+          >
+            <MaterialIcons name="chat-bubble-outline" size={20} color={colors.text} />
+            {messageCount > 0 ? (
+              <View
+                className="absolute -right-0.5 -top-0.5 min-w-[16px] items-center justify-center rounded-full bg-terracotta px-1"
+                style={{ minHeight: 16 }}
+              >
+                <Text className="text-[10px] font-bold text-white">
+                  {messageCount > 9 ? "9+" : messageCount}
+                </Text>
+              </View>
+            ) : null}
+          </Pressable>
+        ) : null}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={favorite ? "Remove favorite" : "Favorite chapter"}

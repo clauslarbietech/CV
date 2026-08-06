@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -20,6 +20,7 @@ import SelectableScripture, {
 } from "../components/bible/SelectableScripture";
 import SelectionActionSheet from "../components/bible/SelectionActionSheet";
 import ChapterPremiseComics from "../components/comics/ChapterPremiseComics";
+import ChapterMessagesModal from "../components/journeys/ChapterMessagesModal";
 import AppTabBar from "../components/navigation/AppTabBar";
 import AudioGuidePlayer from "../components/player/AudioGuidePlayer";
 import { getBook, getChapter, JOURNEYS } from "../data/library";
@@ -36,6 +37,12 @@ import {
   toggleChapterFavorite,
 } from "../services/favoritesService";
 import { inviteToJourney } from "../services/journeyInvite";
+import {
+  getOrCreateJourneyGroup,
+  groupMemberCount,
+  type JourneyGroup,
+} from "../services/journeyGroups";
+import { countChapterMessages } from "../services/journeyMessages";
 import {
   getChapterProgress,
   updateChapterProgress,
@@ -81,6 +88,14 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
   const [appliedHighlights, setAppliedHighlights] = useState<
     AppliedHighlight[]
   >([]);
+  const [messagesOpen, setMessagesOpen] = useState(false);
+  const [journeyGroup, setJourneyGroup] = useState<JourneyGroup | null>(null);
+  const [messageBadge, setMessageBadge] = useState(0);
+
+  const activeJourney = useMemo(
+    () => JOURNEYS.find((item) => item.bookIds.includes(bookId)) ?? JOURNEYS[0],
+    [bookId]
+  );
 
   const audio = useAudioGuideSession({
     guide: chapter?.guide,
@@ -234,6 +249,42 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
   }, [chapterNumber]);
 
   useEffect(() => {
+    if (!activeJourney) {
+      return;
+    }
+    let cancelled = false;
+    void getOrCreateJourneyGroup({
+      journeyTitle: activeJourney.title,
+      booksLabel: activeJourney.booksLabel,
+      bookId,
+    }).then((group) => {
+      if (!cancelled) {
+        setJourneyGroup(group);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeJourney, bookId]);
+
+  const refreshMessageBadge = useCallback(async () => {
+    if (!journeyGroup) {
+      setMessageBadge(0);
+      return;
+    }
+    const count = await countChapterMessages({
+      groupId: journeyGroup.id,
+      bookId,
+      chapterNumber,
+    });
+    setMessageBadge(count);
+  }, [bookId, chapterNumber, journeyGroup]);
+
+  useEffect(() => {
+    void refreshMessageBadge();
+  }, [refreshMessageBadge]);
+
+  useEffect(() => {
     setSelectedSegment(null);
     setSheetOpen(false);
   }, [bookId, chapterNumber]);
@@ -343,14 +394,20 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
               accessibilityLabel="Invite others to read this chapter"
               className="h-9 w-9 items-center justify-center rounded-full bg-terracotta/25"
               onPress={() => {
-                const journey =
-                  JOURNEYS.find((item) => item.bookIds.includes(bookId)) ??
-                  JOURNEYS[0];
                 void inviteToJourney({
-                  journeyTitle: journey?.title ?? book.name,
-                  booksLabel: journey?.booksLabel ?? `${book.name} journey`,
+                  journeyTitle: activeJourney?.title ?? book.name,
+                  booksLabel: activeJourney?.booksLabel ?? `${book.name} journey`,
                   bookId,
                   chapterNumber,
+                  groupId: journeyGroup?.id,
+                }).then((result) => {
+                  if (result.groupId && result.groupId !== journeyGroup?.id) {
+                    void getOrCreateJourneyGroup({
+                      journeyTitle: activeJourney?.title ?? book.name,
+                      booksLabel: activeJourney?.booksLabel ?? `${book.name} journey`,
+                      bookId,
+                    }).then(setJourneyGroup);
+                  }
                 });
               }}
             >
@@ -449,6 +506,8 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
               isPlaying={audio.isPlaying}
               speed={audio.speed}
               favorite={isFavorite || progress.favorite}
+              messageCount={messageBadge}
+              onOpenMessages={() => setMessagesOpen(true)}
               hasPrevious={Boolean(prevChapter)}
               hasNext={Boolean(nextChapter)}
               onToggle={audio.toggle}
@@ -578,6 +637,25 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
           void saveSelectedBibleSource(next);
         }}
       />
+
+      {journeyGroup ? (
+        <ChapterMessagesModal
+          visible={messagesOpen}
+          groupId={journeyGroup.id}
+          journeyTitle={journeyGroup.journeyTitle}
+          bookId={bookId}
+          chapterNumber={chapterNumber}
+          chapterTitle={chapter.title}
+          memberCount={groupMemberCount(journeyGroup)}
+          onClose={() => {
+            setMessagesOpen(false);
+            void refreshMessageBadge();
+          }}
+          onMessagesChanged={() => {
+            void refreshMessageBadge();
+          }}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }

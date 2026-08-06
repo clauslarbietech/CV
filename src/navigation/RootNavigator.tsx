@@ -1,5 +1,10 @@
+import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  DefaultTheme,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AboutScreen from "../screens/AboutScreen";
@@ -17,6 +22,7 @@ import MyPlansScreen from "../screens/MyPlansScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import WebtoonEpisodeScreen from "../screens/WebtoonEpisodeScreen";
+import { useJourneyInviteLink } from "../hooks/useJourneyInviteLink";
 import { useTheme } from "../theme/ThemeProvider";
 import type { MainTabParamList, RootStackParamList } from "./types";
 
@@ -82,6 +88,9 @@ function MainTabs() {
 
 export default function RootNavigator() {
   const { colors, nightMode } = useTheme();
+  const navigationRef = useNavigationContainerRef<RootStackParamList>();
+  const [navigationReady, setNavigationReady] = useState(false);
+  useJourneyInviteLink(navigationRef, navigationReady);
 
   const navTheme = {
     ...DefaultTheme,
@@ -98,7 +107,11 @@ export default function RootNavigator() {
   };
 
   return (
-    <NavigationContainer theme={navTheme}>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => setNavigationReady(true)}
+      theme={navTheme}
+    >
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
