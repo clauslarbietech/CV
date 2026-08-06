@@ -4,6 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import AccessibleIconButton from "../components/accessibility/AccessibleIconButton";
 import AppTabBar from "../components/navigation/AppTabBar";
 import type { RootStackParamList } from "../navigation/types";
 import {
@@ -48,13 +49,12 @@ export default function FavoritesScreen({ navigation }: Props) {
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <View className="flex-1">
         <View className="flex-row items-center px-4 py-3">
-          <Pressable
-            accessibilityRole="button"
+          <AccessibleIconButton
+            icon="arrow-back"
+            label="Go back"
             onPress={() => navigation.goBack()}
-            className="mr-3 h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
-          >
-            <MaterialIcons name="arrow-back" size={20} color="#F2F2F7" />
-          </Pressable>
+            className="mr-1"
+          />
           <View className="flex-1">
             <Text className="text-xl font-bold text-night-text">Favorites</Text>
             <Text className="text-xs text-night-muted">

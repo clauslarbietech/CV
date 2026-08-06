@@ -14,6 +14,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import BibleSearchModal from "../components/bible/BibleSearchModal";
 import ChapterPickerModal from "../components/bible/ChapterPickerModal";
 import StorylinePickerModal from "../components/bible/StorylinePickerModal";
+import AccessibleIconButton from "../components/accessibility/AccessibleIconButton";
 import AppTabBar from "../components/navigation/AppTabBar";
 import { CATALOG_BOOKS, libraryBookIdFor } from "../data/bibleCatalog";
 import { listGenesisArcCards } from "../data/genesisArcs";
@@ -135,13 +136,11 @@ export default function BookScreen({ navigation, route }: Props) {
         <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
           <View className="pb-12 pt-2">
             <View className="mb-3 flex-row items-center justify-between px-4">
-              <Pressable
-                accessibilityRole="button"
+              <AccessibleIconButton
+                icon="arrow-back"
+                label="Go back"
                 onPress={() => navigation.goBack()}
-                className="h-9 w-9 items-center justify-center rounded-full bg-night-elevated"
-              >
-                <MaterialIcons name="arrow-back" size={20} color="#F2F2F7" />
-              </Pressable>
+              />
 
               <View className="flex-1 flex-row items-center justify-center gap-2 px-2">
                 {isGenesis ? (
