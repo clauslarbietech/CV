@@ -101,22 +101,13 @@ export default function BibleSearchModal({
           </View>
 
           {error ? (
-            <Text className="mb-3 text-xs text-[#F3A07A]">{error}</Text>
+            <Text className="mb-1 text-xs text-[#F3A07A]">{error}</Text>
           ) : (
-            <Text className="mb-3 text-xs" style={{ color: colors.muted }}>
-              Jump to a book and chapter — same idea as a Bible app location
-              search.
+            <Text className="mb-1 text-xs" style={{ color: colors.muted }}>
+              Type a book and chapter, then press Search on the keyboard — e.g.
+              Genesis 1 or John 3.
             </Text>
           )}
-
-          <Pressable
-            accessibilityRole="button"
-            onPress={submit}
-            className="flex-row items-center justify-center rounded-full bg-[#E4572E] py-3"
-          >
-            <MaterialIcons name="menu-book" size={18} color="#FFFFFF" />
-            <Text className="ml-2 text-sm font-bold text-white">Go to passage</Text>
-          </Pressable>
         </View>
       </View>
     </Modal>
