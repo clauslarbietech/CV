@@ -99,20 +99,12 @@ export default function BookScreen({ navigation, route }: Props) {
   };
 
   const openArc = (
-    arc: GenesisArc,
+    _arc: GenesisArc,
     startChapter: number,
     endChapter: number
   ) => {
-    const electedInArc =
-      selectedChapter >= startChapter && selectedChapter <= endChapter;
-    const chapter = electedInArc ? selectedChapter : startChapter;
-    setPickerArc(arc);
-    setSelectedChapter(chapter);
-    if (electedInArc) {
-      openChapter(selectedChapter);
-      return;
-    }
-    setChapterOpen(true);
+    setPickerArc(null);
+    openChapter(chapterForArc(startChapter, endChapter));
   };
 
   const playArc = (startChapter: number, endChapter: number) => {
@@ -234,18 +226,8 @@ export default function BookScreen({ navigation, route }: Props) {
                     <Pressable
                       key={chapter.number}
                       accessibilityRole="button"
-                      accessibilityLabel={
-                        selected
-                          ? `Open chapter ${chapter.number}`
-                          : `Select chapter ${chapter.number}`
-                      }
-                      onPress={() => {
-                        if (selected) {
-                          openChapter(chapter.number);
-                        } else {
-                          setSelectedChapter(chapter.number);
-                        }
-                      }}
+                      accessibilityLabel={`Open chapter ${chapter.number}`}
+                      onPress={() => openChapter(chapter.number)}
                       className={`h-10 min-w-[40px] items-center justify-center rounded-full px-2.5 ${
                         selected ? "bg-terracotta" : "bg-night-elevated"
                       }`}
@@ -312,9 +294,10 @@ export default function BookScreen({ navigation, route }: Props) {
                           accessibilityRole="button"
                           accessibilityLabel={`Play ${card.arc} from chapter ${chapterForArc(card.startChapter, card.endChapter)}`}
                           hitSlop={8}
-                          onPress={() =>
-                            playArc(card.startChapter, card.endChapter)
-                          }
+                          onPress={(event) => {
+                            event?.stopPropagation?.();
+                            playArc(card.startChapter, card.endChapter);
+                          }}
                           className="absolute bottom-3 right-3 h-12 w-12 items-center justify-center rounded-full bg-terracotta"
                         >
                           <MaterialIcons
