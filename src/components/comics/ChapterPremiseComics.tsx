@@ -1,5 +1,13 @@
-import { useEffect } from "react";
-import { Pressable, Text, View, useWindowDimensions } from "react-native";
+import { useEffect, useRef } from "react";
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import Animated, {
   Easing,
   FadeIn,
@@ -37,7 +45,7 @@ export function uniqueComicPanels(panels: ComicPanel[]): ComicPanel[] {
 }
 
 /**
- * Genesis-style chapter view: large hero art, speech below (not overlaid on art).
+ * Genesis-style chapter view: swipeable hero art, speech below (not overlaid).
  */
 export default function ChapterPremiseComics({
   panels,
@@ -53,8 +61,13 @@ export default function ChapterPremiseComics({
     Math.max(0, panels.length - 1)
   );
   const panel = panels[clampedActive] ?? panels[0];
-  const height = panel ? premiseHeroHeight(contentWidth, panel.image) : 0;
+  const carouselHeight = Math.max(
+    ...panels.map((item) => premiseHeroHeight(contentWidth, item.image)),
+    premiseHeroHeight(contentWidth)
+  );
   const motion = useSharedValue(0);
+  const pagerRef = useRef<ScrollView>(null);
+  const isUserScrolling = useRef(false);
 
   useEffect(() => {
     if (!panel || reduceMotion) {
@@ -78,6 +91,17 @@ export default function ChapterPremiseComics({
     );
   }, [motion, panel?.id, reduceMotion]);
 
+  // Keep the pager in sync when audio advances (or dots are tapped).
+  useEffect(() => {
+    if (isUserScrolling.current || panels.length <= 1) {
+      return;
+    }
+    pagerRef.current?.scrollTo({
+      x: clampedActive * contentWidth,
+      animated: !reduceMotion,
+    });
+  }, [clampedActive, contentWidth, panels.length, reduceMotion]);
+
   const frameStyle = useAnimatedStyle(() => ({
     opacity: interpolate(motion.value, [0, 1], [0.96, 1]),
   }));
@@ -89,6 +113,18 @@ export default function ChapterPremiseComics({
   const scriptureBody = activeNarration?.trim() || panel.caption;
   const scriptureRef = panel.scriptureRef ?? "ESV";
 
+  const onPagerScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    isUserScrolling.current = false;
+    if (contentWidth <= 0 || panels.length <= 1) {
+      return;
+    }
+    const next = Math.round(event.nativeEvent.contentOffset.x / contentWidth);
+    const index = Math.min(Math.max(0, next), panels.length - 1);
+    if (index !== clampedActive) {
+      onSelectSlide?.(index);
+    }
+  };
+
   return (
     <View className="px-4">
       <Animated.View
@@ -96,17 +132,55 @@ export default function ChapterPremiseComics({
         style={frameStyle}
         className="overflow-hidden rounded-2xl bg-night-card"
       >
-        <View style={{ width: contentWidth, height }}>
-          <PremiseHeroImage
-            source={panel.image}
-            width={contentWidth}
-            accessibilityLabel={
-              panel.scriptureRef
-                ? `${panel.scriptureRef}. ${scriptureBody}`
-                : scriptureBody
+        <ScrollView
+          ref={pagerRef}
+          horizontal
+          pagingEnabled
+          decelerationRate="fast"
+          showsHorizontalScrollIndicator={false}
+          bounces={panels.length > 1}
+          scrollEnabled={panels.length > 1}
+          nestedScrollEnabled
+          accessibilityRole="adjustable"
+          accessibilityLabel={`Scene ${clampedActive + 1} of ${panels.length}. Swipe to change scene.`}
+          style={{ width: contentWidth, height: carouselHeight }}
+          contentContainerStyle={{ alignItems: "center" }}
+          onScrollBeginDrag={() => {
+            isUserScrolling.current = true;
+          }}
+          onMomentumScrollEnd={onPagerScrollEnd}
+          onScrollEndDrag={(event) => {
+            // Web often finishes without momentum; snap selection here too.
+            if (event.nativeEvent.velocity?.x === 0) {
+              onPagerScrollEnd(event);
             }
-          />
-        </View>
+          }}
+        >
+          {panels.map((item, index) => {
+            const body = index === clampedActive ? scriptureBody : item.caption;
+            return (
+              <View
+                key={item.id}
+                style={{
+                  width: contentWidth,
+                  height: carouselHeight,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <PremiseHeroImage
+                  source={item.image}
+                  width={contentWidth}
+                  accessibilityLabel={
+                    item.scriptureRef
+                      ? `${item.scriptureRef}. ${body}`
+                      : body
+                  }
+                />
+              </View>
+            );
+          })}
+        </ScrollView>
       </Animated.View>
 
       {panels.length > 1 ? (
@@ -126,7 +200,7 @@ export default function ChapterPremiseComics({
             );
           })}
           <Text className="ml-2 text-[11px] font-semibold text-night-muted">
-            Scene {clampedActive + 1} / {panels.length}
+            Scene {clampedActive + 1} / {panels.length} · swipe
           </Text>
         </View>
       ) : null}
