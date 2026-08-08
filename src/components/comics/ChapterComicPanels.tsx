@@ -12,6 +12,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import type { ComicPanel } from "../../data/library";
+import { imageAspectRatio } from "../../utils/imageAspect";
 
 type Props = {
   panels: ComicPanel[];
@@ -64,12 +65,29 @@ function PanelCard({
           {panel.title}
         </Text>
       </View>
-      <View className="h-48 overflow-hidden bg-night-card">
-        <Animated.View style={[{ width: "100%", height: "100%" }, imageStyle]}>
+      <View
+        className="overflow-hidden bg-night-card"
+        style={{
+          height: Math.round(width * Math.min(imageAspectRatio(panel.image, 0.75), 0.85)),
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Animated.View
+          style={[
+            {
+              width: "100%",
+              height: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+            imageStyle,
+          ]}
+        >
           <Image
             source={panel.image}
             accessibilityLabel={panel.caption}
-            resizeMode="cover"
+            resizeMode="contain"
             style={{ width: "100%", height: "100%" }}
           />
         </Animated.View>

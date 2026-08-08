@@ -171,6 +171,7 @@ export default function ChapterPremiseComics({
                 <PremiseHeroImage
                   source={item.image}
                   width={contentWidth}
+                  frameHeight={carouselHeight}
                   accessibilityLabel={
                     item.scriptureRef
                       ? `${item.scriptureRef}. ${body}`

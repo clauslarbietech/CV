@@ -31,6 +31,7 @@ import {
 } from "../services/listeningProgress";
 import { inviteToJourney } from "../services/journeyInvite";
 import { openBibleChapter } from "../services/openBibleChapter";
+import { framedImageHeight } from "../utils/imageAspect";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Book">;
 
@@ -46,7 +47,6 @@ export default function BookScreen({ navigation, route }: Props) {
   const [selectedChapter, setSelectedChapter] = useState(initialChapter);
 
   const cardWidth = Math.min(width - 32, 520);
-  const cardHeight = Math.round(cardWidth * 0.56);
 
   useEffect(() => {
     if (route.params.chapterNumber) {
@@ -252,66 +252,83 @@ export default function BookScreen({ navigation, route }: Props) {
               </Text>
 
               {isGenesis
-                ? arcCards.map((card) => (
-                    <Pressable
-                      key={card.arc}
-                      accessibilityRole="button"
-                      accessibilityLabel={`${card.arc}. Chapters ${card.startChapter} to ${card.endChapter}`}
-                      onPress={() =>
-                        openArc(card.arc, card.startChapter, card.endChapter)
-                      }
-                      className="mb-3 overflow-hidden rounded-2xl bg-night-card"
-                      style={{ width: cardWidth, alignSelf: "center" }}
-                    >
-                      <View style={{ width: cardWidth, height: cardHeight }}>
-                        <Image
-                          source={card.image}
-                          style={{ width: cardWidth, height: cardHeight }}
-                          resizeMode="cover"
-                        />
+                ? arcCards.map((card) => {
+                    // Size each card to the art’s real ratio so portrait arcs
+                    // (Fall, Flood, etc.) aren’t zoomed/stretched in a wide frame.
+                    const cardHeight = framedImageHeight(cardWidth, card.image, {
+                      maxAspect: 1.2,
+                      maxHeight: Math.round(cardWidth * 1.2),
+                      fallbackAspect: 0.75,
+                    });
+                    return (
+                      <Pressable
+                        key={card.arc}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${card.arc}. Chapters ${card.startChapter} to ${card.endChapter}`}
+                        onPress={() =>
+                          openArc(card.arc, card.startChapter, card.endChapter)
+                        }
+                        className="mb-3 overflow-hidden rounded-2xl bg-night-card"
+                        style={{ width: cardWidth, alignSelf: "center" }}
+                      >
                         <View
-                          pointerEvents="none"
                           style={{
-                            position: "absolute",
-                            left: 0,
-                            right: 0,
-                            top: 0,
-                            bottom: 0,
-                            backgroundColor: "rgba(0,0,0,0.28)",
-                          }}
-                        />
-                        <Text
-                          className="absolute left-3 top-3 text-lg font-bold text-white"
-                          style={{
-                            textShadowColor: "rgba(0,0,0,0.6)",
-                            textShadowOffset: { width: 0, height: 1 },
-                            textShadowRadius: 4,
+                            width: cardWidth,
+                            height: cardHeight,
+                            backgroundColor: "#1A1A1A",
+                            alignItems: "center",
+                            justifyContent: "center",
                           }}
                         >
-                          {card.arc}
-                        </Text>
-                        <Pressable
-                          accessibilityRole="button"
-                          accessibilityLabel={`Play ${card.arc} from chapter ${chapterForArc(card.startChapter, card.endChapter)}`}
-                          hitSlop={8}
-                          onPress={(event) => {
-                            event?.stopPropagation?.();
-                            playArc(card.startChapter, card.endChapter);
-                          }}
-                          className="absolute bottom-3 right-3 h-12 w-12 items-center justify-center rounded-full bg-terracotta"
-                        >
-                          <MaterialIcons
-                            name="play-arrow"
-                            size={28}
-                            color="#FFFFFF"
+                          <Image
+                            source={card.image}
+                            style={{ width: cardWidth, height: cardHeight }}
+                            resizeMode="contain"
                           />
-                        </Pressable>
-                        <Text className="absolute bottom-3 left-3 text-xs font-semibold text-white/85">
-                          Ch. {card.startChapter}–{card.endChapter}
-                        </Text>
-                      </View>
-                    </Pressable>
-                  ))
+                          <View
+                            pointerEvents="none"
+                            style={{
+                              position: "absolute",
+                              left: 0,
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              backgroundColor: "rgba(0,0,0,0.28)",
+                            }}
+                          />
+                          <Text
+                            className="absolute left-3 top-3 text-lg font-bold text-white"
+                            style={{
+                              textShadowColor: "rgba(0,0,0,0.6)",
+                              textShadowOffset: { width: 0, height: 1 },
+                              textShadowRadius: 4,
+                            }}
+                          >
+                            {card.arc}
+                          </Text>
+                          <Pressable
+                            accessibilityRole="button"
+                            accessibilityLabel={`Play ${card.arc} from chapter ${chapterForArc(card.startChapter, card.endChapter)}`}
+                            hitSlop={8}
+                            onPress={(event) => {
+                              event?.stopPropagation?.();
+                              playArc(card.startChapter, card.endChapter);
+                            }}
+                            className="absolute bottom-3 right-3 h-12 w-12 items-center justify-center rounded-full bg-terracotta"
+                          >
+                            <MaterialIcons
+                              name="play-arrow"
+                              size={28}
+                              color="#FFFFFF"
+                            />
+                          </Pressable>
+                          <Text className="absolute bottom-3 left-3 text-xs font-semibold text-white/85">
+                            Ch. {card.startChapter}–{card.endChapter}
+                          </Text>
+                        </View>
+                      </Pressable>
+                    );
+                  })
                 : null}
             </View>
           </View>

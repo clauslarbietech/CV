@@ -3,39 +3,39 @@ import {
   View,
   type ImageSourcePropType,
 } from "react-native";
+import { framedImageHeight, imageAspectRatio } from "../../utils/imageAspect";
 
 type Props = {
   source: ImageSourcePropType;
   width: number;
+  /** Optional fixed frame height; image is contained inside (never stretched). */
+  frameHeight?: number;
   accessibilityLabel?: string;
 };
 
 /**
- * Full-view story premise — never crops faces.
- * Uses contain + a frame sized to the art’s real aspect ratio.
+ * Full-view story premise — never crops faces or stretches art.
+ * Frame follows the art’s real aspect ratio; image uses contain.
  */
 export function premiseHeroHeight(
   width: number,
   source?: ImageSourcePropType
 ): number {
-  if (typeof source === "number") {
-    const resolved = Image.resolveAssetSource(source);
-    if (resolved?.width && resolved?.height && resolved.width > 0) {
-      const aspect = resolved.height / resolved.width;
-      // Fit the full image; soft cap so very tall art doesn’t dominate the phone.
-      return Math.round(Math.min(width * aspect, width * 1.45, 580));
-    }
-  }
-  // Default portrait comic frame (~4:5) when dimensions are unknown.
-  return Math.round(Math.min(width * 1.25, 520));
+  return framedImageHeight(width, source);
 }
 
 export default function PremiseHeroImage({
   source,
   width,
+  frameHeight,
   accessibilityLabel,
 }: Props) {
-  const height = premiseHeroHeight(width, source);
+  const naturalHeight = premiseHeroHeight(width, source);
+  const height = frameHeight ?? naturalHeight;
+  const aspect = imageAspectRatio(source);
+  // Fit inside the frame without stretching — letterbox if needed.
+  const fittedWidth = Math.min(width, height / aspect);
+  const fittedHeight = Math.min(height, width * aspect);
 
   return (
     <View
@@ -45,13 +45,17 @@ export default function PremiseHeroImage({
         backgroundColor: "#1A1A1A",
         alignItems: "center",
         justifyContent: "center",
+        overflow: "hidden",
       }}
     >
       <Image
         source={source}
         accessibilityLabel={accessibilityLabel}
         resizeMode="contain"
-        style={{ width, height }}
+        style={{
+          width: Math.round(fittedWidth),
+          height: Math.round(fittedHeight),
+        }}
       />
     </View>
   );

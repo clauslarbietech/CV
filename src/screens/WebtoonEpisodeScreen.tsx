@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Image,
   Linking,
@@ -38,6 +38,7 @@ import {
   ESV_COPYRIGHT_NOTICE,
   ESV_WEBSITE_URL,
 } from "../services/esvService";
+import { framedImageHeight, imageAspectRatio } from "../utils/imageAspect";
 
 type Props = NativeStackScreenProps<RootStackParamList, "WebtoonEpisode">;
 
@@ -57,7 +58,21 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
     (item) => item.number === chapterNumber - 1
   );
   const { width } = useWindowDimensions();
-  const panelHeight = Math.round(width * 1.28);
+  const panelHeights = useMemo(
+    () =>
+      (episode?.panels ?? []).map((panel) =>
+        framedImageHeight(width, panel.image, {
+          maxAspect: 1.55,
+          maxHeight: Math.round(width * 1.55),
+          fallbackAspect: 1.5,
+        })
+      ),
+    [episode?.panels, width]
+  );
+  const averagePanelHeight =
+    panelHeights.length > 0
+      ? panelHeights.reduce((sum, value) => sum + value, 0) / panelHeights.length
+      : Math.round(width * 1.5);
   const [activeIndex, setActiveIndex] = useState(0);
   const [playingPanelId, setPlayingPanelId] = useState<string | null>(null);
   const [isReadingAll, setIsReadingAll] = useState(false);
@@ -138,12 +153,12 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
         0,
         Math.min(
           (episode?.panels.length ?? 1) - 1,
-          Math.round(y / Math.max(panelHeight * 0.85, 1))
+          Math.round(y / Math.max(averagePanelHeight * 0.85, 1))
         )
       );
       setActiveIndex(index);
     },
-    [episode?.panels.length, panelHeight]
+    [averagePanelHeight, episode?.panels.length]
   );
 
   if (!episode) {
@@ -240,7 +255,7 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
             panel={panel}
             index={index}
             width={width}
-            height={panelHeight}
+            height={panelHeights[index] ?? averagePanelHeight}
             active={index === activeIndex}
             isPlaying={playingPanelId === panel.id}
             onPlay={() => {
@@ -485,12 +500,33 @@ function WebtoonFrame({
       entering={FadeInUp.delay(index * 80).duration(450)}
       style={[{ width, marginBottom: 10 }, frameStyle]}
     >
-      <View style={{ width, height, overflow: "hidden" }}>
-        <Animated.View style={[{ width, height }, imageStyle]}>
+      <View
+        style={{
+          width,
+          height,
+          overflow: "hidden",
+          backgroundColor: "#1A1A1A",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Animated.View
+          style={[
+            {
+              width: Math.round(
+                Math.min(width, height / imageAspectRatio(panel.image, 1.5))
+              ),
+              height: Math.round(
+                Math.min(height, width * imageAspectRatio(panel.image, 1.5))
+              ),
+            },
+            imageStyle,
+          ]}
+        >
           <Image
             source={panel.image}
-            style={{ width, height }}
-            resizeMode="cover"
+            style={{ width: "100%", height: "100%" }}
+            resizeMode="contain"
             accessibilityLabel={
               panel.scriptureText ?? panel.bubble?.text ?? `Scene ${index + 1}`
             }
