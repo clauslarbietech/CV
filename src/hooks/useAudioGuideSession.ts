@@ -6,6 +6,11 @@ import {
   getPlaybackSpeed,
   setPlaybackSpeed as persistPlaybackSpeed,
 } from "../services/listeningProgress";
+import {
+  loadSpeechPreferences,
+  speechSpeakOptions,
+  type SpeechPreferences,
+} from "../services/speechPreferences";
 
 /** Approximate speaking duration for a line at 1.0x (~145 wpm). */
 export function estimateLineSeconds(text: string): number {
@@ -52,6 +57,10 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const scriptRef = useRef(script);
   const durationRef = useRef(naturalDuration);
+  const speechPrefsRef = useRef<SpeechPreferences>({
+    voiceId: null,
+    rate: 0.85,
+  });
 
   scriptRef.current = script;
   durationRef.current = naturalDuration;
@@ -117,8 +126,16 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
       // Important: call Speech.speak synchronously from the user gesture path
       // (no awaits beforehand) so web speechSynthesis is allowed.
       try {
+        const baseRate = speechPrefsRef.current.rate || 0.85;
+        const rate = Math.min(
+          1.5,
+          Math.max(0.5, baseRate * speedRef.current)
+        );
         Speech.speak(lines[index], {
-          rate: Math.min(1.2, Math.max(0.75, speedRef.current)),
+          ...speechSpeakOptions({
+            voiceId: speechPrefsRef.current.voiceId,
+            rate,
+          }),
           pitch: 1,
           onDone: () => {
             if (!playingRef.current) {
@@ -181,9 +198,13 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
       } catch {
         // Web/native stubs may not support every mode flag.
       }
-      const savedSpeed = await getPlaybackSpeed();
+      const [savedSpeed, speechPrefs] = await Promise.all([
+        getPlaybackSpeed(),
+        loadSpeechPreferences(),
+      ]);
       speedRef.current = savedSpeed;
       setSpeed(savedSpeed);
+      speechPrefsRef.current = speechPrefs;
     })();
 
     return () => {

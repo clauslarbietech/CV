@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Linking,
@@ -17,6 +17,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Speech from "expo-speech";
 import BibleSearchModal from "../components/bible/BibleSearchModal";
 import ScripturePickerModal from "../components/bible/ScripturePickerModal";
+import VoicePickerModal from "../components/bible/VoicePickerModal";
 import SelectableScripture, {
   splitScriptureSegments,
   type AppliedHighlight,
@@ -54,8 +55,19 @@ import {
   DEFAULT_YOUVERSION_VERSION_ID,
   fetchBibleBooksForVersion,
 } from "../services/youversionService";
+import { useBottomMenuInset } from "../hooks/useBottomMenuInset";
+import {
+  formatSpeechRate,
+  loadSpeechPreferences,
+  nextSpeechRate,
+  saveSpeechRate,
+  saveSpeechVoiceId,
+  speechSpeakOptions,
+} from "../services/speechPreferences";
 import { useReaderColors } from "../theme/ThemeProvider";
 import type { BibleSource } from "../types/bibleSource";
+
+const TAB_BAR_CONTENT_HEIGHT = 56;
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Bible">,
@@ -68,6 +80,8 @@ type Props = CompositeScreenProps<
 export default function BibleReaderScreen({ navigation }: Props) {
   const readerColors = useReaderColors();
   const { width } = useWindowDimensions();
+  const bottomInset = useBottomMenuInset();
+  const transportBottom = TAB_BAR_CONTENT_HEIGHT + bottomInset + 10;
 
   const [bookId, setBookId] = useState("GEN");
   const [chapter, setChapter] = useState(1);
@@ -95,6 +109,12 @@ export default function BibleReaderScreen({ navigation }: Props) {
   );
   const [showFullCopyright, setShowFullCopyright] = useState(false);
   const [reading, setReading] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [voiceId, setVoiceId] = useState<string | null>(null);
+  const [speechRate, setSpeechRate] = useState(0.85);
+  const continueReadingRef = useRef(false);
+  const pendingAutoSpeakRef = useRef(false);
+  const speakTokenRef = useRef(0);
 
   const libraryId = libraryBookIdFor(bookId);
   const book = getCatalogBook(bookId, books);
@@ -293,30 +313,135 @@ export default function BibleReaderScreen({ navigation }: Props) {
     };
   }, [chapter, libraryId, verses]);
 
-  const stopReading = () => {
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      void loadSpeechPreferences().then((prefs) => {
+        if (!cancelled) {
+          setVoiceId(prefs.voiceId);
+          setSpeechRate(prefs.rate);
+        }
+      });
+      return () => {
+        cancelled = true;
+      };
+    }, [])
+  );
+
+  const stopReading = useCallback(() => {
+    continueReadingRef.current = false;
+    pendingAutoSpeakRef.current = false;
+    speakTokenRef.current += 1;
     void Speech.stop();
     setReading(false);
-  };
+  }, []);
+
+  const nextPassage = useCallback(() => {
+    if (!book) {
+      return null;
+    }
+    if (chapter < book.chapters) {
+      return { bookId, chapter: chapter + 1 };
+    }
+    const index = books.findIndex(
+      (item) => item.usfm === bookId || item.id === bookId
+    );
+    const following = index >= 0 ? books[index + 1] : undefined;
+    if (!following) {
+      return null;
+    }
+    return { bookId: following.usfm, chapter: 1 };
+  }, [book, bookId, books, chapter]);
+
+  const speakCurrentChapter = useCallback(() => {
+    const body = verses.trim();
+    if (!body || loading) {
+      return;
+    }
+    const token = ++speakTokenRef.current;
+    setReading(true);
+    const title = canonical || passageQueryFor(bookId, chapter, books);
+    Speech.speak(`${title}. ${body}`, {
+      ...speechSpeakOptions({ voiceId, rate: speechRate }),
+      onDone: () => {
+        if (token !== speakTokenRef.current) {
+          return;
+        }
+        if (!continueReadingRef.current) {
+          setReading(false);
+          return;
+        }
+        const next = nextPassage();
+        if (!next) {
+          continueReadingRef.current = false;
+          setReading(false);
+          return;
+        }
+        pendingAutoSpeakRef.current = true;
+        setBookId(next.bookId);
+        setChapter(next.chapter);
+      },
+      onStopped: () => {
+        if (token === speakTokenRef.current && !continueReadingRef.current) {
+          setReading(false);
+        }
+      },
+      onError: () => {
+        if (token === speakTokenRef.current) {
+          continueReadingRef.current = false;
+          pendingAutoSpeakRef.current = false;
+          setReading(false);
+        }
+      },
+    });
+  }, [
+    bookId,
+    books,
+    canonical,
+    chapter,
+    loading,
+    nextPassage,
+    speechRate,
+    verses,
+    voiceId,
+  ]);
+
+  // After a finished chapter auto-advances, speak the newly loaded passage.
+  useEffect(() => {
+    if (!pendingAutoSpeakRef.current || loading || !verses.trim()) {
+      return;
+    }
+    pendingAutoSpeakRef.current = false;
+    speakCurrentChapter();
+  }, [bookId, chapter, loading, speakCurrentChapter, verses]);
 
   const readAloud = () => {
-    if (reading) {
+    if (reading || continueReadingRef.current) {
       stopReading();
       return;
     }
-    const body = verses.trim();
-    if (!body) {
+    if (!verses.trim()) {
       return;
     }
-    setReading(true);
-    Speech.speak(
-      `${canonical || passageQueryFor(bookId, chapter, books)}. ${body}`,
-      {
-        rate: 0.88,
-        onDone: () => setReading(false),
-        onStopped: () => setReading(false),
-        onError: () => setReading(false),
-      }
-    );
+    continueReadingRef.current = true;
+    speakCurrentChapter();
+  };
+
+  const changePace = (direction: -1 | 1) => {
+    const next = nextSpeechRate(speechRate, direction);
+    setSpeechRate(next);
+    void saveSpeechRate(next);
+    if (continueReadingRef.current || reading) {
+      const keepGoing = continueReadingRef.current;
+      speakTokenRef.current += 1;
+      void Speech.stop();
+      continueReadingRef.current = keepGoing;
+      setTimeout(() => {
+        if (keepGoing) {
+          speakCurrentChapter();
+        }
+      }, 80);
+    }
   };
 
   const goChapter = (delta: number) => {
@@ -397,8 +522,17 @@ export default function BibleReaderScreen({ navigation }: Props) {
 
         <View className="flex-row items-center">
           <IconButton
+            name="record-voice-over"
+            label="Choose narrator voice"
+            onPress={() => setVoiceOpen(true)}
+          />
+          <IconButton
             name={reading ? "stop" : "volume-up"}
-            label={reading ? "Stop reading" : "Read aloud"}
+            label={
+              reading
+                ? "Stop reading"
+                : "Read aloud and continue through following chapters"
+            }
             onPress={readAloud}
             active={reading}
           />
@@ -412,7 +546,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: 108 }}
+        contentContainerStyle={{ paddingBottom: transportBottom + 96 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Premise comic at the very top — story before the scroll of text */}
@@ -529,48 +663,93 @@ export default function BibleReaderScreen({ navigation }: Props) {
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-3 left-0 right-0 items-center">
+      <View
+        className="absolute left-0 right-0 items-center px-3"
+        style={{ bottom: transportBottom }}
+      >
         <View
-          className="flex-row items-center rounded-full px-2 py-2"
+          className="w-full max-w-md rounded-3xl px-3 py-2"
           style={{ backgroundColor: readerColors.elevated }}
         >
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Previous chapter"
-            onPress={() => goChapter(-1)}
-            className="h-12 w-12 items-center justify-center rounded-full"
+          <Text
+            className="mb-1 text-center text-[10px] font-semibold"
+            style={{ color: readerColors.secondary }}
           >
-            <MaterialIcons
-              name="chevron-left"
-              size={28}
-              color={readerColors.text}
-            />
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={reading ? "Pause reading" : "Play reading"}
-            onPress={readAloud}
-            className="mx-1 h-14 w-14 items-center justify-center rounded-full"
-            style={{ backgroundColor: readerColors.accent }}
-          >
-            <MaterialIcons
-              name={reading ? "pause" : "play-arrow"}
-              size={32}
-              color="#FFFFFF"
-            />
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Next chapter"
-            onPress={() => goChapter(1)}
-            className="h-12 w-12 items-center justify-center rounded-full"
-          >
-            <MaterialIcons
-              name="chevron-right"
-              size={28}
-              color={readerColors.text}
-            />
-          </Pressable>
+            {reading
+              ? `Reading · continues to next chapters · ${formatSpeechRate(speechRate)}`
+              : `Tap play to read aloud · ${formatSpeechRate(speechRate)}`}
+          </Text>
+          <View className="flex-row items-center justify-between">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Slower reading pace"
+              onPress={() => changePace(-1)}
+              className="min-w-[56px] items-center rounded-full px-2 py-2"
+              style={{ backgroundColor: readerColors.surface }}
+            >
+              <Text
+                className="text-xs font-bold"
+                style={{ color: readerColors.text }}
+              >
+                Slow
+              </Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Previous chapter"
+              onPress={() => goChapter(-1)}
+              className="h-12 w-12 items-center justify-center rounded-full"
+            >
+              <MaterialIcons
+                name="chevron-left"
+                size={28}
+                color={readerColors.text}
+              />
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={
+                reading
+                  ? "Stop continuous reading"
+                  : "Play and keep reading following chapters"
+              }
+              onPress={readAloud}
+              className="mx-1 h-14 w-14 items-center justify-center rounded-full"
+              style={{ backgroundColor: readerColors.accent }}
+            >
+              <MaterialIcons
+                name={reading ? "pause" : "play-arrow"}
+                size={32}
+                color="#FFFFFF"
+              />
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Next chapter"
+              onPress={() => goChapter(1)}
+              className="h-12 w-12 items-center justify-center rounded-full"
+            >
+              <MaterialIcons
+                name="chevron-right"
+                size={28}
+                color={readerColors.text}
+              />
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Faster reading pace"
+              onPress={() => changePace(1)}
+              className="min-w-[56px] items-center rounded-full px-2 py-2"
+              style={{ backgroundColor: readerColors.surface }}
+            >
+              <Text
+                className="text-xs font-bold"
+                style={{ color: readerColors.text }}
+              >
+                Speed
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </View>
 
@@ -631,6 +810,16 @@ export default function BibleReaderScreen({ navigation }: Props) {
               excerpt,
             },
           ]);
+        }}
+      />
+
+      <VoicePickerModal
+        visible={voiceOpen}
+        selectedVoiceId={voiceId}
+        onClose={() => setVoiceOpen(false)}
+        onSelect={(nextId) => {
+          setVoiceId(nextId);
+          void saveSpeechVoiceId(nextId);
         }}
       />
     </SafeAreaView>

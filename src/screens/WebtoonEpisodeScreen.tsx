@@ -38,6 +38,11 @@ import {
   ESV_COPYRIGHT_NOTICE,
   ESV_WEBSITE_URL,
 } from "../services/esvService";
+import {
+  loadSpeechPreferences,
+  speechSpeakOptions,
+  type SpeechPreferences,
+} from "../services/speechPreferences";
 import { framedImageHeight, imageAspectRatio } from "../utils/imageAspect";
 
 type Props = NativeStackScreenProps<RootStackParamList, "WebtoonEpisode">;
@@ -77,6 +82,10 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
   const [playingPanelId, setPlayingPanelId] = useState<string | null>(null);
   const [isReadingAll, setIsReadingAll] = useState(false);
   const [highlightOpen, setHighlightOpen] = useState(false);
+  const [speechPrefs, setSpeechPrefs] = useState<SpeechPreferences>({
+    voiceId: null,
+    rate: 0.85,
+  });
 
   const stopAudio = useCallback(() => {
     void Speech.stop();
@@ -85,26 +94,30 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
   }, []);
 
   useEffect(() => {
+    void loadSpeechPreferences().then(setSpeechPrefs);
     return () => {
       void Speech.stop();
     };
   }, []);
 
-  const playPanel = useCallback((panel: WebtoonPanel) => {
-    const text = getPanelAudioText(panel);
-    if (!text.trim()) {
-      return;
-    }
-    void Speech.stop();
-    setIsReadingAll(false);
-    setPlayingPanelId(panel.id);
-    Speech.speak(text, {
-      rate: 0.88,
-      onDone: () => setPlayingPanelId(null),
-      onStopped: () => setPlayingPanelId(null),
-      onError: () => setPlayingPanelId(null),
-    });
-  }, []);
+  const playPanel = useCallback(
+    (panel: WebtoonPanel) => {
+      const text = getPanelAudioText(panel);
+      if (!text.trim()) {
+        return;
+      }
+      void Speech.stop();
+      setIsReadingAll(false);
+      setPlayingPanelId(panel.id);
+      Speech.speak(text, {
+        ...speechSpeakOptions(speechPrefs),
+        onDone: () => setPlayingPanelId(null),
+        onStopped: () => setPlayingPanelId(null),
+        onError: () => setPlayingPanelId(null),
+      });
+    },
+    [speechPrefs]
+  );
 
   const playStoryline = useCallback(() => {
     if (!episode?.panels.length) {
@@ -128,7 +141,7 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
       }
       setPlayingPanelId(episode.panels[i].id);
       Speech.speak(lines[i], {
-        rate: 0.88,
+        ...speechSpeakOptions(speechPrefs),
         onDone: () => {
           i += 1;
           speakNext();
@@ -144,7 +157,7 @@ export default function WebtoonEpisodeScreen({ navigation, route }: Props) {
       });
     };
     speakNext();
-  }, [episode]);
+  }, [episode, speechPrefs]);
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
