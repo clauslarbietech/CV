@@ -65,8 +65,8 @@ export default function AppTabBar({ activeTab }: Props) {
               color={color}
             />
             <Text
-              className="mt-0.5 text-xs font-semibold"
-              style={{ color }}
+              className="mt-0.5 font-semibold"
+              style={{ color, fontSize: 12 }}
               allowFontScaling
             >
               {tab.label}

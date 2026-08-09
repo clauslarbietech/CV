@@ -123,6 +123,7 @@ export default function MyPlansScreen({ navigation }: Props) {
                     className="text-sm font-semibold"
                     style={{
                       color: active ? chipActiveText : colors.text,
+                      fontSize: 14,
                     }}
                   >
                     {item}
@@ -146,14 +147,15 @@ export default function MyPlansScreen({ navigation }: Props) {
               />
               <View className="ml-3 flex-1">
                 <Text
-                  className="text-base font-bold text-night-text"
+                  className="font-bold text-night-text"
+                  style={{ fontSize: 20, lineHeight: 24 }}
                   numberOfLines={1}
                 >
                   {row.title}
                 </Text>
                 <Text
-                  className="text-sm font-medium"
-                  style={{ color: metaGray }}
+                  className="font-medium"
+                  style={{ color: metaGray, fontSize: 15, lineHeight: 20 }}
                   numberOfLines={1}
                 >
                   {row.subtitle}
@@ -164,8 +166,8 @@ export default function MyPlansScreen({ navigation }: Props) {
                     style={{ backgroundColor: badgeFill }}
                   >
                     <Text
-                      className="text-xs font-semibold"
-                      style={{ color: metaGray }}
+                      className="font-semibold"
+                      style={{ color: metaGray, fontSize: 12 }}
                     >
                       {row.days} days
                     </Text>
@@ -176,8 +178,8 @@ export default function MyPlansScreen({ navigation }: Props) {
                       style={{ backgroundColor: "#D8F5D8" }}
                     >
                       <Text
-                        className="text-xs font-semibold"
-                        style={{ color: "#1B7A3A" }}
+                        className="font-semibold"
+                        style={{ color: "#1B7A3A", fontSize: 12 }}
                       >
                         Finished
                       </Text>
@@ -188,8 +190,8 @@ export default function MyPlansScreen({ navigation }: Props) {
                       style={{ backgroundColor: "#D8F5D8" }}
                     >
                       <Text
-                        className="text-xs font-semibold"
-                        style={{ color: "#1B7A3A" }}
+                        className="font-semibold"
+                        style={{ color: "#1B7A3A", fontSize: 12 }}
                       >
                         {row.progress}%
                       </Text>
