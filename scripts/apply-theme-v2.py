@@ -118,15 +118,13 @@ def genesis_chapter_hero(chapter: int, name: str) -> str:
     if chapter == 2:
         if "naming" in n:
             return "day6_animals"
-        if "eve" in n or "rib" in n:
-            return "eden"
+        # Eden pair — modest leafy coverings (pre-Fall / garden scenes)
         return "eden"
     if chapter == 3:
+        # Gen 3:7 fig leaves after sin; Gen 3:21–24 skins at exile
         if "exile" in n:
             return "exile"
-        if "serpent" in n or "whisper" in n or "bite" in n or "offer" in n:
-            return "fall"
-        return "eden"
+        return "fall"
     if chapter == 4:
         return "cain"
     if chapter == 5:
