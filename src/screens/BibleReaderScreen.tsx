@@ -17,7 +17,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Speech from "expo-speech";
 import BibleSearchModal from "../components/bible/BibleSearchModal";
 import ScripturePickerModal from "../components/bible/ScripturePickerModal";
-import VoicePickerModal from "../components/bible/VoicePickerModal";
+import VoiceCarousel from "../components/bible/VoiceCarousel";
 import SelectableScripture, {
   splitScriptureSegments,
   type AppliedHighlight,
@@ -110,7 +110,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
   );
   const [showFullCopyright, setShowFullCopyright] = useState(false);
   const [reading, setReading] = useState(false);
-  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [voiceMenuOpen, setVoiceMenuOpen] = useState(false);
   const [voiceId, setVoiceId] = useState<string | null>(null);
   const [speechRate, setSpeechRate] = useState(0.85);
   const continueReadingRef = useRef(false);
@@ -527,16 +527,12 @@ export default function BibleReaderScreen({ navigation }: Props) {
         </View>
 
         <View className="flex-row items-center gap-1">
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Choose narrator voice"
-            onPress={() => setVoiceOpen(true)}
-            className="flex-row items-center rounded-full px-2.5 py-2"
-            style={{ backgroundColor: readerColors.accent }}
-          >
-            <MaterialIcons name="record-voice-over" size={16} color="#FFFFFF" />
-            <Text className="ml-1 text-xs font-bold text-white">Voice</Text>
-          </Pressable>
+          <IconButton
+            name="record-voice-over"
+            label="Choose narrator voice"
+            onPress={() => setVoiceMenuOpen((open) => !open)}
+            active={voiceMenuOpen}
+          />
           <IconButton
             name={reading ? "stop" : "volume-up"}
             label={
@@ -557,7 +553,9 @@ export default function BibleReaderScreen({ navigation }: Props) {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: transportBottom + 140 }}
+        contentContainerStyle={{
+          paddingBottom: transportBottom + (voiceMenuOpen ? 200 : 140),
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Premise comic at the very top — story before the scroll of text */}
@@ -686,12 +684,21 @@ export default function BibleReaderScreen({ navigation }: Props) {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Choose narrator voice"
-              onPress={() => setVoiceOpen(true)}
-              className="h-10 flex-row items-center rounded-full px-3"
-              style={{ backgroundColor: readerColors.accent }}
+              accessibilityState={{ expanded: voiceMenuOpen }}
+              accessibilityHint="Shows a swipeable list of narrator voices"
+              onPress={() => setVoiceMenuOpen((open) => !open)}
+              className="h-10 w-10 items-center justify-center rounded-full"
+              style={{
+                backgroundColor: voiceMenuOpen
+                  ? readerColors.accent
+                  : readerColors.surface,
+              }}
             >
-              <MaterialIcons name="record-voice-over" size={18} color="#FFFFFF" />
-              <Text className="ml-1.5 text-xs font-bold text-white">Voice</Text>
+              <MaterialIcons
+                name="record-voice-over"
+                size={20}
+                color={voiceMenuOpen ? "#FFFFFF" : readerColors.text}
+              />
             </Pressable>
             <Pressable
               accessibilityRole="button"
@@ -709,6 +716,19 @@ export default function BibleReaderScreen({ navigation }: Props) {
               </Text>
             </Pressable>
           </View>
+
+          <VoiceCarousel
+            visible={voiceMenuOpen}
+            selectedVoiceId={voiceId}
+            accentColor={readerColors.accent}
+            surfaceColor={readerColors.surface}
+            textColor={readerColors.text}
+            mutedColor={readerColors.secondary}
+            onSelect={(nextId) => {
+              setVoiceId(nextId);
+              void saveSpeechVoiceId(nextId);
+            }}
+          />
 
           <Text
             className="mb-2 text-center text-[10px] font-semibold"
@@ -827,15 +847,6 @@ export default function BibleReaderScreen({ navigation }: Props) {
         }}
       />
 
-      <VoicePickerModal
-        visible={voiceOpen}
-        selectedVoiceId={voiceId}
-        onClose={() => setVoiceOpen(false)}
-        onSelect={(nextId) => {
-          setVoiceId(nextId);
-          void saveSpeechVoiceId(nextId);
-        }}
-      />
     </SafeAreaView>
   );
 }
