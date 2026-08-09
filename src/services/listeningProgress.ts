@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PROGRESS_KEY = "listening:progress:v1";
 const SPEED_KEY = "listening:playbackSpeed:v1";
+/** Bump to re-zero completed chapters after test/demo progress. */
+const ACCOMPLISHMENTS_RESET_KEY = "listening:accomplishments-reset:v2";
 
 export type ChapterProgress = {
   completed: boolean;
@@ -77,6 +79,40 @@ export async function markPlanDownloaded(bookId: string, chapterNumbers: number[
   }
   store[bookId] = book;
   await writeStore(store);
+}
+
+/**
+ * Clears completed / position so journey % starts at 0 and only rises from
+ * real listens. Favorites and downloads are kept.
+ */
+export async function resetChapterAccomplishments(): Promise<void> {
+  const store = await readStore();
+  for (const bookId of Object.keys(store)) {
+    const book = store[bookId] ?? {};
+    for (const key of Object.keys(book)) {
+      book[key] = {
+        ...book[key],
+        completed: false,
+        lastPositionSeconds: 0,
+      };
+    }
+    store[bookId] = book;
+  }
+  await writeStore(store);
+}
+
+/** One-time wipe of leftover test progress so Plans shows 0%. */
+export async function ensureCleanAccomplishments(): Promise<void> {
+  try {
+    const already = await AsyncStorage.getItem(ACCOMPLISHMENTS_RESET_KEY);
+    if (already === "1") {
+      return;
+    }
+    await resetChapterAccomplishments();
+    await AsyncStorage.setItem(ACCOMPLISHMENTS_RESET_KEY, "1");
+  } catch {
+    // Ignore storage failures; UI will still compute from whatever is saved.
+  }
 }
 
 export async function getPlaybackSpeed(): Promise<number> {

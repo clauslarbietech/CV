@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -216,12 +216,29 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
     }
   }, [audio.position, bookId, chapterNumber]);
 
+  // Track a real play session so we don't mark complete from stale seek alone.
+  const didPlayChapterRef = useRef(false);
   useEffect(() => {
-    if (audio.position >= audio.duration && audio.duration > 0) {
-      void updateChapterProgress(bookId, chapterNumber, { completed: true }).then(
-        setProgress
-      );
+    didPlayChapterRef.current = false;
+  }, [bookId, chapterNumber]);
+  useEffect(() => {
+    if (audio.isPlaying) {
+      didPlayChapterRef.current = true;
     }
+  }, [audio.isPlaying]);
+
+  // Accomplishments: chapter counts only after the user listens to the end.
+  useEffect(() => {
+    if (
+      !didPlayChapterRef.current ||
+      audio.duration <= 0 ||
+      audio.position < audio.duration - 0.5
+    ) {
+      return;
+    }
+    void updateChapterProgress(bookId, chapterNumber, { completed: true }).then(
+      setProgress
+    );
   }, [audio.duration, audio.position, bookId, chapterNumber]);
 
   useEffect(() => {

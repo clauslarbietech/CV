@@ -10,6 +10,7 @@ import {
 import { Platform, View } from "react-native";
 import { vars } from "nativewind";
 import { StatusBar } from "expo-status-bar";
+import { ensureCleanAccomplishments } from "../services/listeningProgress";
 import {
   loadPreferences,
   savePreferences,
@@ -81,7 +82,10 @@ export function ThemeProvider({ children }: Props) {
 
   useEffect(() => {
     let cancelled = false;
-    void loadPreferences().then((prefs) => {
+    void (async () => {
+      // Zero leftover test progress so Plans % tracks real listens only.
+      await ensureCleanAccomplishments();
+      const prefs = await loadPreferences();
       if (!cancelled) {
         setNightModeState(prefs.nightMode);
         setLargerTextState(prefs.largerText);
@@ -89,7 +93,7 @@ export function ThemeProvider({ children }: Props) {
         setHighContrastState(prefs.highContrast);
         setReady(true);
       }
-    });
+    })();
     return () => {
       cancelled = true;
     };
