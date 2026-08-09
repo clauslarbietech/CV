@@ -26,10 +26,17 @@ const DEFAULT_PREFS: SpeechPreferences = {
 export async function loadSpeechPreferences(): Promise<SpeechPreferences> {
   try {
     const [voiceRaw, rateRaw] = await AsyncStorage.multiGet([VOICE_KEY, RATE_KEY]);
-    const voiceId = voiceRaw[1]?.trim() || null;
+    let voiceId = voiceRaw[1]?.trim() || null;
     const rateNum = rateRaw[1] ? Number(rateRaw[1]) : DEFAULT_PREFS.rate;
     const rate =
       Number.isFinite(rateNum) && rateNum > 0 ? rateNum : DEFAULT_PREFS.rate;
+
+    // Drop a saved novelty voice so narration falls back to system default.
+    if (voiceId && isNoveltyVoice(voiceId, voiceId)) {
+      await AsyncStorage.removeItem(VOICE_KEY);
+      voiceId = null;
+    }
+
     return { voiceId, rate };
   } catch {
     return { ...DEFAULT_PREFS };
@@ -68,7 +75,54 @@ export function formatSpeechRate(rate: number): string {
   return `${rate.toFixed(2).replace(/0$/, "").replace(/\.$/, "")}x`;
 }
 
-/** Prefer English voices first, then by display name. */
+/**
+ * Classic Apple novelty / effect voices — not suitable for Scripture narration.
+ * Matched against voice name or identifier (case-insensitive).
+ */
+const NOVELTY_VOICE_NAMES = new Set([
+  "albert",
+  "bad news",
+  "bahh",
+  "bells",
+  "boing",
+  "bubbles",
+  "cellos",
+  "deranged",
+  "good news",
+  "hysterical",
+  "junior",
+  "kathy",
+  "pipe organ",
+  "princess",
+  "ralph",
+  "trinoids",
+  "whisper",
+  "zarvox",
+  "superstar",
+  "organ",
+  "jester",
+]);
+
+function isNoveltyVoice(name: string, identifier: string): boolean {
+  const label = name.trim().toLowerCase();
+  const id = identifier.trim().toLowerCase();
+  if (NOVELTY_VOICE_NAMES.has(label)) {
+    return true;
+  }
+  // Identifiers like com.apple.speech.synthesis.voice.BadNews
+  for (const novelty of NOVELTY_VOICE_NAMES) {
+    const compact = novelty.replace(/\s+/g, "");
+    if (id.includes(compact) || label.includes(novelty)) {
+      return true;
+    }
+  }
+  if (id.includes("novelty") || id.includes("effect")) {
+    return true;
+  }
+  return false;
+}
+
+/** Prefer English narration voices; hide novelty/effect voices. */
 export async function listSpeechVoices(): Promise<SpeechVoiceOption[]> {
   try {
     const voices = await Speech.getAvailableVoicesAsync();
@@ -78,6 +132,7 @@ export async function listSpeechVoices(): Promise<SpeechVoiceOption[]> {
         name: voice.name || voice.identifier,
         language: voice.language,
       }))
+      .filter((voice) => !isNoveltyVoice(voice.name, voice.identifier))
       .sort((a, b) => {
         const aEn = a.language.toLowerCase().startsWith("en") ? 0 : 1;
         const bEn = b.language.toLowerCase().startsWith("en") ? 0 : 1;
