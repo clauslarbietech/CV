@@ -18,12 +18,8 @@ export default function Index() {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !profile?.onboardingCompleted) {
     return <Redirect href="/(auth)/welcome" />;
-  }
-
-  if (!profile?.onboardingCompleted) {
-    return <Redirect href="/(onboarding)/welcome" />;
   }
 
   return <Redirect href="/(tabs)/today" />;

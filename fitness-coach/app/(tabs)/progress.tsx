@@ -4,7 +4,7 @@ import { StreakCard } from '@/components/progress/StreakCard';
 import { Card } from '@/components/ui/Card';
 import { MetricCard } from '@/components/ui/MetricCard';
 import { Screen } from '@/components/ui/Screen';
-import { OPERATION_IRON_14 } from '@/constants/programs';
+import { getActiveProgram } from '@/constants/programs';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { colors, spacing, typography } from '@/theme';
@@ -14,6 +14,7 @@ export default function ProgressScreen() {
   const enrollment = useProgramStore((s) => s.enrollment);
   const sessions = useProgramStore((s) => s.sessions);
   const streaks = useProgramStore((s) => s.streaks);
+  const program = getActiveProgram(enrollment?.programId);
 
   const completed = enrollment?.completedDayIds.length ?? 0;
   const totalMinutes = Math.round(
@@ -26,26 +27,19 @@ export default function ProgressScreen() {
 
   return (
     <Screen>
-      <Text style={styles.kicker}>IRON 14 PROGRESS</Text>
+      <Text style={styles.kicker}>{program.name} PROGRESS</Text>
       <Text style={styles.title}>
         Track <Text style={styles.accent}>Progress</Text>
-      </Text>
-      <Text style={styles.subtitle}>
-        Basic progress only — enough to prove Day 1 → Day 14 completion.
       </Text>
 
       <View style={styles.metrics}>
         <MetricCard
           label="Missions"
           value={`${completed}`}
-          subtitle={`/ ${OPERATION_IRON_14.durationDays}`}
+          subtitle={`/ ${program.durationDays}`}
           complete={completed > 0}
         />
-        <MetricCard
-          label="Minutes"
-          value={`${totalMinutes}`}
-          subtitle="trained"
-        />
+        <MetricCard label="Minutes" value={`${totalMinutes}`} />
         <MetricCard label="Sets logged" value={`${totalSets}`} />
         <MetricCard
           label="Current day"
@@ -61,21 +55,11 @@ export default function ProgressScreen() {
       />
 
       <Text style={styles.section}>Completed days</Text>
-      <Card military>
+      <Card military accentBorder>
         <Text style={styles.row}>
-          {(enrollment?.completedDayIds.length
+          {enrollment?.completedDayIds.length
             ? enrollment.completedDayIds.map((d) => `Day ${d}`).join(' · ')
-            : 'No missions completed yet. Start Day 1.')}
-        </Text>
-      </Card>
-
-      <Text style={styles.section}>Achievement</Text>
-      <Card military>
-        <Text style={styles.badgeTitle}>IRON 14 BADGE</Text>
-        <Text style={styles.row}>
-          {completed >= 14
-            ? 'Earned — OPERATION IRON 14 COMPLETE'
-            : `Progress ${completed}/14 missions`}
+            : 'No missions completed yet. Start Day 1.'}
         </Text>
       </Card>
     </Screen>
@@ -83,39 +67,14 @@ export default function ProgressScreen() {
 }
 
 const styles = StyleSheet.create({
-  kicker: {
-    ...typography.overline,
-    color: colors.militaryAccent,
-  },
-  title: {
-    ...typography.title,
-    color: colors.textPrimary,
-  },
-  accent: {
-    color: colors.accent,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-
+  kicker: { ...typography.overline, color: colors.militaryAccent },
+  title: { ...typography.title, color: colors.textPrimary },
+  accent: { color: colors.accent },
   section: {
     ...typography.heading,
     color: colors.textPrimary,
     marginTop: spacing.sm,
   },
-  metrics: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  row: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  badgeTitle: {
-    ...typography.subheading,
-    color: colors.militaryAccent,
-    marginBottom: spacing.xs,
-  },
+  metrics: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  row: { ...typography.body, color: colors.textSecondary },
 });

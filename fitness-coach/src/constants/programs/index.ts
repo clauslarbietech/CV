@@ -1,130 +1,19 @@
 import { WorkoutProgram } from '@/types';
 import { OPERATION_IRON_14 } from './operationIron14';
+import { OPERATION_IRON_30 } from './operationIron30';
 
-/** Placeholder catalog entries — only Iron 14 is fully implemented in MVP. */
-const FUTURE_PROGRAMS: WorkoutProgram[] = [
-  {
-    id: '30-day-shred',
-    name: '30-DAY SHRED',
-    slug: '30-day-shred',
-    tagline: 'Structured fat-loss training for the next month.',
-    subtitle: 'Fat Loss Program',
-    categories: ['fat_burn'],
-    durationDays: 30,
-    equipment: 'Dumbbells or bodyweight',
-    averageWorkout: '30-45 minutes',
-    difficulty: 'Beginner to Intermediate',
-    goals: ['Fat Loss'],
-    featured: false,
-    militaryThemed: false,
-    days: [],
-  },
-  {
-    id: 'mass-builder',
-    name: 'MASS BUILDER',
-    slug: 'mass-builder',
-    tagline: 'Hypertrophy-focused progressive overload.',
-    subtitle: 'Muscle Building',
-    categories: ['muscle'],
-    durationDays: 28,
-    equipment: 'Full gym',
-    averageWorkout: '45-60 minutes',
-    difficulty: 'Intermediate',
-    goals: ['Hypertrophy'],
-    featured: false,
-    militaryThemed: false,
-    days: [],
-  },
-  {
-    id: 'no-gym-required',
-    name: 'NO GYM REQUIRED',
-    slug: 'no-gym-required',
-    tagline: 'Build strength anywhere with bodyweight progressions.',
-    subtitle: 'Bodyweight Fitness',
-    categories: ['calisthenics'],
-    durationDays: 21,
-    equipment: 'Bodyweight',
-    averageWorkout: '25-40 minutes',
-    difficulty: 'All levels',
-    goals: ['Bodyweight Fitness'],
-    featured: false,
-    militaryThemed: false,
-    days: [],
-  },
-  {
-    id: 'military-elite',
-    name: 'MILITARY ELITE',
-    slug: 'military-elite',
-    tagline: 'Advanced calisthenics for high performers.',
-    subtitle: 'Advanced Calisthenics',
-    categories: ['discipline', 'calisthenics'],
-    durationDays: 21,
-    equipment: 'Pull-up bar + bodyweight',
-    averageWorkout: '35-50 minutes',
-    difficulty: 'Advanced',
-    goals: ['Advanced Calisthenics'],
-    featured: false,
-    militaryThemed: true,
-    days: [],
-  },
-  {
-    id: 'strength-protocol',
-    name: 'STRENGTH PROTOCOL',
-    slug: 'strength-protocol',
-    tagline: 'Build raw strength with focused compounds.',
-    subtitle: 'Strength',
-    categories: ['strength'],
-    durationDays: 28,
-    equipment: 'Full gym',
-    averageWorkout: '45-60 minutes',
-    difficulty: 'Intermediate to Advanced',
-    goals: ['Strength'],
-    featured: false,
-    militaryThemed: false,
-    days: [],
-  },
-  {
-    id: '15-minute-assault',
-    name: '15-MINUTE ASSAULT',
-    slug: '15-minute-assault',
-    tagline: 'Short, high-intensity sessions for busy days.',
-    subtitle: 'Short Workouts',
-    categories: ['conditioning', 'fat_burn'],
-    durationDays: 14,
-    equipment: 'Bodyweight',
-    averageWorkout: '15 minutes',
-    difficulty: 'All levels',
-    goals: ['Short workouts'],
-    featured: false,
-    militaryThemed: false,
-    days: [],
-  },
-  {
-    id: 'conditioning-camp',
-    name: 'CONDITIONING CAMP',
-    slug: 'conditioning-camp',
-    tagline: 'Engine work for endurance and work capacity.',
-    subtitle: 'Endurance',
-    categories: ['endurance', 'conditioning'],
-    durationDays: 21,
-    equipment: 'Bodyweight',
-    averageWorkout: '30-45 minutes',
-    difficulty: 'Intermediate',
-    goals: ['Endurance'],
-    featured: false,
-    militaryThemed: false,
-    days: [],
-  },
-];
-
-/** Featured program always first. */
+/** Featured first: 30-day no-equipment military shred. */
 export const WORKOUT_PROGRAMS: WorkoutProgram[] = [
+  OPERATION_IRON_30,
   OPERATION_IRON_14,
-  ...FUTURE_PROGRAMS,
 ];
 
 export function getProgramById(id: string): WorkoutProgram | undefined {
   return WORKOUT_PROGRAMS.find((p) => p.id === id);
 }
 
-export { OPERATION_IRON_14 };
+export function getActiveProgram(programId?: string | null): WorkoutProgram {
+  return getProgramById(programId ?? OPERATION_IRON_30.id) ?? OPERATION_IRON_30;
+}
+
+export { OPERATION_IRON_14, OPERATION_IRON_30 };

@@ -14,7 +14,7 @@ export default function ProgramDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const program = getProgramById(id);
   const enrollment = useProgramStore((s) => s.enrollment);
-  const enrollInIron14 = useProgramStore((s) => s.enrollInIron14);
+  const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
   const setDifficulty = useProgramStore((s) => s.setDifficulty);
 
   if (!program) {
@@ -30,7 +30,7 @@ export default function ProgramDetailScreen() {
     );
   }
 
-  const isIron = program.id === 'operation-iron-14';
+  const hasDays = program.days.length > 0;
   const tier = enrollment?.difficulty ?? 'soldier';
   const isEnrolled = enrollment?.programId === program.id;
 
@@ -47,17 +47,9 @@ export default function ProgramDetailScreen() {
         <Text style={styles.metaText}>{program.durationDays} days</Text>
         <Text style={styles.metaText}>{program.equipment}</Text>
         <Text style={styles.metaText}>{program.averageWorkout}</Text>
-        <Text style={styles.metaText}>{program.difficulty}</Text>
       </View>
 
-      <Text style={styles.section}>Goals</Text>
-      {program.goals.map((goal) => (
-        <Text key={goal} style={styles.goal}>
-          • {goal}
-        </Text>
-      ))}
-
-      {isIron ? (
+      {hasDays ? (
         <>
           <Text style={styles.section}>Difficulty</Text>
           <View style={styles.tiers}>
@@ -65,7 +57,7 @@ export default function ProgramDetailScreen() {
               <Pressable
                 key={item}
                 onPress={() => {
-                  if (!isEnrolled) enrollInIron14(item);
+                  if (!isEnrolled) enrollInProgram(program.id, item);
                   else setDifficulty(item);
                 }}
                 style={[styles.tier, tier === item && styles.tierActive]}
@@ -82,33 +74,23 @@ export default function ProgramDetailScreen() {
             ))}
           </View>
 
-          {!isEnrolled ? (
-            <AppButton
-              label="Enroll & start Day 1"
-              variant="military"
-              onPress={() => {
-                enrollInIron14(tier);
-                router.push({
-                  pathname: '/session/[programId]',
-                  params: { programId: program.id, day: '1' },
-                });
-              }}
-            />
-          ) : (
-            <AppButton
-              label={`Continue Day ${enrollment?.currentDay ?? 1}`}
-              variant="military"
-              onPress={() =>
-                router.push({
-                  pathname: '/session/[programId]',
-                  params: {
-                    programId: program.id,
-                    day: String(enrollment?.currentDay ?? 1),
-                  },
-                })
-              }
-            />
-          )}
+          <AppButton
+            label={
+              isEnrolled
+                ? `Continue Day ${enrollment?.currentDay ?? 1}`
+                : 'Enroll & start Day 1'
+            }
+            variant="military"
+            onPress={() => {
+              if (!isEnrolled) enrollInProgram(program.id, tier);
+              const day =
+                useProgramStore.getState().enrollment?.currentDay ?? 1;
+              router.push({
+                pathname: '/session/[programId]',
+                params: { programId: program.id, day: String(day) },
+              });
+            }}
+          />
 
           <Text style={styles.section}>Mission calendar</Text>
           {program.days.map((day) => {
@@ -133,7 +115,9 @@ export default function ProgramDetailScreen() {
                 <Text style={styles.dayMeta}>
                   {formatDuration(day.estimatedMinutes)}
                   {day.rounds ? ` · ${day.rounds} rounds` : ''}
-                  {formatRest(day.restSec) ? ` · Rest ${formatRest(day.restSec)}` : ''}
+                  {formatRest(day.restSec)
+                    ? ` · Rest ${formatRest(day.restSec)}`
+                    : ''}
                   {done ? ' · Complete' : ''}
                 </Text>
                 {day.exercises.slice(0, 3).map((exercise, index) => (
@@ -151,7 +135,7 @@ export default function ProgramDetailScreen() {
       ) : (
         <EmptyState
           title="Coming soon"
-          description="Only OPERATION IRON 14 is fully implemented in this MVP. Architecture is ready for these programs next."
+          description="This program is listed but not fully implemented yet."
         />
       )}
     </Screen>
@@ -159,27 +143,11 @@ export default function ProgramDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  kicker: {
-    ...typography.overline,
-    color: colors.militaryAccent,
-  },
-  title: {
-    ...typography.hero,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    ...typography.subheading,
-    color: colors.textSecondary,
-  },
-  tagline: {
-    ...typography.body,
-    color: colors.textMuted,
-  },
-  meta: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
+  kicker: { ...typography.overline, color: colors.militaryAccent },
+  title: { ...typography.hero, color: colors.textPrimary },
+  subtitle: { ...typography.subheading, color: colors.textSecondary },
+  tagline: { ...typography.body, color: colors.textMuted },
+  meta: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   metaText: {
     ...typography.caption,
     color: colors.textSecondary,
@@ -193,14 +161,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     marginTop: spacing.md,
   },
-  goal: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  tiers: {
-    flexDirection: 'row',
-    gap: spacing.xs,
-  },
+  tiers: { flexDirection: 'row', gap: spacing.xs },
   tier: {
     flex: 1,
     minHeight: 44,
@@ -212,17 +173,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   tierActive: {
-    borderColor: colors.militaryAccent,
-    backgroundColor: colors.militarySurface,
+    borderColor: colors.accent,
+    backgroundColor: colors.accent,
   },
-  tierText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  tierTextActive: {
-    color: colors.militaryAccent,
-    fontWeight: '700',
-  },
+  tierText: { ...typography.caption, color: colors.textSecondary },
+  tierTextActive: { color: colors.black, fontWeight: '800' },
   dayCard: {
     backgroundColor: colors.militarySurface,
     borderRadius: radii.lg,
@@ -231,13 +186,8 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     gap: spacing.xxs,
   },
-  dayDone: {
-    borderColor: colors.accent,
-  },
-  dayTitle: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-  },
+  dayDone: { borderColor: colors.accent },
+  dayTitle: { ...typography.subheading, color: colors.textPrimary },
   dayMeta: {
     ...typography.caption,
     color: colors.textMuted,

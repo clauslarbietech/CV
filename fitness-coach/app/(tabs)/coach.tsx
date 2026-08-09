@@ -2,21 +2,23 @@ import { StyleSheet, Text } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
-import { colors, spacing, typography } from '@/theme';
+import { colors, typography } from '@/theme';
 
 export default function CoachScreen() {
   return (
     <Screen>
-      <Text style={styles.kicker}>LOCKED UNTIL PHASE 1 COMPLETE</Text>
-      <Text style={styles.title}>AI Coach</Text>
-      <Text style={styles.subtitle}>
-        Conversational coaching stays deferred until OPERATION IRON 14 works
-        end-to-end: onboard → Day 1 session → save → Day 2 unlock.
+      <Text style={styles.kicker}>COMING NEXT</Text>
+      <Text style={styles.title}>
+        AI <Text style={styles.accent}>Coach</Text>
       </Text>
-      <Card>
+      <Text style={styles.subtitle}>
+        Live chat stays next. For now: run OPERATION IRON 30 missions and follow
+        the Tactical 16:8 fuel plan in Nutrition.
+      </Text>
+      <Card accentBorder>
         <Text style={styles.body}>
-          Your coach personality is already saved from onboarding and will drive
-          tone once the chat engine ships.
+          Tip: Complete today&apos;s mission first. Ask the coach later about
+          swaps, sore muscles, and meal timing.
         </Text>
       </Card>
     </Screen>
@@ -24,20 +26,9 @@ export default function CoachScreen() {
 }
 
 const styles = StyleSheet.create({
-  kicker: {
-    ...typography.overline,
-    color: colors.warning,
-  },
-  title: {
-    ...typography.title,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  body: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
+  kicker: { ...typography.overline, color: colors.accent },
+  title: { ...typography.title, color: colors.textPrimary },
+  accent: { color: colors.accent },
+  subtitle: { ...typography.body, color: colors.textSecondary },
+  body: { ...typography.body, color: colors.textSecondary },
 });

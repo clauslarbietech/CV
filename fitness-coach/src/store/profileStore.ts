@@ -3,41 +3,11 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { rankFromXp } from '@/constants/xp';
-import {
-  CoachPersonality,
-  OnboardingDraft,
-  UserProfile,
-} from '@/types';
-import { splitCsv } from '@/utils/format';
-
-const defaultDraft: OnboardingDraft = {
-  firstName: '',
-  age: '',
-  sex: '',
-  heightCm: '',
-  currentWeightKg: '',
-  goalWeightKg: '',
-  primaryGoal: '',
-  experienceLevel: '',
-  activityLevel: '',
-  workoutLocation: '',
-  equipment: [],
-  trainingDaysPerWeek: 4,
-  preferredDurationMin: 30,
-  dietaryPreference: 'none',
-  foodAllergies: '',
-  physicalLimitations: '',
-  injuries: '',
-  coachPersonality: 'motivator',
-  notificationEnabled: true,
-};
+import { CoachPersonality, UserProfile } from '@/types';
 
 interface ProfileState {
   profile: UserProfile | null;
-  draft: OnboardingDraft;
-  updateDraft: (patch: Partial<OnboardingDraft>) => void;
-  resetDraft: () => void;
-  completeOnboarding: (userId: string, email?: string) => void;
+  quickStart: (args: { userId: string; firstName: string; email?: string }) => void;
   setCoachPersonality: (personality: CoachPersonality) => void;
   addXp: (amount: number) => void;
   updateWeight: (kg: number) => void;
@@ -45,48 +15,35 @@ interface ProfileState {
 
 export const useProfileStore = create<ProfileState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       profile: null,
-      draft: defaultDraft,
-      updateDraft: (patch) =>
-        set((state) => ({ draft: { ...state.draft, ...patch } })),
-      resetDraft: () => set({ draft: defaultDraft }),
-      completeOnboarding: (userId, email) => {
-        const { draft } = get();
+      quickStart: ({ userId, firstName, email }) => {
         const now = new Date().toISOString();
-        const profile: UserProfile = {
-          id: userId,
-          firstName: draft.firstName.trim() || 'Athlete',
-          email,
-          age: draft.age ? Number(draft.age) : undefined,
-          sex: draft.sex || undefined,
-          heightCm: draft.heightCm ? Number(draft.heightCm) : undefined,
-          currentWeightKg: draft.currentWeightKg
-            ? Number(draft.currentWeightKg)
-            : undefined,
-          goalWeightKg: draft.goalWeightKg
-            ? Number(draft.goalWeightKg)
-            : undefined,
-          primaryGoal: draft.primaryGoal || undefined,
-          experienceLevel: draft.experienceLevel || undefined,
-          activityLevel: draft.activityLevel || undefined,
-          workoutLocation: draft.workoutLocation || undefined,
-          equipment: draft.equipment,
-          trainingDaysPerWeek: draft.trainingDaysPerWeek,
-          preferredDurationMin: draft.preferredDurationMin,
-          dietaryPreference: draft.dietaryPreference,
-          foodAllergies: splitCsv(draft.foodAllergies),
-          physicalLimitations: splitCsv(draft.physicalLimitations),
-          injuries: splitCsv(draft.injuries),
-          coachPersonality: draft.coachPersonality,
-          notificationEnabled: draft.notificationEnabled,
-          onboardingCompleted: true,
-          xp: 0,
-          rank: 'Recruit',
-          createdAt: now,
-          updatedAt: now,
-        };
-        set({ profile });
+        const name = firstName.trim() || 'Athlete';
+        set({
+          profile: {
+            id: userId,
+            firstName: name,
+            email,
+            primaryGoal: 'lose_fat',
+            experienceLevel: 'beginner',
+            workoutLocation: 'home',
+            equipment: ['none'],
+            trainingDaysPerWeek: 6,
+            preferredDurationMin: 30,
+            dietaryPreference: 'none',
+            foodAllergies: [],
+            physicalLimitations: [],
+            injuries: [],
+            coachPersonality: 'drill_sergeant',
+            notificationEnabled: true,
+            onboardingCompleted: true,
+            xp: 0,
+            rank: 'Recruit',
+            createdAt: now,
+            updatedAt: now,
+          },
+        });
       },
       setCoachPersonality: (personality) =>
         set((state) =>

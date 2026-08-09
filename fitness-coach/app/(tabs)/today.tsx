@@ -5,7 +5,7 @@ import { DailyMissionCard } from '@/components/today/DailyMissionCard';
 import { AppButton } from '@/components/ui/AppButton';
 import { MetricCard } from '@/components/ui/MetricCard';
 import { Screen } from '@/components/ui/Screen';
-import { OPERATION_IRON_14 } from '@/constants/programs';
+import { getActiveProgram, OPERATION_IRON_30 } from '@/constants/programs';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useSessionStore } from '@/store/sessionStore';
@@ -17,44 +17,37 @@ export default function TodayScreen() {
   const enrollment = useProgramStore((s) => s.enrollment);
   const streaks = useProgramStore((s) => s.streaks);
   const sessions = useProgramStore((s) => s.sessions);
-  const enrollInIron14 = useProgramStore((s) => s.enrollInIron14);
+  const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
   const active = useSessionStore((s) => s.active);
 
-  if (!enrollment || enrollment.programId !== OPERATION_IRON_14.id) {
+  if (!enrollment) {
     return (
       <Screen>
         <Text style={styles.kicker}>TRANSFORMATION ENGINE</Text>
-        <Text style={styles.title}>OPERATION IRON 14</Text>
+        <Text style={styles.title}>
+          OPERATION <Text style={styles.accent}>IRON 30</Text>
+        </Text>
         <Text style={styles.body}>
-          14 days. Visual fat loss. Muscle definition. Athletic shredding. Your
-          first mission starts now.
+          30 days. No equipment. Military bodyweight shred. Start now.
         </Text>
         <AppButton
-          label="Start OPERATION IRON 14"
+          label="Start OPERATION IRON 30"
           variant="military"
-          onPress={() => {
-            enrollInIron14(
-              profile?.experienceLevel === 'beginner'
-                ? 'recruit'
-                : profile?.experienceLevel === 'advanced'
-                  ? 'elite'
-                  : 'soldier',
-            );
-          }}
+          onPress={() => enrollInProgram(OPERATION_IRON_30.id, 'soldier')}
         />
       </Screen>
     );
   }
 
+  const program = getActiveProgram(enrollment.programId);
   const day =
-    getProgramDay(OPERATION_IRON_14, enrollment.currentDay) ??
-    OPERATION_IRON_14.days[0];
+    getProgramDay(program, enrollment.currentDay) ?? program.days[0];
   const dayCompleted = enrollment.completedDayIds.includes(day.day);
   const completedCount = enrollment.completedDayIds.length;
   const lastSession = sessions.find((s) => s.day === day.day);
   const resumable =
     active &&
-    active.programId === OPERATION_IRON_14.id &&
+    active.programId === program.id &&
     active.day === day.day &&
     active.phase !== 'complete' &&
     active.phase !== 'briefing';
@@ -63,7 +56,7 @@ export default function TodayScreen() {
     router.push({
       pathname: '/session/[programId]',
       params: {
-        programId: OPERATION_IRON_14.id,
+        programId: program.id,
         day: String(day.day),
       },
     });
@@ -76,12 +69,12 @@ export default function TodayScreen() {
         {profile?.firstName ?? 'Athlete'} · {enrollment.difficulty.toUpperCase()}
       </Text>
       <Text style={styles.progressLine}>
-        {completedCount}/14 missions · Streak {streaks.workoutStreak} ·{' '}
-        {profile?.xp ?? 0} XP
+        {completedCount}/{program.durationDays} missions · Streak{' '}
+        {streaks.workoutStreak} · {profile?.xp ?? 0} XP
       </Text>
 
       <DailyMissionCard
-        program={OPERATION_IRON_14}
+        program={program}
         day={day}
         tier={enrollment.difficulty}
         completed={dayCompleted}
@@ -96,31 +89,12 @@ export default function TodayScreen() {
         />
       ) : null}
 
-      {dayCompleted ? (
-        <View style={styles.nextBox}>
-          <Text style={styles.nextTitle}>Day {day.day} secured</Text>
-          <Text style={styles.body}>
-            {completedCount >= 14
-              ? 'OPERATION IRON 14 complete. Badge earned.'
-              : `Day ${enrollment.currentDay} is unlocked. Keep the shredding streak alive.`}
-          </Text>
-          {completedCount < 14 ? (
-            <AppButton
-              label={`Start Day ${enrollment.currentDay}`}
-              variant="military"
-              onPress={openMission}
-            />
-          ) : null}
-        </View>
-      ) : null}
-
       <Text style={styles.section}>Mission metrics</Text>
       <View style={styles.metrics}>
         <MetricCard
           label="Program day"
           value={`${day.day}`}
-          subtitle="of 14"
-          complete={!dayCompleted}
+          subtitle={`of ${program.durationDays}`}
         />
         <MetricCard
           label="Completed"
@@ -135,7 +109,6 @@ export default function TodayScreen() {
               ? `${Math.round(lastSession.durationSec / 60)}m`
               : '—'
           }
-          subtitle="minutes"
         />
         <MetricCard
           label="Rank"
@@ -161,6 +134,9 @@ const styles = StyleSheet.create({
     ...typography.title,
     color: colors.textPrimary,
   },
+  accent: {
+    color: colors.accent,
+  },
   body: {
     ...typography.body,
     color: colors.textSecondary,
@@ -179,12 +155,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
-  },
-  nextBox: {
-    gap: spacing.sm,
-  },
-  nextTitle: {
-    ...typography.subheading,
-    color: colors.accent,
   },
 });

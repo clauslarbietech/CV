@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { OPERATION_IRON_14 } from '@/constants/programs';
+import { getActiveProgram, OPERATION_IRON_30 } from '@/constants/programs';
 import { XP_REWARDS } from '@/constants/xp';
 import {
   DailyProgress,
@@ -48,6 +48,11 @@ interface ProgramState {
   sessions: WorkoutSessionLog[];
   daily: DailyProgress;
   streaks: StreakState;
+  enrollInProgram: (
+    programId?: string,
+    difficulty?: DifficultyTier,
+  ) => void;
+  /** @deprecated use enrollInProgram — kept for older call sites */
   enrollInIron14: (difficulty?: DifficultyTier) => void;
   setDifficulty: (tier: DifficultyTier) => void;
   completeWorkout: (input: CompleteWorkoutInput) => WorkoutSessionLog | null;
@@ -68,10 +73,10 @@ export const useProgramStore = create<ProgramState>()(
         nutritionStreak: 0,
         longestWorkoutStreak: 0,
       },
-      enrollInIron14: (difficulty = 'soldier') => {
+      enrollInProgram: (programId = OPERATION_IRON_30.id, difficulty = 'soldier') => {
         set({
           enrollment: {
-            programId: OPERATION_IRON_14.id,
+            programId,
             currentDay: 1,
             difficulty,
             startedAt: new Date().toISOString(),
@@ -79,6 +84,9 @@ export const useProgramStore = create<ProgramState>()(
           },
           daily: emptyDaily(),
         });
+      },
+      enrollInIron14: (difficulty = 'soldier') => {
+        get().enrollInProgram('operation-iron-14', difficulty);
       },
       setDifficulty: (tier) =>
         set((state) =>
@@ -92,7 +100,8 @@ export const useProgramStore = create<ProgramState>()(
         const { enrollment, sessions, streaks, daily } = get();
         if (!enrollment) return null;
 
-        // Idempotent: if day already completed, keep progression.
+        const program = getActiveProgram(enrollment.programId);
+
         if (enrollment.completedDayIds.includes(input.day)) {
           const existing = sessions.find(
             (s) => s.day === input.day && s.status === 'completed',
@@ -120,12 +129,11 @@ export const useProgramStore = create<ProgramState>()(
         );
 
         const isChallengeComplete =
-          completedDayIds.length >= OPERATION_IRON_14.durationDays;
+          completedDayIds.length >= program.durationDays;
 
-        // Unlock next day automatically (Day 1 → Day 2 … → Day 14).
         const nextDay = isChallengeComplete
           ? enrollment.currentDay
-          : Math.min(input.day + 1, OPERATION_IRON_14.durationDays);
+          : Math.min(input.day + 1, program.durationDays);
 
         const workoutStreak = streaks.workoutStreak + 1;
 
@@ -147,7 +155,6 @@ export const useProgramStore = create<ProgramState>()(
           daily: {
             ...daily,
             date: todayKey(),
-            // Mission for the completed day is done; next day is unlocked.
             workoutCompleted: true,
           },
           streaks: {

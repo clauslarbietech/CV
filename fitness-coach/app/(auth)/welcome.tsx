@@ -1,14 +1,30 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Link, router } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { Screen } from '@/components/ui/Screen';
+import { OPERATION_IRON_30 } from '@/constants/programs';
 import { useAuthStore } from '@/store/authStore';
-import { colors, spacing, typography } from '@/theme';
+import { useProfileStore } from '@/store/profileStore';
+import { useProgramStore } from '@/store/programStore';
+import { colors, radii, spacing, typography } from '@/theme';
 
 export default function WelcomeScreen() {
   const continueAsGuest = useAuthStore((s) => s.continueAsGuest);
+  const quickStart = useProfileStore((s) => s.quickStart);
+  const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
+  const [name, setName] = useState('');
+
+  const enterApp = () => {
+    const firstName = name.trim() || 'Athlete';
+    continueAsGuest(firstName);
+    const userId = useAuthStore.getState().userId ?? `guest-${Date.now()}`;
+    quickStart({ userId, firstName });
+    enrollInProgram(OPERATION_IRON_30.id, 'soldier');
+    router.replace('/(tabs)/today');
+  };
 
   return (
     <Screen contentStyle={styles.content}>
@@ -20,35 +36,30 @@ export default function WelcomeScreen() {
         <Text style={styles.brand}>FITLIFE</Text>
         <Text style={styles.promise}>YOUR FITNESS LIFE. ONE AI COACH.</Text>
         <Text style={styles.headline}>
-          Personalized <Text style={styles.accentWord}>Workouts</Text>
-          {'\n'}That Fit Your Goals.
+          What&apos;s your <Text style={styles.accentWord}>name</Text>?
         </Text>
         <Text style={styles.support}>
-          Train, eat better, stay accountable — and shred with OPERATION IRON 14.
+          Jump straight into OPERATION IRON 30 — 30 days, no equipment, military
+          bodyweight shred + fasting fuel plan.
         </Text>
+
+        <TextInput
+          value={name}
+          onChangeText={setName}
+          placeholder="Enter your name"
+          placeholderTextColor={colors.textMuted}
+          autoFocus
+          autoCapitalize="words"
+          returnKeyType="go"
+          onSubmitEditing={enterApp}
+          style={styles.input}
+          accessibilityLabel="Your name"
+        />
       </View>
 
       <View style={styles.actions}>
-        <AppButton
-          label="Get started"
-          onPress={() => router.push('/(auth)/sign-up')}
-        />
-        <AppButton
-          label="I already have an account"
-          variant="secondary"
-          onPress={() => router.push('/(auth)/sign-in')}
-        />
-        <AppButton
-          label="Continue as guest"
-          variant="ghost"
-          onPress={() => {
-            continueAsGuest('Athlete');
-            router.replace('/(onboarding)/welcome');
-          }}
-        />
-        <Link href="/(auth)/sign-in" style={styles.link}>
-          <Text style={styles.linkText}>Secure sign-in with email</Text>
-        </Link>
+        <AppButton label="Start training" onPress={enterApp} />
+        <Text style={styles.hint}>No long setup. Name in → Day 1 ready.</Text>
       </View>
     </Screen>
   );
@@ -84,18 +95,27 @@ const styles = StyleSheet.create({
   support: {
     ...typography.body,
     color: colors.textSecondary,
-    maxWidth: 340,
+    maxWidth: 360,
+  },
+  input: {
+    marginTop: spacing.md,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: colors.borderAccent,
+    borderRadius: radii.lg,
+    color: colors.textPrimary,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    minHeight: 56,
+    ...typography.subheading,
   },
   actions: {
     gap: spacing.sm,
     paddingBottom: spacing.xl,
   },
-  link: {
-    alignSelf: 'center',
-    marginTop: spacing.xs,
-  },
-  linkText: {
+  hint: {
     ...typography.caption,
     color: colors.textMuted,
+    textAlign: 'center',
   },
 });

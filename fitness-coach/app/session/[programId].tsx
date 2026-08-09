@@ -8,7 +8,7 @@ import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Screen } from '@/components/ui/Screen';
-import { OPERATION_IRON_14 } from '@/constants/programs';
+import { getActiveProgram } from '@/constants/programs';
 import {
   formatClock,
   parseRepTarget,
@@ -42,19 +42,20 @@ export default function WorkoutSessionScreen() {
   const clearSession = useSessionStore((s) => s.clear);
   const tick = useSessionStore((s) => s.tick);
 
+  const program = getActiveProgram(programId);
   const dayNumber = Number(dayParam ?? enrollment?.currentDay ?? 1);
-  const day = getProgramDay(OPERATION_IRON_14, dayNumber);
+  const day = getProgramDay(program, dayNumber);
   const tier = enrollment?.difficulty ?? 'soldier';
   const [savedNextDay, setSavedNextDay] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!day || programId !== OPERATION_IRON_14.id) return;
+    if (!day || programId !== program.id) return;
     resumeOrBegin({
-      programId: OPERATION_IRON_14.id,
+      programId: program.id,
       day,
       difficulty: tier,
     });
-  }, [dayNumber, programId, tier]);
+  }, [dayNumber, programId, tier, program.id]);
 
   useEffect(() => {
     if (!day || !active) return;
@@ -74,12 +75,12 @@ export default function WorkoutSessionScreen() {
     return resolvedCurrentExercise(day, active);
   }, [day, active]);
 
-  if (programId !== OPERATION_IRON_14.id || !day) {
+  if (!day || programId !== program.id) {
     return (
       <Screen>
         <EmptyState
           title="Mission unavailable"
-          description="Phase 1 only runs OPERATION IRON 14."
+          description="Could not load this workout day."
           actionLabel="Back to Today"
           onAction={() => router.replace('/(tabs)/today')}
         />
@@ -92,7 +93,7 @@ export default function WorkoutSessionScreen() {
       <Screen>
         <EmptyState
           title="Not enrolled"
-          description="Enroll in OPERATION IRON 14 to start missions."
+          description="Start OPERATION IRON 30 from the Workouts tab."
           actionLabel="Go to Workouts"
           onAction={() => router.replace('/(tabs)/workouts')}
         />
@@ -110,7 +111,7 @@ export default function WorkoutSessionScreen() {
   }
 
   const finishAndSave = () => {
-    const next = completeWorkout({
+    completeWorkout({
       day: day.day,
       durationSec: Math.max(active.elapsedSec, 30),
       rating: active.difficultyRating,
@@ -119,41 +120,36 @@ export default function WorkoutSessionScreen() {
       sessionId: active.id,
       startedAt: active.startedAt,
     });
-
     markComplete();
-    const unlocked = useProgramStore.getState().enrollment?.currentDay ?? day.day;
+    const unlocked =
+      useProgramStore.getState().enrollment?.currentDay ?? day.day;
     setSavedNextDay(unlocked);
-    return next;
   };
 
   if (active.phase === 'complete' || (isDayCompleted(day.day) && savedNextDay)) {
     const nextDay = savedNextDay ?? enrollment.currentDay;
-    const challengeDone =
-      (useProgramStore.getState().enrollment?.completedDayIds.length ?? 0) >= 14;
+    const completedCount =
+      useProgramStore.getState().enrollment?.completedDayIds.length ?? day.day;
+    const challengeDone = completedCount >= program.durationDays;
 
     return (
       <Screen>
         <Text style={styles.kicker}>MISSION COMPLETE</Text>
         <Text style={styles.title}>
-          {challengeDone && day.day === 14
-            ? 'OPERATION IRON 14 COMPLETE'
+          {challengeDone
+            ? `${program.name} COMPLETE`
             : `Day ${day.day} complete`}
         </Text>
-        <Card military>
+        <Card military accentBorder>
           <Text style={styles.stat}>
-            {useProgramStore.getState().enrollment?.completedDayIds.length ?? day.day}{' '}
-            / 14 Missions
+            {completedCount} / {program.durationDays} Missions
           </Text>
           <Text style={styles.stat}>Duration: {formatClock(active.elapsedSec)}</Text>
-          <Text style={styles.stat}>
-            Sets logged: {active.exerciseLogs.length}
-          </Text>
+          <Text style={styles.stat}>Sets logged: {active.exerciseLogs.length}</Text>
           <Text style={styles.stat}>+100 XP earned</Text>
-          {day.day === 14 && challengeDone ? (
-            <Text style={styles.badge}>IRON 14 BADGE unlocked</Text>
-          ) : (
-            <Text style={styles.badge}>Day {nextDay} unlocked</Text>
-          )}
+          <Text style={styles.badge}>
+            {challengeDone ? 'CHALLENGE BADGE unlocked' : `Day ${nextDay} unlocked`}
+          </Text>
         </Card>
         {!challengeDone && nextDay > day.day ? (
           <AppButton
@@ -163,10 +159,7 @@ export default function WorkoutSessionScreen() {
               clearSession();
               router.replace({
                 pathname: '/session/[programId]',
-                params: {
-                  programId: OPERATION_IRON_14.id,
-                  day: String(nextDay),
-                },
+                params: { programId: program.id, day: String(nextDay) },
               });
             }}
           />
@@ -187,7 +180,7 @@ export default function WorkoutSessionScreen() {
     return (
       <Screen>
         <Text style={styles.kicker}>
-          OPERATION IRON 14 · {tier.toUpperCase()}
+          {program.name} · {tier.toUpperCase()}
         </Text>
         <Text style={styles.title}>
           DAY {day.day} — {day.title}
@@ -198,11 +191,10 @@ export default function WorkoutSessionScreen() {
           {formatRest(day.restSec) ? ` · Rest ${formatRest(day.restSec)}` : ''}
         </Text>
 
-        <Card military>
-          <Text style={styles.sectionLabel}>TRANSFORMATION MISSION</Text>
+        <Card military accentBorder>
+          <Text style={styles.sectionLabel}>NO EQUIPMENT MISSION</Text>
           <Text style={styles.body}>
-            Visual fat loss · muscle definition · conditioning. Complete every
-            prescribed set for today&apos;s stimulus.
+            Bodyweight only. Fat loss · definition · conditioning.
           </Text>
         </Card>
 
@@ -324,9 +316,7 @@ export default function WorkoutSessionScreen() {
       <Screen>
         <Text style={styles.kicker}>RATE MISSION</Text>
         <Text style={styles.title}>How hard was Day {day.day}?</Text>
-        <Text style={styles.meta}>
-          This feeds adaptive difficulty later. 1 = easy, 5 = extremely hard.
-        </Text>
+        <Text style={styles.meta}>1 = easy · 5 = extremely hard</Text>
         <View style={styles.ratings}>
           {[1, 2, 3, 4, 5].map((value) => (
             <AppButton
@@ -355,11 +345,7 @@ export default function WorkoutSessionScreen() {
         actionLabel="Restart mission"
         onAction={() => {
           clearSession();
-          resumeOrBegin({
-            programId: OPERATION_IRON_14.id,
-            day,
-            difficulty: tier,
-          });
+          resumeOrBegin({ programId: program.id, day, difficulty: tier });
         }}
       />
     </Screen>
@@ -367,35 +353,17 @@ export default function WorkoutSessionScreen() {
 }
 
 const styles = StyleSheet.create({
-  centered: {
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  kicker: {
-    ...typography.overline,
-    color: colors.militaryAccent,
-  },
-  title: {
-    ...typography.title,
-    color: colors.textPrimary,
-  },
-  meta: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  body: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
+  centered: { flexGrow: 1, justifyContent: 'center' },
+  kicker: { ...typography.overline, color: colors.militaryAccent },
+  title: { ...typography.title, color: colors.textPrimary },
+  meta: { ...typography.body, color: colors.textSecondary },
+  body: { ...typography.body, color: colors.textSecondary },
   sectionLabel: {
     ...typography.overline,
     color: colors.textMuted,
     marginTop: spacing.sm,
   },
-  moveRow: {
-    ...typography.body,
-    color: colors.textPrimary,
-  },
+  moveRow: { ...typography.body, color: colors.textPrimary },
   blockTitle: {
     ...typography.subheading,
     color: colors.militaryAccent,
@@ -424,24 +392,14 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     textAlign: 'center',
   },
-
-  row: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  flex: {
-    flex: 1,
-  },
+  row: { flexDirection: 'row', gap: spacing.sm },
+  flex: { flex: 1 },
   ratings: {
     flexDirection: 'row',
     gap: spacing.xs,
     marginVertical: spacing.md,
   },
-  rateBtn: {
-    flex: 1,
-    minHeight: 48,
-    paddingHorizontal: 0,
-  },
+  rateBtn: { flex: 1, minHeight: 48, paddingHorizontal: 0 },
   stat: {
     ...typography.body,
     color: colors.textSecondary,

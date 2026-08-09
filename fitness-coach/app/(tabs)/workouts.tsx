@@ -4,30 +4,65 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ProgramCard } from '@/components/workout/ProgramCard';
 import { AppButton } from '@/components/ui/AppButton';
 import { Screen } from '@/components/ui/Screen';
-import { OPERATION_IRON_14 } from '@/constants/programs';
+import { OPERATION_IRON_14, OPERATION_IRON_30 } from '@/constants/programs';
 import { useProgramStore } from '@/store/programStore';
 import { colors, spacing, typography } from '@/theme';
 
 export default function WorkoutsScreen() {
   const enrollment = useProgramStore((s) => s.enrollment);
-  const enrollInIron14 = useProgramStore((s) => s.enrollInIron14);
+  const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
 
-  const enrolled = enrollment?.programId === OPERATION_IRON_14.id;
+  const onIron30 =
+    enrollment?.programId === OPERATION_IRON_30.id
+      ? enrollment
+      : null;
 
   return (
     <Screen>
-      <Text style={styles.kicker}>CORE PROGRAM</Text>
+      <Text style={styles.kicker}>NO EQUIPMENT</Text>
       <Text style={styles.title}>
-        OPERATION <Text style={styles.accent}>IRON 14</Text>
+        30 Military <Text style={styles.accent}>Workouts</Text>
       </Text>
       <Text style={styles.subtitle}>
-        14-day military bodyweight shred. The only fully executable program in
-        Phase 1.
+        Full bodyweight protocol. Home. Hotel. Anywhere.
       </Text>
 
       <ProgramCard
-        program={OPERATION_IRON_14}
+        program={OPERATION_IRON_30}
         featured
+        onPress={() =>
+          router.push({
+            pathname: '/program/[id]',
+            params: { id: OPERATION_IRON_30.id },
+          })
+        }
+      />
+
+      <View style={styles.actions}>
+        <AppButton
+          label={
+            onIron30
+              ? `Continue Day ${onIron30.currentDay}`
+              : 'Start Day 1 now'
+          }
+          variant="military"
+          onPress={() => {
+            if (!onIron30) enrollInProgram(OPERATION_IRON_30.id, 'soldier');
+            const day = useProgramStore.getState().enrollment?.currentDay ?? 1;
+            router.push({
+              pathname: '/session/[programId]',
+              params: {
+                programId: OPERATION_IRON_30.id,
+                day: String(day),
+              },
+            });
+          }}
+        />
+      </View>
+
+      <Text style={styles.section}>Also available</Text>
+      <ProgramCard
+        program={OPERATION_IRON_14}
         onPress={() =>
           router.push({
             pathname: '/program/[id]',
@@ -35,54 +70,6 @@ export default function WorkoutsScreen() {
           })
         }
       />
-
-      <View style={styles.actions}>
-        {!enrolled ? (
-          <AppButton
-            label="Enroll & open Day 1"
-            variant="military"
-            onPress={() => {
-              enrollInIron14('soldier');
-              router.push({
-                pathname: '/session/[programId]',
-                params: {
-                  programId: OPERATION_IRON_14.id,
-                  day: '1',
-                },
-              });
-            }}
-          />
-        ) : (
-          <AppButton
-            label={`Continue Day ${enrollment?.currentDay ?? 1}`}
-            variant="military"
-            onPress={() =>
-              router.push({
-                pathname: '/session/[programId]',
-                params: {
-                  programId: OPERATION_IRON_14.id,
-                  day: String(enrollment?.currentDay ?? 1),
-                },
-              })
-            }
-          />
-        )}
-        <AppButton
-          label="View full 14-day protocol"
-          variant="secondary"
-          onPress={() =>
-            router.push({
-              pathname: '/program/[id]',
-              params: { id: OPERATION_IRON_14.id },
-            })
-          }
-        />
-      </View>
-
-      <Text style={styles.locked}>
-        Future programs (30-Day Shred, Mass Builder, etc.) stay locked until
-        OPERATION IRON 14 session engine is proven end-to-end.
-      </Text>
     </Screen>
   );
 }
@@ -104,13 +91,12 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: spacing.sm,
   },
-
   actions: {
     gap: spacing.sm,
   },
-  locked: {
-    ...typography.caption,
-    color: colors.textMuted,
+  section: {
+    ...typography.heading,
+    color: colors.textPrimary,
     marginTop: spacing.md,
   },
 });
