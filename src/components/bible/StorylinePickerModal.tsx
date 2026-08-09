@@ -11,13 +11,17 @@ import { MaterialIcons } from "@expo/vector-icons";
 import {
   GENESIS_ARCS,
   getGenesisChapter,
-  type GenesisArc,
 } from "../../data/genesisChapters";
+import {
+  EXODUS_ARCS,
+  getExodusChapter,
+} from "../../data/exodusChapters";
 import type { WebtoonEpisode } from "../../data/webtoonEpisodes";
 import { useReaderColors } from "../../theme/ThemeProvider";
 
 type Props = {
   visible: boolean;
+  bookId?: string;
   episodes: WebtoonEpisode[];
   onClose: () => void;
   onSelect: (episode: WebtoonEpisode) => void;
@@ -25,12 +29,20 @@ type Props = {
 
 type Step = "arc" | "storyline";
 
+function arcForEpisode(bookId: string, chapterNumber: number): string {
+  if (bookId === "exodus") {
+    return getExodusChapter(chapterNumber)?.arc ?? "Oppression";
+  }
+  return getGenesisChapter(chapterNumber)?.arc ?? "Creation";
+}
+
 /**
  * Bottom-sheet picker for illustrated storylines —
  * same pattern as Bible version / chapter pickers (not an endless page scroll).
  */
 export default function StorylinePickerModal({
   visible,
+  bookId = "genesis",
   episodes,
   onClose,
   onSelect,
@@ -38,23 +50,23 @@ export default function StorylinePickerModal({
   const readerColors = useReaderColors();
   const { height } = useWindowDimensions();
   const [step, setStep] = useState<Step>("arc");
-  const [pendingArc, setPendingArc] = useState<GenesisArc | null>(null);
+  const [pendingArc, setPendingArc] = useState<string | null>(null);
 
   const byArc = useMemo(() => {
-    const map = new Map<GenesisArc, WebtoonEpisode[]>();
+    const map = new Map<string, WebtoonEpisode[]>();
     for (const episode of episodes) {
-      const arc = getGenesisChapter(episode.chapterNumber)?.arc ?? "Creation";
+      const arc = arcForEpisode(episode.bookId || bookId, episode.chapterNumber);
       const list = map.get(arc) ?? [];
       list.push(episode);
       map.set(arc, list);
     }
     return map;
-  }, [episodes]);
+  }, [bookId, episodes]);
 
-  const arcsWithArt = useMemo(
-    () => GENESIS_ARCS.filter((arc) => (byArc.get(arc)?.length ?? 0) > 0),
-    [byArc]
-  );
+  const arcsWithArt = useMemo(() => {
+    const arcs = bookId === "exodus" ? EXODUS_ARCS : GENESIS_ARCS;
+    return arcs.filter((arc) => (byArc.get(arc)?.length ?? 0) > 0);
+  }, [bookId, byArc]);
 
   useEffect(() => {
     if (!visible) {

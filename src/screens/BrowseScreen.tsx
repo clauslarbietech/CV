@@ -11,7 +11,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import type { CompositeScreenProps } from "@react-navigation/native";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { BOOKS, JOURNEYS } from "../data/library";
+import { BOOKS, FEATURED_BOOK_IDS, getBook, JOURNEYS } from "../data/library";
 import BrandWordmark from "../components/brand/BrandWordmark";
 import { BRAND } from "../content/brand";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
@@ -144,83 +144,101 @@ export default function BrowseScreen({ navigation }: Props) {
             contentContainerStyle={{ gap: 12, paddingBottom: 8 }}
             className="mb-6"
           >
-            <Pressable
-              accessibilityRole="button"
-              style={{ width: bookCard }}
-              className="overflow-hidden rounded-2xl bg-night-elevated"
-              onPress={() =>
-                navigation.navigate("Book", {
-                  bookId: "genesis",
-                  chapterNumber: 1,
-                })
-              }
-            >
-              <Image
-                source={BOOKS[0].cover}
-                style={{ width: bookCard, height: bookCard, opacity: 0.35 }}
-                resizeMode="cover"
-              />
-              <View className="absolute inset-0 items-center justify-center bg-black/65 px-3">
-                <Text className="text-center text-xl font-bold text-white">
-                  Old{"\n"}Testament
-                </Text>
-                <Text className="mt-1 text-center text-xs font-semibold text-white">
-                  Genesis ready
-                </Text>
-              </View>
-            </Pressable>
+            {BOOKS.map((book) => (
+              <Pressable
+                key={book.id}
+                accessibilityRole="button"
+                accessibilityLabel={`Open ${book.name}`}
+                style={{ width: bookCard }}
+                className="overflow-hidden rounded-2xl bg-night-elevated"
+                onPress={() =>
+                  navigation.navigate("Book", {
+                    bookId: book.id,
+                    chapterNumber: 1,
+                  })
+                }
+              >
+                <Image
+                  source={book.cover}
+                  style={{ width: bookCard, height: bookCard }}
+                  resizeMode="cover"
+                />
+                <View className="absolute inset-x-0 bottom-0 bg-black/70 px-3 py-2">
+                  <Text className="text-base font-bold text-white">{book.name}</Text>
+                  <Text className="text-xs font-semibold text-white/85">
+                    {book.chapters.length} chapters · illustrated
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
             <View
               style={{ width: bookCard }}
               className="items-center justify-center overflow-hidden rounded-2xl bg-night-card"
             >
               <MaterialIcons name="schedule" size={28} color={colors.muted} />
               <Text className="mt-2 text-center text-base font-bold text-night-text">
-                New Testament
+                More books
               </Text>
-              <Text className="mt-1 text-xs font-medium text-night-muted">
-                Coming later
+              <Text className="mt-1 px-2 text-center text-xs font-medium text-night-muted">
+                Same experience · coming next
               </Text>
             </View>
           </ScrollView>
 
-          <SectionHeader title="Featured book" />
-          <Pressable
-            accessibilityRole="button"
-            className="mb-6 flex-row overflow-hidden rounded-2xl border border-night-border bg-night-card"
-            onPress={() =>
-              navigation.navigate("Book", {
-                bookId: "genesis",
-                chapterNumber: 1,
-              })
-            }
-          >
-            <Image
-              source={BOOKS[0].cover}
-              style={{ width: 96, height: 96 }}
-              resizeMode="cover"
-            />
-            <View className="flex-1 justify-center px-3 py-2">
-              <Text
-                className="text-xs font-bold uppercase tracking-wide"
-                style={{ color: colors.brand }}
-              >
-                Start the Bible here
-              </Text>
-              <Text className="text-lg font-bold text-night-text">Genesis</Text>
-              <Text className="mt-1 text-xs font-medium text-night-muted" numberOfLines={2}>
-                50 chapters · comics, ESV audio, and storylines
-              </Text>
-            </View>
-            <View className="justify-center pr-3">
-              <MaterialIcons name="chevron-right" size={28} color="#E4572E" />
-            </View>
-          </Pressable>
+          <SectionHeader title="Featured books" />
+          <View className="mb-6 gap-2">
+            {FEATURED_BOOK_IDS.map((bookId, index) => {
+              const book = getBook(bookId);
+              if (!book) {
+                return null;
+              }
+              return (
+                <Pressable
+                  key={book.id}
+                  accessibilityRole="button"
+                  className="flex-row overflow-hidden rounded-2xl border border-night-border bg-night-card"
+                  onPress={() =>
+                    navigation.navigate("Book", {
+                      bookId: book.id,
+                      chapterNumber: 1,
+                    })
+                  }
+                >
+                  <Image
+                    source={book.cover}
+                    style={{ width: 96, height: 96 }}
+                    resizeMode="cover"
+                  />
+                  <View className="flex-1 justify-center px-3 py-2">
+                    <Text
+                      className="text-xs font-bold uppercase tracking-wide"
+                      style={{ color: colors.brand }}
+                    >
+                      {index === 0 ? "Start the Bible here" : "Continue the story"}
+                    </Text>
+                    <Text className="text-lg font-bold text-night-text">
+                      {book.name}
+                    </Text>
+                    <Text
+                      className="mt-1 text-xs font-medium text-night-muted"
+                      numberOfLines={2}
+                    >
+                      {book.chapters.length} chapters · comics, ESV audio, and storylines
+                    </Text>
+                  </View>
+                  <View className="justify-center pr-3">
+                    <MaterialIcons name="chevron-right" size={28} color="#E4572E" />
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
 
           <SectionHeader
             title="Continue the story"
             onSeeAll={() =>
               navigation.navigate("Book", {
-                bookId: "genesis",
+                bookId: "exodus",
                 chapterNumber: 1,
               })
             }
@@ -228,7 +246,7 @@ export default function BrowseScreen({ navigation }: Props) {
           <View className="mb-2 gap-2">
             <QuickStoryCard
               title="Day 1 · Let There Be Light"
-              subtitle="Creation begins · listen along"
+              subtitle="Genesis 1 · creation begins"
               icon="wb-sunny"
               onPress={() =>
                 navigation.navigate("WebtoonEpisode", {
@@ -251,38 +269,38 @@ export default function BrowseScreen({ navigation }: Props) {
               }
             />
             <QuickStoryCard
-              title="Noah & the Flood"
-              subtitle="Genesis 6–9 · ark and rainbow"
-              icon="water"
+              title="The Burning Bush"
+              subtitle="Exodus 3 · I AM WHO I AM"
+              icon="local-fire-department"
               onPress={() =>
                 navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 6,
-                  storylineId: "noah-ark",
+                  bookId: "exodus",
+                  chapterNumber: 3,
+                  storylineId: "ch-3",
                 })
               }
             />
             <QuickStoryCard
-              title="Abraham’s Call"
-              subtitle="Genesis 12 · go to the land"
-              icon="nights-stay"
+              title="Through the Sea"
+              subtitle="Exodus 14 · deliverance"
+              icon="waves"
               onPress={() =>
                 navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 12,
-                  storylineId: "call-of-abraham",
+                  bookId: "exodus",
+                  chapterNumber: 14,
+                  storylineId: "ch-14",
                 })
               }
             />
             <QuickStoryCard
-              title="Joseph’s Coat"
-              subtitle="Genesis 37 · toward Egypt"
-              icon="style"
+              title="Ten Commandments"
+              subtitle="Exodus 20 · covenant at Sinai"
+              icon="menu-book"
               onPress={() =>
                 navigation.navigate("WebtoonEpisode", {
-                  bookId: "genesis",
-                  chapterNumber: 37,
-                  storylineId: "joseph-coat",
+                  bookId: "exodus",
+                  chapterNumber: 20,
+                  storylineId: "ch-20",
                 })
               }
             />

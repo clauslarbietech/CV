@@ -6,6 +6,14 @@ import {
   buildGenesisComicPanels,
   buildGenesisGuideScript,
 } from "./genesisChapterSlides";
+import {
+  EXODUS_CHAPTERS,
+  type ExodusChapterMeta,
+} from "./exodusChapters";
+import {
+  buildExodusComicPanels,
+  buildExodusGuideScript,
+} from "./exodusChapterSlides";
 import { BRAND } from "../content/brand";
 
 export type ComicPanel = {
@@ -59,9 +67,13 @@ export type Journey = {
 
 const day1 = require("../../assets/panels/genesis-day1-light.jpg");
 const genesisCover = require("../../assets/covers/genesis.jpg");
+const exodusCover = require("../../assets/covers/exodus.jpg");
 const journeyStart = require("../../assets/journeys/start.jpg");
+const journeyExodus = require("../../assets/journeys/exodus-start.jpg");
+const exodusSea = require("../../assets/panels/arc-exodus-deliverance.jpg");
+const exodusSinai = require("../../assets/panels/arc-exodus-sinai.jpg");
 
-function buildGuide(meta: GenesisChapterMeta): ChapterGuide {
+function buildGenesisGuide(meta: GenesisChapterMeta): ChapterGuide {
   const script = buildGenesisGuideScript(meta);
   return {
     title: meta.title,
@@ -71,16 +83,30 @@ function buildGuide(meta: GenesisChapterMeta): ChapterGuide {
   };
 }
 
-function buildPanels(meta: GenesisChapterMeta): ComicPanel[] {
-  return buildGenesisComicPanels(meta.number);
+function buildExodusGuide(meta: ExodusChapterMeta): ChapterGuide {
+  const script = buildExodusGuideScript(meta);
+  return {
+    title: meta.title,
+    narrator: BRAND.audioGuideLabel,
+    durationSeconds: Math.max(420, script.length * 18),
+    script,
+  };
 }
 
 const genesisChapters: BibleChapter[] = GENESIS_CHAPTERS.map((meta) => ({
   number: meta.number,
   title: meta.title,
   passageQuery: meta.passageQuery,
-  guide: buildGuide(meta),
-  panels: buildPanels(meta),
+  guide: buildGenesisGuide(meta),
+  panels: buildGenesisComicPanels(meta.number),
+}));
+
+const exodusChapters: BibleChapter[] = EXODUS_CHAPTERS.map((meta) => ({
+  number: meta.number,
+  title: meta.title,
+  passageQuery: meta.passageQuery,
+  guide: buildExodusGuide(meta),
+  panels: buildExodusComicPanels(meta.number),
 }));
 
 export const BOOKS: BibleBook[] = [
@@ -93,6 +119,16 @@ export const BOOKS: BibleBook[] = [
     tagline: "Beginnings — creation through Joseph · all 50 chapters · ESV",
     cover: genesisCover,
     chapters: genesisChapters,
+  },
+  {
+    id: "exodus",
+    name: "Exodus",
+    abbreviation: "Ex",
+    testament: "OT",
+    days: 40,
+    tagline: "Deliverance — from Egypt to the glory of the tent · all 40 chapters · ESV",
+    cover: exodusCover,
+    chapters: exodusChapters,
   },
 ];
 
@@ -130,9 +166,45 @@ export const JOURNEYS: Journey[] = [
     startChapter: 12,
     endChapter: 50,
   },
+  {
+    id: "journey-exodus",
+    number: 4,
+    title: "Exodus",
+    booksLabel: "All 40 chapters · ESV",
+    days: 40,
+    cover: journeyExodus,
+    bookIds: ["exodus"],
+    startChapter: 1,
+    endChapter: 40,
+  },
+  {
+    id: "journey-deliverance",
+    number: 5,
+    title: "Out of Egypt",
+    booksLabel: "Exodus 1–15 · deliverance",
+    days: 15,
+    cover: exodusSea,
+    bookIds: ["exodus"],
+    startChapter: 1,
+    endChapter: 15,
+  },
+  {
+    id: "journey-sinai",
+    number: 6,
+    title: "Sinai & Dwelling",
+    booksLabel: "Exodus 16–40 · covenant",
+    days: 25,
+    cover: exodusSinai,
+    bookIds: ["exodus"],
+    startChapter: 16,
+    endChapter: 40,
+  },
 ];
 
 export const FEATURED_BOOK_ID = "genesis";
+
+/** Illustrated books featured on Browse (same UX; Genesis is the template). */
+export const FEATURED_BOOK_IDS = ["genesis", "exodus"] as const;
 
 export function getBook(bookId: string): BibleBook | undefined {
   return BOOKS.find((book) => book.id === bookId);
@@ -174,6 +246,11 @@ export function getChapter(
   return getBook(bookId)?.chapters.find(
     (chapter) => chapter.number === chapterNumber
   );
+}
+
+/** Books with full illustrated Guide + arc cards (same UX everywhere). */
+export function isIllustratedBook(bookId: string): boolean {
+  return bookId === "genesis" || bookId === "exodus";
 }
 
 export function formatClock(totalSeconds: number): string {

@@ -17,11 +17,11 @@ export type CatalogBook = {
 };
 
 /** Books that have local comics / audio-guide metadata. */
-export const ILLUSTRATED_USFM = new Set(["GEN"]);
+export const ILLUSTRATED_USFM = new Set(["GEN", "EXO"]);
 
 export const CATALOG_BOOKS: CatalogBook[] = [
   { id: "GEN", name: "Genesis", abbreviation: "Gen", usfm: "GEN", testament: "OT", chapters: 50, illustrated: true },
-  { id: "EXO", name: "Exodus", abbreviation: "Exo", usfm: "EXO", testament: "OT", chapters: 40, illustrated: false },
+  { id: "EXO", name: "Exodus", abbreviation: "Exo", usfm: "EXO", testament: "OT", chapters: 40, illustrated: true },
   { id: "PSA", name: "Psalms", abbreviation: "Psa", usfm: "PSA", testament: "OT", chapters: 150, illustrated: false },
   { id: "PRO", name: "Proverbs", abbreviation: "Pro", usfm: "PRO", testament: "OT", chapters: 31, illustrated: false },
   { id: "ISA", name: "Isaiah", abbreviation: "Isa", usfm: "ISA", testament: "OT", chapters: 66, illustrated: false },
@@ -40,6 +40,9 @@ export function libraryBookIdFor(bookId: string): string {
   if (usfm === "GEN") {
     return "genesis";
   }
+  if (usfm === "EXO") {
+    return "exodus";
+  }
   return usfm.toLowerCase();
 }
 
@@ -56,8 +59,12 @@ export function toUsfm(bookId: string): string {
   if (fromStatic) {
     return fromStatic.usfm;
   }
-  if (trimmed.toLowerCase() === "genesis") {
+  const lower = trimmed.toLowerCase();
+  if (lower === "genesis") {
     return "GEN";
+  }
+  if (lower === "exodus") {
+    return "EXO";
   }
   return trimmed.toUpperCase();
 }

@@ -23,7 +23,7 @@ import ChapterPremiseComics from "../components/comics/ChapterPremiseComics";
 import ChapterMessagesModal from "../components/journeys/ChapterMessagesModal";
 import AppTabBar from "../components/navigation/AppTabBar";
 import AudioGuidePlayer from "../components/player/AudioGuidePlayer";
-import { getBook, getChapter, JOURNEYS } from "../data/library";
+import { getBook, getChapter, isIllustratedBook, JOURNEYS } from "../data/library";
 import { getWebtoonEpisode } from "../data/webtoonEpisodes";
 import { useAudioGuideSession } from "../hooks/useAudioGuideSession";
 import type { RootStackParamList } from "../navigation/types";
@@ -637,9 +637,11 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
         }}
       />
 
-      {book.id === "genesis" ? (
+      {isIllustratedBook(book.id) ? (
         <ChapterPickerModal
           visible={chapterOpen}
+          bookId={book.id}
+          bookName={book.name}
           chapterCount={book.chapters.length}
           selectedChapter={chapter.number}
           onClose={() => setChapterOpen(false)}

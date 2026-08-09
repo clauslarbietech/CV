@@ -12,28 +12,38 @@ import {
   GENESIS_ARCS,
   listGenesisByArc,
   type GenesisArc,
-  type GenesisChapterMeta,
 } from "../../data/genesisChapters";
+import {
+  EXODUS_ARCS,
+  listExodusByArc,
+  type ExodusArc,
+} from "../../data/exodusChapters";
 import { useReaderColors } from "../../theme/ThemeProvider";
 
 type Props = {
   visible: boolean;
+  bookId?: string;
+  bookName?: string;
   chapterCount: number;
   selectedChapter?: number;
   /** When set, open directly on this arc’s chapter grid. */
-  initialArc?: GenesisArc | null;
+  initialArc?: string | null;
   onClose: () => void;
   onSelect: (chapterNumber: number) => void;
 };
 
 type Step = "arc" | "chapter";
 
+type ArcChapter = { number: number; title: string };
+
 /**
- * Bottom-sheet chapter picker for Genesis —
- * arc first, then a compact chapter grid (YouVersion-style).
+ * Bottom-sheet chapter picker for illustrated books —
+ * arc first, then a compact chapter grid (same UX for Genesis & Exodus).
  */
 export default function ChapterPickerModal({
   visible,
+  bookId = "genesis",
+  bookName,
   chapterCount,
   selectedChapter,
   initialArc = null,
@@ -43,7 +53,11 @@ export default function ChapterPickerModal({
   const readerColors = useReaderColors();
   const { height, width } = useWindowDimensions();
   const [step, setStep] = useState<Step>("arc");
-  const [pendingArc, setPendingArc] = useState<GenesisArc | null>(null);
+  const [pendingArc, setPendingArc] = useState<string | null>(null);
+
+  const isExodus = bookId === "exodus";
+  const arcs = isExodus ? [...EXODUS_ARCS] : [...GENESIS_ARCS];
+  const label = bookName ?? (isExodus ? "Exodus" : "Genesis");
 
   const gap = 8;
   const columns = 5;
@@ -64,14 +78,19 @@ export default function ChapterPickerModal({
     }
   }, [initialArc, visible]);
 
-  const chapters: GenesisChapterMeta[] = useMemo(() => {
+  const chapters: ArcChapter[] = useMemo(() => {
     if (!pendingArc) {
       return [];
     }
-    return listGenesisByArc(pendingArc).filter(
-      (meta) => meta.number <= chapterCount
-    );
-  }, [chapterCount, pendingArc]);
+    if (isExodus) {
+      return listExodusByArc(pendingArc as ExodusArc)
+        .filter((meta) => meta.number <= chapterCount)
+        .map((meta) => ({ number: meta.number, title: meta.title }));
+    }
+    return listGenesisByArc(pendingArc as GenesisArc)
+      .filter((meta) => meta.number <= chapterCount)
+      .map((meta) => ({ number: meta.number, title: meta.title }));
+  }, [chapterCount, isExodus, pendingArc]);
 
   return (
     <Modal
@@ -139,18 +158,20 @@ export default function ChapterPickerModal({
               style={{ color: readerColors.secondary }}
             >
               {step === "arc"
-                ? `Genesis 1–${chapterCount} · pick an arc`
+                ? `${label} 1–${chapterCount} · pick an arc`
                 : `${pendingArc} · tap a chapter`}
             </Text>
           </View>
 
           {step === "arc" ? (
             <FlatList
-              data={[...GENESIS_ARCS]}
+              data={arcs}
               keyExtractor={(arc) => arc}
               showsVerticalScrollIndicator={false}
               renderItem={({ item: arc }) => {
-                const list = listGenesisByArc(arc);
+                const list = isExodus
+                  ? listExodusByArc(arc as ExodusArc)
+                  : listGenesisByArc(arc as GenesisArc);
                 const range =
                   list.length > 0
                     ? `${list[0].number}–${list[list.length - 1].number}`

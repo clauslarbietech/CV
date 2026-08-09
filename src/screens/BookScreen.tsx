@@ -17,9 +17,9 @@ import StorylinePickerModal from "../components/bible/StorylinePickerModal";
 import AccessibleIconButton from "../components/accessibility/AccessibleIconButton";
 import AppTabBar from "../components/navigation/AppTabBar";
 import { CATALOG_BOOKS, libraryBookIdFor } from "../data/bibleCatalog";
+import { listExodusArcCards } from "../data/exodusArcs";
 import { listGenesisArcCards } from "../data/genesisArcs";
-import type { GenesisArc } from "../data/genesisChapters";
-import { getBook, JOURNEYS } from "../data/library";
+import { getBook, isIllustratedBook, JOURNEYS } from "../data/library";
 import {
   listWebtoonEpisodes,
   type WebtoonEpisode,
@@ -43,7 +43,7 @@ export default function BookScreen({ navigation, route }: Props) {
   const [storylineOpen, setStorylineOpen] = useState(false);
   const [chapterOpen, setChapterOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [pickerArc, setPickerArc] = useState<GenesisArc | null>(null);
+  const [pickerArc, setPickerArc] = useState<string | null>(null);
   const [selectedChapter, setSelectedChapter] = useState(initialChapter);
 
   const cardWidth = Math.min(width - 32, 520);
@@ -72,7 +72,15 @@ export default function BookScreen({ navigation, route }: Props) {
     [book]
   );
 
-  const arcCards = useMemo(() => listGenesisArcCards(), []);
+  const arcCards = useMemo(() => {
+    if (book?.id === "exodus") {
+      return listExodusArcCards();
+    }
+    if (book?.id === "genesis") {
+      return listGenesisArcCards();
+    }
+    return [];
+  }, [book?.id]);
 
   const openEpisode = (episode: WebtoonEpisode) => {
     navigation.navigate("WebtoonEpisode", {
@@ -99,7 +107,7 @@ export default function BookScreen({ navigation, route }: Props) {
   };
 
   const openArc = (
-    _arc: GenesisArc,
+    _arc: string,
     startChapter: number,
     endChapter: number
   ) => {
@@ -120,7 +128,7 @@ export default function BookScreen({ navigation, route }: Props) {
     );
   }
 
-  const isGenesis = book.id === "genesis";
+  const illustratedBook = isIllustratedBook(book.id);
 
   return (
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
@@ -135,7 +143,7 @@ export default function BookScreen({ navigation, route }: Props) {
               />
 
               <View className="flex-1 flex-row items-center justify-center gap-2 px-2">
-                {isGenesis ? (
+                {illustratedBook ? (
                   <Pressable
                     accessibilityRole="button"
                     accessibilityLabel={`${book.name} chapter ${selectedChapter}`}
@@ -209,7 +217,7 @@ export default function BookScreen({ navigation, route }: Props) {
               </View>
             </View>
 
-            {isGenesis ? (
+            {illustratedBook ? (
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -251,7 +259,7 @@ export default function BookScreen({ navigation, route }: Props) {
                 {book.name}
               </Text>
 
-              {isGenesis
+              {illustratedBook
                 ? arcCards.map((card) => {
                     // Size each card to the art’s real ratio so portrait arcs
                     // (Fall, Flood, etc.) aren’t zoomed/stretched in a wide frame.
@@ -336,14 +344,17 @@ export default function BookScreen({ navigation, route }: Props) {
 
         <StorylinePickerModal
           visible={storylineOpen}
+          bookId={book.id}
           episodes={illustrated}
           onClose={() => setStorylineOpen(false)}
           onSelect={openEpisode}
         />
 
-        {isGenesis ? (
+        {illustratedBook ? (
           <ChapterPickerModal
             visible={chapterOpen}
+            bookId={book.id}
+            bookName={book.name}
             chapterCount={book.chapters.length}
             selectedChapter={selectedChapter}
             initialArc={pickerArc}

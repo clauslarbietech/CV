@@ -35,6 +35,7 @@ import {
   type CatalogBook,
 } from "../data/bibleCatalog";
 import { getGenesisChapter } from "../data/genesisChapters";
+import { getExodusChapter } from "../data/exodusChapters";
 import { getChapter } from "../data/library";
 import {
   getPanelAudioText,
@@ -116,8 +117,12 @@ export default function BibleReaderScreen({ navigation }: Props) {
   const libraryId = libraryBookIdFor(bookId);
   const book = getCatalogBook(bookId, books);
   const libraryChapter = getChapter(libraryId, chapter);
-  const genesisMeta =
-    libraryId === "genesis" ? getGenesisChapter(chapter) : undefined;
+  const chapterMeta =
+    libraryId === "genesis"
+      ? getGenesisChapter(chapter)
+      : libraryId === "exodus"
+        ? getExodusChapter(chapter)
+        : undefined;
   const webtoon = getWebtoonEpisode(libraryId, chapter);
 
   const comicPeek = useMemo(() => {
@@ -146,7 +151,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
 
   const chapterTitle =
     webtoon?.title ??
-    genesisMeta?.title ??
+    chapterMeta?.title ??
     libraryChapter?.title ??
     `${book?.name ?? "Bible"} ${chapter}`;
 
@@ -234,10 +239,10 @@ export default function BibleReaderScreen({ navigation }: Props) {
         setSource(result.source);
       }
     } catch (err) {
-      if (genesisMeta) {
-        setCanonical(genesisMeta.passageQuery);
+      if (chapterMeta) {
+        setCanonical(chapterMeta.passageQuery);
         setVerses(
-          `${genesisMeta.keyVerseRef}\n\n${genesisMeta.keyVerseEsV}\n\n${genesisMeta.summary}`
+          `${chapterMeta.keyVerseRef}\n\n${chapterMeta.keyVerseEsV}\n\n${chapterMeta.summary}`
         );
         setCopyright(ESV_COPYRIGHT_NOTICE);
         setCopyrightUrl(ESV_WEBSITE_URL);
@@ -256,7 +261,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
     } finally {
       setLoading(false);
     }
-  }, [bookId, books, chapter, genesisMeta, source]);
+  }, [bookId, books, chapter, chapterMeta, source]);
 
   useFocusEffect(
     useCallback(() => {

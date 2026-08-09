@@ -2,6 +2,19 @@ import {
   getGenesisChapterSlides,
 } from "./genesisChapterSlides";
 import { getGenesisChapter } from "./genesisChapters";
+import {
+  getExodusChapterSlides,
+} from "./exodusChapterSlides";
+import { getExodusChapter } from "./exodusChapters";
+
+const ILLUSTRATED_CHAPTER_COUNTS: Record<string, number> = {
+  genesis: 50,
+  exodus: 40,
+};
+
+function isIllustratedBookId(bookId: string): boolean {
+  return bookId in ILLUSTRATED_CHAPTER_COUNTS;
+}
 
 export type WebtoonBubble = {
   text: string;
@@ -804,16 +817,45 @@ export function getWebtoonEpisode(
   if (matches[0]) {
     return matches[0];
   }
-  // Every Genesis chapter has scripture-matched slides — use them as a storyline.
-  if (bookId === "genesis") {
-    return slidesAsWebtoonEpisode(chapterNumber);
+  // Illustrated books have scripture-matched slides — use them as a storyline.
+  if (isIllustratedBookId(bookId)) {
+    return slidesAsWebtoonEpisode(bookId, chapterNumber);
   }
   return undefined;
 }
 
 function slidesAsWebtoonEpisode(
+  bookId: string,
   chapterNumber: number
 ): WebtoonEpisode | undefined {
+  if (bookId === "exodus") {
+    const meta = getExodusChapter(chapterNumber);
+    const slides = getExodusChapterSlides(chapterNumber);
+    if (!meta || slides.length === 0) {
+      return undefined;
+    }
+    return {
+      id: `exodus-${chapterNumber}-slides`,
+      bookId: "exodus",
+      chapterNumber,
+      storylineId: `ch-${chapterNumber}`,
+      seriesTitle: "Exodus",
+      episodeLabel: `Ch. ${chapterNumber}`,
+      title: meta.title,
+      subtitle: meta.summary,
+      panels: slides.map((slide, index) => ({
+        id: `e${chapterNumber}-slide-${index + 1}`,
+        image: slide.image,
+        scriptureRef: slide.scriptureRef,
+        scriptureText: slide.scriptureText,
+        bubble: {
+          tone: "scripture" as const,
+          text: slide.scriptureText,
+        },
+      })),
+    };
+  }
+
   const meta = getGenesisChapter(chapterNumber);
   const slides = getGenesisChapterSlides(chapterNumber);
   if (!meta || slides.length === 0) {
@@ -845,23 +887,36 @@ export function listWebtoonEpisodes(bookId?: string): WebtoonEpisode[] {
   const base = bookId
     ? WEBTOON_EPISODES.filter((episode) => episode.bookId === bookId)
     : WEBTOON_EPISODES;
-  if (bookId && bookId !== "genesis") {
-    return base;
-  }
-  const covered = new Set(
-    base.filter((episode) => episode.bookId === "genesis").map((episode) => episode.chapterNumber)
-  );
+
+  const booksToFill = bookId
+    ? isIllustratedBookId(bookId)
+      ? [bookId]
+      : []
+    : Object.keys(ILLUSTRATED_CHAPTER_COUNTS);
+
   const fromSlides: WebtoonEpisode[] = [];
-  for (let chapter = 1; chapter <= 50; chapter += 1) {
-    if (covered.has(chapter)) {
-      continue;
-    }
-    const episode = slidesAsWebtoonEpisode(chapter);
-    if (episode) {
-      fromSlides.push(episode);
+  for (const id of booksToFill) {
+    const maxChapter = ILLUSTRATED_CHAPTER_COUNTS[id] ?? 0;
+    const covered = new Set(
+      base
+        .filter((episode) => episode.bookId === id)
+        .map((episode) => episode.chapterNumber)
+    );
+    for (let chapter = 1; chapter <= maxChapter; chapter += 1) {
+      if (covered.has(chapter)) {
+        continue;
+      }
+      const episode = slidesAsWebtoonEpisode(id, chapter);
+      if (episode) {
+        fromSlides.push(episode);
+      }
     }
   }
+
   return [...base, ...fromSlides].sort((a, b) => {
+    if (a.bookId !== b.bookId) {
+      return a.bookId.localeCompare(b.bookId);
+    }
     if (a.chapterNumber !== b.chapterNumber) {
       return a.chapterNumber - b.chapterNumber;
     }
