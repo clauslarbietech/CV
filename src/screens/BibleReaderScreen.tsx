@@ -55,7 +55,6 @@ import {
   DEFAULT_YOUVERSION_VERSION_ID,
   fetchBibleBooksForVersion,
 } from "../services/youversionService";
-import { useBottomMenuInset } from "../hooks/useBottomMenuInset";
 import {
   formatSpeechRate,
   loadSpeechPreferences,
@@ -65,10 +64,9 @@ import {
   speechSpeakOptions,
   SPEECH_RATES,
 } from "../services/speechPreferences";
+import { MIN_TOUCH_TARGET } from "../theme/a11y";
 import { useReaderColors } from "../theme/ThemeProvider";
 import type { BibleSource } from "../types/bibleSource";
-
-const TAB_BAR_CONTENT_HEIGHT = 56;
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Bible">,
@@ -81,8 +79,6 @@ type Props = CompositeScreenProps<
 export default function BibleReaderScreen({ navigation }: Props) {
   const readerColors = useReaderColors();
   const { width } = useWindowDimensions();
-  const bottomInset = useBottomMenuInset();
-  const transportBottom = TAB_BAR_CONTENT_HEIGHT + bottomInset + 10;
 
   const [bookId, setBookId] = useState("GEN");
   const [chapter, setChapter] = useState(1);
@@ -482,6 +478,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
       edges={["top", "left", "right"]}
       style={{ backgroundColor: readerColors.bg }}
     >
+      <View className="flex-1">
       <View className="flex-row items-center justify-between px-3 pb-2 pt-1">
         <View className="flex-row items-center gap-2">
           <Pressable
@@ -553,9 +550,7 @@ export default function BibleReaderScreen({ navigation }: Props) {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{
-          paddingBottom: transportBottom + (voiceMenuOpen ? 200 : 140),
-        }}
+        contentContainerStyle={{ paddingBottom: 28 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Premise comic at the very top — story before the scroll of text */}
@@ -672,119 +667,146 @@ export default function BibleReaderScreen({ navigation }: Props) {
         </View>
       </ScrollView>
 
+      {/* Docked above Home/Bible/Plans/More — not floating over scripture */}
       <View
-        className="absolute left-0 right-0 items-center px-3"
-        style={{ bottom: transportBottom }}
+        accessibilityRole="toolbar"
+        accessibilityLabel="Bible audio controls"
+        className="border-t px-3 pt-2 pb-2"
+        style={{
+          backgroundColor: readerColors.elevated,
+          borderTopColor: readerColors.border,
+        }}
       >
-        <View
-          className="w-full max-w-md rounded-3xl px-3 py-3"
-          style={{ backgroundColor: readerColors.elevated }}
-        >
-          <View className="mb-2 flex-row items-center justify-between">
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Choose narrator voice"
-              accessibilityState={{ expanded: voiceMenuOpen }}
-              accessibilityHint="Shows a swipeable list of narrator voices"
-              onPress={() => setVoiceMenuOpen((open) => !open)}
-              className="h-10 w-10 items-center justify-center rounded-full"
-              style={{
-                backgroundColor: voiceMenuOpen
-                  ? readerColors.accent
-                  : readerColors.surface,
-              }}
-            >
-              <MaterialIcons
-                name="record-voice-over"
-                size={20}
-                color={voiceMenuOpen ? "#FFFFFF" : readerColors.text}
-              />
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`Playback speed ${formatSpeechRate(speechRate)}. Tap to change.`}
-              accessibilityHint="Cycles through slower and faster reading speeds"
-              onPress={cycleSpeed}
-              className="h-10 min-w-[56px] items-center justify-center rounded-full px-4"
-              style={{ backgroundColor: readerColors.surface }}
-            >
-              <Text
-                className="text-sm font-bold"
-                style={{ color: readerColors.text }}
-              >
-                {formatSpeechRate(speechRate)}
-              </Text>
-            </Pressable>
-          </View>
+        <VoiceCarousel
+          visible={voiceMenuOpen}
+          selectedVoiceId={voiceId}
+          accentColor={readerColors.accent}
+          surfaceColor={readerColors.surface}
+          textColor={readerColors.text}
+          mutedColor={readerColors.secondary}
+          onSelect={(nextId) => {
+            setVoiceId(nextId);
+            void saveSpeechVoiceId(nextId);
+          }}
+        />
 
-          <VoiceCarousel
-            visible={voiceMenuOpen}
-            selectedVoiceId={voiceId}
-            accentColor={readerColors.accent}
-            surfaceColor={readerColors.surface}
-            textColor={readerColors.text}
-            mutedColor={readerColors.secondary}
-            onSelect={(nextId) => {
-              setVoiceId(nextId);
-              void saveSpeechVoiceId(nextId);
+        <View className="flex-row items-center justify-between gap-2">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Choose narrator voice"
+            accessibilityState={{ expanded: voiceMenuOpen }}
+            accessibilityHint="Shows a swipeable list of narrator voices"
+            onPress={() => setVoiceMenuOpen((open) => !open)}
+            className="items-center justify-center rounded-full"
+            style={{
+              minWidth: MIN_TOUCH_TARGET,
+              minHeight: MIN_TOUCH_TARGET,
+              backgroundColor: voiceMenuOpen
+                ? readerColors.accent
+                : readerColors.surface,
             }}
-          />
+          >
+            <MaterialIcons
+              name="record-voice-over"
+              size={22}
+              color={voiceMenuOpen ? "#FFFFFF" : readerColors.text}
+            />
+          </Pressable>
 
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Previous chapter"
+            onPress={() => goChapter(-1)}
+            className="items-center justify-center rounded-full"
+            style={{
+              minWidth: MIN_TOUCH_TARGET,
+              minHeight: MIN_TOUCH_TARGET,
+              backgroundColor: readerColors.surface,
+            }}
+          >
+            <MaterialIcons
+              name="chevron-left"
+              size={28}
+              color={readerColors.text}
+            />
+          </Pressable>
+
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={
+              reading
+                ? "Stop continuous reading"
+                : "Play and keep reading following chapters"
+            }
+            accessibilityHint={
+              reading
+                ? "Stops read aloud"
+                : "Reads this chapter, then continues to the next chapters"
+            }
+            onPress={readAloud}
+            className="items-center justify-center rounded-full"
+            style={{
+              width: 56,
+              height: 56,
+              backgroundColor: readerColors.accent,
+            }}
+          >
+            <MaterialIcons
+              name={reading ? "pause" : "play-arrow"}
+              size={32}
+              color="#FFFFFF"
+            />
+          </Pressable>
+
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Next chapter"
+            onPress={() => goChapter(1)}
+            className="items-center justify-center rounded-full"
+            style={{
+              minWidth: MIN_TOUCH_TARGET,
+              minHeight: MIN_TOUCH_TARGET,
+              backgroundColor: readerColors.surface,
+            }}
+          >
+            <MaterialIcons
+              name="chevron-right"
+              size={28}
+              color={readerColors.text}
+            />
+          </Pressable>
+
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Playback speed ${formatSpeechRate(speechRate)}. Tap to change.`}
+            accessibilityHint="Cycles through slower and faster reading speeds"
+            onPress={cycleSpeed}
+            className="items-center justify-center rounded-full px-3"
+            style={{
+              minWidth: MIN_TOUCH_TARGET,
+              minHeight: MIN_TOUCH_TARGET,
+              backgroundColor: readerColors.surface,
+            }}
+          >
+            <Text
+              className="text-sm font-bold"
+              style={{ color: readerColors.text }}
+            >
+              {formatSpeechRate(speechRate)}
+            </Text>
+          </Pressable>
+        </View>
+
+        {reading ? (
           <Text
-            className="mb-2 text-center text-[10px] font-semibold"
+            accessibilityLiveRegion="polite"
+            className="mt-1.5 text-center text-[10px] font-semibold"
             style={{ color: readerColors.secondary }}
           >
-            {reading
-              ? "Reading · keeps going to next chapters until you stop"
-              : "Tap play to read aloud continuously"}
+            Reading · continues to next chapters until you stop
           </Text>
-
-          <View className="flex-row items-center justify-center gap-3">
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Previous chapter"
-              onPress={() => goChapter(-1)}
-              className="h-12 w-12 items-center justify-center rounded-full"
-              style={{ backgroundColor: readerColors.surface }}
-            >
-              <MaterialIcons
-                name="chevron-left"
-                size={28}
-                color={readerColors.text}
-              />
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={
-                reading
-                  ? "Stop continuous reading"
-                  : "Play and keep reading following chapters"
-              }
-              onPress={readAloud}
-              className="h-14 w-14 items-center justify-center rounded-full"
-              style={{ backgroundColor: readerColors.accent }}
-            >
-              <MaterialIcons
-                name={reading ? "pause" : "play-arrow"}
-                size={32}
-                color="#FFFFFF"
-              />
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Next chapter"
-              onPress={() => goChapter(1)}
-              className="h-12 w-12 items-center justify-center rounded-full"
-              style={{ backgroundColor: readerColors.surface }}
-            >
-              <MaterialIcons
-                name="chevron-right"
-                size={28}
-                color={readerColors.text}
-              />
-            </Pressable>
-          </View>
-        </View>
+        ) : null}
+      </View>
       </View>
 
       <ScripturePickerModal
