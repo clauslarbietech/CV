@@ -7,6 +7,7 @@ import { XP_REWARDS } from '@/constants/xp';
 import {
   DailyProgress,
   DifficultyTier,
+  ExerciseSetLog,
   StreakState,
   UserProgramEnrollment,
   WorkoutSessionLog,
@@ -32,6 +33,16 @@ function emptyDaily(date = todayKey()): DailyProgress {
   };
 }
 
+interface CompleteWorkoutInput {
+  day: number;
+  durationSec: number;
+  rating?: number;
+  exerciseLogs?: ExerciseSetLog[];
+  roundsCompleted?: number;
+  sessionId?: string;
+  startedAt?: string;
+}
+
 interface ProgramState {
   enrollment: UserProgramEnrollment | null;
   sessions: WorkoutSessionLog[];
@@ -39,7 +50,8 @@ interface ProgramState {
   streaks: StreakState;
   enrollInIron14: (difficulty?: DifficultyTier) => void;
   setDifficulty: (tier: DifficultyTier) => void;
-  completeWorkout: (day: number, durationSec: number, rating?: number) => void;
+  completeWorkout: (input: CompleteWorkoutInput) => WorkoutSessionLog | null;
+  isDayCompleted: (day: number) => boolean;
   completeCheckIn: () => void;
   updateDailyMetrics: (patch: Partial<DailyProgress>) => void;
 }
@@ -65,6 +77,7 @@ export const useProgramStore = create<ProgramState>()(
             startedAt: new Date().toISOString(),
             completedDayIds: [],
           },
+          daily: emptyDaily(),
         });
       },
       setDifficulty: (tier) =>
@@ -73,32 +86,48 @@ export const useProgramStore = create<ProgramState>()(
             ? { enrollment: { ...state.enrollment, difficulty: tier } }
             : state,
         ),
-      completeWorkout: (day, durationSec, rating) => {
+      isDayCompleted: (day) =>
+        Boolean(get().enrollment?.completedDayIds.includes(day)),
+      completeWorkout: (input) => {
         const { enrollment, sessions, streaks, daily } = get();
-        if (!enrollment) return;
+        if (!enrollment) return null;
+
+        // Idempotent: if day already completed, keep progression.
+        if (enrollment.completedDayIds.includes(input.day)) {
+          const existing = sessions.find(
+            (s) => s.day === input.day && s.status === 'completed',
+          );
+          return existing ?? null;
+        }
 
         const session: WorkoutSessionLog = {
-          id: `session-${Date.now()}`,
+          id: input.sessionId ?? `session-${Date.now()}`,
           programId: enrollment.programId,
-          day,
-          startedAt: new Date(Date.now() - durationSec * 1000).toISOString(),
+          day: input.day,
+          startedAt:
+            input.startedAt ??
+            new Date(Date.now() - input.durationSec * 1000).toISOString(),
           completedAt: new Date().toISOString(),
-          durationSec,
-          difficultyRating: rating,
+          durationSec: input.durationSec,
+          difficultyRating: input.rating,
+          exerciseLogs: input.exerciseLogs ?? [],
+          roundsCompleted: input.roundsCompleted ?? 0,
+          status: 'completed',
         };
 
-        const completedDayIds = enrollment.completedDayIds.includes(day)
-          ? enrollment.completedDayIds
-          : [...enrollment.completedDayIds, day].sort((a, b) => a - b);
-
-        const nextDay = Math.min(
-          day + 1,
-          OPERATION_IRON_14.durationDays,
+        const completedDayIds = [...enrollment.completedDayIds, input.day].sort(
+          (a, b) => a - b,
         );
 
-        const workoutStreak = streaks.workoutStreak + 1;
         const isChallengeComplete =
           completedDayIds.length >= OPERATION_IRON_14.durationDays;
+
+        // Unlock next day automatically (Day 1 → Day 2 … → Day 14).
+        const nextDay = isChallengeComplete
+          ? enrollment.currentDay
+          : Math.min(input.day + 1, OPERATION_IRON_14.durationDays);
+
+        const workoutStreak = streaks.workoutStreak + 1;
 
         useProfileStore.getState().addXp(XP_REWARDS.workoutCompleted);
         if (isChallengeComplete) {
@@ -110,12 +139,17 @@ export const useProgramStore = create<ProgramState>()(
           enrollment: {
             ...enrollment,
             completedDayIds,
-            currentDay: isChallengeComplete ? enrollment.currentDay : nextDay,
+            currentDay: nextDay,
             completedAt: isChallengeComplete
               ? new Date().toISOString()
               : undefined,
           },
-          daily: { ...daily, date: todayKey(), workoutCompleted: true },
+          daily: {
+            ...daily,
+            date: todayKey(),
+            // Mission for the completed day is done; next day is unlocked.
+            workoutCompleted: true,
+          },
           streaks: {
             ...streaks,
             workoutStreak,
@@ -126,6 +160,8 @@ export const useProgramStore = create<ProgramState>()(
             ),
           },
         });
+
+        return session;
       },
       completeCheckIn: () => {
         useProfileStore.getState().addXp(XP_REWARDS.dailyCheckIn);

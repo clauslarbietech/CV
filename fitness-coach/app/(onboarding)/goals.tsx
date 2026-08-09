@@ -3,14 +3,25 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { OptionChip } from '@/components/onboarding/OptionChip';
 import { AppButton } from '@/components/ui/AppButton';
+import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
-import {
-  ACTIVITY_LEVELS,
-  EXPERIENCE_LEVELS,
-  FITNESS_GOALS,
-} from '@/constants/onboarding';
+import { ACTIVITY_LEVELS, EXPERIENCE_LEVELS } from '@/constants/onboarding';
 import { useProfileStore } from '@/store/profileStore';
+import { FitnessGoal } from '@/types';
 import { colors, spacing, typography } from '@/theme';
+
+const PHASE1_GOALS: Array<{ id: FitnessGoal; label: string; detail: string }> = [
+  {
+    id: 'lose_fat',
+    label: 'Lose fat',
+    detail: 'Primary path for visual shredding in 14 days.',
+  },
+  {
+    id: 'recomposition',
+    label: 'Recomposition',
+    detail: 'Burn fat while retaining / building lean muscle.',
+  },
+];
 
 export default function GoalsScreen() {
   const draft = useProfileStore((s) => s.draft);
@@ -24,14 +35,23 @@ export default function GoalsScreen() {
   return (
     <Screen>
       <Text style={styles.step}>STEP 2 OF 5</Text>
-      <Text style={styles.title}>Your goal</Text>
+      <Text style={styles.title}>Transformation goal</Text>
       <Text style={styles.subtitle}>
-        This shapes programs, nutrition targets, and coaching tone.
+        OPERATION IRON 14 is built for visual fat loss and athletic
+        recomposition. Pick your primary target.
       </Text>
 
-      <Text style={styles.section}>Primary fitness goal</Text>
-      <View style={styles.chips}>
-        {FITNESS_GOALS.map((goal) => (
+      <Card military>
+        <Text style={styles.cardTitle}>14-DAY SHRED FOCUS</Text>
+        <Text style={styles.cardBody}>
+          Reduce visible body fat · improve definition · keep lean muscle · raise
+          conditioning.
+        </Text>
+      </Card>
+
+      <Text style={styles.section}>Primary goal</Text>
+      <View style={styles.goalList}>
+        {PHASE1_GOALS.map((goal) => (
           <OptionChip
             key={goal.id}
             label={goal.label}
@@ -40,6 +60,11 @@ export default function GoalsScreen() {
           />
         ))}
       </View>
+      {draft.primaryGoal ? (
+        <Text style={styles.detail}>
+          {PHASE1_GOALS.find((g) => g.id === draft.primaryGoal)?.detail}
+        </Text>
+      ) : null}
 
       <Text style={styles.section}>Experience level</Text>
       <View style={styles.chips}>
@@ -87,6 +112,15 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textSecondary,
   },
+  cardTitle: {
+    ...typography.overline,
+    color: colors.militaryAccent,
+    marginBottom: spacing.xs,
+  },
+  cardBody: {
+    ...typography.body,
+    color: colors.textSecondary,
+  },
   section: {
     ...typography.subheading,
     color: colors.textPrimary,
@@ -96,5 +130,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.xs,
+  },
+  goalList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+  },
+  detail: {
+    ...typography.caption,
+    color: colors.textMuted,
   },
 });

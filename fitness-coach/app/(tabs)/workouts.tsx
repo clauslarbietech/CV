@@ -2,46 +2,85 @@ import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ProgramCard } from '@/components/workout/ProgramCard';
+import { AppButton } from '@/components/ui/AppButton';
 import { Screen } from '@/components/ui/Screen';
-import { WORKOUT_PROGRAMS } from '@/constants/programs';
+import { OPERATION_IRON_14 } from '@/constants/programs';
+import { useProgramStore } from '@/store/programStore';
 import { colors, spacing, typography } from '@/theme';
 
 export default function WorkoutsScreen() {
-  const [featured, ...rest] = WORKOUT_PROGRAMS;
+  const enrollment = useProgramStore((s) => s.enrollment);
+  const enrollInIron14 = useProgramStore((s) => s.enrollInIron14);
+
+  const enrolled = enrollment?.programId === OPERATION_IRON_14.id;
 
   return (
     <Screen>
-      <Text style={styles.kicker}>WORKOUT LIBRARY</Text>
-      <Text style={styles.title}>Programs & challenges</Text>
+      <Text style={styles.kicker}>CORE PROGRAM</Text>
+      <Text style={styles.title}>OPERATION IRON 14</Text>
       <Text style={styles.subtitle}>
-        Start with the featured mission. Additional programs unlock as your plan
-        expands.
+        Phase 1 is a transformation engine — not a generic workout library. This
+        is the only fully executable program.
       </Text>
 
-      <View style={styles.list}>
-        <ProgramCard
-          program={featured}
-          featured
-          onPress={() =>
-            router.push({
-              pathname: '/program/[id]',
-              params: { id: featured.id },
-            })
-          }
-        />
-        {rest.map((program) => (
-          <ProgramCard
-            key={program.id}
-            program={program}
+      <ProgramCard
+        program={OPERATION_IRON_14}
+        featured
+        onPress={() =>
+          router.push({
+            pathname: '/program/[id]',
+            params: { id: OPERATION_IRON_14.id },
+          })
+        }
+      />
+
+      <View style={styles.actions}>
+        {!enrolled ? (
+          <AppButton
+            label="Enroll & open Day 1"
+            variant="military"
+            onPress={() => {
+              enrollInIron14('soldier');
+              router.push({
+                pathname: '/session/[programId]',
+                params: {
+                  programId: OPERATION_IRON_14.id,
+                  day: '1',
+                },
+              });
+            }}
+          />
+        ) : (
+          <AppButton
+            label={`Continue Day ${enrollment?.currentDay ?? 1}`}
+            variant="military"
             onPress={() =>
               router.push({
-                pathname: '/program/[id]',
-                params: { id: program.id },
+                pathname: '/session/[programId]',
+                params: {
+                  programId: OPERATION_IRON_14.id,
+                  day: String(enrollment?.currentDay ?? 1),
+                },
               })
             }
           />
-        ))}
+        )}
+        <AppButton
+          label="View full 14-day protocol"
+          variant="secondary"
+          onPress={() =>
+            router.push({
+              pathname: '/program/[id]',
+              params: { id: OPERATION_IRON_14.id },
+            })
+          }
+        />
       </View>
+
+      <Text style={styles.locked}>
+        Future programs (30-Day Shred, Mass Builder, etc.) stay locked until
+        OPERATION IRON 14 session engine is proven end-to-end.
+      </Text>
     </Screen>
   );
 }
@@ -49,7 +88,7 @@ export default function WorkoutsScreen() {
 const styles = StyleSheet.create({
   kicker: {
     ...typography.overline,
-    color: colors.accent,
+    color: colors.militaryAccent,
   },
   title: {
     ...typography.title,
@@ -60,7 +99,12 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: spacing.sm,
   },
-  list: {
-    gap: spacing.md,
+  actions: {
+    gap: spacing.sm,
+  },
+  locked: {
+    ...typography.caption,
+    color: colors.textMuted,
+    marginTop: spacing.md,
   },
 });

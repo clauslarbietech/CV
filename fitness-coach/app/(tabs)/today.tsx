@@ -1,40 +1,46 @@
 import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { CoachMessage } from '@/components/today/CoachMessage';
 import { DailyMissionCard } from '@/components/today/DailyMissionCard';
 import { AppButton } from '@/components/ui/AppButton';
 import { MetricCard } from '@/components/ui/MetricCard';
 import { Screen } from '@/components/ui/Screen';
-import { COACH_PERSONALITIES, coachTipForDay } from '@/constants/coach';
 import { OPERATION_IRON_14 } from '@/constants/programs';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
+import { useSessionStore } from '@/store/sessionStore';
 import { getProgramDay } from '@/utils/workout';
 import { colors, spacing, typography } from '@/theme';
 
 export default function TodayScreen() {
   const profile = useProfileStore((s) => s.profile);
   const enrollment = useProgramStore((s) => s.enrollment);
-  const daily = useProgramStore((s) => s.daily);
   const streaks = useProgramStore((s) => s.streaks);
-  const completeCheckIn = useProgramStore((s) => s.completeCheckIn);
+  const sessions = useProgramStore((s) => s.sessions);
   const enrollInIron14 = useProgramStore((s) => s.enrollInIron14);
+  const active = useSessionStore((s) => s.active);
 
-  if (!enrollment) {
+  if (!enrollment || enrollment.programId !== OPERATION_IRON_14.id) {
     return (
       <Screen>
-        <Text style={styles.greeting}>
-          Hey {profile?.firstName ?? 'Athlete'}
-        </Text>
-        <Text style={styles.title}>No active mission</Text>
+        <Text style={styles.kicker}>TRANSFORMATION ENGINE</Text>
+        <Text style={styles.title}>OPERATION IRON 14</Text>
         <Text style={styles.body}>
-          Enroll in OPERATION IRON 14 to get today&apos;s coaching plan.
+          14 days. Visual fat loss. Muscle definition. Athletic shredding. Your
+          first mission starts now.
         </Text>
         <AppButton
           label="Start OPERATION IRON 14"
           variant="military"
-          onPress={() => enrollInIron14('soldier')}
+          onPress={() => {
+            enrollInIron14(
+              profile?.experienceLevel === 'beginner'
+                ? 'recruit'
+                : profile?.experienceLevel === 'advanced'
+                  ? 'elite'
+                  : 'soldier',
+            );
+          }}
         />
       </Screen>
     );
@@ -43,26 +49,34 @@ export default function TodayScreen() {
   const day =
     getProgramDay(OPERATION_IRON_14, enrollment.currentDay) ??
     OPERATION_IRON_14.days[0];
-  const completed = enrollment.completedDayIds.includes(day.day);
-  const proteinShortfall = Math.max(0, daily.proteinTarget - daily.proteinG);
-  const personality =
-    COACH_PERSONALITIES.find((c) => c.id === profile?.coachPersonality)?.name ??
-    'Coach';
+  const dayCompleted = enrollment.completedDayIds.includes(day.day);
+  const completedCount = enrollment.completedDayIds.length;
+  const lastSession = sessions.find((s) => s.day === day.day);
+  const resumable =
+    active &&
+    active.programId === OPERATION_IRON_14.id &&
+    active.day === day.day &&
+    active.phase !== 'complete' &&
+    active.phase !== 'briefing';
 
-  const tip = coachTipForDay({
-    personality: profile?.coachPersonality ?? 'motivator',
-    day: day.day,
-    programName: OPERATION_IRON_14.name,
-    proteinShortfallG: proteinShortfall,
-  });
+  const openMission = () => {
+    router.push({
+      pathname: '/session/[programId]',
+      params: {
+        programId: OPERATION_IRON_14.id,
+        day: String(day.day),
+      },
+    });
+  };
 
   return (
     <Screen>
+      <Text style={styles.kicker}>TODAY&apos;S MISSION</Text>
       <Text style={styles.greeting}>
-        Hey {profile?.firstName ?? 'Athlete'} · Day {day.day}
+        {profile?.firstName ?? 'Athlete'} · {enrollment.difficulty.toUpperCase()}
       </Text>
-      <Text style={styles.streak}>
-        Streak {streaks.workoutStreak} · {profile?.rank ?? 'Recruit'} ·{' '}
+      <Text style={styles.progressLine}>
+        {completedCount}/14 missions · Streak {streaks.workoutStreak} ·{' '}
         {profile?.xp ?? 0} XP
       </Text>
 
@@ -70,73 +84,78 @@ export default function TodayScreen() {
         program={OPERATION_IRON_14}
         day={day}
         tier={enrollment.difficulty}
-        completed={completed}
-        onStart={() =>
-          router.push({
-            pathname: '/session/[programId]',
-            params: {
-              programId: OPERATION_IRON_14.id,
-              day: String(day.day),
-            },
-          })
-        }
+        completed={dayCompleted}
+        onStart={openMission}
       />
 
-      <Text style={styles.section}>Daily progress</Text>
-      <View style={styles.metrics}>
-        <MetricCard
-          label="Workout"
-          value={daily.workoutCompleted || completed ? 'Done' : 'Pending'}
-          complete={daily.workoutCompleted || completed}
-        />
-        <MetricCard
-          label="Steps"
-          value={`${daily.steps}`}
-          subtitle={`/ ${daily.stepsTarget}`}
-          accentColor={colors.steps}
-        />
-        <MetricCard
-          label="Protein"
-          value={`${daily.proteinG}g`}
-          subtitle={`/ ${daily.proteinTarget}g`}
-          accentColor={colors.protein}
-        />
-        <MetricCard
-          label="Calories"
-          value={`${daily.calories}`}
-          subtitle={`/ ${daily.calorieTarget}`}
-          accentColor={colors.warning}
-        />
-        <MetricCard
-          label="Water"
-          value={`${(daily.waterMl / 1000).toFixed(1)}L`}
-          subtitle={`/ ${(daily.waterTarget / 1000).toFixed(1)}L`}
-          accentColor={colors.water}
-        />
-        <MetricCard
-          label="Check-in"
-          value={daily.checkInCompleted ? 'Done' : 'Open'}
-          complete={daily.checkInCompleted}
-        />
-      </View>
-
-      {!daily.checkInCompleted ? (
+      {resumable ? (
         <AppButton
-          label="Complete daily check-in"
-          variant="secondary"
-          onPress={completeCheckIn}
+          label="Resume active mission"
+          variant="military"
+          onPress={openMission}
         />
       ) : null}
 
-      <CoachMessage message={tip} personalityLabel={personality} />
+      {dayCompleted ? (
+        <View style={styles.nextBox}>
+          <Text style={styles.nextTitle}>Day {day.day} secured</Text>
+          <Text style={styles.body}>
+            {completedCount >= 14
+              ? 'OPERATION IRON 14 complete. Badge earned.'
+              : `Day ${enrollment.currentDay} is unlocked. Keep the shredding streak alive.`}
+          </Text>
+          {completedCount < 14 ? (
+            <AppButton
+              label={`Start Day ${enrollment.currentDay}`}
+              variant="military"
+              onPress={openMission}
+            />
+          ) : null}
+        </View>
+      ) : null}
+
+      <Text style={styles.section}>Mission metrics</Text>
+      <View style={styles.metrics}>
+        <MetricCard
+          label="Program day"
+          value={`${day.day}`}
+          subtitle="of 14"
+          complete={!dayCompleted}
+        />
+        <MetricCard
+          label="Completed"
+          value={`${completedCount}`}
+          subtitle="missions"
+          complete={completedCount > 0}
+        />
+        <MetricCard
+          label="Last duration"
+          value={
+            lastSession?.durationSec
+              ? `${Math.round(lastSession.durationSec / 60)}m`
+              : '—'
+          }
+          subtitle="minutes"
+        />
+        <MetricCard
+          label="Rank"
+          value={profile?.rank ?? 'Recruit'}
+          subtitle={`${profile?.xp ?? 0} XP`}
+          accentColor={colors.militaryAccent}
+        />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  greeting: {
+  kicker: {
     ...typography.overline,
-    color: colors.accent,
+    color: colors.militaryAccent,
+  },
+  greeting: {
+    ...typography.caption,
+    color: colors.textMuted,
   },
   title: {
     ...typography.title,
@@ -146,7 +165,7 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textSecondary,
   },
-  streak: {
+  progressLine: {
     ...typography.caption,
     color: colors.textMuted,
     marginBottom: spacing.xs,
@@ -160,5 +179,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
+  },
+  nextBox: {
+    gap: spacing.sm,
+  },
+  nextTitle: {
+    ...typography.subheading,
+    color: colors.accent,
   },
 });

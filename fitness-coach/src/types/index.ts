@@ -152,6 +152,19 @@ export interface UserProgramEnrollment {
   completedAt?: string;
 }
 
+export interface ExerciseSetLog {
+  exerciseId: string;
+  exerciseName: string;
+  round: number;
+  targetReps?: number;
+  completedReps?: number;
+  targetDurationSec?: number;
+  completedDurationSec?: number;
+  skipped?: boolean;
+  modified?: boolean;
+  completedAt: string;
+}
+
 export interface WorkoutSessionLog {
   id: string;
   programId: string;
@@ -161,6 +174,34 @@ export interface WorkoutSessionLog {
   durationSec?: number;
   difficultyRating?: number;
   notes?: string;
+  exerciseLogs: ExerciseSetLog[];
+  roundsCompleted: number;
+  status: 'in_progress' | 'completed' | 'abandoned';
+}
+
+export type SessionPhase =
+  | 'briefing'
+  | 'exercise'
+  | 'hold'
+  | 'rest'
+  | 'rating'
+  | 'complete';
+
+export interface ActiveWorkoutSession {
+  id: string;
+  programId: string;
+  day: number;
+  difficulty: DifficultyTier;
+  startedAt: string;
+  elapsedSec: number;
+  currentRound: number;
+  totalRounds: number;
+  exerciseIndex: number;
+  phase: SessionPhase;
+  restRemainingSec: number;
+  holdRemainingSec: number;
+  exerciseLogs: ExerciseSetLog[];
+  difficultyRating?: number;
 }
 
 export interface DailyProgress {

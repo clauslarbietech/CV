@@ -129,16 +129,29 @@ Stacks (from tabs)
 
 ## 7. Development Milestones
 
+### CRITICAL PRIORITY OVERRIDE
+
+**OPERATION IRON 14 is the core product.** Phase 1 is incomplete until:
+
+1. Onboard → enroll Iron 14  
+2. Start Day 1 mission  
+3. Step-through session engine (rounds, reps, rest, skip/modify)  
+4. Save completion  
+5. Auto-unlock Day 2  
+6. Today reflects current mission  
+
+Do **not** expand nutrition, AI chat, or wearables until that loop works.
+
 | Milestone | Deliverable |
 | --- | --- |
 | M1 | Expo app + theme + tabs + auth shells |
-| M2 | Onboarding + profile persistence |
-| M3 | Operation Iron 14 data + Workouts UI |
-| M4 | Session tracker + Today mission wiring |
-| M5 | Progress + XP/streaks local logic |
-| M6 | Supabase schema + auth wiring |
-| M7 | AI context builder + Coach chat (next) |
-| M8 | Nutrition system (next) |
+| M2 | Onboarding (fat loss / recomposition focus) |
+| M3 | Operation Iron 14 data model (14 days + tiers) |
+| M4 | **Workout Session Engine** (step flow, rest timer, logs) |
+| M5 | Today mission screen bound to Iron 14 |
+| M6 | Completion → Day N+1 progression + basic progress |
+| M7 | Supabase persistence for sessions (next hardening) |
+| M8 | Nutrition / AI coach (only after M1–M6 proven) |
 
 ---
 

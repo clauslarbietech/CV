@@ -19,49 +19,55 @@ export default function ProgressScreen() {
   const totalMinutes = Math.round(
     sessions.reduce((sum, s) => sum + (s.durationSec ?? 0), 0) / 60,
   );
+  const totalSets = sessions.reduce(
+    (sum, s) => sum + (s.exerciseLogs?.length ?? 0),
+    0,
+  );
 
   return (
     <Screen>
-      <Text style={styles.kicker}>PROGRESS CENTER</Text>
-      <Text style={styles.title}>Track what compounds</Text>
+      <Text style={styles.kicker}>IRON 14 PROGRESS</Text>
+      <Text style={styles.title}>Transformation tracking</Text>
+      <Text style={styles.subtitle}>
+        Basic progress only — enough to prove Day 1 → Day 14 completion.
+      </Text>
 
-      <Text style={styles.section}>Body</Text>
       <View style={styles.metrics}>
         <MetricCard
-          label="Weight"
-          value={
-            profile?.currentWeightKg != null
-              ? `${profile.currentWeightKg} kg`
-              : '—'
-          }
-          subtitle={
-            profile?.goalWeightKg != null
-              ? `Goal ${profile.goalWeightKg} kg`
-              : 'Set in profile'
-          }
+          label="Missions"
+          value={`${completed}`}
+          subtitle={`/ ${OPERATION_IRON_14.durationDays}`}
+          complete={completed > 0}
         />
-        <MetricCard label="Waist" value="—" subtitle="Log soon" />
+        <MetricCard
+          label="Minutes"
+          value={`${totalMinutes}`}
+          subtitle="trained"
+        />
+        <MetricCard label="Sets logged" value={`${totalSets}`} />
+        <MetricCard
+          label="Current day"
+          value={`${enrollment?.currentDay ?? 1}`}
+          accentColor={colors.militaryAccent}
+        />
       </View>
 
-      <Text style={styles.section}>Performance</Text>
-      <Card>
-        <Text style={styles.row}>
-          Workouts completed: {sessions.length}
-        </Text>
-        <Text style={styles.row}>Total minutes: {totalMinutes}</Text>
-        <Text style={styles.row}>
-          {OPERATION_IRON_14.name}: {completed} / {OPERATION_IRON_14.durationDays}
-        </Text>
-      </Card>
-
-      <Text style={styles.section}>Consistency</Text>
       <StreakCard
         streaks={streaks}
         xp={profile?.xp ?? 0}
         rank={profile?.rank ?? 'Recruit'}
       />
 
-      <Text style={styles.section}>Achievements</Text>
+      <Text style={styles.section}>Completed days</Text>
+      <Card military>
+        <Text style={styles.row}>
+          {(enrollment?.completedDayIds.length
+            ? enrollment.completedDayIds.map((d) => `Day ${d}`).join(' · ')
+            : 'No missions completed yet. Start Day 1.')}
+        </Text>
+      </Card>
+
+      <Text style={styles.section}>Achievement</Text>
       <Card military>
         <Text style={styles.badgeTitle}>IRON 14 BADGE</Text>
         <Text style={styles.row}>
@@ -77,11 +83,15 @@ export default function ProgressScreen() {
 const styles = StyleSheet.create({
   kicker: {
     ...typography.overline,
-    color: colors.accent,
+    color: colors.militaryAccent,
   },
   title: {
     ...typography.title,
     color: colors.textPrimary,
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.textSecondary,
   },
   section: {
     ...typography.heading,
@@ -96,7 +106,6 @@ const styles = StyleSheet.create({
   row: {
     ...typography.body,
     color: colors.textSecondary,
-    marginBottom: spacing.xs,
   },
   badgeTitle: {
     ...typography.subheading,
