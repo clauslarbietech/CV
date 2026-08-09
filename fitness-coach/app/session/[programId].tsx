@@ -10,6 +10,10 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Screen } from '@/components/ui/Screen';
 import { getActiveProgram } from '@/constants/programs';
 import {
+  ExpressBudget,
+  toExpressMission,
+} from '@/constants/programs/expressMissions';
+import {
   formatClock,
   parseRepTarget,
   phaseLabel,
@@ -21,10 +25,21 @@ import { formatDuration, formatRest } from '@/utils/format';
 import { getProgramDay, resolveExercise } from '@/utils/workout';
 import { colors, spacing, typography } from '@/theme';
 
+function parseExpressBudget(value?: string): ExpressBudget | undefined {
+  const n = Number(value);
+  if (n === 8 || n === 10 || n === 15) return n;
+  return undefined;
+}
+
 export default function WorkoutSessionScreen() {
-  const { programId, day: dayParam } = useLocalSearchParams<{
+  const {
+    programId,
+    day: dayParam,
+    express: expressParam,
+  } = useLocalSearchParams<{
     programId: string;
     day?: string;
+    express?: string;
   }>();
 
   const enrollment = useProgramStore((s) => s.enrollment);
@@ -44,7 +59,14 @@ export default function WorkoutSessionScreen() {
 
   const program = getActiveProgram(programId);
   const dayNumber = Number(dayParam ?? enrollment?.currentDay ?? 1);
-  const day = getProgramDay(program, dayNumber);
+  const expressMinutes = parseExpressBudget(expressParam);
+  const baseDay = getProgramDay(program, dayNumber);
+  const day = useMemo(() => {
+    if (!baseDay) return undefined;
+    return expressMinutes
+      ? toExpressMission(baseDay, expressMinutes)
+      : baseDay;
+  }, [baseDay, expressMinutes]);
   const tier = enrollment?.difficulty ?? 'soldier';
   const [savedNextDay, setSavedNextDay] = useState<number | null>(null);
 
@@ -54,8 +76,9 @@ export default function WorkoutSessionScreen() {
       programId: program.id,
       day,
       difficulty: tier,
+      expressMinutes,
     });
-  }, [dayNumber, programId, tier, program.id]);
+  }, [dayNumber, programId, tier, program.id, expressMinutes]);
 
   useEffect(() => {
     if (!day || !active) return;
@@ -68,7 +91,7 @@ export default function WorkoutSessionScreen() {
     }
     const id = setInterval(() => tick(day), 1000);
     return () => clearInterval(id);
-  }, [active?.phase, dayNumber]);
+  }, [active?.phase, dayNumber, expressMinutes]);
 
   const resolved = useMemo(() => {
     if (!day || !active) return undefined;
@@ -181,10 +204,12 @@ export default function WorkoutSessionScreen() {
       <Screen>
         <Text style={styles.kicker}>
           {program.name} · {tier.toUpperCase()}
+          {expressMinutes ? ` · ${expressMinutes} MIN EXPRESS` : ''}
         </Text>
         <Text style={styles.title}>
           DAY {day.day} — {day.title}
         </Text>
+        {day.subtitle ? <Text style={styles.meta}>{day.subtitle}</Text> : null}
         <Text style={styles.meta}>
           {formatDuration(day.estimatedMinutes)}
           {day.rounds ? ` · ${day.rounds} rounds` : ''}
@@ -192,9 +217,15 @@ export default function WorkoutSessionScreen() {
         </Text>
 
         <Card military accentBorder>
-          <Text style={styles.sectionLabel}>NO EQUIPMENT MISSION</Text>
+          <Text style={styles.sectionLabel}>
+            {expressMinutes
+              ? 'EXPRESS MILITARY STRATEGY'
+              : 'NO EQUIPMENT MISSION'}
+          </Text>
           <Text style={styles.body}>
-            Bodyweight only. Fat loss · definition · conditioning.
+            {expressMinutes
+              ? 'Time-boxed tactical density. Bodyweight only — keep the streak when you are short on time.'
+              : 'Bodyweight only. Fat loss · definition · conditioning.'}
           </Text>
         </Card>
 

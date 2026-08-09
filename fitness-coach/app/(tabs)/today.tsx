@@ -2,10 +2,12 @@ import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { DailyMissionCard } from '@/components/today/DailyMissionCard';
+import { ExpressTimeCard } from '@/components/today/ExpressTimeCard';
 import { RemindersPanel } from '@/components/today/RemindersPanel';
 import { AppButton } from '@/components/ui/AppButton';
 import { MetricCard } from '@/components/ui/MetricCard';
 import { Screen } from '@/components/ui/Screen';
+import { ExpressBudget } from '@/constants/programs/expressMissions';
 import { getActiveProgram, OPERATION_IRON_30 } from '@/constants/programs';
 import { useNotesStore } from '@/store/notesStore';
 import { useProfileStore } from '@/store/profileStore';
@@ -65,6 +67,7 @@ export default function TodayScreen() {
   const completedCount = enrollment.completedDayIds.length;
   const lastSession = sessions.find((s) => s.day === day.day);
   const medsDone = meds.filter((m) => isMedTakenToday(m.id)).length;
+  const clearSession = useSessionStore((s) => s.clear);
   const resumable =
     active &&
     active.programId === program.id &&
@@ -72,12 +75,22 @@ export default function TodayScreen() {
     active.phase !== 'complete' &&
     active.phase !== 'briefing';
 
-  const openMission = () => {
+  const openMission = (express?: ExpressBudget) => {
+    // Restart if switching between full day and an express budget (or between budgets).
+    if (
+      active &&
+      active.programId === program.id &&
+      active.day === day.day &&
+      active.expressMinutes !== express
+    ) {
+      clearSession();
+    }
     router.push({
       pathname: '/session/[programId]',
       params: {
         programId: program.id,
         day: String(day.day),
+        ...(express ? { express: String(express) } : {}),
       },
     });
   };
@@ -98,16 +111,25 @@ export default function TodayScreen() {
         day={day}
         tier={enrollment.difficulty}
         completed={dayCompleted}
-        onStart={openMission}
+        onStart={() => openMission()}
       />
 
       {resumable ? (
         <AppButton
-          label="Resume active mission"
+          label={
+            active.expressMinutes
+              ? `Resume ${active.expressMinutes}-min express`
+              : 'Resume active mission'
+          }
           variant="military"
-          onPress={openMission}
+          onPress={() => openMission(active.expressMinutes)}
         />
       ) : null}
+
+      <ExpressTimeCard
+        disabled={dayCompleted}
+        onSelect={(budget) => openMission(budget)}
+      />
 
       <AppButton
         label="Open nutrition & fasting plan"

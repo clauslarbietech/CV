@@ -20,11 +20,13 @@ interface SessionState {
     programId: string;
     day: ProgramDay;
     difficulty: DifficultyTier;
+    expressMinutes?: 8 | 10 | 15;
   }) => void;
   resumeOrBegin: (args: {
     programId: string;
     day: ProgramDay;
     difficulty: DifficultyTier;
+    expressMinutes?: 8 | 10 | 15;
   }) => void;
   launch: (day: ProgramDay) => void;
   completeExercise: (day: ProgramDay, opts?: { modified?: boolean; completedReps?: number }) => void;
@@ -40,20 +42,35 @@ export const useSessionStore = create<SessionState>()(
   persist(
     (set, get) => ({
       active: null,
-      begin: ({ programId, day, difficulty }) => {
-        set({ active: createActiveSession({ programId, day, difficulty }) });
+      begin: ({ programId, day, difficulty, expressMinutes }) => {
+        set({
+          active: createActiveSession({
+            programId,
+            day,
+            difficulty,
+            expressMinutes,
+          }),
+        });
       },
-      resumeOrBegin: ({ programId, day, difficulty }) => {
+      resumeOrBegin: ({ programId, day, difficulty, expressMinutes }) => {
         const current = get().active;
         if (
           current &&
           current.programId === programId &&
           current.day === day.day &&
+          current.expressMinutes === expressMinutes &&
           current.phase !== 'complete'
         ) {
           return;
         }
-        set({ active: createActiveSession({ programId, day, difficulty }) });
+        set({
+          active: createActiveSession({
+            programId,
+            day,
+            difficulty,
+            expressMinutes,
+          }),
+        });
       },
       launch: (day) => {
         const active = get().active;

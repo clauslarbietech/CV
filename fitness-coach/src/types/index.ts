@@ -192,6 +192,8 @@ export interface ActiveWorkoutSession {
   programId: string;
   day: number;
   difficulty: DifficultyTier;
+  /** Present when mission was converted to an 8/10/15-min express strategy. */
+  expressMinutes?: 8 | 10 | 15;
   startedAt: string;
   elapsedSec: number;
   currentRound: number;
