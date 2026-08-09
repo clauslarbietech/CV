@@ -1,43 +1,24 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import { colors, spacing, typography } from '@/theme';
 
-const SAMPLE_PROMPTS = [
-  'What should I train today?',
-  "I'm sore from yesterday.",
-  'I only have 15 minutes.',
-  "I can't get to the gym.",
-  'How am I doing this week?',
-];
-
 export default function CoachScreen() {
   return (
     <Screen>
-      <Text style={styles.kicker}>AI COACH</Text>
-      <Text style={styles.title}>Your coach remembers the plan</Text>
+      <Text style={styles.kicker}>LOCKED UNTIL PHASE 1 COMPLETE</Text>
+      <Text style={styles.title}>AI Coach</Text>
       <Text style={styles.subtitle}>
-        Conversational coaching arrives in Phase 6. All AI requests will run
-        through a secure backend context builder — never with exposed API keys.
+        Conversational coaching stays deferred until OPERATION IRON 14 works
+        end-to-end: onboard → Day 1 session → save → Day 2 unlock.
       </Text>
-
       <Card>
-        <Text style={styles.cardTitle}>Coming next</Text>
         <Text style={styles.body}>
-          Ask about today&apos;s mission, convert workouts for home, adjust
-          difficulty, and get weekly analysis grounded in your history.
+          Your coach personality is already saved from onboarding and will drive
+          tone once the chat engine ships.
         </Text>
       </Card>
-
-      <Text style={styles.section}>You&apos;ll be able to ask</Text>
-      <View style={styles.prompts}>
-        {SAMPLE_PROMPTS.map((prompt) => (
-          <View key={prompt} style={styles.prompt}>
-            <Text style={styles.promptText}>{prompt}</Text>
-          </View>
-        ))}
-      </View>
     </Screen>
   );
 }
@@ -45,7 +26,7 @@ export default function CoachScreen() {
 const styles = StyleSheet.create({
   kicker: {
     ...typography.overline,
-    color: colors.accent,
+    color: colors.warning,
   },
   title: {
     ...typography.title,
@@ -55,32 +36,8 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textSecondary,
   },
-  cardTitle: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
   body: {
     ...typography.body,
     color: colors.textSecondary,
-  },
-  section: {
-    ...typography.heading,
-    color: colors.textPrimary,
-    marginTop: spacing.sm,
-  },
-  prompts: {
-    gap: spacing.xs,
-  },
-  prompt: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: spacing.md,
-  },
-  promptText: {
-    ...typography.body,
-    color: colors.textPrimary,
   },
 });
