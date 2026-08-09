@@ -63,6 +63,7 @@ import {
   saveSpeechRate,
   saveSpeechVoiceId,
   speechSpeakOptions,
+  SPEECH_RATES,
 } from "../services/speechPreferences";
 import { useReaderColors } from "../theme/ThemeProvider";
 import type { BibleSource } from "../types/bibleSource";
@@ -427,10 +428,15 @@ export default function BibleReaderScreen({ navigation }: Props) {
     speakCurrentChapter();
   };
 
-  const changePace = (direction: -1 | 1) => {
-    const next = nextSpeechRate(speechRate, direction);
-    setSpeechRate(next);
-    void saveSpeechRate(next);
+  /** Cycle 0.7x → 0.85x → 1x → 1.15x → 1.3x → … (same pattern as Guide 1x). */
+  const cycleSpeed = () => {
+    const next = nextSpeechRate(speechRate, 1);
+    // Wrap past the last rate back to the slowest.
+    const atEnd =
+      Math.abs(speechRate - SPEECH_RATES[SPEECH_RATES.length - 1]) < 0.01;
+    const rate = atEnd ? SPEECH_RATES[0] : next;
+    setSpeechRate(rate);
+    void saveSpeechRate(rate);
     if (continueReadingRef.current || reading) {
       const keepGoing = continueReadingRef.current;
       speakTokenRef.current += 1;
@@ -676,13 +682,12 @@ export default function BibleReaderScreen({ navigation }: Props) {
           className="w-full max-w-md rounded-3xl px-3 py-3"
           style={{ backgroundColor: readerColors.elevated }}
         >
-          {/* Pace + voice — same idea as Guide 1x control */}
-          <View className="mb-2 flex-row items-center gap-2">
+          <View className="mb-2 flex-row items-center justify-between">
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Choose narrator voice"
               onPress={() => setVoiceOpen(true)}
-              className="h-11 flex-row items-center rounded-full px-3"
+              className="h-10 flex-row items-center rounded-full px-3"
               style={{ backgroundColor: readerColors.accent }}
             >
               <MaterialIcons name="record-voice-over" size={18} color="#FFFFFF" />
@@ -690,41 +695,17 @@ export default function BibleReaderScreen({ navigation }: Props) {
             </Pressable>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Slower reading pace"
-              onPress={() => changePace(-1)}
-              className="h-11 flex-1 items-center justify-center rounded-full"
+              accessibilityLabel={`Playback speed ${formatSpeechRate(speechRate)}. Tap to change.`}
+              accessibilityHint="Cycles through slower and faster reading speeds"
+              onPress={cycleSpeed}
+              className="h-10 min-w-[56px] items-center justify-center rounded-full px-4"
               style={{ backgroundColor: readerColors.surface }}
             >
               <Text
                 className="text-sm font-bold"
                 style={{ color: readerColors.text }}
-              >
-                Slow
-              </Text>
-            </Pressable>
-            <View
-              className="h-11 min-w-[52px] items-center justify-center rounded-full px-3"
-              style={{ backgroundColor: readerColors.surface }}
-            >
-              <Text
-                className="text-sm font-bold"
-                style={{ color: readerColors.accent }}
               >
                 {formatSpeechRate(speechRate)}
-              </Text>
-            </View>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Faster reading pace"
-              onPress={() => changePace(1)}
-              className="h-11 flex-1 items-center justify-center rounded-full"
-              style={{ backgroundColor: readerColors.surface }}
-            >
-              <Text
-                className="text-sm font-bold"
-                style={{ color: readerColors.text }}
-              >
-                Fast
               </Text>
             </Pressable>
           </View>
