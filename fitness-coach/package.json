@@ -8,7 +8,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "verify:iron14": "node scripts/verify-iron14-flow.mjs"
+    "verify:iron14": "node scripts/verify-iron14-flow.mjs",
+    "export:web": "EXPO_PUBLIC_BASE_URL=/CV expo export --platform web --output-dir dist",
+    "deploy:pages": "npm run export:web && node scripts/deploy-gh-pages.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
