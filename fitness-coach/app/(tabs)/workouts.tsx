@@ -17,10 +17,12 @@ export default function WorkoutsScreen() {
   return (
     <Screen>
       <Text style={styles.kicker}>CORE PROGRAM</Text>
-      <Text style={styles.title}>OPERATION IRON 14</Text>
+      <Text style={styles.title}>
+        OPERATION <Text style={styles.accent}>IRON 14</Text>
+      </Text>
       <Text style={styles.subtitle}>
-        Phase 1 is a transformation engine — not a generic workout library. This
-        is the only fully executable program.
+        14-day military bodyweight shred. The only fully executable program in
+        Phase 1.
       </Text>
 
       <ProgramCard
@@ -94,11 +96,15 @@ const styles = StyleSheet.create({
     ...typography.title,
     color: colors.textPrimary,
   },
+  accent: {
+    color: colors.accent,
+  },
   subtitle: {
     ...typography.body,
     color: colors.textSecondary,
     marginBottom: spacing.sm,
   },
+
   actions: {
     gap: spacing.sm,
   },

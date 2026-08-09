@@ -21,9 +21,9 @@ export function CoachMessage({ message, personalityLabel }: CoachMessageProps) {
 const styles = StyleSheet.create({
   wrap: {
     backgroundColor: colors.accentSoft,
-    borderRadius: radii.lg,
+    borderRadius: radii.xl,
     borderWidth: 1,
-    borderColor: 'rgba(61, 255, 138, 0.25)',
+    borderColor: colors.borderAccent,
     padding: spacing.lg,
     gap: spacing.xs,
   },

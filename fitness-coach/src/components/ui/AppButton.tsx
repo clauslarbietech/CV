@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
 
 import { colors, radii, spacing, typography } from '@/theme';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'military' | 'danger';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'military' | 'action' | 'danger';
 
 interface AppButtonProps {
   label: string;
@@ -21,6 +21,9 @@ export function AppButton({
   style,
   accessibilityHint,
 }: AppButtonProps) {
+  const darkLabel =
+    variant === 'primary' || variant === 'military' || variant === 'action';
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -36,7 +39,14 @@ export function AppButton({
         style,
       ]}
     >
-      <Text style={[styles.label, variant === 'ghost' && styles.ghostLabel]}>
+      <Text
+        style={[
+          styles.label,
+          darkLabel && styles.darkLabel,
+          variant === 'ghost' && styles.ghostLabel,
+          variant === 'secondary' && styles.secondaryLabel,
+        ]}
+      >
         {label}
       </Text>
     </Pressable>
@@ -45,11 +55,11 @@ export function AppButton({
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: 52,
-    borderRadius: radii.md,
+    minHeight: 54,
+    borderRadius: radii.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.xl,
   },
   primary: {
     backgroundColor: colors.accent,
@@ -63,21 +73,30 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   military: {
-    backgroundColor: colors.militaryAccent,
+    backgroundColor: colors.accent,
+  },
+  action: {
+    backgroundColor: colors.action,
   },
   danger: {
     backgroundColor: colors.danger,
   },
   pressed: {
-    opacity: 0.88,
+    opacity: 0.9,
     transform: [{ scale: 0.985 }],
   },
   disabled: {
-    opacity: 0.45,
+    opacity: 0.4,
   },
   label: {
     ...typography.bodyBold,
-    color: colors.textInverse,
+    color: colors.white,
+  },
+  darkLabel: {
+    color: colors.black,
+  },
+  secondaryLabel: {
+    color: colors.textPrimary,
   },
   ghostLabel: {
     color: colors.accent,

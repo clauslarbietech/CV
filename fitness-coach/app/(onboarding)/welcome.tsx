@@ -11,7 +11,8 @@ export default function OnboardingWelcome() {
       <View style={styles.hero}>
         <Text style={styles.kicker}>AI FITNESS ASSESSMENT</Text>
         <Text style={styles.headline}>
-          Let&apos;s build the strongest version of you.
+          Let&apos;s build the <Text style={styles.accent}>strongest</Text> version
+          of you.
         </Text>
         <Text style={styles.support}>
           I&apos;ll help you train, eat better, stay accountable, and adjust your
@@ -41,8 +42,12 @@ const styles = StyleSheet.create({
     ...typography.hero,
     color: colors.textPrimary,
   },
+  accent: {
+    color: colors.accent,
+  },
   support: {
     ...typography.body,
     color: colors.textSecondary,
   },
 });
+

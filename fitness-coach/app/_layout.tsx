@@ -21,6 +21,8 @@ const headerOptions = {
   headerShown: true,
   headerStyle: { backgroundColor: colors.background },
   headerTintColor: colors.textPrimary,
+  headerTitleStyle: { fontWeight: '700' as const },
+  headerShadowVisible: false,
 } as const;
 
 export default function RootLayout() {

@@ -17,7 +17,6 @@ export function ProgramCard({ program, onPress, featured }: ProgramCardProps) {
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        program.militaryThemed && styles.military,
         featured && styles.featured,
         pressed && styles.pressed,
       ]}
@@ -47,19 +46,16 @@ export function ProgramCard({ program, onPress, featured }: ProgramCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderRadius: radii.xl,
+    borderRadius: radii.xxl,
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.xl,
     gap: spacing.xs,
   },
-  military: {
-    backgroundColor: colors.militarySurface,
-    borderColor: colors.militaryBorder,
-  },
   featured: {
-    borderColor: colors.militaryAccent,
+    borderColor: colors.borderAccent,
     borderWidth: 1.5,
+    backgroundColor: colors.militarySurface,
   },
   pressed: {
     opacity: 0.92,
@@ -67,7 +63,7 @@ const styles = StyleSheet.create({
   },
   badge: {
     ...typography.overline,
-    color: colors.militaryAccent,
+    color: colors.accent,
     marginBottom: spacing.xxs,
   },
   name: {
@@ -104,14 +100,15 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   tag: {
-    backgroundColor: colors.backgroundElevated,
-    borderRadius: radii.sm,
+    backgroundColor: colors.accentSoft,
+    borderRadius: radii.pill,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xxs,
   },
   tagText: {
     ...typography.caption,
-    color: colors.textSecondary,
+    color: colors.accent,
     textTransform: 'capitalize',
+    fontWeight: '700',
   },
 });

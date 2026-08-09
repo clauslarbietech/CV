@@ -4,19 +4,19 @@ export const typography = {
   hero: {
     fontSize: 34,
     fontWeight: '800',
-    letterSpacing: -0.5,
+    letterSpacing: -0.8,
     lineHeight: 40,
   } satisfies TextStyle,
   title: {
     fontSize: 26,
     fontWeight: '700',
-    letterSpacing: -0.3,
+    letterSpacing: -0.4,
     lineHeight: 32,
   } satisfies TextStyle,
   heading: {
     fontSize: 20,
     fontWeight: '700',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
     lineHeight: 26,
   } satisfies TextStyle,
   subheading: {
@@ -31,26 +31,26 @@ export const typography = {
   } satisfies TextStyle,
   bodyBold: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     lineHeight: 24,
   } satisfies TextStyle,
   caption: {
     fontSize: 13,
     fontWeight: '500',
     lineHeight: 18,
-    letterSpacing: 0.2,
+    letterSpacing: 0.1,
   } satisfies TextStyle,
   overline: {
     fontSize: 12,
     fontWeight: '700',
-    letterSpacing: 1.2,
+    letterSpacing: 1.4,
     textTransform: 'uppercase',
     lineHeight: 16,
   } satisfies TextStyle,
   metric: {
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: -0.5,
-    lineHeight: 34,
+    fontSize: 32,
+    fontWeight: '800',
+    letterSpacing: -0.8,
+    lineHeight: 38,
   } satisfies TextStyle,
 } as const;

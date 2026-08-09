@@ -6,15 +6,26 @@ interface OptionChipProps {
   label: string;
   selected?: boolean;
   onPress: () => void;
+  tone?: 'green' | 'blue';
 }
 
-export function OptionChip({ label, selected, onPress }: OptionChipProps) {
+export function OptionChip({
+  label,
+  selected,
+  onPress,
+  tone = 'green',
+}: OptionChipProps) {
+  const selectedBg = tone === 'blue' ? colors.action : colors.accent;
+
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={onPress}
-      style={[styles.chip, selected && styles.selected]}
+      style={[
+        styles.chip,
+        selected && { backgroundColor: selectedBg, borderColor: selectedBg },
+      ]}
     >
       <Text style={[styles.label, selected && styles.selectedLabel]}>{label}</Text>
     </Pressable>
@@ -23,24 +34,19 @@ export function OptionChip({ label, selected, onPress }: OptionChipProps) {
 
 const styles = StyleSheet.create({
   chip: {
-    minHeight: 44,
+    minHeight: 48,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.backgroundElevated,
-  },
-  selected: {
-    borderColor: colors.accent,
-    backgroundColor: colors.accentSoft,
+    backgroundColor: colors.surface,
   },
   label: {
-    ...typography.body,
-    color: colors.textSecondary,
+    ...typography.bodyBold,
+    color: colors.textPrimary,
   },
   selectedLabel: {
-    color: colors.accent,
-    fontWeight: '600',
+    color: colors.black,
   },
 });

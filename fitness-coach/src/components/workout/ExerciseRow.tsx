@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { DifficultyTier, ExerciseDefinition } from '@/types';
 import { formatExerciseTarget } from '@/utils/workout';
-import { colors, spacing, typography } from '@/theme';
+import { colors, radii, spacing, typography } from '@/theme';
 
 interface ExerciseRowProps {
   exercise: ExerciseDefinition;
@@ -15,14 +15,19 @@ export function ExerciseRow({ exercise, tier, index }: ExerciseRowProps) {
 
   return (
     <View style={styles.row}>
-      <Text style={styles.index}>{index}</Text>
+      <View style={styles.indexBadge}>
+        <Text style={styles.index}>{index}</Text>
+      </View>
       <View style={styles.content}>
         <Text style={styles.name}>{exercise.name}</Text>
+        <Text style={styles.meta}>
+          {target}
+          {exercise.perSide ? ' · each side' : ''}
+        </Text>
         {exercise.notes ? (
           <Text style={styles.notes}>{exercise.notes}</Text>
         ) : null}
       </View>
-      <Text style={styles.target}>{target}</Text>
     </View>
   );
 }
@@ -32,14 +37,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    paddingVertical: spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.borderSubtle,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    marginBottom: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  indexBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.accentSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   index: {
     ...typography.caption,
-    color: colors.textMuted,
-    width: 20,
+    color: colors.accent,
+    fontWeight: '800',
   },
   content: {
     flex: 1,
@@ -49,12 +66,12 @@ const styles = StyleSheet.create({
     ...typography.bodyBold,
     color: colors.textPrimary,
   },
+  meta: {
+    ...typography.caption,
+    color: colors.textSecondary,
+  },
   notes: {
     ...typography.caption,
     color: colors.textMuted,
-  },
-  target: {
-    ...typography.bodyBold,
-    color: colors.accent,
   },
 });

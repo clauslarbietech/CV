@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
-import { colors, spacing, typography } from '@/theme';
 import { formatClock } from '@/features/workouts/sessionEngine';
+import { colors, radii, spacing, typography } from '@/theme';
 
 interface RestTimerProps {
   seconds: number;
@@ -14,7 +14,9 @@ export function RestTimer({ seconds, onSkip, label = 'REST' }: RestTimerProps) {
   return (
     <View style={styles.wrap}>
       <Text style={styles.label}>{label}</Text>
-      <Text style={styles.timer}>{formatClock(seconds)}</Text>
+      <View style={styles.ring}>
+        <Text style={styles.timer}>{formatClock(seconds)}</Text>
+      </View>
       <Text style={styles.hint}>Breathe. Next movement loads automatically.</Text>
       <AppButton label="Skip rest" variant="secondary" onPress={onSkip} />
     </View>
@@ -29,10 +31,20 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.overline,
-    color: colors.militaryAccent,
+    color: colors.accent,
+  },
+  ring: {
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    borderWidth: 8,
+    borderColor: colors.action,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surface,
   },
   timer: {
-    fontSize: 64,
+    fontSize: 56,
     fontWeight: '800',
     color: colors.textPrimary,
     letterSpacing: -1,
@@ -41,5 +53,6 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textSecondary,
     textAlign: 'center',
+    paddingHorizontal: spacing.xl,
   },
 });

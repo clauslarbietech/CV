@@ -7,11 +7,24 @@ interface CardProps {
   children: ReactNode;
   style?: ViewStyle;
   military?: boolean;
+  accentBorder?: boolean;
 }
 
-export function Card({ children, style, military = false }: CardProps) {
+export function Card({
+  children,
+  style,
+  military = false,
+  accentBorder = false,
+}: CardProps) {
   return (
-    <View style={[styles.card, military && styles.military, style]}>
+    <View
+      style={[
+        styles.card,
+        military && styles.military,
+        accentBorder && styles.accentBorder,
+        style,
+      ]}
+    >
       {children}
     </View>
   );
@@ -20,7 +33,7 @@ export function Card({ children, style, military = false }: CardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderRadius: radii.lg,
+    borderRadius: radii.xl,
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.lg,
@@ -28,5 +41,9 @@ const styles = StyleSheet.create({
   military: {
     backgroundColor: colors.militarySurface,
     borderColor: colors.militaryBorder,
+  },
+  accentBorder: {
+    borderColor: colors.borderAccent,
+    borderWidth: 1.5,
   },
 });

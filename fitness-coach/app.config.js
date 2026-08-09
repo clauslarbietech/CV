@@ -13,7 +13,7 @@ const config = {
   splash: {
     image: './assets/splash-icon.png',
     resizeMode: 'contain',
-    backgroundColor: '#0A0B0D',
+    backgroundColor: '#000000',
   },
   ios: {
     supportsTablet: true,
@@ -21,7 +21,8 @@ const config = {
   },
   android: {
     adaptiveIcon: {
-      backgroundColor: '#0A0B0D',
+      backgroundColor: '#000000',
+
       foregroundImage: './assets/android-icon-foreground.png',
       backgroundImage: './assets/android-icon-background.png',
       monochromeImage: './assets/android-icon-monochrome.png',

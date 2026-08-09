@@ -12,6 +12,9 @@ export default function TabsLayout() {
           backgroundColor: colors.background,
         },
         headerTintColor: colors.textPrimary,
+        headerTitleStyle: {
+          fontWeight: '700',
+        },
         headerShadowVisible: false,
         headerRight: () => (
           <Pressable
@@ -25,17 +28,17 @@ export default function TabsLayout() {
           </Pressable>
         ),
         tabBarStyle: {
-          backgroundColor: colors.backgroundElevated,
+          backgroundColor: '#0A0A0A',
           borderTopColor: colors.border,
-          height: 64,
-          paddingTop: 6,
-          paddingBottom: 8,
+          height: 68,
+          paddingTop: 8,
+          paddingBottom: 10,
         },
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
+          fontWeight: '700',
         },
       }}
     >
@@ -44,7 +47,7 @@ export default function TabsLayout() {
         options={{
           title: 'Today',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="flash-outline" color={color} size={size} />
+            <Ionicons name="flash" color={color} size={size} />
           ),
         }}
       />
@@ -53,7 +56,7 @@ export default function TabsLayout() {
         options={{
           title: 'Workouts',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="barbell-outline" color={color} size={size} />
+            <Ionicons name="barbell" color={color} size={size} />
           ),
         }}
       />
@@ -62,7 +65,7 @@ export default function TabsLayout() {
         options={{
           title: 'Coach',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubble-ellipses-outline" color={color} size={size} />
+            <Ionicons name="chatbubble-ellipses" color={color} size={size} />
           ),
         }}
       />
@@ -71,7 +74,7 @@ export default function TabsLayout() {
         options={{
           title: 'Nutrition',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="nutrition-outline" color={color} size={size} />
+            <Ionicons name="nutrition" color={color} size={size} />
           ),
         }}
       />
@@ -80,7 +83,7 @@ export default function TabsLayout() {
         options={{
           title: 'Progress',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="stats-chart-outline" color={color} size={size} />
+            <Ionicons name="stats-chart" color={color} size={size} />
           ),
         }}
       />

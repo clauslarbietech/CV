@@ -270,12 +270,16 @@ export default function WorkoutSessionScreen() {
           ROUND {active.currentRound}/{active.totalRounds}
         </Text>
         <Text style={styles.title}>{resolved.name}</Text>
-        <Text style={styles.holdTimer}>{formatClock(active.holdRemainingSec)}</Text>
+        <View style={styles.holdRing}>
+          <Text style={styles.holdTimer}>
+            {formatClock(active.holdRemainingSec)}
+          </Text>
+        </View>
         <Text style={styles.meta}>Hold strong. Completes automatically.</Text>
         <View style={styles.row}>
           <AppButton
             label="Complete now"
-            variant="military"
+            variant="action"
             onPress={() => completeExercise(day)}
             style={styles.flex}
           />
@@ -402,13 +406,25 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontStyle: 'italic',
   },
-  holdTimer: {
-    fontSize: 72,
-    fontWeight: '800',
-    color: colors.accent,
-    textAlign: 'center',
+  holdRing: {
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    borderWidth: 8,
+    borderColor: colors.action,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    backgroundColor: colors.surface,
     marginVertical: spacing.lg,
   },
+  holdTimer: {
+    fontSize: 56,
+    fontWeight: '800',
+    color: colors.textPrimary,
+    textAlign: 'center',
+  },
+
   row: {
     flexDirection: 'row',
     gap: spacing.sm,

@@ -27,7 +27,9 @@ export default function ProgressScreen() {
   return (
     <Screen>
       <Text style={styles.kicker}>IRON 14 PROGRESS</Text>
-      <Text style={styles.title}>Transformation tracking</Text>
+      <Text style={styles.title}>
+        Track <Text style={styles.accent}>Progress</Text>
+      </Text>
       <Text style={styles.subtitle}>
         Basic progress only — enough to prove Day 1 → Day 14 completion.
       </Text>
@@ -89,10 +91,14 @@ const styles = StyleSheet.create({
     ...typography.title,
     color: colors.textPrimary,
   },
+  accent: {
+    color: colors.accent,
+  },
   subtitle: {
     ...typography.body,
     color: colors.textSecondary,
   },
+
   section: {
     ...typography.heading,
     color: colors.textPrimary,
