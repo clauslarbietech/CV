@@ -2,10 +2,12 @@ import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { DailyMissionCard } from '@/components/today/DailyMissionCard';
+import { RemindersPanel } from '@/components/today/RemindersPanel';
 import { AppButton } from '@/components/ui/AppButton';
 import { MetricCard } from '@/components/ui/MetricCard';
 import { Screen } from '@/components/ui/Screen';
 import { getActiveProgram, OPERATION_IRON_30 } from '@/constants/programs';
+import { useNotesStore } from '@/store/notesStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useSessionStore } from '@/store/sessionStore';
@@ -19,22 +21,39 @@ export default function TodayScreen() {
   const sessions = useProgramStore((s) => s.sessions);
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
   const active = useSessionStore((s) => s.active);
+  const meds = useNotesStore((s) => s.meds);
+  const isMedTakenToday = useNotesStore((s) => s.isMedTakenToday);
+
+  const startIron30 = () => {
+    enrollInProgram(OPERATION_IRON_30.id, 'soldier');
+    router.push({
+      pathname: '/session/[programId]',
+      params: { programId: OPERATION_IRON_30.id, day: '1' },
+    });
+  };
 
   if (!enrollment) {
     return (
       <Screen>
-        <Text style={styles.kicker}>TRANSFORMATION ENGINE</Text>
+        <Text style={styles.kicker}>READY TO TRAIN</Text>
         <Text style={styles.title}>
-          OPERATION <Text style={styles.accent}>IRON 30</Text>
+          Start <Text style={styles.accent}>Day 1</Text>
         </Text>
         <Text style={styles.body}>
-          30 days. No equipment. Military bodyweight shred. Start now.
+          OPERATION IRON 30 — no equipment. Tap below to begin testing the
+          workout engine.
         </Text>
         <AppButton
-          label="Start OPERATION IRON 30"
+          label="START DAY 1 MISSION"
           variant="military"
-          onPress={() => enrollInProgram(OPERATION_IRON_30.id, 'soldier')}
+          onPress={startIron30}
         />
+        <AppButton
+          label="View nutrition & fasting"
+          variant="secondary"
+          onPress={() => router.push('/(tabs)/nutrition')}
+        />
+        <RemindersPanel />
       </Screen>
     );
   }
@@ -45,6 +64,7 @@ export default function TodayScreen() {
   const dayCompleted = enrollment.completedDayIds.includes(day.day);
   const completedCount = enrollment.completedDayIds.length;
   const lastSession = sessions.find((s) => s.day === day.day);
+  const medsDone = meds.filter((m) => isMedTakenToday(m.id)).length;
   const resumable =
     active &&
     active.programId === program.id &&
@@ -70,7 +90,7 @@ export default function TodayScreen() {
       </Text>
       <Text style={styles.progressLine}>
         {completedCount}/{program.durationDays} missions · Streak{' '}
-        {streaks.workoutStreak} · {profile?.xp ?? 0} XP
+        {streaks.workoutStreak} · Meds {medsDone}/{meds.length}
       </Text>
 
       <DailyMissionCard
@@ -88,6 +108,12 @@ export default function TodayScreen() {
           onPress={openMission}
         />
       ) : null}
+
+      <AppButton
+        label="Open nutrition & fasting plan"
+        variant="secondary"
+        onPress={() => router.push('/(tabs)/nutrition')}
+      />
 
       <Text style={styles.section}>Mission metrics</Text>
       <View style={styles.metrics}>
@@ -111,12 +137,13 @@ export default function TodayScreen() {
           }
         />
         <MetricCard
-          label="Rank"
-          value={profile?.rank ?? 'Recruit'}
-          subtitle={`${profile?.xp ?? 0} XP`}
-          accentColor={colors.militaryAccent}
+          label="Meds today"
+          value={`${medsDone}/${meds.length}`}
+          complete={meds.length > 0 && medsDone === meds.length}
         />
       </View>
+
+      <RemindersPanel />
     </Screen>
   );
 }

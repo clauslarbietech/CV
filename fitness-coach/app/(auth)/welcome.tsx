@@ -17,12 +17,19 @@ export default function WelcomeScreen() {
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
   const [name, setName] = useState('');
 
-  const enterApp = () => {
+  const enterApp = (startMission = false) => {
     const firstName = name.trim() || 'Athlete';
     continueAsGuest(firstName);
     const userId = useAuthStore.getState().userId ?? `guest-${Date.now()}`;
     quickStart({ userId, firstName });
     enrollInProgram(OPERATION_IRON_30.id, 'soldier');
+    if (startMission) {
+      router.replace({
+        pathname: '/session/[programId]',
+        params: { programId: OPERATION_IRON_30.id, day: '1' },
+      });
+      return;
+    }
     router.replace('/(tabs)/today');
   };
 
@@ -51,15 +58,25 @@ export default function WelcomeScreen() {
           autoFocus
           autoCapitalize="words"
           returnKeyType="go"
-          onSubmitEditing={enterApp}
+          onSubmitEditing={() => enterApp(true)}
           style={styles.input}
           accessibilityLabel="Your name"
         />
       </View>
 
       <View style={styles.actions}>
-        <AppButton label="Start training" onPress={enterApp} />
-        <Text style={styles.hint}>No long setup. Name in → Day 1 ready.</Text>
+        <AppButton
+          label="Start Day 1 now"
+          onPress={() => enterApp(true)}
+        />
+        <AppButton
+          label="Go to Today dashboard"
+          variant="secondary"
+          onPress={() => enterApp(false)}
+        />
+        <Text style={styles.hint}>
+          Name in → Day 1 mission. Meds + work notes are pinned on Today.
+        </Text>
       </View>
     </Screen>
   );
