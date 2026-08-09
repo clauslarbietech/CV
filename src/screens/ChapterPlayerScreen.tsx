@@ -508,6 +508,10 @@ export default function ChapterPlayerScreen({ navigation, route }: Props) {
               favorite={isFavorite || progress.favorite}
               messageCount={messageBadge}
               onOpenMessages={() => setMessagesOpen(true)}
+              narratorVoiceId={audio.narratorVoiceId}
+              onSelectVoice={(voiceId) => {
+                audio.setNarratorVoice(voiceId);
+              }}
               hasPrevious={Boolean(prevChapter)}
               hasNext={Boolean(nextChapter)}
               onToggle={audio.toggle}

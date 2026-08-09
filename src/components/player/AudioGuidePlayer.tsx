@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   GestureResponderEvent,
   LayoutChangeEvent,
@@ -7,6 +7,7 @@ import {
   View,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import VoiceCarousel from "../bible/VoiceCarousel";
 import { formatClock } from "../../data/library";
 import { MIN_TOUCH_TARGET } from "../../theme/a11y";
 import { useTheme } from "../../theme/ThemeProvider";
@@ -21,6 +22,8 @@ type Props = {
   favorite: boolean;
   messageCount?: number;
   onOpenMessages?: () => void;
+  narratorVoiceId?: string | null;
+  onSelectVoice?: (voiceId: string | null) => void;
   hasPrevious: boolean;
   hasNext: boolean;
   onToggle: () => void;
@@ -32,8 +35,8 @@ type Props = {
 };
 
 /**
- * Compact chapter transport:
- * scrub the play line to seek; orange Back / Next for chapters (no ±15).
+ * Compact chapter transport for every Bible journey:
+ * voice carousel, speed, scrub, Back / Play / Next.
  */
 export default function AudioGuidePlayer({
   title,
@@ -45,6 +48,8 @@ export default function AudioGuidePlayer({
   favorite,
   messageCount = 0,
   onOpenMessages,
+  narratorVoiceId = null,
+  onSelectVoice,
   hasPrevious,
   hasNext,
   onToggle,
@@ -55,8 +60,11 @@ export default function AudioGuidePlayer({
   onNext,
 }: Props) {
   const { colors } = useTheme();
+  const [voiceMenuOpen, setVoiceMenuOpen] = useState(false);
   const progress = duration > 0 ? Math.min(1, position / duration) : 0;
   const trackWidth = useRef(1);
+  const speedLabel =
+    Math.abs(speed - 1) < 0.01 ? "1x" : `${Number(speed.toFixed(2))}x`;
 
   const seekFromEvent = (event: GestureResponderEvent) => {
     if (duration <= 0) {
@@ -71,9 +79,13 @@ export default function AudioGuidePlayer({
   };
 
   return (
-    <View className="border-t border-night-border bg-night-card px-4 pb-3 pt-3">
+    <View
+      accessibilityRole="toolbar"
+      accessibilityLabel="Journey audio guide controls"
+      className="border-t border-night-border bg-night-card px-4 pb-3 pt-3"
+    >
       <View className="mb-2 flex-row items-center justify-between">
-        <View className="flex-1 pr-3">
+        <View className="min-w-0 flex-1 pr-2">
           <Text className="text-base font-bold text-night-text" numberOfLines={1}>
             {title}
           </Text>
@@ -83,6 +95,29 @@ export default function AudioGuidePlayer({
             </Text>
           ) : null}
         </View>
+
+        {onSelectVoice ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Choose narrator voice"
+            accessibilityState={{ expanded: voiceMenuOpen }}
+            accessibilityHint="Shows a swipeable list of narrator voices"
+            onPress={() => setVoiceMenuOpen((open) => !open)}
+            className="mr-2 items-center justify-center rounded-full"
+            style={{
+              minWidth: MIN_TOUCH_TARGET,
+              minHeight: MIN_TOUCH_TARGET,
+              backgroundColor: voiceMenuOpen ? colors.accent : colors.elevated,
+            }}
+          >
+            <MaterialIcons
+              name="record-voice-over"
+              size={20}
+              color={voiceMenuOpen ? "#FFFFFF" : colors.text}
+            />
+          </Pressable>
+        ) : null}
+
         {onOpenMessages ? (
           <Pressable
             accessibilityRole="button"
@@ -105,6 +140,7 @@ export default function AudioGuidePlayer({
             ) : null}
           </Pressable>
         ) : null}
+
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={favorite ? "Remove favorite" : "Favorite chapter"}
@@ -118,18 +154,34 @@ export default function AudioGuidePlayer({
             color={favorite ? colors.accent : colors.muted}
           />
         </Pressable>
+
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Change playback speed"
+          accessibilityLabel={`Playback speed ${speedLabel}. Tap to change.`}
+          accessibilityHint="Cycles through slower and faster reading speeds"
           onPress={onCycleSpeed}
           className="items-center justify-center rounded-full bg-night-elevated px-4"
-          style={{ minHeight: MIN_TOUCH_TARGET }}
+          style={{ minHeight: MIN_TOUCH_TARGET, minWidth: MIN_TOUCH_TARGET }}
         >
           <Text className="text-sm font-bold text-night-text" allowFontScaling>
-            {speed}x
+            {speedLabel}
           </Text>
         </Pressable>
       </View>
+
+      {onSelectVoice ? (
+        <VoiceCarousel
+          visible={voiceMenuOpen}
+          selectedVoiceId={narratorVoiceId}
+          accentColor={colors.accent}
+          surfaceColor={colors.elevated}
+          textColor={colors.text}
+          mutedColor={colors.muted}
+          onSelect={(nextId) => {
+            onSelectVoice(nextId);
+          }}
+        />
+      ) : null}
 
       {/* Scrubbable play line — drag/tap to seek */}
       <View
@@ -178,6 +230,7 @@ export default function AudioGuidePlayer({
           className={`min-w-[88px] flex-1 items-center rounded-full px-3 py-3 ${
             hasPrevious ? "bg-terracotta" : "bg-night-elevated"
           }`}
+          style={{ minHeight: MIN_TOUCH_TARGET }}
         >
           <Text
             className="text-sm font-bold"
@@ -211,6 +264,7 @@ export default function AudioGuidePlayer({
           className={`min-w-[88px] flex-1 items-center rounded-full px-3 py-3 ${
             hasNext ? "bg-terracotta" : "bg-night-elevated"
           }`}
+          style={{ minHeight: MIN_TOUCH_TARGET }}
         >
           <Text
             className="text-sm font-bold"

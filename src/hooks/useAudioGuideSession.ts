@@ -8,6 +8,7 @@ import {
 } from "../services/listeningProgress";
 import {
   loadSpeechPreferences,
+  saveSpeechVoiceId,
   speechSpeakOptions,
   type SpeechPreferences,
 } from "../services/speechPreferences";
@@ -49,6 +50,9 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
   const [position, setPosition] = useState(0);
   const [speed, setSpeed] = useState(1);
   const [activeLineIndex, setActiveLineIndex] = useState(0);
+  const [narratorVoiceId, setNarratorVoiceIdState] = useState<string | null>(
+    null
+  );
 
   const playingRef = useRef(false);
   const positionRef = useRef(0);
@@ -205,6 +209,7 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
       speedRef.current = savedSpeed;
       setSpeed(savedSpeed);
       speechPrefsRef.current = speechPrefs;
+      setNarratorVoiceIdState(speechPrefs.voiceId);
     })();
 
     return () => {
@@ -299,12 +304,28 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
     }
   }, [speakFrom]);
 
+  const setNarratorVoice = useCallback(
+    (voiceId: string | null) => {
+      speechPrefsRef.current = {
+        ...speechPrefsRef.current,
+        voiceId,
+      };
+      setNarratorVoiceIdState(voiceId);
+      void saveSpeechVoiceId(voiceId);
+      if (playingRef.current) {
+        speakFrom(lineIndexRef.current);
+      }
+    },
+    [speakFrom]
+  );
+
   return {
     isPlaying,
     position,
     duration: naturalDuration,
     speed,
     activeLineIndex,
+    narratorVoiceId,
     toggle,
     play,
     pause,
@@ -312,6 +333,7 @@ export function useAudioGuideSession({ guide, chapterKey }: Options) {
     seekTo,
     seekToLine,
     cycleSpeed,
+    setNarratorVoice,
     stop: stopTransport,
   };
 }
