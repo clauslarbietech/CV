@@ -41,8 +41,9 @@
     "web": "expo start --web",
     "export:web": "expo export --platform web",
     "prepare:pages": "bash scripts/prepare-pages-dist.sh",
-    "deploy:pages": "expo export --platform web && npm run prepare:pages"
+    "deploy:pages": "expo export --platform web && npm run prepare:pages",
+    "deploy:pages:pixbible": "npm run deploy:pages && bash scripts/deploy-gh-pages-pixbible.sh"
   },
-  "homepage": "https://clauslarbietech.github.io/CV",
+  "homepage": "https://clauslarbietech.github.io/CV/pixbible",
   "private": true
 }
