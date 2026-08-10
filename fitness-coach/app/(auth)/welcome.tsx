@@ -1,138 +1,136 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { AppButton } from '@/components/ui/AppButton';
+import { BodyWelcome } from '@/components/intro/BodyWelcome';
+import { IntroQuestions } from '@/components/intro/IntroQuestions';
+import { SessionSkipPicker } from '@/components/intro/SessionSkipPicker';
+import { SplashLogo } from '@/components/intro/SplashLogo';
 import { Screen } from '@/components/ui/Screen';
-import { OPERATION_IRON_30 } from '@/constants/programs';
+import {
+  IntroBodySex,
+  SkipSessionOption,
+} from '@/constants/intro';
 import { useAuthStore } from '@/store/authStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
-import { colors, radii, spacing, typography } from '@/theme';
+import { ExperienceLevel, FitnessGoal } from '@/types';
+import { colors, spacing } from '@/theme';
+
+type Step = 'splash' | 'body' | 'questions' | 'sessions';
 
 export default function WelcomeScreen() {
   const continueAsGuest = useAuthStore((s) => s.continueAsGuest);
-  const quickStart = useProfileStore((s) => s.quickStart);
+  const completeOnboarding = useProfileStore((s) => s.completeOnboarding);
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
-  const [name, setName] = useState('');
 
-  const enterApp = (startMission = false) => {
-    const firstName = name.trim() || 'Athlete';
-    continueAsGuest(firstName);
-    const userId = useAuthStore.getState().userId ?? `guest-${Date.now()}`;
-    quickStart({ userId, firstName });
-    enrollInProgram(OPERATION_IRON_30.id, 'soldier');
-    if (startMission) {
-      router.replace({
-        pathname: '/session/[programId]',
-        params: { programId: OPERATION_IRON_30.id, day: '1' },
+  const [step, setStep] = useState<Step>('splash');
+  const [sex, setSex] = useState<IntroBodySex | null>(null);
+  const [firstName, setFirstName] = useState('');
+  const [goal, setGoal] = useState<FitnessGoal | null>(null);
+  const [experience, setExperience] = useState<ExperienceLevel | null>(null);
+  const [minutes, setMinutes] = useState<number | null>(null);
+  const [selectedSession, setSelectedSession] =
+    useState<SkipSessionOption | null>(null);
+  const [returnStep, setReturnStep] = useState<Step>('body');
+
+  const finishProfile = useCallback(
+    (opts?: { name?: string }) => {
+      const name = (opts?.name ?? firstName).trim() || 'Athlete';
+      continueAsGuest(name);
+      const userId = useAuthStore.getState().userId ?? `guest-${Date.now()}`;
+      completeOnboarding({
+        userId,
+        firstName: name,
+        sex: sex ?? undefined,
+        primaryGoal: goal ?? 'lose_fat',
+        experienceLevel: experience ?? 'beginner',
+        preferredDurationMin: minutes ?? 30,
       });
-      return;
-    }
+      return name;
+    },
+    [completeOnboarding, continueAsGuest, experience, firstName, goal, minutes, sex],
+  );
+
+  const goToToday = () => {
+    finishProfile();
+    enrollInProgram('operation-iron-30', 'soldier');
     router.replace('/(tabs)/today');
   };
 
+  const goToSelectedSession = () => {
+    if (!selectedSession) return;
+    finishProfile({ name: firstName || 'Athlete' });
+    enrollInProgram(selectedSession.programId, 'soldier');
+    router.replace({
+      pathname: '/session/[programId]',
+      params: {
+        programId: selectedSession.programId,
+        day: String(selectedSession.day),
+        ...(selectedSession.express
+          ? { express: String(selectedSession.express) }
+          : {}),
+      },
+    });
+  };
+
+  const openSessions = (from: Step) => {
+    setReturnStep(from);
+    setStep('sessions');
+  };
+
   return (
-    <Screen contentStyle={styles.content}>
-      <LinearGradient
-        colors={['#000000', '#0A1A00', '#000000']}
-        style={StyleSheet.absoluteFill}
-      />
-      <View style={styles.hero}>
-        <Text style={styles.brand}>FITLIFE</Text>
-        <Text style={styles.promise}>YOUR FITNESS LIFE. ONE AI COACH.</Text>
-        <Text style={styles.headline}>
-          What&apos;s your <Text style={styles.accentWord}>name</Text>?
-        </Text>
-        <Text style={styles.support}>
-          Jump straight into OPERATION IRON 30 — 30 days, no equipment, military
-          bodyweight shred + fasting fuel plan.
-        </Text>
+    <View style={styles.root}>
+      {step === 'splash' ? (
+        <SplashLogo onDone={() => setStep('body')} />
+      ) : null}
 
-        <TextInput
-          value={name}
-          onChangeText={setName}
-          placeholder="Enter your name"
-          placeholderTextColor={colors.textMuted}
-          autoFocus
-          autoCapitalize="words"
-          returnKeyType="go"
-          onSubmitEditing={() => enterApp(true)}
-          style={styles.input}
-          accessibilityLabel="Your name"
-        />
-      </View>
+      <Screen contentStyle={styles.content}>
+        {step === 'body' || step === 'splash' ? (
+          <BodyWelcome
+            sex={sex}
+            onSelectSex={setSex}
+            onContinue={() => setStep('questions')}
+            onSkipToSessions={() => openSessions('body')}
+          />
+        ) : null}
 
-      <View style={styles.actions}>
-        <AppButton
-          label="Start Day 1 now"
-          onPress={() => enterApp(true)}
-        />
-        <AppButton
-          label="Go to Today dashboard"
-          variant="secondary"
-          onPress={() => enterApp(false)}
-        />
-        <Text style={styles.hint}>
-          Name in → Day 1 mission. Meds + work notes are pinned on Today.
-        </Text>
-      </View>
-    </Screen>
+        {step === 'questions' ? (
+          <IntroQuestions
+            firstName={firstName}
+            goal={goal}
+            experience={experience}
+            minutes={minutes}
+            onChangeName={setFirstName}
+            onChangeGoal={setGoal}
+            onChangeExperience={setExperience}
+            onChangeMinutes={setMinutes}
+            onFinish={goToToday}
+            onSkipToSessions={() => openSessions('questions')}
+          />
+        ) : null}
+
+        {step === 'sessions' ? (
+          <SessionSkipPicker
+            selectedId={selectedSession?.id ?? null}
+            onSelect={setSelectedSession}
+            onStart={goToSelectedSession}
+            onBack={() => setStep(returnStep)}
+          />
+        ) : null}
+      </Screen>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: colors.black,
+  },
   content: {
     flexGrow: 1,
-    justifyContent: 'space-between',
-    paddingTop: spacing.xxxl,
-  },
-  hero: {
-    gap: spacing.md,
-    paddingTop: spacing.huge,
-  },
-  brand: {
-    ...typography.overline,
-    color: colors.accent,
-  },
-  promise: {
-    ...typography.caption,
-    color: colors.textMuted,
-    letterSpacing: 1,
-  },
-  headline: {
-    ...typography.hero,
-    color: colors.textPrimary,
-    marginTop: spacing.sm,
-  },
-  accentWord: {
-    color: colors.accent,
-  },
-  support: {
-    ...typography.body,
-    color: colors.textSecondary,
-    maxWidth: 360,
-  },
-  input: {
-    marginTop: spacing.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1.5,
-    borderColor: colors.borderAccent,
-    borderRadius: radii.lg,
-    color: colors.textPrimary,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    minHeight: 56,
-    ...typography.subheading,
-  },
-  actions: {
-    gap: spacing.sm,
-    paddingBottom: spacing.xl,
-  },
-  hint: {
-    ...typography.caption,
-    color: colors.textMuted,
-    textAlign: 'center',
+    paddingTop: spacing.md,
+    paddingBottom: spacing.huge,
   },
 });

@@ -3,14 +3,71 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { rankFromXp } from '@/constants/xp';
-import { CoachPersonality, UserProfile } from '@/types';
+import {
+  CoachPersonality,
+  ExperienceLevel,
+  FitnessGoal,
+  Sex,
+  UserProfile,
+} from '@/types';
 
 interface ProfileState {
   profile: UserProfile | null;
-  quickStart: (args: { userId: string; firstName: string; email?: string }) => void;
+  /** @deprecated prefer completeOnboarding */
+  quickStart: (args: {
+    userId: string;
+    firstName: string;
+    email?: string;
+  }) => void;
+  completeOnboarding: (args: {
+    userId: string;
+    firstName: string;
+    sex?: Sex;
+    primaryGoal?: FitnessGoal;
+    experienceLevel?: ExperienceLevel;
+    preferredDurationMin?: number;
+    email?: string;
+  }) => void;
   setCoachPersonality: (personality: CoachPersonality) => void;
   addXp: (amount: number) => void;
   updateWeight: (kg: number) => void;
+  resetOnboarding: () => void;
+}
+
+function buildProfile(args: {
+  userId: string;
+  firstName: string;
+  sex?: Sex;
+  primaryGoal?: FitnessGoal;
+  experienceLevel?: ExperienceLevel;
+  preferredDurationMin?: number;
+  email?: string;
+}): UserProfile {
+  const now = new Date().toISOString();
+  const name = args.firstName.trim() || 'Athlete';
+  return {
+    id: args.userId,
+    firstName: name,
+    email: args.email,
+    sex: args.sex,
+    primaryGoal: args.primaryGoal ?? 'lose_fat',
+    experienceLevel: args.experienceLevel ?? 'beginner',
+    workoutLocation: 'home',
+    equipment: ['none'],
+    trainingDaysPerWeek: 6,
+    preferredDurationMin: args.preferredDurationMin ?? 30,
+    dietaryPreference: 'none',
+    foodAllergies: [],
+    physicalLimitations: [],
+    injuries: [],
+    coachPersonality: 'drill_sergeant',
+    notificationEnabled: true,
+    onboardingCompleted: true,
+    xp: 0,
+    rank: 'Recruit',
+    createdAt: now,
+    updatedAt: now,
+  };
 }
 
 export const useProfileStore = create<ProfileState>()(
@@ -18,32 +75,12 @@ export const useProfileStore = create<ProfileState>()(
     (set) => ({
       profile: null,
       quickStart: ({ userId, firstName, email }) => {
-        const now = new Date().toISOString();
-        const name = firstName.trim() || 'Athlete';
         set({
-          profile: {
-            id: userId,
-            firstName: name,
-            email,
-            primaryGoal: 'lose_fat',
-            experienceLevel: 'beginner',
-            workoutLocation: 'home',
-            equipment: ['none'],
-            trainingDaysPerWeek: 6,
-            preferredDurationMin: 30,
-            dietaryPreference: 'none',
-            foodAllergies: [],
-            physicalLimitations: [],
-            injuries: [],
-            coachPersonality: 'drill_sergeant',
-            notificationEnabled: true,
-            onboardingCompleted: true,
-            xp: 0,
-            rank: 'Recruit',
-            createdAt: now,
-            updatedAt: now,
-          },
+          profile: buildProfile({ userId, firstName, email }),
         });
+      },
+      completeOnboarding: (args) => {
+        set({ profile: buildProfile(args) });
       },
       setCoachPersonality: (personality) =>
         set((state) =>
@@ -82,6 +119,7 @@ export const useProfileStore = create<ProfileState>()(
               }
             : state,
         ),
+      resetOnboarding: () => set({ profile: null }),
     }),
     {
       name: 'fitlife-profile',

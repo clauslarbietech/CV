@@ -14,6 +14,7 @@ import { colors, spacing, typography } from '@/theme';
 export default function ProfileScreen() {
   const profile = useProfileStore((s) => s.profile);
   const setCoachPersonality = useProfileStore((s) => s.setCoachPersonality);
+  const resetOnboarding = useProfileStore((s) => s.resetOnboarding);
   const signOut = useAuthStore((s) => s.signOut);
 
   return (
@@ -24,6 +25,9 @@ export default function ProfileScreen() {
       <Card>
         <Text style={styles.row}>Rank: {profile?.rank ?? 'Recruit'}</Text>
         <Text style={styles.row}>XP: {profile?.xp ?? 0}</Text>
+        <Text style={styles.row}>
+          Body: {profile?.sex ?? '—'}
+        </Text>
         <Text style={styles.row}>
           Goal: {profile?.primaryGoal?.replace('_', ' ') ?? '—'}
         </Text>
@@ -48,9 +52,18 @@ export default function ProfileScreen() {
       </View>
 
       <AppButton
-        label="Sign out"
+        label="Replay intro"
         variant="secondary"
+        onPress={() => {
+          resetOnboarding();
+          router.replace('/(auth)/welcome');
+        }}
+      />
+      <AppButton
+        label="Sign out"
+        variant="ghost"
         onPress={async () => {
+          resetOnboarding();
           await signOut();
           router.replace('/(auth)/welcome');
         }}

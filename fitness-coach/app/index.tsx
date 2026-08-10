@@ -18,7 +18,13 @@ export default function Index() {
     );
   }
 
-  if (!isAuthenticated || !profile?.onboardingCompleted) {
+  // New intro requires a completed profile with body sex selection.
+  const needsIntro =
+    !isAuthenticated ||
+    !profile?.onboardingCompleted ||
+    (profile.sex !== 'male' && profile.sex !== 'female');
+
+  if (needsIntro) {
     return <Redirect href="/(auth)/welcome" />;
   }
 
