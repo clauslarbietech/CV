@@ -2,6 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { ExerciseGraphic } from '@/components/workout/ExerciseGraphic';
 import { ExerciseStep } from '@/components/workout/ExerciseStep';
 import { RestTimer } from '@/components/workout/RestTimer';
 import { AppButton } from '@/components/ui/AppButton';
@@ -241,6 +242,9 @@ export default function WorkoutSessionScreen() {
         ) : null}
 
         <Text style={styles.sectionLabel}>Today&apos;s movements</Text>
+        {day.exercises[0] ? (
+          <ExerciseGraphic exerciseName={day.exercises[0].name} compact />
+        ) : null}
         {day.exercises.map((exercise, index) => {
           const r = resolveExercise(exercise, tier);
           return (
@@ -288,11 +292,12 @@ export default function WorkoutSessionScreen() {
 
   if (active.phase === 'hold' && resolved) {
     return (
-      <Screen scroll={false} contentStyle={styles.centered}>
+      <Screen contentStyle={styles.centered}>
         <Text style={styles.kicker}>
           ROUND {active.currentRound}/{active.totalRounds}
         </Text>
         <Text style={styles.title}>{resolved.name}</Text>
+        <ExerciseGraphic exerciseName={resolved.name} compact />
         <View style={styles.holdRing}>
           <Text style={styles.holdTimer}>
             {formatClock(active.holdRemainingSec)}
