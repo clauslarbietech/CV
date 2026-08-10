@@ -13,7 +13,12 @@ type Props = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList>
 >;
 
-type MoreLinkRoute = "Favorites" | "Profile" | "Settings" | "About";
+type MoreLinkRoute =
+  | "Favorites"
+  | "Profile"
+  | "Settings"
+  | "About"
+  | "Groups";
 
 const LINKS: {
   id: string;
@@ -28,6 +33,13 @@ const LINKS: {
     hint: "Mission, our story, and why it's free",
     icon: "auto-stories",
     route: "About",
+  },
+  {
+    id: "groups",
+    label: "Groups",
+    hint: "Family and church listening together",
+    icon: "groups",
+    route: "Groups",
   },
   {
     id: "favorites",

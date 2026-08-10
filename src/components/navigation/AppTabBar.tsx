@@ -14,10 +14,10 @@ const TABS: {
   label: string;
   icon: keyof typeof MaterialIcons.glyphMap;
 }[] = [
-  { name: "Home", label: "Home", icon: "home" },
+  { name: "Home", label: "Browse", icon: "home" },
   { name: "Bible", label: "Bible", icon: "menu-book" },
-  { name: "Plans", label: "Plans", icon: "checklist" },
-  { name: "More", label: "More", icon: "person-outline" },
+  { name: "Plans", label: "My Plans", icon: "checklist" },
+  { name: "More", label: "Menu", icon: "menu" },
 ];
 
 type Props = {

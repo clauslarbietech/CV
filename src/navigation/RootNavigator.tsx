@@ -14,6 +14,7 @@ import BookScreen from "../screens/BookScreen";
 import BrowseScreen from "../screens/BrowseScreen";
 import ChapterPlayerScreen from "../screens/ChapterPlayerScreen";
 import FavoritesScreen from "../screens/FavoritesScreen";
+import GroupsScreen from "../screens/GroupsScreen";
 import { useBottomMenuInset } from "../hooks/useBottomMenuInset";
 import { MIN_TOUCH_TARGET } from "../theme/a11y";
 import JourneyDetailScreen from "../screens/JourneyDetailScreen";
@@ -36,7 +37,7 @@ const TAB_ICONS: Record<
   Home: "home",
   Bible: "menu-book",
   Plans: "checklist",
-  More: "person-outline",
+  More: "menu",
 };
 
 const TAB_CONTENT_HEIGHT = 56;
@@ -47,7 +48,7 @@ function MainTabs() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Bible"
+      initialRouteName="Home"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: colors.accent,
@@ -74,14 +75,22 @@ function MainTabs() {
         ),
       })}
     >
-      <Tab.Screen name="Home" component={BrowseScreen} />
+      <Tab.Screen
+        name="Home"
+        component={BrowseScreen}
+        options={{ title: "Browse" }}
+      />
       <Tab.Screen name="Bible" component={BibleReaderScreen} />
       <Tab.Screen
         name="Plans"
         component={MyPlansScreen}
-        options={{ title: "Plans" }}
+        options={{ title: "My Plans" }}
       />
-      <Tab.Screen name="More" component={MoreScreen} />
+      <Tab.Screen
+        name="More"
+        component={MoreScreen}
+        options={{ title: "Menu" }}
+      />
     </Tab.Navigator>
   );
 }
@@ -129,6 +138,7 @@ export default function RootNavigator() {
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Favorites" component={FavoritesScreen} />
         <Stack.Screen name="About" component={AboutScreen} />
+        <Stack.Screen name="Groups" component={GroupsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
