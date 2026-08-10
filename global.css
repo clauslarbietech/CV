@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Through the Word–matched geometric sans (Poppins). */
+html,
+body,
+#root,
+button,
+input,
+textarea {
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
 /* Keep the app above iOS home indicator / mobile browser chrome.
    Background follows ThemeProvider CSS vars (night ↔ day). */
 html,
@@ -12,6 +23,11 @@ body,
   padding: 0;
   background: var(--app-bg, #121212);
   color: var(--app-text, #f2f2f7);
+}
+
+/* React Native Web Text nodes */
+#root * {
+  font-family: inherit;
 }
 
 @supports (padding: max(0px)) {

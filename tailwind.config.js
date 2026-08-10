@@ -8,6 +8,20 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          "Poppins",
+          "Poppins_400Regular",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "sans-serif",
+        ],
+        medium: ["Poppins_500Medium", "Poppins", "sans-serif"],
+        semibold: ["Poppins_600SemiBold", "Poppins", "sans-serif"],
+        bold: ["Poppins_700Bold", "Poppins", "sans-serif"],
+      },
       colors: {
         terracotta: {
           DEFAULT: "var(--app-accent, #E4572E)",

@@ -1,6 +1,7 @@
 import { Text, View } from "react-native";
 import { BRAND, BRAND_COLORS } from "../../content/brand";
 import { useTheme } from "../../theme/ThemeProvider";
+import { fontStyle } from "../../theme/typography";
 
 type Props = {
   size?: "sm" | "lg";
@@ -33,10 +34,13 @@ export default function BrandWordmark({
       accessibilityRole="header"
       accessibilityLabel={BRAND.name}
     >
-      <Text className={wordClass} style={{ color: pixColor }}>
+      <Text className={wordClass} style={[{ color: pixColor }, fontStyle("bold")]}>
         {BRAND.namePix}
       </Text>
-      <Text className={`${wordClass} ml-1.5`} style={{ color: bibleColor }}>
+      <Text
+        className={`${wordClass} ml-1.5`}
+        style={[{ color: bibleColor }, fontStyle("bold")]}
+      >
         {BRAND.nameBible}
       </Text>
     </View>

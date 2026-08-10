@@ -14,7 +14,9 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["audio"],
+        "UIBackgroundModes": [
+          "audio"
+        ],
         "NSMicrophoneUsageDescription": "Record short voice reflections for each Bible chapter.",
         "NSSpeechRecognitionUsageDescription": "Optional speech features for audio guide accessibility.",
         "UIAccessibilityEnabled": true
@@ -51,7 +53,8 @@
           "recordAudioAndroid": true,
           "enableBackgroundPlayback": true
         }
-      ]
+      ],
+      "expo-font"
     ]
   }
 }

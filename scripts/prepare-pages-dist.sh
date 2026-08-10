@@ -10,3 +10,16 @@ if [ -d dist/_expo ]; then
   mv dist/_expo dist/expo
   sed -i 's|/_expo/|/expo/|g' dist/index.html dist/404.html
 fi
+
+# Ensure Poppins (Through the Word–matched UI font) loads on static hosting.
+inject_poppins() {
+  local file="$1"
+  if ! grep -q "fonts.googleapis.com/css2?family=Poppins" "$file"; then
+    sed -i 's|<head>|<head>\n    <link rel="preconnect" href="https://fonts.googleapis.com" />\n    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />\n    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700\&display=swap" rel="stylesheet" />|' "$file"
+  fi
+  # Keep product title consistent if another project overwrote export metadata.
+  sed -i 's|<title>FitLife AI Coach</title>|<title>Pix Bible</title>|' "$file"
+}
+
+inject_poppins dist/index.html
+inject_poppins dist/404.html

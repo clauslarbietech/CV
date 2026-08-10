@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
+    "@expo-google-fonts/poppins": "^0.4.1",
     "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/bottom-tabs": "^7.18.14",
@@ -13,6 +14,7 @@
     "expo": "~57.0.9",
     "expo-audio": "~57.0.3",
     "expo-file-system": "~57.0.1",
+    "expo-font": "~57.0.1",
     "expo-speech": "~57.0.1",
     "expo-status-bar": "~57.0.1",
     "nativewind": "^4.2.6",

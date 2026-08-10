@@ -1,13 +1,37 @@
 import "./global.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Platform, View } from "react-native";
+import {
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  useFonts,
+} from "@expo-google-fonts/poppins";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import CoverAnimationScreen from "./src/components/brand/CoverAnimationScreen";
 import RootNavigator from "./src/navigation/RootNavigator";
 import { BRAND_COLORS } from "./src/content/brand";
 import { ThemeProvider, useTheme } from "./src/theme/ThemeProvider";
+import { applyAppFonts } from "./src/theme/typography";
+
+function ensureWebPoppinsStylesheet() {
+  if (Platform.OS !== "web" || typeof document === "undefined") {
+    return;
+  }
+  const id = "pixbible-poppins-font";
+  if (document.getElementById(id)) {
+    return;
+  }
+  const link = document.createElement("link");
+  link.id = id;
+  link.rel = "stylesheet";
+  link.href =
+    "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap";
+  document.head.appendChild(link);
+}
 
 function AppShell() {
   const { colors } = useTheme();
@@ -66,6 +90,34 @@ function AppGate() {
 }
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+  });
+
+  useEffect(() => {
+    ensureWebPoppinsStylesheet();
+  }, []);
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      applyAppFonts();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: BRAND_COLORS.navy,
+        }}
+      />
+    );
+  }
+
   return (
     <ThemeProvider>
       <AppGate />

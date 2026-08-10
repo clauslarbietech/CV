@@ -11,6 +11,7 @@ import { JOURNEYS } from "../data/library";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 import { getJourneyProgressSummary } from "../services/journeyProgress";
 import { useTheme } from "../theme/ThemeProvider";
+import { fontStyle } from "../theme/typography";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "Plans">,
@@ -148,14 +149,17 @@ export default function MyPlansScreen({ navigation }: Props) {
               <View className="ml-3 flex-1">
                 <Text
                   className="font-bold text-night-text"
-                  style={{ fontSize: 20, lineHeight: 24 }}
+                  style={[{ fontSize: 20, lineHeight: 24 }, fontStyle("bold")]}
                   numberOfLines={1}
                 >
                   {row.title}
                 </Text>
                 <Text
                   className="font-medium"
-                  style={{ color: metaGray, fontSize: 15, lineHeight: 20 }}
+                  style={[
+                    { color: metaGray, fontSize: 15, lineHeight: 20 },
+                    fontStyle("medium"),
+                  ]}
                   numberOfLines={1}
                 >
                   {row.subtitle}
