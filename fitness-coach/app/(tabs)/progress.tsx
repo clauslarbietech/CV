@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { ResearchMilestonesCard } from '@/components/progress/ResearchMilestonesCard';
 import { StreakCard } from '@/components/progress/StreakCard';
 import { Card } from '@/components/ui/Card';
 import { MetricCard } from '@/components/ui/MetricCard';
@@ -62,6 +63,8 @@ export default function ProgressScreen() {
             : 'No missions completed yet. Start Day 1.'}
         </Text>
       </Card>
+
+      <ResearchMilestonesCard completedDays={completed} />
     </Screen>
   );
 }

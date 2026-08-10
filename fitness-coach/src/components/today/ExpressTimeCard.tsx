@@ -21,7 +21,9 @@ export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
       <Text style={styles.title}>Military express strategies</Text>
       <Text style={styles.body}>
         Don&apos;t have 20–30 minutes? Convert today&apos;s mission using tactical
-        Tabata density or condensed Army PRT-style sessions.
+        Tabata density or condensed Army PRT-style sessions. Research shows short
+        high-intensity blocks can still raise aerobic power and work capacity —
+        see Progress for Day 10 / 14 / 30 expectations.
       </Text>
 
       <View style={styles.row}>
