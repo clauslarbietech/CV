@@ -17,7 +17,7 @@ const TABS: {
   { name: "Home", label: "Home", icon: "home" },
   { name: "Bible", label: "Bible", icon: "menu-book" },
   { name: "Plans", label: "Plans", icon: "checklist" },
-  { name: "More", label: "More", icon: "person-outline" },
+  { name: "More", label: "Menu", icon: "menu" },
 ];
 
 type Props = {
