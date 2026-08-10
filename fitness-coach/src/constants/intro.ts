@@ -5,11 +5,11 @@ import { ExperienceLevel, FitnessGoal, Sex } from '@/types';
 export type IntroBodySex = Extract<Sex, 'male' | 'female'>;
 
 export const INTRO_BODY_IMAGES: Record<IntroBodySex, ImageSourcePropType> = {
-  male: require('../../../assets/intro/body-male.png'),
-  female: require('../../../assets/intro/body-female.png'),
+  male: require('../../assets/intro/body-male.png'),
+  female: require('../../assets/intro/body-female.png'),
 };
 
-export const INTRO_LOGO = require('../../../assets/intro/fitlife-logo.png');
+export const INTRO_LOGO = require('../../assets/intro/fitlife-logo.png');
 
 export const INTRO_GOALS: Array<{ id: FitnessGoal; label: string; hint: string }> = [
   { id: 'lose_fat', label: 'Lose fat', hint: 'Lean out and feel lighter' },
