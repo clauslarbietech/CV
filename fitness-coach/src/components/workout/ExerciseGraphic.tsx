@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
-import { ExercisePoseSvg } from '@/components/workout/ExercisePoseSvg';
 import { MuscleMapSvg } from '@/components/workout/MuscleMapSvg';
 import {
   getExerciseVisual,
   muscleLabel,
 } from '@/constants/exercises/exerciseVisuals';
+import { POSE_IMAGES } from '@/constants/exercises/poseImages';
 import { colors, radii, spacing, typography } from '@/theme';
 
 interface ExerciseGraphicProps {
@@ -18,6 +18,7 @@ export function ExerciseGraphic({
   compact = false,
 }: ExerciseGraphicProps) {
   const visual = getExerciseVisual(exerciseName);
+  const image = POSE_IMAGES[visual.pose] ?? POSE_IMAGES.generic;
 
   return (
     <View style={[styles.card, compact && styles.compact]}>
@@ -28,12 +29,12 @@ export function ExerciseGraphic({
         <Text style={styles.hint}>Neon = working muscles</Text>
       </View>
 
-      <View style={styles.art}>
-        <ExercisePoseSvg
-          pose={visual.pose}
-          muscles={visual.muscles}
-          width={compact ? 220 : 280}
-          height={compact ? 140 : 180}
+      <View style={[styles.art, compact && styles.artCompact]}>
+        <Image
+          source={image}
+          style={styles.image}
+          resizeMode="cover"
+          accessibilityLabel={`${exerciseName} form illustration`}
         />
       </View>
 
@@ -99,10 +100,18 @@ const styles = StyleSheet.create({
   art: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#0A0A0A',
     borderRadius: radii.xl,
-    paddingVertical: spacing.sm,
     overflow: 'hidden',
+    aspectRatio: 1,
+    width: '100%',
+  },
+  artCompact: {
+    aspectRatio: 1.15,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
   cue: {
     ...typography.body,
