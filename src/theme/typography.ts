@@ -25,21 +25,25 @@ type TextLike = typeof Text & {
  * and named faces resolve on native.
  */
 export function applyAppFonts() {
-  const TextComp = Text as TextLike;
-  const inputComp = TextInput as TextLike;
+  const textComponent = Text as TextLike;
+  const inputComponent = TextInput as TextLike;
 
   const baseStyle =
     Platform.OS === "web"
       ? { fontFamily: APP_FONT_WEB }
       : { fontFamily: APP_FONT.regular };
 
-  textComp.defaultProps = {
-    ...(textComp.defaultProps ?? {}),
-    style: [baseStyle, textComp.defaultProps?.style].flat().filter(Boolean),
+  textComponent.defaultProps = {
+    ...(textComponent.defaultProps ?? {}),
+    style: [baseStyle, textComponent.defaultProps?.style]
+      .flat()
+      .filter(Boolean),
   };
-  inputComp.defaultProps = {
-    ...(inputComp.defaultProps ?? {}),
-    style: [baseStyle, inputComp.defaultProps?.style].flat().filter(Boolean),
+  inputComponent.defaultProps = {
+    ...(inputComponent.defaultProps ?? {}),
+    style: [baseStyle, inputComponent.defaultProps?.style]
+      .flat()
+      .filter(Boolean),
   };
 }
 
