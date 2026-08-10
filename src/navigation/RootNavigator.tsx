@@ -36,7 +36,7 @@ const TAB_ICONS: Record<
   Home: "home",
   Bible: "menu-book",
   Plans: "checklist",
-  More: "person-outline",
+  More: "menu",
 };
 
 const TAB_CONTENT_HEIGHT = 56;
@@ -81,7 +81,11 @@ function MainTabs() {
         component={MyPlansScreen}
         options={{ title: "Plans" }}
       />
-      <Tab.Screen name="More" component={MoreScreen} />
+      <Tab.Screen
+        name="More"
+        component={MoreScreen}
+        options={{ title: "Menu", tabBarLabel: "Menu" }}
+      />
     </Tab.Navigator>
   );
 }
