@@ -42,21 +42,6 @@ export default function BrowseScreen({ navigation }: Props) {
               {BRAND.tagline}
             </Text>
 
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="About The Picture Bible — mission, story, and why it is free"
-              className="mt-3 flex-row items-center rounded-full px-4 py-2.5"
-              style={{ backgroundColor: colors.elevated }}
-              onPress={() => navigation.navigate("About")}
-            >
-              <MaterialIcons name="info-outline" size={16} color={colors.brand} />
-              <Text
-                className="ml-2 text-xs font-semibold"
-                style={{ color: colors.brand }}
-              >
-                About · mission & why it's free
-              </Text>
-            </Pressable>
           </View>
 
           <SectionHeader
