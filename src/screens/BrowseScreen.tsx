@@ -11,6 +11,13 @@ import { MaterialIcons } from "@expo/vector-icons";
 import type { CompositeScreenProps } from "@react-navigation/native";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useEffect } from "react";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { BOOKS, FEATURED_BOOK_IDS, getBook, JOURNEYS } from "../data/library";
 import BrandWordmark from "../components/brand/BrandWordmark";
 import { BRAND } from "../content/brand";
@@ -28,12 +35,26 @@ export default function BrowseScreen({ navigation }: Props) {
   const { colors } = useTheme();
   const journeyCard = Math.min(148, width * 0.38);
   const bookCard = Math.min(160, width * 0.42);
+  const logoIntro = useSharedValue(0);
+
+  useEffect(() => {
+    logoIntro.value = 0;
+    logoIntro.value = withTiming(1, {
+      duration: 550,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [logoIntro]);
+
+  const logoIntroStyle = useAnimatedStyle(() => ({
+    opacity: logoIntro.value,
+    transform: [{ translateY: (1 - logoIntro.value) * 8 }],
+  }));
 
   return (
     <SafeAreaView className="flex-1 bg-night-bg" edges={["top", "left", "right"]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-4 pb-8 pt-2">
-          <View className="mb-6 items-center">
+          <Animated.View style={logoIntroStyle} className="mb-6 items-center">
             <BrandWordmark size="lg" />
             <Text
               className="mt-2 text-center text-sm font-semibold"
@@ -41,8 +62,7 @@ export default function BrowseScreen({ navigation }: Props) {
             >
               {BRAND.tagline}
             </Text>
-
-          </View>
+          </Animated.View>
 
           <SectionHeader
             title="Bible Journeys"
