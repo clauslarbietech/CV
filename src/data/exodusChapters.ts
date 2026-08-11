@@ -1,0 +1,411 @@
+/**
+ * Exodus chapter metadata for Pix Bible.
+ * Scripture quotations marked as ESV are from the ESV® Bible
+ * (The Holy Bible, English Standard Version®), © Crossway.
+ */
+
+export type ExodusArc =
+  | "Oppression"
+  | "Call"
+  | "Plagues"
+  | "Passover"
+  | "Deliverance"
+  | "Wilderness"
+  | "Sinai"
+  | "Tabernacle"
+  | "Rebellion"
+  | "Glory";
+
+export type ExodusChapterMeta = {
+  number: number;
+  title: string;
+  passageQuery: string;
+  summary: string;
+  keyVerseRef: string;
+  keyVerseEsV: string;
+  arc: ExodusArc;
+};
+
+export const EXODUS_ARCS: readonly ExodusArc[] = [
+  "Oppression",
+  "Call",
+  "Plagues",
+  "Passover",
+  "Deliverance",
+  "Wilderness",
+  "Sinai",
+  "Tabernacle",
+  "Rebellion",
+  "Glory",
+] as const;
+
+export const EXODUS_CHAPTERS: ExodusChapterMeta[] = [
+  {
+    number: 1,
+    title: "Israel Oppressed in Egypt",
+    passageQuery: "Exodus 1",
+    summary: "A new Pharaoh enslaves Israel and orders Hebrew baby boys killed.",
+    keyVerseRef: "Exodus 1:12",
+    keyVerseEsV: "But the more they were oppressed, the more they multiplied and the more they spread abroad.",
+    arc: "Oppression",
+  },
+  {
+    number: 2,
+    title: "The Birth of Moses",
+    passageQuery: "Exodus 2",
+    summary: "Moses is hidden in the Nile, raised in Pharaoh’s house, then flees to Midian.",
+    keyVerseRef: "Exodus 2:10",
+    keyVerseEsV: "She named him Moses, “Because,” she said, “I drew him out of the water.”",
+    arc: "Oppression",
+  },
+  {
+    number: 3,
+    title: "The Burning Bush",
+    passageQuery: "Exodus 3",
+    summary: "God calls Moses from the bush and reveals His name: I AM WHO I AM.",
+    keyVerseRef: "Exodus 3:14",
+    keyVerseEsV: "God said to Moses, “I AM WHO I AM.”",
+    arc: "Call",
+  },
+  {
+    number: 4,
+    title: "Signs for Moses",
+    passageQuery: "Exodus 4",
+    summary: "God gives Moses signs and sends Aaron to help him speak to Israel and Pharaoh.",
+    keyVerseRef: "Exodus 4:12",
+    keyVerseEsV: "Now therefore go, and I will be with your mouth and teach you what you shall speak.",
+    arc: "Call",
+  },
+  {
+    number: 5,
+    title: "Bricks Without Straw",
+    passageQuery: "Exodus 5",
+    summary: "Pharaoh refuses and increases the people’s burden; Moses cries out to the Lord.",
+    keyVerseRef: "Exodus 5:1",
+    keyVerseEsV: "Thus says the Lord, the God of Israel, “Let my people go.”",
+    arc: "Call",
+  },
+  {
+    number: 6,
+    title: "God Remembers His Covenant",
+    passageQuery: "Exodus 6",
+    summary: "The Lord promises deliverance by His mighty hand and renews the covenant name.",
+    keyVerseRef: "Exodus 6:7",
+    keyVerseEsV: "I will take you to be my people, and I will be your God.",
+    arc: "Call",
+  },
+  {
+    number: 7,
+    title: "Staff to Serpent; Nile to Blood",
+    passageQuery: "Exodus 7",
+    summary: "Moses and Aaron confront Pharaoh; the Nile turns to blood.",
+    keyVerseRef: "Exodus 7:5",
+    keyVerseEsV: "The Egyptians shall know that I am the Lord, when I stretch out my hand against Egypt.",
+    arc: "Plagues",
+  },
+  {
+    number: 8,
+    title: "Frogs, Gnats, and Flies",
+    passageQuery: "Exodus 8",
+    summary: "Plagues of frogs, gnats, and flies strike Egypt; Pharaoh hardens his heart.",
+    keyVerseRef: "Exodus 8:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Plagues",
+  },
+  {
+    number: 9,
+    title: "Livestock, Boils, and Hail",
+    passageQuery: "Exodus 9",
+    summary: "Disease, boils, and devastating hail fall on Egypt.",
+    keyVerseRef: "Exodus 9:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Plagues",
+  },
+  {
+    number: 10,
+    title: "Locusts and Darkness",
+    passageQuery: "Exodus 10",
+    summary: "Locusts devour the land; thick darkness covers Egypt for three days.",
+    keyVerseRef: "Exodus 10:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Plagues",
+  },
+  {
+    number: 11,
+    title: "Death of the Firstborn Foretold",
+    passageQuery: "Exodus 11",
+    summary: "The Lord announces the final plague and favor for Israel’s request of silver and gold.",
+    keyVerseRef: "Exodus 11:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Plagues",
+  },
+  {
+    number: 12,
+    title: "The Passover",
+    passageQuery: "Exodus 12",
+    summary: "The Passover lamb is slain; Israel is spared and leaves Egypt in haste.",
+    keyVerseRef: "Exodus 12:13",
+    keyVerseEsV: "The blood shall be a sign for you… When I see the blood, I will pass over you.",
+    arc: "Passover",
+  },
+  {
+    number: 13,
+    title: "Consecration and Pillars",
+    passageQuery: "Exodus 13",
+    summary: "Firstborn are consecrated; God leads with a pillar of cloud and fire.",
+    keyVerseRef: "Exodus 13:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Passover",
+  },
+  {
+    number: 14,
+    title: "Crossing the Red Sea",
+    passageQuery: "Exodus 14",
+    summary: "Israel passes through the sea on dry ground; Egypt’s army is overthrown.",
+    keyVerseRef: "Exodus 14:13",
+    keyVerseEsV: "Fear not, stand firm, and see the salvation of the Lord.",
+    arc: "Deliverance",
+  },
+  {
+    number: 15,
+    title: "The Song of the Sea",
+    passageQuery: "Exodus 15",
+    summary: "Moses and Israel sing; bitter water at Marah is made sweet.",
+    keyVerseRef: "Exodus 15:2",
+    keyVerseEsV: "The Lord is my strength and my song, and he has become my salvation.",
+    arc: "Deliverance",
+  },
+  {
+    number: 16,
+    title: "Manna from Heaven",
+    passageQuery: "Exodus 16",
+    summary: "God provides quail and daily manna; the Sabbath rest is taught.",
+    keyVerseRef: "Exodus 16:4",
+    keyVerseEsV: "Behold, I am about to rain bread from heaven for you.",
+    arc: "Wilderness",
+  },
+  {
+    number: 17,
+    title: "Water from the Rock; Amalek",
+    passageQuery: "Exodus 17",
+    summary: "Water comes from the rock at Horeb; Israel prevails over Amalek.",
+    keyVerseRef: "Exodus 17:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Wilderness",
+  },
+  {
+    number: 18,
+    title: "Jethro’s Counsel",
+    passageQuery: "Exodus 18",
+    summary: "Jethro rejoices and advises Moses to appoint leaders to judge the people.",
+    keyVerseRef: "Exodus 18:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Wilderness",
+  },
+  {
+    number: 19,
+    title: "Israel at Mount Sinai",
+    passageQuery: "Exodus 19",
+    summary: "Israel camps at Sinai; God calls them a kingdom of priests and a holy nation.",
+    keyVerseRef: "Exodus 19:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Sinai",
+  },
+  {
+    number: 20,
+    title: "The Ten Commandments",
+    passageQuery: "Exodus 20",
+    summary: "God speaks the Ten Commandments; the people tremble at His voice.",
+    keyVerseRef: "Exodus 20:2–3",
+    keyVerseEsV: "I am the Lord your God… You shall have no other gods before me.",
+    arc: "Sinai",
+  },
+  {
+    number: 21,
+    title: "Laws for Servants and Injury",
+    passageQuery: "Exodus 21",
+    summary: "Judgments about servants, violence, and restitution are given.",
+    keyVerseRef: "Exodus 21:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Sinai",
+  },
+  {
+    number: 22,
+    title: "Property and Justice",
+    passageQuery: "Exodus 22",
+    summary: "Laws of theft, deposit, and care for the vulnerable are set out.",
+    keyVerseRef: "Exodus 22:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Sinai",
+  },
+  {
+    number: 23,
+    title: "Justice, Sabbaths, and Conquest",
+    passageQuery: "Exodus 23",
+    summary: "Commands for justice, feast days, and the angel who goes before Israel.",
+    keyVerseRef: "Exodus 23:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Sinai",
+  },
+  {
+    number: 24,
+    title: "The Covenant Confirmed",
+    passageQuery: "Exodus 24",
+    summary: "The covenant is sealed with blood; Moses enters the cloud on the mountain.",
+    keyVerseRef: "Exodus 24:7",
+    keyVerseEsV: "All that the Lord has spoken we will do, and we will be obedient.",
+    arc: "Sinai",
+  },
+  {
+    number: 25,
+    title: "Offerings for the Sanctuary",
+    passageQuery: "Exodus 25",
+    summary: "Israel is to bring offerings; the ark and table and lampstand are described.",
+    keyVerseRef: "Exodus 25:8",
+    keyVerseEsV: "And let them make me a sanctuary, that I may dwell in their midst.",
+    arc: "Tabernacle",
+  },
+  {
+    number: 26,
+    title: "The Tabernacle Curtains",
+    passageQuery: "Exodus 26",
+    summary: "Detailed plans for the tabernacle’s curtains, frames, and veil.",
+    keyVerseRef: "Exodus 26:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Tabernacle",
+  },
+  {
+    number: 27,
+    title: "Altar and Court",
+    passageQuery: "Exodus 27",
+    summary: "The bronze altar and the court of the tabernacle are prescribed.",
+    keyVerseRef: "Exodus 27:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Tabernacle",
+  },
+  {
+    number: 28,
+    title: "Priestly Garments",
+    passageQuery: "Exodus 28",
+    summary: "Holy garments for Aaron and his sons are designed for glory and beauty.",
+    keyVerseRef: "Exodus 28:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Tabernacle",
+  },
+  {
+    number: 29,
+    title: "Consecration of the Priests",
+    passageQuery: "Exodus 29",
+    summary: "Aaron and his sons are ordained; daily offerings begin.",
+    keyVerseRef: "Exodus 29:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Tabernacle",
+  },
+  {
+    number: 30,
+    title: "Altar of Incense and Atonement Money",
+    passageQuery: "Exodus 30",
+    summary: "Incense altar, census ransom, laver, anointing oil, and incense.",
+    keyVerseRef: "Exodus 30:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Tabernacle",
+  },
+  {
+    number: 31,
+    title: "Craftsmen and the Sabbath",
+    passageQuery: "Exodus 31",
+    summary: "Bezalel and Oholiab are filled with skill; the Sabbath is a sign.",
+    keyVerseRef: "Exodus 31:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Tabernacle",
+  },
+  {
+    number: 32,
+    title: "The Golden Calf",
+    passageQuery: "Exodus 32",
+    summary: "Israel makes a calf; Moses intercedes and breaks the tablets.",
+    keyVerseRef: "Exodus 32:26",
+    keyVerseEsV: "Who is on the Lord’s side? Come to me.",
+    arc: "Rebellion",
+  },
+  {
+    number: 33,
+    title: "The Tent of Meeting",
+    passageQuery: "Exodus 33",
+    summary: "Moses seeks God’s presence; the Lord speaks with him face to face.",
+    keyVerseRef: "Exodus 33:14",
+    keyVerseEsV: "My presence will go with you, and I will give you rest.",
+    arc: "Rebellion",
+  },
+  {
+    number: 34,
+    title: "New Tablets; God’s Glory",
+    passageQuery: "Exodus 34",
+    summary: "God proclaims His name; the covenant is renewed; Moses’ face shines.",
+    keyVerseRef: "Exodus 34:6",
+    keyVerseEsV: "The Lord, the Lord, a God merciful and gracious, slow to anger…",
+    arc: "Rebellion",
+  },
+  {
+    number: 35,
+    title: "Sabbath and Freewill Offerings",
+    passageQuery: "Exodus 35",
+    summary: "The people bring willing gifts for the tabernacle work.",
+    keyVerseRef: "Exodus 35:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Glory",
+  },
+  {
+    number: 36,
+    title: "Building the Tabernacle",
+    passageQuery: "Exodus 36",
+    summary: "Skilled workers construct the curtains and frames of the sanctuary.",
+    keyVerseRef: "Exodus 36:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Glory",
+  },
+  {
+    number: 37,
+    title: "Ark, Table, and Lampstand Made",
+    passageQuery: "Exodus 37",
+    summary: "Bezalel makes the ark, mercy seat, table, and lampstand.",
+    keyVerseRef: "Exodus 37:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Glory",
+  },
+  {
+    number: 38,
+    title: "Altar, Court, and Materials",
+    passageQuery: "Exodus 38",
+    summary: "The bronze altar, laver, court, and inventory of materials.",
+    keyVerseRef: "Exodus 38:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Glory",
+  },
+  {
+    number: 39,
+    title: "Priestly Garments Completed",
+    passageQuery: "Exodus 39",
+    summary: "The holy garments are finished as the Lord commanded Moses.",
+    keyVerseRef: "Exodus 39:1",
+    keyVerseEsV: "And the Lord spoke to Moses in that day concerning all Israel.",
+    arc: "Glory",
+  },
+  {
+    number: 40,
+    title: "The Tabernacle Raised; Glory Fills It",
+    passageQuery: "Exodus 40",
+    summary: "The tabernacle is set up; the glory of the Lord fills the tent.",
+    keyVerseRef: "Exodus 40:34",
+    keyVerseEsV: "Then the cloud covered the tent of meeting, and the glory of the Lord filled the tabernacle.",
+    arc: "Glory",
+  },
+];
+
+export function getExodusChapter(chapterNumber: number): ExodusChapterMeta | undefined {
+  return EXODUS_CHAPTERS.find((chapter) => chapter.number === chapterNumber);
+}
+
+export function listExodusByArc(arc: ExodusArc): ExodusChapterMeta[] {
+  return EXODUS_CHAPTERS.filter((chapter) => chapter.arc === arc);
+}
