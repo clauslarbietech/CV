@@ -1,36 +1,37 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { TopChrome } from "@/components/AppShell";
 import { accomplishments } from "@/data/accomplishments";
 
 export const metadata: Metadata = {
   title: "Accomplishments",
-  description: "People with dyslexia who shaped business, science, sports, film, and more.",
 };
 
 export default function AccomplishmentsPage() {
   return (
-    <section className="section">
-      <div className="site-shell">
-        <h1 className="section-title">People with dyslexia who changed the world</h1>
-        <p className="section-lead">
-          Dyslexia is common—about 1 in 5 people struggle with reading in ways connected to it. These stories show
-          what becomes possible when strengths get room to grow.
-        </p>
-
-        <ul className="grid gap-10 sm:grid-cols-2">
-          {accomplishments.map((person) => (
-            <li key={person.name} className="border-t border-[var(--line)] pt-5">
-              <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--teal)]">{person.field}</p>
-              <h2 className="font-display mt-2 text-3xl text-[var(--bg-deep)]">{person.name}</h2>
-              <p className="mt-3 text-[var(--ink-soft)]">{person.achievement}</p>
-              {person.quote ? (
-                <blockquote className="mt-4 border-l-4 border-[var(--amber)] pl-4 text-[var(--ink)] italic">
-                  “{person.quote}”
-                </blockquote>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
+    <>
+      <TopChrome />
+      <Link href="/explore" className="mb-3 inline-flex text-sm text-[var(--ink-muted)]">
+        ← Explore
+      </Link>
+      <h1 className="mb-2 text-3xl font-bold tracking-tight">Accomplishments</h1>
+      <p className="mb-6 text-[var(--ink-muted)]">
+        People with dyslexia who shaped the world—proof that struggle with print is not a ceiling.
+      </p>
+      <ul className="space-y-4">
+        {accomplishments.map((person) => (
+          <li key={person.name} className="panel">
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--accent)]">{person.field}</p>
+            <h2 className="mt-2 text-xl font-bold">{person.name}</h2>
+            <p className="mt-2 text-[var(--ink-soft)]">{person.achievement}</p>
+            {person.quote ? (
+              <blockquote className="mt-3 border-l-2 border-[var(--accent)] pl-3 text-[var(--ink)] italic">
+                “{person.quote}”
+              </blockquote>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }

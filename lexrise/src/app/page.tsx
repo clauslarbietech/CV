@@ -1,76 +1,58 @@
 import Link from "next/link";
+import { TopChrome } from "@/components/AppShell";
 
-export default function HomePage() {
+export default function TrainingPage() {
   return (
     <>
-      <section className="hero-plane">
-        <div className="hero-glow" aria-hidden />
-        <div className="hero-letters" aria-hidden>
-          <span>b</span>
-          <span>d</span>
-          <span>p</span>
-          <span>q</span>
-        </div>
-        <div className="site-shell flex min-h-[min(100svh,860px)] flex-col justify-center py-20">
-          <p className="rise font-display text-5xl font-semibold tracking-tight sm:text-7xl md:text-8xl">
-            LexRise
-          </p>
-          <h1 className="rise rise-delay-1 mt-5 max-w-2xl text-2xl font-medium leading-snug text-[rgba(244,251,250,0.92)] sm:text-3xl">
-            Reading tools, fonts, and phonics games for dyslexic minds.
-          </h1>
-          <p className="rise rise-delay-2 mt-4 max-w-xl text-lg text-[rgba(244,251,250,0.78)]">
-            Practice clearer text, build sound–letter skills, and see what people with dyslexia have already
-            achieved in the world.
-          </p>
-          <div className="rise rise-delay-3 mt-8 flex flex-wrap gap-3">
-            <Link href="/accomplishments" className="btn btn-primary bg-[var(--amber)] text-[var(--ink)] hover:bg-[var(--amber-deep)]">
-              See accomplishments
-            </Link>
-            <Link href="/games" className="btn btn-secondary border-[rgba(244,251,250,0.35)] text-[var(--foam)] hover:bg-[rgba(255,255,255,0.08)]">
-              Play reading games
-            </Link>
-          </div>
-        </div>
-      </section>
+      <TopChrome />
+      <div className="segmented" role="tablist" aria-label="Day">
+        <button type="button" data-active="false" disabled>
+          Yesterday
+        </button>
+        <button type="button" data-active="true">
+          Today
+        </button>
+      </div>
 
-      <section className="section">
-        <div className="site-shell">
-          <h2 className="section-title">One app. Three ways to rise.</h2>
-          <p className="section-lead">
-            LexRise starts with inspiration, then gives you practical reading supports grounded in research—not
-            viral myths.
-          </p>
-          <div className="grid gap-8 md:grid-cols-3">
-            <Link href="/accomplishments" className="group block">
-              <h3 className="font-display text-2xl text-[var(--bg-deep)] transition-colors group-hover:text-[var(--teal)]">
-                Accomplishments
-              </h3>
-              <p className="mt-2 text-[var(--ink-soft)]">
-                Entrepreneurs, scientists, athletes, and artists who thrived with dyslexia—proof that struggle with
-                print is not a ceiling.
-              </p>
-            </Link>
-            <Link href="/fonts" className="group block">
-              <h3 className="font-display text-2xl text-[var(--bg-deep)] transition-colors group-hover:text-[var(--teal)]">
-                Font Lab
-              </h3>
-              <p className="mt-2 text-[var(--ink-soft)]">
-                Tune Lexend, OpenDyslexic, size, spacing, and contrast. Research says spacing often helps more than
-                fancy letter shapes.
-              </p>
-            </Link>
-            <Link href="/games" className="group block">
-              <h3 className="font-display text-2xl text-[var(--bg-deep)] transition-colors group-hover:text-[var(--teal)]">
-                Phonics games
-              </h3>
-              <p className="mt-2 text-[var(--ink-soft)]">
-                Sound match, letter flip (b/d/p/q), word unscramble, and nonsense decoding—plus the scramble
-                challenge with myth-busting.
-              </p>
-            </Link>
+      <Link href="/session" className="session-card">
+        <span className="session-orb" aria-hidden>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M7 14c2.2-4 4-6 5-6s2.8 2 5 6c-2.5 1.8-7.5 1.8-10 0Z"
+              fill="#5b3cc4"
+              opacity="0.35"
+              stroke="#5b3cc4"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M8 10c1.5-2.5 2.8-3.5 4-3.5s2.5 1 4 3.5"
+              stroke="#5b3cc4"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+          </svg>
+        </span>
+        <span className="text-lg font-semibold text-white">Start session</span>
+      </Link>
+
+      <p className="session-hint">Start a session and keep building your streak.</p>
+
+      <div className="mt-8 grid gap-3">
+        <Link href="/session?game=unscramble" className="panel flex items-center justify-between">
+          <div>
+            <p className="text-sm text-[var(--ink-muted)]">Quick practice</p>
+            <p className="font-semibold">Phonics unscramble</p>
           </div>
-        </div>
-      </section>
+          <span className="text-[var(--ink-muted)]">→</span>
+        </Link>
+        <Link href="/session?game=flip" className="panel flex items-center justify-between">
+          <div>
+            <p className="text-sm text-[var(--ink-muted)]">Letter focus</p>
+            <p className="font-semibold">b / d / p / q flip</p>
+          </div>
+          <span className="text-[var(--ink-muted)]">→</span>
+        </Link>
+      </div>
     </>
   );
 }

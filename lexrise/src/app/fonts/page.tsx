@@ -1,22 +1,24 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { TopChrome } from "@/components/AppShell";
 import { FontLab } from "@/components/FontLab";
 
 export const metadata: Metadata = {
   title: "Font Lab",
-  description: "Tune fonts, spacing, and contrast for more comfortable dyslexia-friendly reading.",
 };
 
 export default function FontsPage() {
   return (
-    <section className="section">
-      <div className="site-shell">
-        <h1 className="section-title">Font Lab</h1>
-        <p className="section-lead">
-          Special “dyslexia fonts” get a lot of hype. Evidence is mixed—extra letter and word spacing often matters
-          more. Dial in what works for your eyes.
-        </p>
-        <FontLab />
-      </div>
-    </section>
+    <>
+      <TopChrome />
+      <Link href="/explore" className="mb-3 inline-flex text-sm text-[var(--ink-muted)]">
+        ← Explore
+      </Link>
+      <h1 className="mb-2 text-3xl font-bold tracking-tight">Font Lab</h1>
+      <p className="mb-6 text-[var(--ink-muted)]">
+        Spacing often helps more than specialty letter shapes. Keep what feels clearest for you.
+      </p>
+      <FontLab />
+    </>
   );
 }

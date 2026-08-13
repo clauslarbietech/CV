@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
-import { Fraunces, Lexend } from "next/font/google";
-import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
+import type { Metadata, Viewport } from "next";
+import { Lexend } from "next/font/google";
+import { AppShell } from "@/components/AppShell";
 import "./globals.css";
 
 const lexend = Lexend({
@@ -9,28 +9,27 @@ const lexend = Lexend({
   display: "swap",
 });
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: {
-    default: "LexRise — Dyslexia reading tools, fonts & games",
+    default: "LexRise — Dyslexia reading training",
     template: "%s · LexRise",
   },
   description:
-    "LexRise helps people with dyslexia practice reading with adjustable fonts, phonics games, research-backed tips, and a hall of accomplishments.",
+    "Daily reading sessions, phonics games, font comfort tools, and accomplishments for people with dyslexia.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#050505",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${lexend.variable} ${fraunces.variable} h-full`}>
-      <body className="min-h-full flex flex-col reading-surface">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
+    <html lang="en" className={`${lexend.variable} h-full`}>
+      <body className="min-h-full">
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

@@ -10,6 +10,8 @@ import {
   type PhonicsWord,
 } from "@/data/games";
 
+type GameTab = "unscramble" | "flip" | "nonsense" | "scramble";
+
 function shuffle<T>(items: T[]): T[] {
   const next = [...items];
   for (let i = next.length - 1; i > 0; i -= 1) {
@@ -32,18 +34,18 @@ function scrambleText(text: string): string {
     .join("");
 }
 
-export function GamesHub() {
-  const [tab, setTab] = useState<"unscramble" | "flip" | "nonsense" | "scramble">("unscramble");
+export function GamesHub({ initialTab = "unscramble" }: { initialTab?: GameTab }) {
+  const [tab, setTab] = useState<GameTab>(initialTab);
 
   return (
     <div>
-      <div className="mb-6 flex flex-wrap gap-2" role="tablist" aria-label="Games">
+      <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Games">
         {(
           [
-            ["unscramble", "Phonics unscramble"],
-            ["flip", "Letter flip b/d/p/q"],
-            ["nonsense", "Nonsense decode"],
-            ["scramble", "Scramble challenge"],
+            ["unscramble", "Unscramble"],
+            ["flip", "Letter flip"],
+            ["nonsense", "Nonsense"],
+            ["scramble", "Scramble"],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -51,9 +53,13 @@ export function GamesHub() {
             type="button"
             role="tab"
             aria-selected={tab === id}
-            className="btn btn-secondary min-h-11 px-4 text-sm"
+            className="btn btn-ghost min-h-10 px-4 text-sm"
             onClick={() => setTab(id)}
-            style={tab === id ? { borderColor: "var(--teal)", background: "rgba(42,157,154,0.14)" } : undefined}
+            style={
+              tab === id
+                ? { background: "rgba(255,122,61,0.18)", borderColor: "rgba(255,122,61,0.45)" }
+                : undefined
+            }
           >
             {label}
           </button>
@@ -129,13 +135,13 @@ function UnscrambleRound({
     <div className="panel">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="font-display text-2xl text-[var(--bg-deep)]">Phonics unscramble</h2>
-          <p className="text-[var(--ink-soft)]">Hint: {current.hint}</p>
+          <h2 className="text-xl font-bold">Phonics unscramble</h2>
+          <p className="text-[var(--ink-muted)]">Hint: {current.hint}</p>
         </div>
-        <p className="font-semibold text-[var(--teal)]">Score {score}</p>
+        <p className="font-semibold text-[var(--accent)]">Score {score}</p>
       </div>
 
-      <p className="mt-4 text-lg">{message}</p>
+      <p className="mt-4">{message}</p>
 
       <div className="mt-6 flex flex-wrap gap-2" aria-label="Answer slots">
         {Array.from({ length: current.word.length }).map((_, i) => (
@@ -154,13 +160,13 @@ function UnscrambleRound({
       </div>
 
       <div className="mt-6 flex flex-wrap gap-2">
-        <button type="button" className="btn btn-secondary" onClick={undo}>
+        <button type="button" className="btn btn-ghost" onClick={undo}>
           Undo
         </button>
-        <button type="button" className="btn btn-primary" onClick={check}>
+        <button type="button" className="btn btn-accent" onClick={check}>
           Check word
         </button>
-        <button type="button" className="btn btn-secondary" onClick={onSkip}>
+        <button type="button" className="btn btn-ghost" onClick={onSkip}>
           Skip
         </button>
       </div>
@@ -191,11 +197,11 @@ function LetterFlipGame() {
   return (
     <div className="panel">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 className="font-display text-2xl text-[var(--bg-deep)]">Letter flip</h2>
-        <p className="font-semibold text-[var(--teal)]">Score {score}</p>
+        <h2 className="text-xl font-bold">Letter flip</h2>
+        <p className="font-semibold text-[var(--accent)]">Score {score}</p>
       </div>
-      <p className="mt-3 text-lg">{item.prompt}</p>
-      <div className="mt-6 grid max-w-md grid-cols-2 gap-3">
+      <p className="mt-3">{item.prompt}</p>
+      <div className="mt-6 grid grid-cols-2 gap-3">
         {item.options.map((option) => {
           let dataState: "correct" | "wrong" | undefined;
           if (picked) {
@@ -215,9 +221,6 @@ function LetterFlipGame() {
           );
         })}
       </div>
-      <p className="mt-4 text-sm text-[var(--ink-soft)]">
-        Say the sound out loud before you tap. Mouth shape helps lock the letter.
-      </p>
     </div>
   );
 }
@@ -243,18 +246,16 @@ function NonsenseGame() {
   return (
     <div className="panel">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 className="font-display text-2xl text-[var(--bg-deep)]">Nonsense decode</h2>
-        <p className="font-semibold text-[var(--teal)]">Score {score}</p>
+        <h2 className="text-xl font-bold">Nonsense decode</h2>
+        <p className="font-semibold text-[var(--accent)]">Score {score}</p>
       </div>
-      <p className="mt-3 text-[var(--ink-soft)]">
-        Inspired by apps like Nonsense!—made-up words force decoding instead of memory guessing.
-      </p>
-      <p className="mt-6 font-display text-4xl tracking-wide text-[var(--bg-deep)]">{item.word}</p>
-      <p className="mt-2 text-lg">Sounds: {item.sounds}</p>
-      <label className="mt-6 block max-w-md">
-        <span className="mb-2 block font-semibold">Type what you hear/see</span>
+      <p className="mt-3 text-[var(--ink-muted)]">Made-up words force decoding instead of guessing.</p>
+      <p className="mt-6 text-4xl font-bold tracking-wide">{item.word}</p>
+      <p className="mt-2">Sounds: {item.sounds}</p>
+      <label className="mt-6 block">
+        <span className="mb-2 block font-semibold">Type what you see</span>
         <input
-          className="control w-full rounded-xl border-2 border-[var(--line)] bg-white px-3 py-3 text-xl"
+          className="control"
           value={guess}
           onChange={(e) => setGuess(e.target.value)}
           onKeyDown={(e) => {
@@ -265,12 +266,12 @@ function NonsenseGame() {
         />
       </label>
       <div className="mt-4 flex flex-wrap gap-2">
-        <button type="button" className="btn btn-primary" onClick={check}>
+        <button type="button" className="btn btn-accent" onClick={check}>
           Check
         </button>
         <button
           type="button"
-          className="btn btn-secondary"
+          className="btn btn-ghost"
           onClick={() => {
             setGuess("");
             setIndex((i) => i + 1);
@@ -280,7 +281,7 @@ function NonsenseGame() {
           Next word
         </button>
       </div>
-      <p className="mt-4">{feedback}</p>
+      <p className="mt-4 text-[var(--ink-soft)]">{feedback}</p>
     </div>
   );
 }
@@ -291,19 +292,15 @@ function ScrambleChallenge() {
 
   return (
     <div className="panel">
-      <h2 className="font-display text-2xl text-[var(--bg-deep)]">Scramble challenge</h2>
-      <p className="mt-3 rounded-xl bg-[rgba(224,154,62,0.16)] px-4 py-3 text-[var(--ink)]">
-        Myth check: viral posts claim “only dyslexic people can read this.” That is false. Most readers can decode
-        typoglycemia when first and last letters stay put. It is not a dyslexia test.
+      <h2 className="text-xl font-bold">Scramble challenge</h2>
+      <p className="mt-3 rounded-2xl bg-[var(--accent-soft)] px-4 py-3 text-sm">
+        Myth check: “Only dyslexic people can read this” is false. Most readers can decode scrambled words when
+        first and last letters stay put.
       </p>
-      <p className="mt-6 text-xl leading-relaxed">{showPlain ? scrambleSample : scrambled}</p>
-      <button type="button" className="btn btn-secondary mt-6" onClick={() => setShowPlain((v) => !v)}>
+      <p className="mt-6 text-lg leading-relaxed">{showPlain ? scrambleSample : scrambled}</p>
+      <button type="button" className="btn btn-ghost mt-6" onClick={() => setShowPlain((v) => !v)}>
         {showPlain ? "Show scrambled again" : "Reveal clear text"}
       </button>
-      <p className="mt-4 text-sm text-[var(--ink-soft)]">
-        For real reading growth, use Phonics unscramble and Nonsense decode—or explore Nessy, Starfall, and Nonsense!
-        on the Research page.
-      </p>
     </div>
   );
 }

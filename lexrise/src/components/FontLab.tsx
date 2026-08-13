@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Face = "lexend" | "opendyslexic" | "system";
 
@@ -13,36 +13,24 @@ export function FontLab() {
   const [letterSpacing, setLetterSpacing] = useState(0.06);
   const [wordSpacing, setWordSpacing] = useState(0.2);
   const [lineHeight, setLineHeight] = useState(1.8);
-  const [theme, setTheme] = useState<"day" | "soft" | "night">("day");
+  const [theme, setTheme] = useState<"night" | "soft" | "day">("night");
 
-  useEffect(() => {
-    document.documentElement.style.setProperty("--letter-spacing", `${letterSpacing}em`);
-    document.documentElement.style.setProperty("--word-spacing", `${wordSpacing}em`);
-    document.documentElement.style.setProperty("--line-height", String(lineHeight));
-    document.documentElement.style.setProperty("--reading-size", `${size}px`);
-  }, [letterSpacing, wordSpacing, lineHeight, size]);
-
-  const faceClass =
-    face === "opendyslexic" ? "reading-opendyslexic" : face === "system" ? "font-sans" : "reading-surface";
+  const faceClass = face === "opendyslexic" ? "reading-opendyslexic" : "";
 
   const surface =
-    theme === "night"
-      ? { background: "#102226", color: "#e7f4f2" }
+    theme === "day"
+      ? { background: "#f4f4f5", color: "#111" }
       : theme === "soft"
-        ? { background: "#dceee9", color: "#1a3034" }
-        : { background: "#f7fbfa", color: "#142428" };
+        ? { background: "#1a2030", color: "#e8eefc" }
+        : { background: "#0b0b0d", color: "#fff" };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.2fr)]">
+    <div className="grid gap-4">
       <div className="panel space-y-5">
         <label className="block">
           <span className="mb-2 block font-semibold">Font family</span>
-          <select
-            className="control w-full rounded-xl border-2 border-[var(--line)] bg-white px-3 py-3"
-            value={face}
-            onChange={(e) => setFace(e.target.value as Face)}
-          >
-            <option value="lexend">Lexend (designed for reading)</option>
+          <select className="control" value={face} onChange={(e) => setFace(e.target.value as Face)}>
+            <option value="lexend">Lexend</option>
             <option value="opendyslexic">OpenDyslexic</option>
             <option value="system">System sans</option>
           </select>
@@ -82,33 +70,32 @@ export function FontLab() {
           <div className="flex flex-wrap gap-2">
             {(
               [
+                ["night", "Dark"],
+                ["soft", "Soft"],
                 ["day", "Bright"],
-                ["soft", "Soft teal"],
-                ["night", "Low glare"],
               ] as const
             ).map(([id, label]) => (
               <button
                 key={id}
                 type="button"
-                className="btn btn-secondary min-h-10 px-4 text-sm"
+                className="btn btn-ghost min-h-10 px-4 text-sm"
                 aria-pressed={theme === id}
                 onClick={() => setTheme(id)}
-                style={theme === id ? { borderColor: "var(--teal)", background: "rgba(42,157,154,0.12)" } : undefined}
+                style={
+                  theme === id
+                    ? { borderColor: "rgba(255,122,61,0.5)", background: "rgba(255,122,61,0.16)" }
+                    : undefined
+                }
               >
                 {label}
               </button>
             ))}
           </div>
         </fieldset>
-
-        <p className="text-sm text-[var(--ink-soft)]">
-          Tip from research: if OpenDyslexic feels harder, try Lexend with wider spacing. Keep the setup that makes
-          reading feel steadier for you.
-        </p>
       </div>
 
       <div className="panel" style={surface}>
-        <p className={`text-sm font-semibold uppercase tracking-[0.12em] opacity-70`}>Live preview</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.12em] opacity-70">Live preview</p>
         <p
           className={`mt-4 ${faceClass}`}
           style={{
@@ -119,17 +106,6 @@ export function FontLab() {
           }}
         >
           {sample}
-        </p>
-        <p
-          className={`mt-6 ${faceClass}`}
-          style={{
-            fontSize: `${size}px`,
-            letterSpacing: `${letterSpacing}em`,
-            wordSpacing: `${wordSpacing}em`,
-            lineHeight,
-          }}
-        >
-          b d p q · ship · when · map · thin · chat
         </p>
       </div>
     </div>
@@ -157,13 +133,13 @@ function Slider({
     <label className="block">
       <span className="mb-2 flex items-center justify-between gap-3 font-semibold">
         <span>{label}</span>
-        <span className="text-sm font-medium text-[var(--ink-soft)]">
+        <span className="text-sm font-medium text-[var(--ink-muted)]">
           {value}
           {suffix}
         </span>
       </span>
       <input
-        className="control w-full accent-[var(--teal)]"
+        className="w-full accent-[var(--accent)]"
         type="range"
         min={min}
         max={max}
