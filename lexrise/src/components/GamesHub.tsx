@@ -19,6 +19,8 @@ import {
   syllableItems,
 } from "@/data/literacy";
 import { recordAttempt } from "@/lib/hero/store";
+import { speakPhonemeSequence, speakText } from "@/lib/hero/speech";
+import { useHeroProfile } from "@/hooks/useHeroProfile";
 
 type GameTab =
   | "phonemic"
@@ -139,11 +141,19 @@ function ScoreHeader({ title, score, tier }: { title: string; score: number; tie
 }
 
 function PhonemeGame() {
+  const profile = useHeroProfile();
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
   const item = phonemeItems[index % phonemeItems.length];
   const answer = item.answer;
+
+  function hear() {
+    speakPhonemeSequence(item.phonemes, {
+      rate: profile.tts.rate * 0.85,
+      soundOff: profile.experience.soundOff,
+    });
+  }
 
   function choose(option: string) {
     if (picked) return;
@@ -173,6 +183,9 @@ function PhonemeGame() {
       <p className="mt-3 text-[var(--ink-muted)]">Hear the sounds in words—phonological awareness.</p>
       <p className="mt-4 text-lg font-semibold">{item.prompt}</p>
       <p className="mt-2 text-[var(--ink-soft)]">Word: {item.word}</p>
+      <button type="button" className="btn btn-ghost mt-3" onClick={hear}>
+        Hear the sounds
+      </button>
       <div className="mt-6 grid grid-cols-2 gap-3">
         {item.options.map((option) => {
           let dataState: "correct" | "wrong" | undefined;
@@ -222,9 +235,17 @@ function UnscrambleRound({
   onCorrect: () => void;
   onSkip: () => void;
 }) {
+  const profile = useHeroProfile();
   const [picked, setPicked] = useState<string[]>([]);
   const [poolLetters, setPoolLetters] = useState(() => shuffle(current.word.split("")));
   const [message, setMessage] = useState(`Sounds: ${current.sounds}`);
+
+  function hear() {
+    speakText(current.sounds.replace(/\//g, " "), {
+      rate: profile.tts.rate * 0.8,
+      soundOff: profile.experience.soundOff,
+    });
+  }
 
   function takeLetter(letter: string, fromIndex: number) {
     setPoolLetters((letters) => letters.filter((_, i) => i !== fromIndex));
@@ -260,6 +281,9 @@ function UnscrambleRound({
       <ScoreHeader title="Word Builder" score={score} tier="evidence-based" />
       <p className="text-[var(--ink-muted)]">Hint: {current.hint}</p>
       <p className="mt-4">{message}</p>
+      <button type="button" className="btn btn-ghost" onClick={hear}>
+        Hear sounds
+      </button>
       <div className="mt-6 flex flex-wrap gap-2" aria-label="Answer slots">
         {Array.from({ length: current.word.length }).map((_, i) => (
           <span key={i} className="slot">
@@ -410,6 +434,7 @@ function NonsenseGame() {
 }
 
 function MorphologyGame() {
+  const profile = useHeroProfile();
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
   const item = morphologyItems[index % morphologyItems.length];
@@ -417,7 +442,6 @@ function MorphologyGame() {
   const [pool, setPool] = useState(() => shuffle(item.parts));
   const [message, setMessage] = useState(item.meaning);
 
-  // Reset tiles when the word changes (keyed via index)
   const wordKey = item.word;
   const [prevWord, setPrevWord] = useState(wordKey);
   if (prevWord !== wordKey) {
@@ -425,6 +449,10 @@ function MorphologyGame() {
     setPicked([]);
     setPool(shuffle(item.parts));
     setMessage(item.meaning);
+  }
+
+  function hear() {
+    speakText(item.word, { rate: profile.tts.rate, soundOff: profile.experience.soundOff });
   }
 
   function take(part: string, fromIndex: number) {
@@ -462,6 +490,9 @@ function MorphologyGame() {
       <p className="mt-3 text-[var(--ink-muted)]">Morphology: meaningful pieces of words (un + help + ful).</p>
       <p className="mt-4 text-2xl font-bold tracking-wide">{item.word}</p>
       <p className="mt-2">{message}</p>
+      <button type="button" className="btn btn-ghost mt-2" onClick={hear}>
+        Hear word
+      </button>
       <div className="mt-5 flex flex-wrap gap-2">
         {picked.map((part, i) => (
           <span key={`${part}-${i}`} className="slot morph-slot">
@@ -565,11 +596,19 @@ function SyllableGame() {
 }
 
 function SpellingGame() {
+  const profile = useHeroProfile();
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState("Listen to the sounds, then spell.");
   const item = spellingItems[index % spellingItems.length];
+
+  function hear() {
+    speakText(item.sounds.replace(/\//g, " "), {
+      rate: profile.tts.rate * 0.8,
+      soundOff: profile.experience.soundOff,
+    });
+  }
 
   function check() {
     if (guess.trim().toLowerCase() === item.answer) {
@@ -594,6 +633,9 @@ function SpellingGame() {
       <ScoreHeader title="Spelling Lab" score={score} tier="evidence-based" />
       <p className="mt-3">{item.prompt}</p>
       <p className="mt-2 text-[var(--ink-muted)]">Sounds: {item.sounds}</p>
+      <button type="button" className="btn btn-ghost mt-2" onClick={hear}>
+        Hear sounds
+      </button>
       <label className="mt-6 block">
         <span className="mb-2 block font-semibold">Type the spelling</span>
         <input
@@ -625,6 +667,8 @@ function FluencyPractice() {
   const [reps, setReps] = useState(0);
   const [running, setRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  const [showComp, setShowComp] = useState(false);
+  const [compPicked, setCompPicked] = useState<string | null>(null);
   const started = useRef<number | null>(null);
   const passage = fluencyPassages[index % fluencyPassages.length];
 
@@ -640,16 +684,32 @@ function FluencyPractice() {
     started.current = Date.now();
     setElapsed(0);
     setRunning(true);
+    setShowComp(false);
+    setCompPicked(null);
   }
 
   function finish() {
     setRunning(false);
     setReps((r) => r + 1);
+    setShowComp(true);
     recordAttempt({
       exerciseId: "fluency",
       skill: "fluency",
       correct: true,
       responseMs: elapsed * 1000,
+      hintsUsed: 0,
+    });
+  }
+
+  function answerComp(option: string) {
+    if (compPicked) return;
+    setCompPicked(option);
+    const correct = option === passage.comprehension.answer;
+    recordAttempt({
+      exerciseId: "fluency-comp",
+      skill: "comprehension",
+      correct,
+      responseMs: 0,
       hintsUsed: 0,
     });
   }
@@ -682,12 +742,33 @@ function FluencyPractice() {
           onClick={() => {
             setRunning(false);
             setElapsed(0);
+            setShowComp(false);
+            setCompPicked(null);
             setIndex((i) => i + 1);
           }}
         >
           Next passage
         </button>
       </div>
+      {showComp ? (
+        <div className="mt-6">
+          <p className="font-semibold">{passage.comprehension.prompt}</p>
+          <div className="mt-3 grid grid-cols-1 gap-2">
+            {passage.comprehension.options.map((option) => {
+              let dataState: "correct" | "wrong" | undefined;
+              if (compPicked) {
+                if (option === passage.comprehension.answer) dataState = "correct";
+                else if (option === compPicked) dataState = "wrong";
+              }
+              return (
+                <button key={option} type="button" className="choice" data-state={dataState} onClick={() => answerComp(option)}>
+                  {option}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
       <p className="mt-4 text-[var(--ink-soft)]">Completed passes: {reps}</p>
     </div>
   );

@@ -3,38 +3,23 @@
 import Link from "next/link";
 import { HERO_FLOW_OPTIONS } from "@/lib/hero/types";
 
-const ZONE_LABELS = {
-  play: "Play",
-  grow: "Grow",
-  live: "Live",
-} as const;
-
 export function HeroFlow() {
   return (
-    <div className="flow-page">
-      <header className="flow-header">
-        <h1>What do you want to do?</h1>
-        <p>HERO is your space to read, listen, learn, play, and get things done differently.</p>
+    <div className="flow-page mendi-explore">
+      <header className="mendi-explore-head">
+        <h1>Explore</h1>
       </header>
 
-      {(["play", "grow", "live"] as const).map((zone) => {
-        const items = HERO_FLOW_OPTIONS.filter((o) => o.zone === zone);
-        return (
-          <section key={zone} className="flow-zone">
-            <p className="flow-zone-label">{ZONE_LABELS[zone]}</p>
-            <div className="flow-grid">
-              {items.map((item) => (
-                <Link key={item.id} href={item.href} className="flow-card">
-                  <span className="flow-icon" aria-hidden>
-                    {item.icon}
-                  </span>
-                  <span>{item.label}</span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        );
-      })}
+      <div className="explore-grid explore-grid-flow">
+        {HERO_FLOW_OPTIONS.map((item) => (
+          <Link key={item.id} href={item.href} className={`explore-tile explore-${item.zone}`}>
+            <span className="explore-tile-label">{item.label.replace(" something", "").replace("Help me ", "")}</span>
+            <span className="explore-tile-art" aria-hidden>
+              {item.icon}
+            </span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

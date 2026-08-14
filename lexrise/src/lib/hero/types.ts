@@ -153,6 +153,7 @@ export const HERO_FLOW_OPTIONS = [
   { id: "scan", icon: "📷", label: "Scan something", href: "/scan", zone: "live" as const },
   { id: "listen", icon: "🔊", label: "Listen to something", href: "/listen", zone: "live" as const },
   { id: "read", icon: "📖", label: "Help me read", href: "/read", zone: "grow" as const },
+  { id: "session", icon: "🧪", label: "Science session", href: "/practice", zone: "grow" as const },
   { id: "write", icon: "✏️", label: "Help me write", href: "/games?skill=spelling", zone: "grow" as const },
   { id: "play", icon: "🎮", label: "Play & train", href: "/games", zone: "play" as const },
   { id: "focus", icon: "🧠", label: "Focus", href: "/train", zone: "play" as const },

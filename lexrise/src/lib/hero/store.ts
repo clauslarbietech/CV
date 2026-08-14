@@ -22,6 +22,7 @@ const KEYS = {
   events: "hero-events-v1",
   summary: "hero-summary-v1",
   assistive: "hero-assistive-v1",
+  checkins: "hero-checkins-v1",
 } as const;
 
 const CHANGE = "hero-store-change";
@@ -291,6 +292,30 @@ export function recordAssistiveUse(kind: keyof AssistiveLog) {
   if (typeof window === "undefined") return;
   const current = getAssistiveLog();
   writeJson(KEYS.assistive, { ...current, [kind]: current[kind] + 1 });
+}
+
+export type WellbeingCheckIn = {
+  id: string;
+  confidence: 1 | 2 | 3 | 4 | 5;
+  enjoyment: 1 | 2 | 3 | 4 | 5;
+  note: string;
+  createdAt: string;
+};
+
+const EMPTY_CHECKINS: WellbeingCheckIn[] = [];
+
+export function getCheckIns(): WellbeingCheckIn[] {
+  return readJsonSnapshot(KEYS.checkins, EMPTY_CHECKINS);
+}
+
+export function recordCheckIn(input: Omit<WellbeingCheckIn, "id" | "createdAt">) {
+  const entry: WellbeingCheckIn = {
+    ...input,
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
+  };
+  writeJson(KEYS.checkins, [entry, ...getCheckIns()].slice(0, 100));
+  return entry;
 }
 
 export function useHeroStore<T>(selector: () => T, serverFallback: T): T {

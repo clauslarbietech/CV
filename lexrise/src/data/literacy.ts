@@ -36,6 +36,11 @@ export type FluencyPassage = {
   wordCount: number;
   /** Soft target seconds — never used punitively */
   gentlePaceSec: number;
+  comprehension: {
+    prompt: string;
+    options: string[];
+    answer: string;
+  };
 };
 
 /** Morphological awareness — evidence-based for older learners */
@@ -99,6 +104,36 @@ export const morphologyItems: MorphologyItem[] = [
     parts: ["kind", "ness"],
     meaning: "the quality of being kind",
     answer: ["kind", "ness"],
+  },
+  {
+    word: "uncomfortable",
+    parts: ["un", "comfort", "able"],
+    meaning: "not able to feel comfort",
+    answer: ["un", "comfort", "able"],
+  },
+  {
+    word: "international",
+    parts: ["inter", "nation", "al"],
+    meaning: "between nations",
+    answer: ["inter", "nation", "al"],
+  },
+  {
+    word: "reconstruction",
+    parts: ["re", "construct", "ion"],
+    meaning: "the act of building again",
+    answer: ["re", "construct", "ion"],
+  },
+  {
+    word: "misunderstand",
+    parts: ["mis", "under", "stand"],
+    meaning: "understand wrongly",
+    answer: ["mis", "under", "stand"],
+  },
+  {
+    word: "biography",
+    parts: ["bio", "graphy"],
+    meaning: "writing about a life",
+    answer: ["bio", "graphy"],
   },
 ];
 
@@ -196,6 +231,11 @@ export const fluencyPassages: FluencyPassage[] = [
     text: "The night sky is full of stars. Some look bright. Some look soft and far away. People look up and wonder. Reading about stars can feel like a quiet adventure.",
     wordCount: 38,
     gentlePaceSec: 45,
+    comprehension: {
+      prompt: "What fills the night sky in this passage?",
+      options: ["Stars", "Clouds", "Birds", "Planes"],
+      answer: "Stars",
+    },
   },
   {
     id: "garden",
@@ -203,6 +243,11 @@ export const fluencyPassages: FluencyPassage[] = [
     text: "In the garden, seeds wait under the soil. Rain comes. Sun comes. Green leaves push up. Growth takes time. Strong readers grow the same way—one careful step at a time.",
     wordCount: 36,
     gentlePaceSec: 42,
+    comprehension: {
+      prompt: "What do seeds need before green leaves push up?",
+      options: ["Rain and sun", "Wind only", "Ice", "Noise"],
+      answer: "Rain and sun",
+    },
   },
   {
     id: "bridge",
@@ -210,6 +255,11 @@ export const fluencyPassages: FluencyPassage[] = [
     text: "A bridge connects two sides of a river. Words connect sounds to meaning. When you read a sentence again, the path feels clearer. Practice builds a bridge you can trust.",
     wordCount: 35,
     gentlePaceSec: 40,
+    comprehension: {
+      prompt: "According to the passage, what builds a bridge you can trust?",
+      options: ["Practice", "Luck", "Speed", "Silence"],
+      answer: "Practice",
+    },
   },
 ];
 

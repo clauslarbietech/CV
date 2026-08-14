@@ -1,17 +1,32 @@
 "use client";
 
+import { ScienceBadge } from "@/components/hero/ScienceBadge";
 import { useHeroProfile } from "@/hooks/useHeroProfile";
 import { applyAccessibilityPrefs } from "@/lib/hero/accessibility";
 import { saveProfile } from "@/lib/hero/store";
 import type { AccessibilityPreference, ReadingFont } from "@/lib/hero/types";
 
-const FONTS: { id: ReadingFont; label: string }[] = [
-  { id: "lexend", label: "Lexend" },
-  { id: "opendyslexic", label: "OpenDyslexic" },
-  { id: "atkinson", label: "Atkinson Hyperlegible" },
-  { id: "verdana", label: "Verdana" },
-  { id: "system", label: "System" },
+const FONTS: { id: ReadingFont; label: string; note: string }[] = [
+  { id: "lexend", label: "Lexend", note: "Designed for readability" },
+  { id: "opendyslexic", label: "OpenDyslexic", note: "Specialty shapes — mixed evidence alone" },
+  { id: "atkinson", label: "Atkinson Hyperlegible", note: "Clear letterforms" },
+  { id: "verdana", label: "Verdana", note: "Wide, familiar sans" },
+  { id: "system", label: "System", note: "Device default" },
 ];
+
+/** Research-informed starting point: spacing often helps more than font shape alone */
+const RESEARCH_PRESET: AccessibilityPreference = {
+  font: "lexend",
+  fontSize: 20,
+  letterSpacing: 0.08,
+  wordSpacing: 0.18,
+  lineHeight: 1.85,
+  background: "dark",
+  lineFocus: true,
+  highlightWords: true,
+  maskUnfocused: false,
+  showSyllables: false,
+};
 
 export default function StylePage() {
   const profile = useHeroProfile();
@@ -23,12 +38,28 @@ export default function StylePage() {
     applyAccessibilityPrefs(next);
   }
 
+  function applyResearchPreset() {
+    saveProfile({ accessibility: RESEARCH_PRESET });
+    applyAccessibilityPrefs(RESEARCH_PRESET);
+  }
+
   return (
     <div>
       <header className="module-header">
         <h1>Reading Style</h1>
-        <p>Font, spacing, contrast, focus mask, and highlighting—your choices, always.</p>
+        <p>Font, spacing, contrast, and focus tools—personalize how text looks.</p>
+        <ScienceBadge tier="evidence-informed" />
       </header>
+
+      <div className="panel science-rec-panel">
+        <p className="science-rec-label">Research note</p>
+        <p className="home-practice-detail">
+          Studies often find letter and word spacing help more than specialty “dyslexia fonts” alone. Start with spacing and size, then try fonts and keep what feels clearest for you.
+        </p>
+        <button type="button" className="btn btn-accent module-cta" onClick={applyResearchPreset}>
+          Apply spacing-first preset
+        </button>
+      </div>
 
       <div className="panel space-y-4">
         <label className="field">
@@ -36,7 +67,7 @@ export default function StylePage() {
           <select className="control" value={prefs.font} onChange={(e) => update({ font: e.target.value as ReadingFont })}>
             {FONTS.map((f) => (
               <option key={f.id} value={f.id}>
-                {f.label}
+                {f.label} — {f.note}
               </option>
             ))}
           </select>

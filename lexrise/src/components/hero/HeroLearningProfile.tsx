@@ -9,7 +9,7 @@ import {
   computeDomainRatings,
   computeWellbeingRatings,
 } from "@/lib/hero/learning-profile";
-import { getAssistiveLog, getProfileEvents, getSummary, subscribeHero } from "@/lib/hero/store";
+import { getAssistiveLog, getCheckIns, getProfileEvents, getSummary, subscribeHero } from "@/lib/hero/store";
 
 function StarRow({ stars, max = 5 }: { stars: number; max?: number }) {
   return (
@@ -41,9 +41,11 @@ export function HeroLearningProfile() {
     daysActiveThisWeek: 0,
   }));
   const assistive = useSyncExternalStore(subscribeHero, getAssistiveLog, () => emptyAssistive);
+  const checkIns = useSyncExternalStore(subscribeHero, getCheckIns, () => []);
 
   const domains = computeDomainRatings(events);
   const wellbeing = computeWellbeingRatings(summary, events, assistive, profile.goals.length);
+  const latestCheckIn = checkIns[0];
 
   const focusDomains = rankedFocusFromRatings(domains);
   const recommended = recommendActivities(focusDomains, profile.mode, 3);
@@ -82,6 +84,11 @@ export function HeroLearningProfile() {
       </ul>
 
       <p className="section-label">Confidence & independence</p>
+      {latestCheckIn ? (
+        <p className="home-practice-detail" style={{ marginBottom: 8 }}>
+          Latest check-in: confidence {latestCheckIn.confidence}/5 · enjoyment {latestCheckIn.enjoyment}/5
+        </p>
+      ) : null}
       <ul className="profile-rating-list">
         {wellbeing.map((metric) => (
           <li key={metric.id} className="profile-rating-row">

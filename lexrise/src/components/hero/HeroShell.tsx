@@ -4,21 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useHeroProfile } from "@/hooks/useHeroProfile";
-import type { HeroMode } from "@/lib/hero/types";
 
-const KIDS_NAV = [
-  { href: "/home", label: "Home", icon: "⌂" },
-  { href: "/read", label: "Reader", icon: "📖" },
-  { href: "/games", label: "Play", icon: "🎮" },
-  { href: "/listen", label: "Listen", icon: "🔊" },
-  { href: "/profile", label: "Profile", icon: "☺" },
-];
-
-const ADULT_NAV = [
-  { href: "/home", label: "Home", icon: "◉" },
-  { href: "/read", label: "Reader", icon: "R" },
-  { href: "/scan", label: "Scan", icon: "⎘" },
-  { href: "/listen", label: "Listen", icon: "♪" },
+const NAV = [
+  { href: "/flow", label: "Explore", icon: "◎" },
+  { href: "/home", label: "Training", icon: "✦" },
   { href: "/profile", label: "Profile", icon: "☺" },
 ];
 
@@ -38,19 +27,21 @@ export function HeroShell({ children }: { children: ReactNode }) {
   return (
     <div className={`app-frame ${modeClass}`}>
       <div className={`app-content${fullBleed ? " app-content-full" : ""}`}>{children}</div>
-      {!hideNav && profile.onboardingComplete ? (
-        <HeroNav mode={profile.mode} pathname={pathname} />
-      ) : null}
+      {!hideNav && profile.onboardingComplete ? <HeroNav pathname={pathname} /> : null}
     </div>
   );
 }
 
-function HeroNav({ mode, pathname }: { mode: HeroMode; pathname: string }) {
-  const items = mode === "kids" ? KIDS_NAV : ADULT_NAV;
+function HeroNav({ pathname }: { pathname: string }) {
   return (
     <nav className="bottom-nav" aria-label="Primary">
-      {items.map(({ href, label, icon }) => {
-        const active = pathname === href || (href !== "/home" && pathname.startsWith(href));
+      {NAV.map(({ href, label, icon }) => {
+        const active =
+          href === "/home"
+            ? pathname === "/home" || pathname.startsWith("/practice") || pathname.startsWith("/read") || pathname.startsWith("/games")
+            : href === "/flow"
+              ? pathname.startsWith("/flow") || pathname.startsWith("/scan") || pathname.startsWith("/listen") || pathname.startsWith("/simplify")
+              : pathname.startsWith("/profile") || pathname.startsWith("/progress") || pathname.startsWith("/style");
         return (
           <Link key={href} href={href} className="nav-item" data-active={active} aria-current={active ? "page" : undefined}>
             <span className="nav-icon" aria-hidden>
@@ -66,7 +57,7 @@ function HeroNav({ mode, pathname }: { mode: HeroMode; pathname: string }) {
 
 export function HeroBrand() {
   return (
-    <span className="hero-logo" aria-label="HERO">
+    <span className="hero-logo hero-logo-compact" aria-label="HERO">
       H<span className="hero-logo-r">E</span>ЯO
     </span>
   );
