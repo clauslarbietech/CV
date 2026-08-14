@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useHeroProfile } from "@/hooks/useHeroProfile";
+import { ScienceBadge } from "@/components/hero/ScienceBadge";
+import { recordAssistiveUse } from "@/lib/hero/learning-profile";
 import { SAMPLE_SCAN_TEXT } from "@/lib/hero/types";
 
 function ListenContent({ initialText }: { initialText: string }) {
@@ -16,6 +18,7 @@ function ListenContent({ initialText }: { initialText: string }) {
 
   function speak() {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
+    recordAssistiveUse("listenSessions");
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
     utter.rate = profile.tts.rate;
@@ -37,8 +40,9 @@ function ListenContent({ initialText }: { initialText: string }) {
   return (
     <div>
       <header className="module-header">
-        <h1>HERO Listen</h1>
+        <h1>Listen</h1>
         <p>Paste, type, scan, or import text—then listen with synchronized highlighting in Reader.</p>
+        <ScienceBadge tier="evidence-informed" />
       </header>
 
       <label className="field">

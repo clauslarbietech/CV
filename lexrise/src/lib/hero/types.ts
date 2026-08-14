@@ -140,11 +140,12 @@ export const SAMPLE_SCAN_TEXT =
   "Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world. — Albert Einstein";
 
 export const READ_SKILLS = [
-  { id: "phonemic", label: "Sound Quest", detail: "Hear and match sounds" },
-  { id: "mapping", label: "Letter Match", detail: "Connect letters to sounds" },
-  { id: "decoding", label: "Word Builder", detail: "Sound out new words" },
-  { id: "syllables", label: "Syllable Split", detail: "Break words into parts" },
-  { id: "fluency", label: "Reader Flow", detail: "Read smoothly with meaning" },
+  { id: "phonemic", label: "Sound Quest", detail: "Hear and match sounds", tier: "evidence-based" as const },
+  { id: "mapping", label: "Letter Match", detail: "Connect letters to sounds", tier: "evidence-based" as const },
+  { id: "decoding", label: "Word Builder", detail: "Sound out new words", tier: "evidence-based" as const },
+  { id: "morphology", label: "Word Parts", detail: "Prefixes, roots & suffixes", tier: "evidence-based" as const },
+  { id: "syllables", label: "Syllable Split", detail: "Break words into parts", tier: "evidence-based" as const },
+  { id: "fluency", label: "Reader Flow", detail: "Read smoothly with meaning", tier: "evidence-informed" as const },
 ] as const;
 
 export const HERO_FLOW_OPTIONS = [

@@ -7,6 +7,7 @@ import { applyAccessibilityPrefs, readerSurfaceStyle } from "@/lib/hero/accessib
 import { getLibraryItem, saveLibraryItem } from "@/lib/hero/store";
 import { SAMPLE_SCAN_TEXT } from "@/lib/hero/types";
 import { useHeroProfile } from "@/hooks/useHeroProfile";
+import { recordAssistiveUse } from "@/lib/hero/learning-profile";
 
 function ReaderContent({ id, textParam }: { id: string | null; textParam: string | null }) {
   const profile = useHeroProfile();
@@ -22,6 +23,10 @@ function ReaderContent({ id, textParam }: { id: string | null; textParam: string
     applyAccessibilityPrefs(profile.accessibility);
   }, [profile.accessibility]);
 
+  useEffect(() => {
+    recordAssistiveUse("readerSessions");
+  }, []);
+
   const surface = readerSurfaceStyle(profile.accessibility);
 
   function saveToLibrary() {
@@ -30,6 +35,7 @@ function ReaderContent({ id, textParam }: { id: string | null; textParam: string
 
   function speak() {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
+    recordAssistiveUse("listenSessions");
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
     utter.rate = profile.tts.rate;

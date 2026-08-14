@@ -37,6 +37,16 @@ export default function ProfilePage() {
           <span>HERO Flow</span>
           <span className="chevron">›</span>
         </Link>
+        <Link href="/research" className="list-row">
+          <span className="list-icon">🔬</span>
+          <span>Science & Research</span>
+          <span className="chevron">›</span>
+        </Link>
+        <Link href="/labs" className="list-row">
+          <span className="list-icon">🧪</span>
+          <span>HERO Labs</span>
+          <span className="chevron">›</span>
+        </Link>
         {profile.mode === "kids" ? (
           <Link href="/parent" className="list-row">
             <span className="list-icon">👪</span>

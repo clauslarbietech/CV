@@ -1707,6 +1707,261 @@ select {
   line-height: 1.35;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-letter,
+  .cinematic-logo-block,
+  .cinematic-tagline,
+  .world-transition,
+  .world-mascot,
+  .world-line,
+  .world-sub,
+  .world-burst,
+  .cinematic-flashes span {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* —— Science tiers & learning profile —— */
+.science-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tier-color, #8e8e93);
+  border: 1px solid color-mix(in srgb, var(--tier-color, #8e8e93) 45%, transparent);
+  background: color-mix(in srgb, var(--tier-color, #8e8e93) 12%, transparent);
+}
+
+.science-badge-compact {
+  padding: 2px 8px;
+  font-size: 10px;
+}
+
+.science-legend {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 8px;
+}
+
+.science-legend-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.4;
+}
+
+.science-legend-row .science-badge {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.learning-profile {
+  margin-bottom: 20px;
+}
+
+.learning-profile-head h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.learning-profile-head p {
+  margin: 6px 0 0;
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.learning-profile-encourage {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(107, 78, 255, 0.12);
+  border: 1px solid rgba(107, 78, 255, 0.25);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.profile-rating-list {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+}
+
+.profile-rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.profile-rating-row strong {
+  display: block;
+  font-size: 15px;
+}
+
+.profile-rating-detail {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-muted);
+  font-size: 12px;
+}
+
+.star-row {
+  display: inline-flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.star {
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 16px;
+}
+
+.star[data-filled="true"] {
+  color: #ffb347;
+}
+
+.learning-profile-focus {
+  margin-top: 16px;
+}
+
+.learning-profile-focus-label {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.research-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.research-card h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.research-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.research-card p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.research-claim {
+  margin-top: 10px !important;
+  color: var(--ink) !important;
+  font-weight: 500;
+}
+
+.research-link,
+.research-source {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.research-external-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.research-external-kind {
+  margin: 0;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.research-external-name {
+  display: block;
+  margin-top: 6px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.research-external-why {
+  margin: 8px 0 0;
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.labs-banner {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.labs-status {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.read-skill-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.scan-loop-card {
+  margin-bottom: 16px;
+}
+
+.scan-loop-label {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.scan-loop-card strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.scan-loop-card .home-practice-detail {
+  margin-top: 8px;
+}
+
 .experience-toggle {
   display: flex;
   align-items: center;
@@ -1732,21 +1987,4 @@ select {
   color: var(--ink-muted);
   font-size: 12px;
   line-height: 1.35;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cinematic-letter,
-  .cinematic-logo-block,
-  .cinematic-tagline,
-  .world-transition,
-  .world-mascot,
-  .world-line,
-  .world-sub,
-  .world-burst,
-  .cinematic-flashes span {
-    animation: none !important;
-    transition: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
 }

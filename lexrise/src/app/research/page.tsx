@@ -1,50 +1,88 @@
-import type { Metadata } from "next";
-import { PageTopBar } from "@/components/AppShell";
-import { externalGames, researchFindings } from "@/data/research";
+"use client";
 
-export const metadata: Metadata = { title: "Research" };
+import Link from "next/link";
+import { ScienceBadge, ScienceTierLegend } from "@/components/hero/ScienceBadge";
+import { HERO_FEATURES, RESEARCH_PILLARS } from "@/lib/hero/science";
+import { externalGames, researchFindings } from "@/data/research";
 
 export default function ResearchPage() {
   return (
-    <>
-      <PageTopBar title="Research" />
-      <p style={{ margin: "0 0 16px", color: "var(--ink-muted)", fontSize: 15, lineHeight: 1.4 }}>
-        Evidence notes and tools worth knowing.
-      </p>
-      <div style={{ display: "grid", gap: 12 }}>
-        {researchFindings.map((item) => (
-          <article key={item.title} className="panel">
-            <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>{item.title}</h2>
-            <p style={{ margin: "8px 0 0", color: "var(--ink-soft)", fontSize: 14, lineHeight: 1.45 }}>
-              {item.summary}
-            </p>
-            <p style={{ margin: "10px 0 0", fontSize: 14, fontWeight: 500 }}>{item.takeaway}</p>
-            {item.href ? (
-              <a
-                href={item.href}
-                className="mt-3 inline-flex text-sm font-semibold"
-                style={{ color: "var(--accent)" }}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open source →
-              </a>
-            ) : null}
+    <div>
+      <header className="module-header">
+        <h1>Science & Research</h1>
+        <p>How HERO uses dyslexia research—honestly labeled by evidence strength.</p>
+      </header>
+
+      <ScienceTierLegend />
+
+      <p className="section-label">Research pillars</p>
+      <div className="research-grid">
+        {RESEARCH_PILLARS.map((pillar) => (
+          <article key={pillar.id} className="panel research-card">
+            <div className="research-card-head">
+              <h2>{pillar.title}</h2>
+              <ScienceBadge tier={pillar.tier} compact />
+            </div>
+            <p>{pillar.summary}</p>
           </article>
         ))}
       </div>
-      <h2 style={{ margin: "28px 0 12px", fontSize: 22, fontWeight: 700 }}>Recommended games</h2>
-      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: 12 }}>
+
+      <p className="section-label">HERO features & claims</p>
+      <div className="research-grid">
+        {HERO_FEATURES.map((feature) => (
+          <article key={feature.id} className="panel research-card">
+            <div className="research-card-head">
+              <h2>{feature.name}</h2>
+              <ScienceBadge tier={feature.tier} compact />
+            </div>
+            <p>{feature.summary}</p>
+            <p className="research-claim">{feature.claim}</p>
+          </article>
+        ))}
+      </div>
+
+      <p className="section-label">Detailed findings</p>
+      <div className="research-grid">
+        {researchFindings.map((item) => (
+          <article key={item.title} className="panel research-card">
+            <div className="research-card-head">
+              <h2>{item.title}</h2>
+              <ScienceBadge tier={item.tier} compact />
+            </div>
+            <p>{item.summary}</p>
+            <p className="research-claim">{item.takeaway}</p>
+            {item.href ? (
+              <a href={item.href} className="research-link" target="_blank" rel="noreferrer">
+                {item.sourceLabel} →
+              </a>
+            ) : (
+              <p className="research-source">{item.sourceLabel}</p>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <p className="section-label">Recommended external tools</p>
+      <ul className="research-external-list">
         {externalGames.map((game) => (
           <li key={game.name} className="panel">
-            <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: "var(--accent)" }}>{game.kind}</p>
-            <a href={game.href} target="_blank" rel="noreferrer" style={{ display: "block", marginTop: 6, fontSize: 17, fontWeight: 700 }}>
+            <p className="research-external-kind">{game.kind}</p>
+            <a href={game.href} target="_blank" rel="noreferrer" className="research-external-name">
               {game.name}
             </a>
-            <p style={{ margin: "8px 0 0", color: "var(--ink-muted)", fontSize: 14, lineHeight: 1.4 }}>{game.why}</p>
+            <p className="research-external-why">{game.why}</p>
           </li>
         ))}
       </ul>
-    </>
+
+      <Link href="/labs" className="btn btn-ghost module-cta">
+        Explore HERO Labs (Experimental) →
+      </Link>
+
+      <p className="module-disclaimer">
+        HERO supports reading and learning. It does not diagnose dyslexia. With appropriate consent and privacy protections, HERO could eventually contribute to dyslexia research through institutional partnerships.
+      </p>
+    </div>
   );
 }

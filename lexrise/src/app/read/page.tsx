@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ScienceBadge } from "@/components/hero/ScienceBadge";
 import { READ_SKILLS } from "@/lib/hero/types";
 
 export default function ReadPage() {
@@ -8,13 +9,17 @@ export default function ReadPage() {
     <div>
       <header className="module-header">
         <h1>Reader</h1>
-        <p>Structured reading practice. Difficulty adapts to how you perform—not just level number.</p>
+        <p>Structured Literacy practice—phonics, morphology, syllables, and fluency with explicit instruction.</p>
+        <ScienceBadge tier="evidence-based" />
       </header>
 
       <div className="read-skills">
         {READ_SKILLS.map((skill) => (
           <Link key={skill.id} href={`/games?skill=${skill.id}`} className="read-skill-card">
-            <strong>{skill.label}</strong>
+            <div className="read-skill-head">
+              <strong>{skill.label}</strong>
+              <ScienceBadge tier={skill.tier} compact />
+            </div>
             <span>{skill.detail}</span>
           </Link>
         ))}
@@ -25,7 +30,7 @@ export default function ReadPage() {
       </Link>
 
       <p className="module-disclaimer">
-        Reader supports learning. It is not a clinical diagnosis or treatment program.
+        Reader supports learning. It is a learning profile—not a clinical diagnosis or treatment program.
       </p>
     </div>
   );

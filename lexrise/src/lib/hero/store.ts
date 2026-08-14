@@ -7,6 +7,7 @@ import {
   type PerformanceEvent,
   type PracticeSummary,
 } from "./types";
+import { recordAssistiveUse } from "./learning-profile";
 
 const KEYS = {
   profile: "hero-profile-v1",
@@ -123,6 +124,7 @@ export function saveLibraryItem(item: Omit<LibraryItem, "id" | "createdAt"> & { 
     createdAt: new Date().toISOString(),
   };
   writeJson(KEYS.library, [entry, ...list.filter((x) => x.id !== entry.id)]);
+  recordAssistiveUse("librarySaves");
   return entry;
 }
 
@@ -194,6 +196,10 @@ export function suggestDifficulty(): "easy" | "medium" | "hard" {
   if (rate > 0.75) return "medium";
   if (rate > 0.55) return "easy";
   return "easy";
+}
+
+export function getProfileEvents(): PerformanceEvent[] {
+  return readJson<PerformanceEvent[]>(KEYS.events, []);
 }
 
 export function useHeroStore<T>(selector: () => T, serverFallback: T): T {

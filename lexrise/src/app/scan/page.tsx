@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ScienceBadge } from "@/components/hero/ScienceBadge";
+import { recordAssistiveUse } from "@/lib/hero/learning-profile";
 import { saveLibraryItem } from "@/lib/hero/store";
 import { SAMPLE_SCAN_TEXT } from "@/lib/hero/types";
 
@@ -13,10 +15,12 @@ export default function ScanPage() {
   function captureSample() {
     setText(SAMPLE_SCAN_TEXT);
     setTitle("Einstein quote");
+    recordAssistiveUse("scans");
   }
 
   function continueToReader() {
     const body = text.trim() || SAMPLE_SCAN_TEXT;
+    recordAssistiveUse("scans");
     const item = saveLibraryItem({ title: title.trim() || "Scan", text: body, source: text.trim() ? "paste" : "sample" });
     router.push(`/reader?id=${item.id}`);
   }
@@ -24,9 +28,18 @@ export default function ScanPage() {
   return (
     <div>
       <header className="module-header">
-        <h1>HERO Scan</h1>
-        <p>Camera, image, or PDF → OCR → editable text → Reader → Listen → Library</p>
+        <h1>Scan</h1>
+        <p>Flagship loop: Scan → Read → Listen → Highlight → Simplify → Save</p>
+        <ScienceBadge tier="evidence-informed" />
       </header>
+
+      <div className="panel scan-loop-card">
+        <p className="scan-loop-label">HERO signature system</p>
+        <strong>Capture text → transform presentation → listen with highlights → save to My Library</strong>
+        <p className="home-practice-detail">
+          Assistive technology research shows read-aloud and presentation tools can support comprehension—results vary by person.
+        </p>
+      </div>
 
       <div className="scan-stage panel">
         <div className="scan-camera" aria-hidden>

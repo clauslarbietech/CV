@@ -1,46 +1,98 @@
+import type { ScienceTier } from "@/lib/hero/science";
+
 export type ResearchItem = {
   title: string;
   summary: string;
   takeaway: string;
   sourceLabel: string;
+  tier: ScienceTier;
   href?: string;
 };
 
 export const researchFindings: ResearchItem[] = [
   {
-    title: "Letter spacing often helps more than “dyslexia fonts”",
+    title: "Dyslexia is language processing—not letter reversal",
     summary:
-      "Studies comparing Dyslexie and OpenDyslexic with Arial or Times New Roman often find little or no benefit from special letter shapes alone. When readers improve, extra spacing within and between words is a common reason.",
-    takeaway:
-      "In LexRise Font Lab, start by increasing letter and word spacing—then try Lexend or OpenDyslexic and keep what feels clearest for you.",
-    sourceLabel: "Marinus et al.; Wery & Diliberto; Edutopia summary",
-    href: "https://pmc.ncbi.nlm.nih.gov/articles/PMC5629233/",
+      "Current research points to differences in phonological and language processing, reading networks, automaticity, and—in some individuals—visual/temporal processing, with substantial variation between people.",
+    takeaway: "HERO builds around phonics, morphology, fluency, and assistive reading—not myths about reversed letters.",
+    sourceLabel: "International Dyslexia Association",
+    tier: "evidence-based",
+    href: "https://dyslexiaida.org/",
   },
   {
-    title: "Structured phonics beats guessing games",
+    title: "Structured Literacy: phonics, morphology & explicit instruction",
     summary:
-      "Evidence-based dyslexia support centers on phonemic awareness, systematic phonics, decoding practice, and lots of successful reading reps—often aligned with Orton–Gillingham / Science of Reading principles.",
-    takeaway:
-      "Our games target sound–letter mapping, confusable letters (b/d/p/q), and nonsense-word decoding so readers cannot rely on memorized whole-word guessing.",
-    sourceLabel: "Yale Center for Dyslexia & Creativity guidance",
+      "Evidence-based support centers on phonemic awareness, systematic phonics, blending, segmenting, decoding, syllables, spelling patterns, and morphology—taught explicitly rather than discovered alone.",
+    takeaway: "Reader and Play & Train target sound–letter mapping, word parts, and controlled decoding.",
+    sourceLabel: "Yale Center for Dyslexia & Creativity",
+    tier: "evidence-based",
     href: "https://dyslexia.yale.edu/",
   },
   {
-    title: "The “only dyslexics can read scrambled text” claim is a myth",
+    title: "Morphological awareness for older learners",
     summary:
-      "Viral posts say only people with dyslexia can read jumbled words (typoglycemia). In reality, most readers can decode text when first and last letters stay put. It is not a diagnostic test and not unique to dyslexia.",
-    takeaway:
-      "Try our Scramble Challenge for fun—and read the myth-bust note beside it. Real progress comes from phonics practice, not viral quizzes.",
-    sourceLabel: "Typoglycemia / Cambridge-style letter scramble folklore",
+      "Structured Literacy includes morphology: teaching meaningful word parts (un + help + ful, re + write, predict + ion) supports decoding and vocabulary for children through adults.",
+    takeaway: "HERO Word Parts trains morphology—especially valuable for teens and adults.",
+    sourceLabel: "Structured Literacy / IDA guidance",
+    tier: "evidence-based",
+    href: "https://dyslexiaida.org/",
   },
   {
-    title: "Dyslexia is about language processing, not intelligence",
+    title: "Letter spacing often helps more than specialty fonts",
     summary:
-      "Dyslexia is a neurological difference in how the brain processes written language. Many people with dyslexia excel in spatial reasoning, big-picture thinking, storytelling, entrepreneurship, and the arts.",
-    takeaway:
-      "Visit Accomplishments to see real-world stories—then use Font Lab and Games as daily tools, not as a measure of worth.",
-    sourceLabel: "International Dyslexia Association",
-    href: "https://dyslexiaida.org/",
+      "Studies comparing Dyslexie and OpenDyslexic with common fonts often find little benefit from letter shapes alone. Spacing within and between words is a frequent reason readers improve.",
+    takeaway: "In Reading Style, increase spacing first—then try fonts and keep what feels clearest.",
+    sourceLabel: "Marinus et al.; Wery & Diliberto",
+    tier: "evidence-informed",
+    href: "https://pmc.ncbi.nlm.nih.gov/articles/PMC5629233/",
+  },
+  {
+    title: "Assistive technology & text-to-speech",
+    summary:
+      "Assistive technologies can help adolescents and adults with learning disabilities, though results differ by tool and person. Text-to-speech meta-analyses show modest positive effects on reading comprehension.",
+    takeaway: "Scan → Read → Listen → Highlight → Save is a flagship HERO loop—not a replacement for instruction.",
+    sourceLabel: "Assistive technology & TTS research summaries",
+    tier: "evidence-informed",
+  },
+  {
+    title: "Game-based dyslexia learning: promising but limited",
+    summary:
+      "Systematic reviews find serious games can improve some phonological skills and engagement, but evidence is relatively small and gains do not always transfer to every untreated reading skill. Adult dyslexia remains underserved in game-based research.",
+    takeaway: "HERO Adult is an opportunity—games support practice without overclaiming transfer.",
+    sourceLabel: "Serious games systematic reviews (incl. 2026 primary-school concentration)",
+    tier: "evidence-informed",
+  },
+  {
+    title: "Neuroplasticity without oversimplification",
+    summary:
+      "Reading intervention can accompany changes in brain systems involved in reading, but neuroscience findings are heterogeneous. This should not be simplified into 'this app rewires your brain.'",
+    takeaway: "HERO Mind supports focus separately—never marketed as dyslexia treatment.",
+    sourceLabel: "Reading intervention neuroscience literature",
+    tier: "evidence-informed",
+  },
+  {
+    title: "Neurofeedback does not establish reading benefits alone",
+    summary:
+      "A 2025 systematic review concluded current evidence does not establish significant reading benefits from neurofeedback alone for dyslexia.",
+    takeaway: "HERO takes Mendi-inspired UX inspiration—calm interface, focus sessions—not neurofeedback therapy claims.",
+    sourceLabel: "Neurofeedback systematic review (2025)",
+    tier: "experimental",
+  },
+  {
+    title: "The scrambled-text myth is not diagnostic",
+    summary:
+      "Viral posts claim only people with dyslexia can read jumbled words. Most readers decode when first and last letters stay put. It is not a diagnostic test.",
+    takeaway: "Scramble Challenge is for myth-busting fun—real progress comes from structured practice.",
+    sourceLabel: "Typoglycemia folklore",
+    tier: "evidence-informed",
+  },
+  {
+    title: "Emerging: AI, eye tracking, VR/AR, neurostimulation",
+    summary:
+      "Recent reviews describe AI-assisted screening, handwriting analysis, immersive technologies, and brain-stimulation approaches. Many are not mature enough to present as established treatments.",
+    takeaway: "HERO Labs keeps experimental capabilities clearly separated from evidence-based reading support.",
+    sourceLabel: "Emerging dyslexia technology reviews",
+    tier: "experimental",
   },
 ];
 
@@ -55,7 +107,7 @@ export const externalGames: ExternalGame[] = [
   {
     name: "Nonsense!",
     kind: "Phonics decoding app",
-    why: "Generates nonsense words so learners must sound out phonemes instead of guessing familiar words. Built for dyslexia and struggling readers.",
+    why: "Generates nonsense words so learners must sound out phonemes instead of guessing familiar words.",
     href: "https://apps.apple.com/us/app/nonsense/id938907017",
   },
   {
@@ -67,37 +119,19 @@ export const externalGames: ExternalGame[] = [
   {
     name: "Starfall",
     kind: "Free phonics site",
-    why: "Systematic phonics and phonemic awareness practice recommended by University of Michigan DyslexiaHelp.",
+    why: "Systematic phonics and phonemic awareness practice.",
     href: "https://www.starfall.com/",
-  },
-  {
-    name: "I Play Phonics",
-    kind: "Voice-interactive phonics",
-    why: "Progressive phoneme levels with voice practice and dyslexia-aware repetition design.",
-    href: "https://iplayphonics.com/",
-  },
-  {
-    name: "The Magic Potion (VR)",
-    kind: "Empathy simulation",
-    why: "VR experience from the Vrailexia project that presents a recipe written like phonological dyslexia perception—useful for allies, not a reading curriculum.",
-    href: "https://eyeguas.itch.io/the-magic-potion-in-the-shoes-of-dyslexic-students-for-meta-quest-2",
   },
   {
     name: "Lexy",
     kind: "AI phonics tutor",
-    why: "Gamified structured phonics lessons with adaptive pacing for dyslexia and ADHD-friendly short sessions.",
+    why: "Gamified structured phonics with adaptive pacing for short sessions.",
     href: "https://apps.apple.com/us/app/lexy-literacy-phonic-games/id1564885095",
-  },
-  {
-    name: "ABZ Reading Scramble Mania",
-    kind: "Phonics unscramble",
-    why: "Picture-supported word unscrambling across CVC, digraphs, blends, vowel teams, and more.",
-    href: "https://abzlearning.com/games/reading_scramble_mania/rsm.html",
   },
   {
     name: "University of Michigan DyslexiaHelp games list",
     kind: "Curated directory",
-    why: "Trusted list of word games, phonics sites, and apps useful for dyslexic learners.",
+    why: "Trusted list of word games, phonics sites, and apps useful for struggling readers.",
     href: "https://dyslexiahelp.umich.edu/tools/fun-games-for-dyslexics/",
   },
 ];
