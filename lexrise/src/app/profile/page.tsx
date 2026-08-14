@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TopChrome } from "@/components/AppShell";
+import { SpeedHeroLogo } from "@/components/SpeedHeroLogo";
 
 function Row({
   href,
@@ -47,13 +48,15 @@ export default function ProfilePage() {
         }
       />
 
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2 flex items-center gap-2">
+        <SpeedHeroLogo size={36} title="Speed" />
         <p className="text-sm font-semibold tracking-wide text-[var(--ink-soft)]">lexrise</p>
       </div>
 
       <div className="profile-head">
         <h1 className="text-2xl font-bold">LexRise Reader</h1>
-        <p className="mt-1 text-[var(--ink-muted)]">reader@lexrise.app</p>
+        <p className="mt-1 text-[var(--ink-muted)]">Powered by Speed</p>
+        <p className="mt-0.5 text-sm text-[var(--ink-muted)]">reader@lexrise.app</p>
         <div className="badge-row" aria-label="Achievements">
           {["S", "P", "F", "R"].map((b) => (
             <span key={b} className="mini-badge">

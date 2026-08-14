@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { FadeIntro } from "@/components/FadeIntro";
+import { SpeedHeroLogo } from "@/components/SpeedHeroLogo";
 
 function IconExplore({ active }: { active?: boolean }) {
   return (
@@ -65,6 +67,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="app-frame">
+      <FadeIntro />
       <div className="app-content">{children}</div>
       {!hideNav ? (
         <nav className="bottom-nav" aria-label="Primary">
@@ -93,11 +96,14 @@ export function TopChrome({
 }) {
   return (
     <div className="top-bar">
-      <div className="streak" aria-label={`Streak ${streak}`}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-          <path d="M12 2c1.5 3.2-.2 5.2-1.5 6.7C9 10.5 8 12 8 14.2 8 17 10.2 19 13 19c3.2 0 5-2.3 5-5.2 0-2.4-1.2-4.1-2.4-5.5.8 1.8.7 3.1.2 4.1C19 11 20.5 8.4 18.8 5.2 16.2 7 14.8 4.6 12 2Z" />
-        </svg>
-        <span>{streak}</span>
+      <div className="top-bar-brand">
+        <SpeedHeroLogo size={28} className="top-bar-logo" title="Speed" />
+        <div className="streak" aria-label={`Streak ${streak}`}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M12 2c1.5 3.2-.2 5.2-1.5 6.7C9 10.5 8 12 8 14.2 8 17 10.2 19 13 19c3.2 0 5-2.3 5-5.2 0-2.4-1.2-4.1-2.4-5.5.8 1.8.7 3.1.2 4.1C19 11 20.5 8.4 18.8 5.2 16.2 7 14.8 4.6 12 2Z" />
+          </svg>
+          <span>{streak}</span>
+        </div>
       </div>
       {right ?? (
         <Link href="/profile" className="icon-btn" aria-label="Open calendar and profile">
