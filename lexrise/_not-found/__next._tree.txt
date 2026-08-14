@@ -1,2 +1,2 @@
-:HL["/CV/lexrise/_next/static/chunks/2l6-vfch3_s8e.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"6ZahbjV2jbn0XfsMwoV13"}
+:HL["/CV/lexrise/_next/static/chunks/30afx7x67vns6.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"-8xj7rQyRz_nK9bJJBXwo"}
