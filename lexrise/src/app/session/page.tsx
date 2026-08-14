@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import { GamesHub } from "@/components/GamesHub";
+import { recordPracticeSession } from "@/lib/practice";
 
 function SessionInner() {
   const params = useSearchParams();
@@ -12,7 +13,7 @@ function SessionInner() {
     if (initial === "flip") return "Letter flip";
     if (initial === "nonsense") return "Nonsense decode";
     if (initial === "scramble") return "Scramble challenge";
-    return "Session";
+    return "Practice";
   }, [initial]);
 
   const tab =
@@ -20,10 +21,14 @@ function SessionInner() {
       ? initial
       : "unscramble";
 
+  useEffect(() => {
+    recordPracticeSession();
+  }, []);
+
   return (
     <>
       <div className="top-bar">
-        <Link href="/" className="icon-btn" aria-label="Close session">
+        <Link href="/" className="icon-btn" aria-label="Close practice">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
             <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
           </svg>
@@ -38,7 +43,7 @@ function SessionInner() {
 
 export default function SessionPage() {
   return (
-    <Suspense fallback={<p style={{ color: "var(--ink-muted)" }}>Loading session…</p>}>
+    <Suspense fallback={<p style={{ color: "var(--ink-muted)" }}>Loading practice…</p>}>
       <SessionInner />
     </Suspense>
   );

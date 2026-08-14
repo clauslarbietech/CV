@@ -146,40 +146,131 @@ select {
   background: #000;
 }
 
-/* —— Training day tabs —— */
-.segmented {
+/* —— Home / Training —— */
+.home-screen {
   display: flex;
-  gap: 28px;
-  margin: 10px 0 28px;
+  flex-direction: column;
 }
 
-.segmented button {
-  background: none;
-  border: none;
-  padding: 0 0 10px;
-  color: var(--ink-muted);
+.home-hero {
+  margin: 8px 0 20px;
+}
+
+.home-kicker {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 13px;
   font-weight: 600;
+}
+
+.home-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.home-lead {
+  margin: 10px 0 0;
+  color: var(--ink-muted);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.home-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #35267a 0%, #4a2d9b 45%, #ff7a3a 140%);
+  min-height: 96px;
+}
+
+.home-cta .session-orb {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.home-cta-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.home-cta-copy strong {
   font-size: 17px;
-  cursor: pointer;
-  position: relative;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
-.segmented [data-active="true"] {
-  color: #fff;
+.home-cta-copy span {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
 }
 
-.segmented [data-active="true"]::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  background: #fff;
-  border-radius: 2px;
+.home-cta-arrow {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 20px;
 }
 
-/* —— Start session card (Training) —— */
+.home-section-label {
+  margin: 26px 0 8px;
+  color: var(--ink-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.home-practice-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-practice-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.home-practice-row:last-child {
+  border-bottom: none;
+}
+
+.home-practice-row strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.home-practice-detail {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.home-practice-row .chevron {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 22px;
+  font-weight: 300;
+}
+
+.home-soft-link {
+  margin-top: 18px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* —— legacy session card (kept for reuse) —— */
 .training-stage {
   display: flex;
   flex-direction: column;
@@ -202,7 +293,8 @@ select {
   transition: transform 0.2s ease;
 }
 
-.session-card:active {
+.session-card:active,
+.home-cta:active {
   transform: scale(0.985);
 }
 
