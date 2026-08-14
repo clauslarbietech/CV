@@ -60,11 +60,6 @@ function bustSnapshot(key: string) {
   if (key === KEYS.assistive) assistiveCache = null;
 }
 
-function bustAllSnapshots() {
-  jsonSnapshotCache.clear();
-  mergedProfileCache = null;
-  assistiveCache = null;
-}
 
 function readJsonSnapshot<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
