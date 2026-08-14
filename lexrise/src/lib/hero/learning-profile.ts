@@ -6,6 +6,9 @@ import {
   type LearningDomainId,
   type WellbeingMetricId,
 } from "./science";
+import type { AssistiveLog } from "./store";
+
+export type { AssistiveLog };
 
 export type DomainRating = {
   id: LearningDomainId;
@@ -20,20 +23,6 @@ export type WellbeingRating = {
   label: string;
   detail: string;
   stars: number;
-};
-
-export type AssistiveLog = {
-  scans: number;
-  listenSessions: number;
-  readerSessions: number;
-  librarySaves: number;
-};
-
-const EMPTY_ASSISTIVE: AssistiveLog = {
-  scans: 0,
-  listenSessions: 0,
-  readerSessions: 0,
-  librarySaves: 0,
 };
 
 function accuracyToStars(rate: number, sampleSize: number): number {
@@ -114,24 +103,6 @@ export function computeWellbeingRatings(
     detail: metric.detail,
     stars: values[metric.id],
   }));
-}
-
-export function getAssistiveLog(): AssistiveLog {
-  if (typeof window === "undefined") return EMPTY_ASSISTIVE;
-  try {
-    const raw = window.localStorage.getItem("hero-assistive-v1");
-    return raw ? { ...EMPTY_ASSISTIVE, ...(JSON.parse(raw) as AssistiveLog) } : EMPTY_ASSISTIVE;
-  } catch {
-    return EMPTY_ASSISTIVE;
-  }
-}
-
-export function recordAssistiveUse(kind: keyof AssistiveLog) {
-  if (typeof window === "undefined") return;
-  const current = getAssistiveLog();
-  const next = { ...current, [kind]: current[kind] + 1 };
-  window.localStorage.setItem("hero-assistive-v1", JSON.stringify(next));
-  window.dispatchEvent(new Event("hero-store-change"));
 }
 
 export function suggestFocusDomains(ratings: DomainRating[]): LearningDomainId[] {

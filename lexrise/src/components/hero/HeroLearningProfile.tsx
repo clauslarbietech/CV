@@ -6,10 +6,9 @@ import { useHeroProfile } from "@/hooks/useHeroProfile";
 import {
   computeDomainRatings,
   computeWellbeingRatings,
-  getAssistiveLog,
   suggestFocusDomains,
 } from "@/lib/hero/learning-profile";
-import { getProfileEvents, getSummary, subscribeHero } from "@/lib/hero/store";
+import { getAssistiveLog, getProfileEvents, getSummary, subscribeHero } from "@/lib/hero/store";
 
 function StarRow({ stars, max = 5 }: { stars: number; max?: number }) {
   return (
@@ -23,6 +22,13 @@ function StarRow({ stars, max = 5 }: { stars: number; max?: number }) {
   );
 }
 
+const emptyAssistive = {
+  scans: 0,
+  listenSessions: 0,
+  readerSessions: 0,
+  librarySaves: 0,
+};
+
 export function HeroLearningProfile() {
   const profile = useHeroProfile();
   const events = useSyncExternalStore(subscribeHero, getProfileEvents, () => []);
@@ -33,12 +39,7 @@ export function HeroLearningProfile() {
     lastActiveDate: null,
     daysActiveThisWeek: 0,
   }));
-  const assistive = useSyncExternalStore(subscribeHero, getAssistiveLog, () => ({
-    scans: 0,
-    listenSessions: 0,
-    readerSessions: 0,
-    librarySaves: 0,
-  }));
+  const assistive = useSyncExternalStore(subscribeHero, getAssistiveLog, () => emptyAssistive);
 
   const domains = computeDomainRatings(events);
   const wellbeing = computeWellbeingRatings(summary, events, assistive, profile.goals.length);

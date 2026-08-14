@@ -7,7 +7,7 @@ import { applyAccessibilityPrefs, readerSurfaceStyle } from "@/lib/hero/accessib
 import { getLibraryItem, saveLibraryItem } from "@/lib/hero/store";
 import { SAMPLE_SCAN_TEXT } from "@/lib/hero/types";
 import { useHeroProfile } from "@/hooks/useHeroProfile";
-import { recordAssistiveUse } from "@/lib/hero/learning-profile";
+import { recordAssistiveUse } from "@/lib/hero/store";
 
 function ReaderContent({ id, textParam }: { id: string | null; textParam: string | null }) {
   const profile = useHeroProfile();

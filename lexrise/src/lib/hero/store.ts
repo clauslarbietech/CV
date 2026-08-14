@@ -7,7 +7,13 @@ import {
   type PerformanceEvent,
   type PracticeSummary,
 } from "./types";
-import { recordAssistiveUse } from "./learning-profile";
+
+export type AssistiveLog = {
+  scans: number;
+  listenSessions: number;
+  readerSessions: number;
+  librarySaves: number;
+};
 
 const KEYS = {
   profile: "hero-profile-v1",
@@ -15,26 +21,82 @@ const KEYS = {
   attempts: "hero-attempts-v1",
   events: "hero-events-v1",
   summary: "hero-summary-v1",
+  assistive: "hero-assistive-v1",
 } as const;
 
 const CHANGE = "hero-store-change";
+
+const EMPTY_SUMMARY: PracticeSummary = {
+  totalSessions: 0,
+  totalMinutes: 0,
+  activitiesCompleted: 0,
+  lastActiveDate: null,
+  daysActiveThisWeek: 0,
+};
+
+const EMPTY_LIBRARY: LibraryItem[] = [];
+const EMPTY_EVENTS: PerformanceEvent[] = [];
+const EMPTY_ATTEMPTS: ExerciseAttempt[] = [];
+
+const EMPTY_ASSISTIVE: AssistiveLog = {
+  scans: 0,
+  listenSessions: 0,
+  readerSessions: 0,
+  librarySaves: 0,
+};
+
+/** Stable snapshots for useSyncExternalStore — must keep reference equality until data changes */
+const jsonSnapshotCache = new Map<string, { raw: string | null; value: unknown }>();
+let mergedProfileCache: { raw: string | null; profile: HeroProfile } | null = null;
+let assistiveCache: { raw: string | null; log: AssistiveLog } | null = null;
 
 function emit() {
   if (typeof window !== "undefined") window.dispatchEvent(new Event(CHANGE));
 }
 
-function readJson<T>(key: string, fallback: T): T {
+function bustSnapshot(key: string) {
+  jsonSnapshotCache.delete(key);
+  if (key === KEYS.profile) mergedProfileCache = null;
+  if (key === KEYS.assistive) assistiveCache = null;
+}
+
+function bustAllSnapshots() {
+  jsonSnapshotCache.clear();
+  mergedProfileCache = null;
+  assistiveCache = null;
+}
+
+function readJsonSnapshot<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
+
+  let raw: string | null;
   try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
+    raw = window.localStorage.getItem(key);
   } catch {
     return fallback;
   }
+
+  const cached = jsonSnapshotCache.get(key);
+  if (cached && cached.raw === raw) return cached.value as T;
+
+  let value: T;
+  if (!raw) {
+    value = fallback;
+  } else {
+    try {
+      value = JSON.parse(raw) as T;
+    } catch {
+      value = fallback;
+    }
+  }
+
+  jsonSnapshotCache.set(key, { raw, value });
+  return value;
 }
 
 function writeJson<T>(key: string, value: T) {
   window.localStorage.setItem(key, JSON.stringify(value));
+  bustSnapshot(key);
   emit();
 }
 
@@ -48,15 +110,31 @@ export function subscribeHero(onChange: () => void) {
 }
 
 export function getProfile(): HeroProfile {
-  const raw = readJson(KEYS.profile, DEFAULT_PROFILE);
-  return {
+  if (typeof window === "undefined") return DEFAULT_PROFILE;
+
+  let raw: string | null;
+  try {
+    raw = window.localStorage.getItem(KEYS.profile);
+  } catch {
+    return DEFAULT_PROFILE;
+  }
+
+  if (mergedProfileCache && mergedProfileCache.raw === raw) {
+    return mergedProfileCache.profile;
+  }
+
+  const parsed = raw ? (JSON.parse(raw) as Partial<HeroProfile>) : {};
+  const profile: HeroProfile = {
     ...DEFAULT_PROFILE,
-    ...raw,
-    experience: { ...DEFAULT_EXPERIENCE, ...raw.experience },
-    accessibility: { ...DEFAULT_PROFILE.accessibility, ...raw.accessibility },
-    tts: { ...DEFAULT_PROFILE.tts, ...raw.tts },
-    learning: { ...DEFAULT_PROFILE.learning, ...raw.learning },
+    ...parsed,
+    experience: { ...DEFAULT_EXPERIENCE, ...parsed.experience },
+    accessibility: { ...DEFAULT_PROFILE.accessibility, ...parsed.accessibility },
+    tts: { ...DEFAULT_PROFILE.tts, ...parsed.tts },
+    learning: { ...DEFAULT_PROFILE.learning, ...parsed.learning },
   };
+
+  mergedProfileCache = { raw, profile };
+  return profile;
 }
 
 export function saveProfile(patch: Partial<HeroProfile>) {
@@ -107,7 +185,7 @@ export function completeOnboarding(profile: Partial<HeroProfile>) {
 }
 
 export function getLibrary(): LibraryItem[] {
-  return readJson<LibraryItem[]>(KEYS.library, []);
+  return readJsonSnapshot(KEYS.library, EMPTY_LIBRARY);
 }
 
 export function getLibraryItem(id: string): LibraryItem | undefined {
@@ -129,13 +207,7 @@ export function saveLibraryItem(item: Omit<LibraryItem, "id" | "createdAt"> & { 
 }
 
 export function getSummary(): PracticeSummary {
-  return readJson<PracticeSummary>(KEYS.summary, {
-    totalSessions: 0,
-    totalMinutes: 0,
-    activitiesCompleted: 0,
-    lastActiveDate: null,
-    daysActiveThisWeek: 0,
-  });
+  return readJsonSnapshot(KEYS.summary, EMPTY_SUMMARY);
 }
 
 function weekDates() {
@@ -166,7 +238,7 @@ export function recordActivity(minutes = 3) {
 }
 
 export function recordAttempt(input: Omit<ExerciseAttempt, "id" | "createdAt">) {
-  const attempts = readJson<ExerciseAttempt[]>(KEYS.attempts, []);
+  const attempts = readJsonSnapshot(KEYS.attempts, EMPTY_ATTEMPTS);
   const attempt: ExerciseAttempt = {
     ...input,
     id: crypto.randomUUID(),
@@ -174,7 +246,7 @@ export function recordAttempt(input: Omit<ExerciseAttempt, "id" | "createdAt">) 
   };
   writeJson(KEYS.attempts, [attempt, ...attempts].slice(0, 200));
 
-  const events = readJson<PerformanceEvent[]>(KEYS.events, []);
+  const events = getProfileEvents();
   const event: PerformanceEvent = {
     id: attempt.id,
     skill: input.skill,
@@ -190,7 +262,7 @@ export function recordAttempt(input: Omit<ExerciseAttempt, "id" | "createdAt">) 
 }
 
 export function suggestDifficulty(): "easy" | "medium" | "hard" {
-  const events = readJson<PerformanceEvent[]>(KEYS.events, []).slice(0, 12);
+  const events = getProfileEvents().slice(0, 12);
   if (events.length < 4) return "easy";
   const rate = events.filter((e) => e.correct).length / events.length;
   if (rate > 0.75) return "medium";
@@ -199,11 +271,34 @@ export function suggestDifficulty(): "easy" | "medium" | "hard" {
 }
 
 export function getProfileEvents(): PerformanceEvent[] {
-  return readJson<PerformanceEvent[]>(KEYS.events, []);
+  return readJsonSnapshot(KEYS.events, EMPTY_EVENTS);
+}
+
+export function getAssistiveLog(): AssistiveLog {
+  if (typeof window === "undefined") return EMPTY_ASSISTIVE;
+
+  let raw: string | null;
+  try {
+    raw = window.localStorage.getItem(KEYS.assistive);
+  } catch {
+    return EMPTY_ASSISTIVE;
+  }
+
+  if (assistiveCache && assistiveCache.raw === raw) return assistiveCache.log;
+
+  const parsed = raw ? (JSON.parse(raw) as Partial<AssistiveLog>) : {};
+  const log: AssistiveLog = { ...EMPTY_ASSISTIVE, ...parsed };
+  assistiveCache = { raw, log };
+  return log;
+}
+
+export function recordAssistiveUse(kind: keyof AssistiveLog) {
+  if (typeof window === "undefined") return;
+  const current = getAssistiveLog();
+  writeJson(KEYS.assistive, { ...current, [kind]: current[kind] + 1 });
 }
 
 export function useHeroStore<T>(selector: () => T, serverFallback: T): T {
-  // helper for components — actual hook in components via useSyncExternalStore
   if (typeof window === "undefined") return serverFallback;
   return selector();
 }

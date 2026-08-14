@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ScienceBadge } from "@/components/hero/ScienceBadge";
-import { recordAssistiveUse } from "@/lib/hero/learning-profile";
+import { getAssistiveLog, recordAssistiveUse } from "@/lib/hero/store";
 import { saveLibraryItem } from "@/lib/hero/store";
 import { SAMPLE_SCAN_TEXT } from "@/lib/hero/types";
 

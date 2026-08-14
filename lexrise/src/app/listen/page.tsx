@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useHeroProfile } from "@/hooks/useHeroProfile";
 import { ScienceBadge } from "@/components/hero/ScienceBadge";
-import { recordAssistiveUse } from "@/lib/hero/learning-profile";
+import { recordAssistiveUse } from "@/lib/hero/store";
 import { SAMPLE_SCAN_TEXT } from "@/lib/hero/types";
 
 function ListenContent({ initialText }: { initialText: string }) {
