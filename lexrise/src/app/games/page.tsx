@@ -9,11 +9,13 @@ export default function GamesPage() {
     <div>
       <header className="module-header">
         <h1>Play & Train</h1>
-        <p>Games can support phonological skills and engagement—gains vary and do not always transfer to every reading skill.</p>
+        <p>
+          Evidence-based Structured Literacy practice plus evidence-informed games. Adult learners are underserved in game research—HERO includes them on purpose.
+        </p>
         <ScienceBadge tier="evidence-informed" />
       </header>
-      <Suspense fallback={<p>Loading games…</p>}>
-        <GamesHub initialTab="unscramble" />
+      <Suspense fallback={<p>Loading practice…</p>}>
+        <GamesHub />
       </Suspense>
     </div>
   );

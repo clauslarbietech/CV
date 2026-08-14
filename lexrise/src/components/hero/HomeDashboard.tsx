@@ -15,18 +15,20 @@ const emptySummary = {
 };
 
 const PLAY_LINKS = [
-  { href: "/games", icon: "🎮", label: "Sound Quest", detail: "Games, challenges & brain training" },
-  { href: "/train", icon: "🧠", label: "Memory Lab", detail: "Focus and mind training" },
+  { href: "/games?skill=phonemic", icon: "🎮", label: "Sound Quest", detail: "Phonological awareness practice" },
+  { href: "/train", icon: "🧠", label: "Memory Lab", detail: "Focus practice (not dyslexia treatment)" },
 ] as const;
 
 const GROW_LINKS = [
-  { href: "/read", icon: "📖", label: "Reader", detail: "Structured reading practice" },
-  { href: "/reader", icon: "✏️", label: "Word Builder", detail: "Help me read & write" },
+  { href: "/read", icon: "📖", label: "Reader", detail: "Structured Literacy path" },
+  { href: "/games?skill=morphology", icon: "🧩", label: "Word Parts", detail: "Prefixes, roots & suffixes" },
+  { href: "/games?skill=fluency", icon: "🌊", label: "Reader Flow", detail: "Repeated reading for ease" },
 ] as const;
 
 const LIVE_LINKS = [
-  { href: "/scan", icon: "📷", label: "Scan", detail: "Turn photos into readable text" },
-  { href: "/listen", icon: "🔊", label: "Listen", detail: "Hear words light up as you go" },
+  { href: "/scan", icon: "📷", label: "Scan", detail: "Capture text into HERO" },
+  { href: "/listen", icon: "🔊", label: "Listen", detail: "TTS with word highlights" },
+  { href: "/simplify", icon: "✨", label: "Simplify", detail: "Clearer wording for hard text" },
   { href: "/library", icon: "📚", label: "My Library", detail: "Saved passages & documents" },
 ] as const;
 

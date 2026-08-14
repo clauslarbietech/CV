@@ -6,20 +6,37 @@ import { Suspense, useEffect, useMemo } from "react";
 import { GamesHub } from "@/components/GamesHub";
 import { recordPracticeSession } from "@/lib/practice";
 
+const GAME_MAP = {
+  unscramble: "decoding",
+  flip: "mapping",
+  nonsense: "nonsense",
+  scramble: "scramble",
+  phonemic: "phonemic",
+  mapping: "mapping",
+  decoding: "decoding",
+  morphology: "morphology",
+  syllables: "syllables",
+  spelling: "spelling",
+  fluency: "fluency",
+} as const;
+
+type MappedTab = (typeof GAME_MAP)[keyof typeof GAME_MAP];
+
 function SessionInner() {
   const params = useSearchParams();
-  const initial = params.get("game") ?? "unscramble";
+  const initial = params.get("game") ?? params.get("skill") ?? "decoding";
+  const tab: MappedTab = GAME_MAP[initial as keyof typeof GAME_MAP] ?? "decoding";
   const title = useMemo(() => {
-    if (initial === "flip") return "Letter flip";
-    if (initial === "nonsense") return "Nonsense decode";
-    if (initial === "scramble") return "Scramble challenge";
-    return "Practice";
-  }, [initial]);
-
-  const tab =
-    initial === "flip" || initial === "nonsense" || initial === "scramble" || initial === "unscramble"
-      ? initial
-      : "unscramble";
+    if (tab === "mapping") return "Letter Match";
+    if (tab === "nonsense") return "Nonsense Decode";
+    if (tab === "scramble") return "Myth check";
+    if (tab === "morphology") return "Word Parts";
+    if (tab === "phonemic") return "Sound Quest";
+    if (tab === "fluency") return "Reader Flow";
+    if (tab === "spelling") return "Spelling Lab";
+    if (tab === "syllables") return "Syllable Split";
+    return "Word Builder";
+  }, [tab]);
 
   useEffect(() => {
     recordPracticeSession();
@@ -28,7 +45,7 @@ function SessionInner() {
   return (
     <>
       <div className="top-bar">
-        <Link href="/" className="icon-btn" aria-label="Close practice">
+        <Link href="/home" className="icon-btn" aria-label="Close practice">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
             <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
           </svg>

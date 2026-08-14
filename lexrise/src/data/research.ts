@@ -38,6 +38,14 @@ export const researchFindings: ResearchItem[] = [
     href: "https://dyslexiaida.org/",
   },
   {
+    title: "Fluency without punishment",
+    summary:
+      "Automaticity develops through successful, repeated reading. Timed challenges can help some learners, but punishing slow reading increases anxiety and stigma.",
+    takeaway: "HERO Reader Flow tracks completed passes, not speed scores.",
+    sourceLabel: "Fluency / repeated reading literature",
+    tier: "evidence-informed",
+  },
+  {
     title: "Letter spacing often helps more than specialty fonts",
     summary:
       "Studies comparing Dyslexie and OpenDyslexic with common fonts often find little benefit from letter shapes alone. Spacing within and between words is a frequent reason readers improve.",

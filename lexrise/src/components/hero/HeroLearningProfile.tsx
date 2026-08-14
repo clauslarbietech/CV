@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
+import { ScienceBadge } from "@/components/hero/ScienceBadge";
 import { useHeroProfile } from "@/hooks/useHeroProfile";
+import { recommendActivities, rankedFocusFromRatings } from "@/lib/hero/activity-engine";
 import {
   computeDomainRatings,
   computeWellbeingRatings,
-  suggestFocusDomains,
 } from "@/lib/hero/learning-profile";
 import { getAssistiveLog, getProfileEvents, getSummary, subscribeHero } from "@/lib/hero/store";
 
@@ -44,7 +45,8 @@ export function HeroLearningProfile() {
   const domains = computeDomainRatings(events);
   const wellbeing = computeWellbeingRatings(summary, events, assistive, profile.goals.length);
 
-  const focusDomains = suggestFocusDomains(domains);
+  const focusDomains = rankedFocusFromRatings(domains);
+  const recommended = recommendActivities(focusDomains, profile.mode, 3);
   const strengths = domains.filter((d) => d.status === "strength").slice(0, 4);
 
   return (
@@ -92,21 +94,30 @@ export function HeroLearningProfile() {
         ))}
       </ul>
 
-      {focusDomains.length > 0 ? (
+      {recommended.length > 0 ? (
         <div className="panel learning-profile-focus">
-          <p className="learning-profile-focus-label">Suggested focus</p>
+          <p className="learning-profile-focus-label">Science-guided next steps</p>
           <p>
-            HERO recommends extra practice in:{" "}
+            Focus areas:{" "}
             <strong>
               {focusDomains
+                .slice(0, 3)
                 .map((id) => domains.find((d) => d.id === id)?.label)
                 .filter(Boolean)
                 .join(", ")}
             </strong>
           </p>
-          <Link href="/read" className="btn btn-white module-cta">
-            Go to Reader
-          </Link>
+          <div className="science-rec-list">
+            {recommended.map((activity) => (
+              <Link key={activity.id} href={activity.href} className="science-rec-card">
+                <div className="read-skill-head">
+                  <strong>{activity.title}</strong>
+                  <ScienceBadge tier={activity.tier} compact />
+                </div>
+                <span>{activity.detail}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       ) : null}
 

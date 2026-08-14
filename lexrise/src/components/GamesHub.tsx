@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { recordAttempt } from "@/lib/hero/store";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { ScienceBadge } from "@/components/hero/ScienceBadge";
 import {
   confusablePairs,
   cvcWords,
@@ -10,8 +11,49 @@ import {
   scrambleSample,
   type PhonicsWord,
 } from "@/data/games";
+import {
+  fluencyPassages,
+  morphologyItems,
+  phonemeItems,
+  spellingItems,
+  syllableItems,
+} from "@/data/literacy";
+import { recordAttempt } from "@/lib/hero/store";
 
-type GameTab = "unscramble" | "flip" | "nonsense" | "scramble";
+type GameTab =
+  | "phonemic"
+  | "mapping"
+  | "decoding"
+  | "nonsense"
+  | "morphology"
+  | "syllables"
+  | "spelling"
+  | "fluency"
+  | "scramble";
+
+const TABS: { id: GameTab; label: string; skill: string }[] = [
+  { id: "phonemic", label: "Sounds", skill: "phonemic" },
+  { id: "mapping", label: "Letters", skill: "mapping" },
+  { id: "decoding", label: "Words", skill: "decoding" },
+  { id: "nonsense", label: "Nonsense", skill: "decoding" },
+  { id: "morphology", label: "Word Parts", skill: "morphology" },
+  { id: "syllables", label: "Syllables", skill: "syllables" },
+  { id: "spelling", label: "Spelling", skill: "spelling" },
+  { id: "fluency", label: "Fluency", skill: "fluency" },
+  { id: "scramble", label: "Myth check", skill: "decoding" },
+];
+
+const SKILL_TO_TAB: Record<string, GameTab> = {
+  phonemic: "phonemic",
+  mapping: "mapping",
+  decoding: "decoding",
+  nonsense: "nonsense",
+  morphology: "morphology",
+  syllables: "syllables",
+  spelling: "spelling",
+  fluency: "fluency",
+  scramble: "scramble",
+};
 
 function shuffle<T>(items: T[]): T[] {
   const next = [...items];
@@ -35,20 +77,24 @@ function scrambleText(text: string): string {
     .join("");
 }
 
-export function GamesHub({ initialTab = "unscramble" }: { initialTab?: GameTab }) {
-  const [tab, setTab] = useState<GameTab>(initialTab);
+export function GamesHub({ initialTab = "decoding" }: { initialTab?: GameTab }) {
+  const params = useSearchParams();
+  const skill = params.get("skill");
+  const fromSkill = skill ? SKILL_TO_TAB[skill] : undefined;
+  const [tab, setTab] = useState<GameTab>(fromSkill ?? initialTab);
+  const [skillKey, setSkillKey] = useState(skill ?? "");
+  if ((skill ?? "") !== skillKey) {
+    setSkillKey(skill ?? "");
+    if (fromSkill) setTab(fromSkill);
+  }
 
   return (
     <div>
-      <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Games">
-        {(
-          [
-            ["unscramble", "Unscramble"],
-            ["flip", "Letter flip"],
-            ["nonsense", "Nonsense"],
-            ["scramble", "Scramble"],
-          ] as const
-        ).map(([id, label]) => (
+      <p className="science-practice-note">
+        Structured Literacy practice — explicit instruction, not discovery-only guessing.
+      </p>
+      <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Literacy practice">
+        {TABS.map(({ id, label }) => (
           <button
             key={id}
             type="button"
@@ -67,10 +113,80 @@ export function GamesHub({ initialTab = "unscramble" }: { initialTab?: GameTab }
         ))}
       </div>
 
-      {tab === "unscramble" ? <UnscrambleGame /> : null}
-      {tab === "flip" ? <LetterFlipGame /> : null}
+      {tab === "phonemic" ? <PhonemeGame /> : null}
+      {tab === "mapping" ? <LetterFlipGame /> : null}
+      {tab === "decoding" ? <UnscrambleGame /> : null}
       {tab === "nonsense" ? <NonsenseGame /> : null}
+      {tab === "morphology" ? <MorphologyGame /> : null}
+      {tab === "syllables" ? <SyllableGame /> : null}
+      {tab === "spelling" ? <SpellingGame /> : null}
+      {tab === "fluency" ? <FluencyPractice /> : null}
       {tab === "scramble" ? <ScrambleChallenge /> : null}
+    </div>
+  );
+}
+
+function ScoreHeader({ title, score, tier }: { title: string; score: number; tier: "evidence-based" | "evidence-informed" }) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2 className="text-xl font-bold">{title}</h2>
+        <ScienceBadge tier={tier} compact />
+      </div>
+      <p className="font-semibold text-[var(--accent)]">Score {score}</p>
+    </div>
+  );
+}
+
+function PhonemeGame() {
+  const [index, setIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [picked, setPicked] = useState<string | null>(null);
+  const item = phonemeItems[index % phonemeItems.length];
+  const answer = item.answer;
+
+  function choose(option: string) {
+    if (picked) return;
+    setPicked(option);
+    const correct = option === answer;
+    if (correct) {
+      setScore((s) => s + 1);
+      recordAttempt({
+        exerciseId: "phoneme",
+        skill: "phonemic",
+        correct: true,
+        responseMs: 0,
+        hintsUsed: 0,
+      });
+      window.setTimeout(() => {
+        setIndex((i) => i + 1);
+        setPicked(null);
+      }, 700);
+    } else {
+      window.setTimeout(() => setPicked(null), 700);
+    }
+  }
+
+  return (
+    <div className="panel">
+      <ScoreHeader title="Sound Quest" score={score} tier="evidence-based" />
+      <p className="mt-3 text-[var(--ink-muted)]">Hear the sounds in words—phonological awareness.</p>
+      <p className="mt-4 text-lg font-semibold">{item.prompt}</p>
+      <p className="mt-2 text-[var(--ink-soft)]">Word: {item.word}</p>
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        {item.options.map((option) => {
+          let dataState: "correct" | "wrong" | undefined;
+          if (picked) {
+            if (option === answer) dataState = "correct";
+            else if (option === picked) dataState = "wrong";
+          }
+          return (
+            <button key={option} type="button" className="choice" data-state={dataState} onClick={() => choose(option)}>
+              {option}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -141,16 +257,9 @@ function UnscrambleRound({
 
   return (
     <div className="panel">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-bold">Phonics unscramble</h2>
-          <p className="text-[var(--ink-muted)]">Hint: {current.hint}</p>
-        </div>
-        <p className="font-semibold text-[var(--accent)]">Score {score}</p>
-      </div>
-
+      <ScoreHeader title="Word Builder" score={score} tier="evidence-based" />
+      <p className="text-[var(--ink-muted)]">Hint: {current.hint}</p>
       <p className="mt-4">{message}</p>
-
       <div className="mt-6 flex flex-wrap gap-2" aria-label="Answer slots">
         {Array.from({ length: current.word.length }).map((_, i) => (
           <span key={i} className="slot">
@@ -158,7 +267,6 @@ function UnscrambleRound({
           </span>
         ))}
       </div>
-
       <div className="mt-5 flex flex-wrap gap-2" aria-label="Letter tiles">
         {poolLetters.map((letter, i) => (
           <button key={`${letter}-${i}`} type="button" className="tile" onClick={() => takeLetter(letter, i)}>
@@ -166,7 +274,6 @@ function UnscrambleRound({
           </button>
         ))}
       </div>
-
       <div className="mt-6 flex flex-wrap gap-2">
         <button type="button" className="btn btn-ghost" onClick={undo}>
           Undo
@@ -211,10 +318,7 @@ function LetterFlipGame() {
 
   return (
     <div className="panel">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 className="text-xl font-bold">Letter flip</h2>
-        <p className="font-semibold text-[var(--accent)]">Score {score}</p>
-      </div>
+      <ScoreHeader title="Letter Match" score={score} tier="evidence-based" />
       <p className="mt-3">{item.prompt}</p>
       <div className="mt-6 grid grid-cols-2 gap-3">
         {item.options.map((option) => {
@@ -267,10 +371,7 @@ function NonsenseGame() {
 
   return (
     <div className="panel">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 className="text-xl font-bold">Nonsense decode</h2>
-        <p className="font-semibold text-[var(--accent)]">Score {score}</p>
-      </div>
+      <ScoreHeader title="Nonsense Decode" score={score} tier="evidence-based" />
       <p className="mt-3 text-[var(--ink-muted)]">Made-up words force decoding instead of guessing.</p>
       <p className="mt-6 text-4xl font-bold tracking-wide">{item.word}</p>
       <p className="mt-2">Sounds: {item.sounds}</p>
@@ -308,6 +409,290 @@ function NonsenseGame() {
   );
 }
 
+function MorphologyGame() {
+  const [index, setIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const item = morphologyItems[index % morphologyItems.length];
+  const [picked, setPicked] = useState<string[]>([]);
+  const [pool, setPool] = useState(() => shuffle(item.parts));
+  const [message, setMessage] = useState(item.meaning);
+
+  // Reset tiles when the word changes (keyed via index)
+  const wordKey = item.word;
+  const [prevWord, setPrevWord] = useState(wordKey);
+  if (prevWord !== wordKey) {
+    setPrevWord(wordKey);
+    setPicked([]);
+    setPool(shuffle(item.parts));
+    setMessage(item.meaning);
+  }
+
+  function take(part: string, fromIndex: number) {
+    setPool((parts) => parts.filter((_, i) => i !== fromIndex));
+    setPicked((parts) => [...parts, part]);
+  }
+
+  function undo() {
+    const last = picked[picked.length - 1];
+    if (!last) return;
+    setPicked((parts) => parts.slice(0, -1));
+    setPool((parts) => [...parts, last]);
+  }
+
+  function check() {
+    if (picked.join("") === item.answer.join("")) {
+      setMessage(`Yes — ${item.word} = ${item.answer.join(" + ")}`);
+      setScore((s) => s + 1);
+      recordAttempt({
+        exerciseId: "morphology",
+        skill: "morphology",
+        correct: true,
+        responseMs: 0,
+        hintsUsed: 0,
+      });
+      window.setTimeout(() => setIndex((i) => i + 1), 800);
+    } else {
+      setMessage("Try again — think about prefix, root, and suffix.");
+    }
+  }
+
+  return (
+    <div className="panel">
+      <ScoreHeader title="Word Parts" score={score} tier="evidence-based" />
+      <p className="mt-3 text-[var(--ink-muted)]">Morphology: meaningful pieces of words (un + help + ful).</p>
+      <p className="mt-4 text-2xl font-bold tracking-wide">{item.word}</p>
+      <p className="mt-2">{message}</p>
+      <div className="mt-5 flex flex-wrap gap-2">
+        {picked.map((part, i) => (
+          <span key={`${part}-${i}`} className="slot morph-slot">
+            {part}
+          </span>
+        ))}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {pool.map((part, i) => (
+          <button key={`${part}-${i}`} type="button" className="tile" onClick={() => take(part, i)}>
+            {part}
+          </button>
+        ))}
+      </div>
+      <div className="mt-6 flex flex-wrap gap-2">
+        <button type="button" className="btn btn-ghost" onClick={undo}>
+          Undo
+        </button>
+        <button type="button" className="btn btn-accent" onClick={check}>
+          Check parts
+        </button>
+        <button type="button" className="btn btn-ghost" onClick={() => setIndex((i) => i + 1)}>
+          Skip
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SyllableGame() {
+  const [index, setIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const item = syllableItems[index % syllableItems.length];
+  const [picked, setPicked] = useState<string[]>([]);
+  const [pool, setPool] = useState(() => shuffle(item.syllables));
+  const wordKey = item.word;
+  const [prevWord, setPrevWord] = useState(wordKey);
+  if (prevWord !== wordKey) {
+    setPrevWord(wordKey);
+    setPicked([]);
+    setPool(shuffle(item.syllables));
+  }
+
+  function take(part: string, fromIndex: number) {
+    setPool((parts) => parts.filter((_, i) => i !== fromIndex));
+    setPicked((parts) => [...parts, part]);
+  }
+
+  function check() {
+    if (picked.join("-") === item.syllables.join("-")) {
+      setScore((s) => s + 1);
+      recordAttempt({
+        exerciseId: "syllables",
+        skill: "syllables",
+        correct: true,
+        responseMs: 0,
+        hintsUsed: 0,
+      });
+      window.setTimeout(() => setIndex((i) => i + 1), 700);
+    }
+  }
+
+  return (
+    <div className="panel">
+      <ScoreHeader title="Syllable Split" score={score} tier="evidence-based" />
+      <p className="mt-3 text-[var(--ink-muted)]">Pattern: {item.pattern}</p>
+      <p className="mt-4 text-3xl font-bold">{item.word}</p>
+      <div className="mt-5 flex flex-wrap gap-2">
+        {picked.map((part, i) => (
+          <span key={`${part}-${i}`} className="slot morph-slot">
+            {part}
+          </span>
+        ))}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {pool.map((part, i) => (
+          <button key={`${part}-${i}`} type="button" className="tile" onClick={() => take(part, i)}>
+            {part}
+          </button>
+        ))}
+      </div>
+      <div className="mt-6 flex flex-wrap gap-2">
+        <button
+          type="button"
+          className="btn btn-ghost"
+          onClick={() => {
+            const last = picked[picked.length - 1];
+            if (!last) return;
+            setPicked((p) => p.slice(0, -1));
+            setPool((p) => [...p, last]);
+          }}
+        >
+          Undo
+        </button>
+        <button type="button" className="btn btn-accent" onClick={check}>
+          Check syllables
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SpellingGame() {
+  const [index, setIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [guess, setGuess] = useState("");
+  const [feedback, setFeedback] = useState("Listen to the sounds, then spell.");
+  const item = spellingItems[index % spellingItems.length];
+
+  function check() {
+    if (guess.trim().toLowerCase() === item.answer) {
+      setScore((s) => s + 1);
+      recordAttempt({
+        exerciseId: "spelling",
+        skill: "spelling",
+        correct: true,
+        responseMs: 0,
+        hintsUsed: 0,
+      });
+      setFeedback(`Correct — ${item.pattern} pattern.`);
+      setGuess("");
+      setIndex((i) => i + 1);
+    } else {
+      setFeedback(`Try again. Sounds: ${item.sounds}`);
+    }
+  }
+
+  return (
+    <div className="panel">
+      <ScoreHeader title="Spelling Lab" score={score} tier="evidence-based" />
+      <p className="mt-3">{item.prompt}</p>
+      <p className="mt-2 text-[var(--ink-muted)]">Sounds: {item.sounds}</p>
+      <label className="mt-6 block">
+        <span className="mb-2 block font-semibold">Type the spelling</span>
+        <input
+          className="control"
+          value={guess}
+          onChange={(e) => setGuess(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") check();
+          }}
+          autoComplete="off"
+          spellCheck={false}
+        />
+      </label>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button type="button" className="btn btn-accent" onClick={check}>
+          Check spelling
+        </button>
+        <button type="button" className="btn btn-ghost" onClick={() => setIndex((i) => i + 1)}>
+          Skip
+        </button>
+      </div>
+      <p className="mt-4 text-[var(--ink-soft)]">{feedback}</p>
+    </div>
+  );
+}
+
+function FluencyPractice() {
+  const [index, setIndex] = useState(0);
+  const [reps, setReps] = useState(0);
+  const [running, setRunning] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const started = useRef<number | null>(null);
+  const passage = fluencyPassages[index % fluencyPassages.length];
+
+  useEffect(() => {
+    if (!running) return;
+    const id = window.setInterval(() => {
+      if (started.current) setElapsed(Math.floor((Date.now() - started.current) / 1000));
+    }, 250);
+    return () => clearInterval(id);
+  }, [running]);
+
+  function start() {
+    started.current = Date.now();
+    setElapsed(0);
+    setRunning(true);
+  }
+
+  function finish() {
+    setRunning(false);
+    setReps((r) => r + 1);
+    recordAttempt({
+      exerciseId: "fluency",
+      skill: "fluency",
+      correct: true,
+      responseMs: elapsed * 1000,
+      hintsUsed: 0,
+    });
+  }
+
+  return (
+    <div className="panel">
+      <ScoreHeader title="Reader Flow" score={reps} tier="evidence-informed" />
+      <p className="mt-3 text-[var(--ink-muted)]">
+        Read the passage again for accuracy and ease. Time is optional—never a punishment.
+      </p>
+      <h3 className="mt-4 text-lg font-bold">{passage.title}</h3>
+      <p className="mt-3 text-lg leading-relaxed">{passage.text}</p>
+      <p className="mt-4 text-sm text-[var(--ink-soft)]">
+        {passage.wordCount} words · gentle pace ~{passage.gentlePaceSec}s (optional)
+      </p>
+      {running ? <p className="mt-2 font-semibold">{elapsed}s</p> : null}
+      <div className="mt-6 flex flex-wrap gap-2">
+        {!running ? (
+          <button type="button" className="btn btn-accent" onClick={start}>
+            Start reading
+          </button>
+        ) : (
+          <button type="button" className="btn btn-white" onClick={finish}>
+            I finished this pass
+          </button>
+        )}
+        <button
+          type="button"
+          className="btn btn-ghost"
+          onClick={() => {
+            setRunning(false);
+            setElapsed(0);
+            setIndex((i) => i + 1);
+          }}
+        >
+          Next passage
+        </button>
+      </div>
+      <p className="mt-4 text-[var(--ink-soft)]">Completed passes: {reps}</p>
+    </div>
+  );
+}
+
 function ScrambleChallenge() {
   const scrambled = useMemo(() => scrambleText(scrambleSample), []);
   const [showPlain, setShowPlain] = useState(false);
@@ -315,9 +700,10 @@ function ScrambleChallenge() {
   return (
     <div className="panel">
       <h2 className="text-xl font-bold">Scramble challenge</h2>
+      <ScienceBadge tier="evidence-informed" compact />
       <p className="mt-3 rounded-2xl bg-[var(--accent-soft)] px-4 py-3 text-sm">
         Myth check: “Only dyslexic people can read this” is false. Most readers can decode scrambled words when
-        first and last letters stay put.
+        first and last letters stay put. Real progress comes from Structured Literacy—not viral quizzes.
       </p>
       <p className="mt-6 text-lg leading-relaxed">{showPlain ? scrambleSample : scrambled}</p>
       <button type="button" className="btn btn-ghost mt-6" onClick={() => setShowPlain((v) => !v)}>

@@ -2005,9 +2005,63 @@ select {
   line-height: 1.4;
 }
 
-.scan-loop-card .home-practice-detail {
-  margin-top: 8px;
+.science-practice-note {
+  margin: 0 0 12px;
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 1.4;
 }
+
+.science-rec-panel {
+  margin-bottom: 16px;
+}
+
+.science-rec-label {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.science-rec-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.science-rec-card {
+  display: block;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+}
+
+.science-rec-card > span {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.science-rec-why {
+  margin-top: 8px !important;
+  color: var(--ink-soft) !important;
+  font-size: 12px !important;
+  font-style: italic;
+}
+
+.morph-slot {
+  min-width: 64px;
+  padding-inline: 10px;
+}
+
+.simplify-output {
+  min-height: 100px;
+}
+
 
 .experience-toggle {
   display: flex;

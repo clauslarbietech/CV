@@ -145,6 +145,7 @@ export const READ_SKILLS = [
   { id: "decoding", label: "Word Builder", detail: "Sound out new words", tier: "evidence-based" as const },
   { id: "morphology", label: "Word Parts", detail: "Prefixes, roots & suffixes", tier: "evidence-based" as const },
   { id: "syllables", label: "Syllable Split", detail: "Break words into parts", tier: "evidence-based" as const },
+  { id: "spelling", label: "Spelling Lab", detail: "Encode sounds into written words", tier: "evidence-based" as const },
   { id: "fluency", label: "Reader Flow", detail: "Read smoothly with meaning", tier: "evidence-informed" as const },
 ] as const;
 
@@ -152,8 +153,8 @@ export const HERO_FLOW_OPTIONS = [
   { id: "scan", icon: "📷", label: "Scan something", href: "/scan", zone: "live" as const },
   { id: "listen", icon: "🔊", label: "Listen to something", href: "/listen", zone: "live" as const },
   { id: "read", icon: "📖", label: "Help me read", href: "/read", zone: "grow" as const },
-  { id: "write", icon: "✏️", label: "Help me write", href: "/reader", zone: "grow" as const },
+  { id: "write", icon: "✏️", label: "Help me write", href: "/games?skill=spelling", zone: "grow" as const },
   { id: "play", icon: "🎮", label: "Play & train", href: "/games", zone: "play" as const },
   { id: "focus", icon: "🧠", label: "Focus", href: "/train", zone: "play" as const },
-  { id: "simplify", icon: "✨", label: "Simplify something", href: "/scan", zone: "live" as const },
+  { id: "simplify", icon: "✨", label: "Simplify something", href: "/simplify", zone: "live" as const },
 ] as const;
