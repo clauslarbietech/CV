@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TopChrome } from "@/components/AppShell";
+import { TrainingTopBar } from "@/components/AppShell";
 
 const items = [
   {
@@ -31,15 +31,15 @@ const items = [
 export default function ExplorePage() {
   return (
     <>
-      <TopChrome />
-      <h1 className="mb-2 text-3xl font-bold tracking-tight">Explore</h1>
-      <p className="mb-6 text-[var(--ink-muted)]">
-        Find inspiration, research, and tools that support dyslexic readers.
+      <TrainingTopBar />
+      <h1 style={{ margin: "8px 0 6px", fontSize: 28, fontWeight: 700, letterSpacing: "-0.03em" }}>Explore</h1>
+      <p style={{ margin: "0 0 18px", color: "var(--ink-muted)", fontSize: 15, lineHeight: 1.4 }}>
+        Inspiration, research, and tools for dyslexic readers.
       </p>
       <div className="explore-grid">
         {items.map((item) => (
           <Link key={item.href} href={item.href} className="explore-card">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--accent)]">{item.kicker}</p>
+            <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: "var(--accent)" }}>{item.kicker}</p>
             <h2>{item.title}</h2>
             <p>{item.body}</p>
           </Link>
