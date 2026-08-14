@@ -18,7 +18,7 @@ export default function ProgressPage() {
   return (
     <div>
       <header className="module-header">
-        <h1>Progress</h1>
+        <h1>My Progress</h1>
         <p>
           {profile.mode === "kids"
             ? "Your journey—no streak punishments, just honest encouragement."

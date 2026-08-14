@@ -7,8 +7,8 @@ export default function ReadPage() {
   return (
     <div>
       <header className="module-header">
-        <h1>HERO Read</h1>
-        <p>Evidence-informed exercises. Difficulty adapts to how you perform—not just level number.</p>
+        <h1>Reader</h1>
+        <p>Structured reading practice. Difficulty adapts to how you perform—not just level number.</p>
       </header>
 
       <div className="read-skills">
@@ -21,11 +21,11 @@ export default function ReadPage() {
       </div>
 
       <Link href="/games" className="btn btn-white module-cta">
-        Start reading game
+        Start a challenge
       </Link>
 
       <p className="module-disclaimer">
-        HERO Read supports learning. It is not a clinical diagnosis or treatment program.
+        Reader supports learning. It is not a clinical diagnosis or treatment program.
       </p>
     </div>
   );

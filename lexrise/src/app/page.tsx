@@ -13,7 +13,7 @@ export default function RootRedirect() {
       router.replace("/splash");
       return;
     }
-    router.replace("/home");
+    router.replace("/intro");
   }, [router]);
 
   return <p className="splash-note">Loading HERO…</p>;

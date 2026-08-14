@@ -8,25 +8,28 @@ import type { HeroMode } from "@/lib/hero/types";
 
 const KIDS_NAV = [
   { href: "/home", label: "Home", icon: "⌂" },
-  { href: "/read", label: "Read", icon: "📖" },
-  { href: "/games", label: "Games", icon: "🎮" },
+  { href: "/read", label: "Reader", icon: "📖" },
+  { href: "/games", label: "Play", icon: "🎮" },
   { href: "/listen", label: "Listen", icon: "🔊" },
   { href: "/profile", label: "Profile", icon: "☺" },
 ];
 
 const ADULT_NAV = [
   { href: "/home", label: "Home", icon: "◉" },
-  { href: "/read", label: "Read", icon: "R" },
+  { href: "/read", label: "Reader", icon: "R" },
   { href: "/scan", label: "Scan", icon: "⎘" },
   { href: "/listen", label: "Listen", icon: "♪" },
   { href: "/profile", label: "Profile", icon: "☺" },
 ];
 
+const FULL_BLEED_ROUTES = ["/intro", "/splash"];
+
 export function HeroShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const profile = useHeroProfile();
+  const fullBleed = FULL_BLEED_ROUTES.some((route) => pathname.startsWith(route));
   const hideNav =
-    pathname.startsWith("/splash") ||
+    fullBleed ||
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/reader");
 
@@ -34,7 +37,7 @@ export function HeroShell({ children }: { children: ReactNode }) {
 
   return (
     <div className={`app-frame ${modeClass}`}>
-      <div className="app-content">{children}</div>
+      <div className={`app-content${fullBleed ? " app-content-full" : ""}`}>{children}</div>
       {!hideNav && profile.onboardingComplete ? (
         <HeroNav mode={profile.mode} pathname={pathname} />
       ) : null}

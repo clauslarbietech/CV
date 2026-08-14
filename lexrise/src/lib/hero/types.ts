@@ -35,6 +35,15 @@ export type LearningProfile = {
   recentSkills: string[];
 };
 
+export type ExperiencePreference = {
+  reduceMotion: boolean;
+  skipIntro: boolean;
+  soundOff: boolean;
+  /** User has seen the full cinematic intro at least once */
+  introSeenOnce: boolean;
+  lastIntroAt: string | null;
+};
+
 export type HeroProfile = {
   displayName: string;
   mode: HeroMode;
@@ -43,6 +52,7 @@ export type HeroProfile = {
   accessibility: AccessibilityPreference;
   tts: TTSPreference;
   learning: LearningProfile;
+  experience: ExperiencePreference;
 };
 
 export type PerformanceEvent = {
@@ -107,6 +117,14 @@ export const DEFAULT_LEARNING: LearningProfile = {
   recentSkills: [],
 };
 
+export const DEFAULT_EXPERIENCE: ExperiencePreference = {
+  reduceMotion: false,
+  skipIntro: false,
+  soundOff: false,
+  introSeenOnce: false,
+  lastIntroAt: null,
+};
+
 export const DEFAULT_PROFILE: HeroProfile = {
   displayName: "",
   mode: "adult",
@@ -115,15 +133,26 @@ export const DEFAULT_PROFILE: HeroProfile = {
   accessibility: DEFAULT_ACCESSIBILITY,
   tts: DEFAULT_TTS,
   learning: DEFAULT_LEARNING,
+  experience: DEFAULT_EXPERIENCE,
 };
 
 export const SAMPLE_SCAN_TEXT =
   "Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world. — Albert Einstein";
 
 export const READ_SKILLS = [
-  { id: "phonemic", label: "Phonemic awareness", detail: "Hear and match sounds" },
-  { id: "mapping", label: "Sound–letter mapping", detail: "Connect letters to sounds" },
-  { id: "decoding", label: "Decoding", detail: "Sound out new words" },
-  { id: "syllables", label: "Syllables", detail: "Break words into parts" },
-  { id: "fluency", label: "Fluency", detail: "Read smoothly with meaning" },
+  { id: "phonemic", label: "Sound Quest", detail: "Hear and match sounds" },
+  { id: "mapping", label: "Letter Match", detail: "Connect letters to sounds" },
+  { id: "decoding", label: "Word Builder", detail: "Sound out new words" },
+  { id: "syllables", label: "Syllable Split", detail: "Break words into parts" },
+  { id: "fluency", label: "Reader Flow", detail: "Read smoothly with meaning" },
+] as const;
+
+export const HERO_FLOW_OPTIONS = [
+  { id: "scan", icon: "📷", label: "Scan something", href: "/scan", zone: "live" as const },
+  { id: "listen", icon: "🔊", label: "Listen to something", href: "/listen", zone: "live" as const },
+  { id: "read", icon: "📖", label: "Help me read", href: "/read", zone: "grow" as const },
+  { id: "write", icon: "✏️", label: "Help me write", href: "/reader", zone: "grow" as const },
+  { id: "play", icon: "🎮", label: "Play & train", href: "/games", zone: "play" as const },
+  { id: "focus", icon: "🧠", label: "Focus", href: "/train", zone: "play" as const },
+  { id: "simplify", icon: "✨", label: "Simplify something", href: "/scan", zone: "live" as const },
 ] as const;

@@ -6,17 +6,17 @@ export default function TrainPage() {
   return (
     <div>
       <header className="module-header">
-        <h1>HERO Mind</h1>
-        <p>Working memory, sequencing, and attention challenges—kept separate from dyslexia intervention claims.</p>
+        <h1>Focus</h1>
+        <p>Memory Lab and mind training—attention, sequencing, and focus practice.</p>
       </header>
 
       <div className="panel">
-        <h2 className="text-lg font-bold">Sequence Master (preview)</h2>
+        <h2 className="text-lg font-bold">Memory Lab (preview)</h2>
         <p className="home-practice-detail">
-          Pattern and memory games can support focus practice. They are not marketed as treating dyslexia or developing specific brain regions.
+          Pattern and memory games support focus practice. Mind training is separate from reading support.
         </p>
         <Link href="/games?game=flip" className="btn btn-white module-cta">
-          Try letter focus game
+          Try focus game
         </Link>
       </div>
     </div>

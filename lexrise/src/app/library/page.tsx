@@ -10,7 +10,7 @@ export default function LibraryPage() {
   return (
     <div>
       <header className="module-header">
-        <h1>Library</h1>
+        <h1>My Library</h1>
         <p>Saved scans and passages ready to read or listen again.</p>
       </header>
 

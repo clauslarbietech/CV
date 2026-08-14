@@ -13,7 +13,7 @@ export default function SplashPage() {
       <HeroBrand />
       <p className="splash-tagline">Read differently. Learn differently. Be powerful.</p>
       <p className="splash-mission">Different minds. Powerful futures.</p>
-      <p className="splash-note">HERO supports reading—it does not diagnose dyslexia.</p>
+      <p className="splash-note">Your personalized space for reading, listening, learning, and getting things done differently.</p>
       <div className="splash-actions">
         <button type="button" className="btn btn-white" onClick={() => router.push("/onboarding/mode")}>
           Get started

@@ -14,6 +14,22 @@ const emptySummary = {
   daysActiveThisWeek: 0,
 };
 
+const PLAY_LINKS = [
+  { href: "/games", icon: "🎮", label: "Sound Quest", detail: "Games, challenges & brain training" },
+  { href: "/train", icon: "🧠", label: "Memory Lab", detail: "Focus and mind training" },
+] as const;
+
+const GROW_LINKS = [
+  { href: "/read", icon: "📖", label: "Reader", detail: "Structured reading practice" },
+  { href: "/reader", icon: "✏️", label: "Word Builder", detail: "Help me read & write" },
+] as const;
+
+const LIVE_LINKS = [
+  { href: "/scan", icon: "📷", label: "Scan", detail: "Turn photos into readable text" },
+  { href: "/listen", icon: "🔊", label: "Listen", detail: "Hear words light up as you go" },
+  { href: "/library", icon: "📚", label: "My Library", detail: "Saved passages & documents" },
+] as const;
+
 export function HomeDashboard() {
   const profile = useHeroProfile();
   const summary = useSyncExternalStore(subscribeHero, getSummary, () => emptySummary);
@@ -22,6 +38,55 @@ export function HomeDashboard() {
     return <KidsHome name={profile.displayName} summary={summary} />;
   }
   return <AdultHome name={profile.displayName} summary={summary} />;
+}
+
+function HeroFlowButton({ variant }: { variant: "kids" | "adult" }) {
+  return (
+    <Link href="/flow" className={`hero-flow-cta hero-flow-cta-${variant}`}>
+      <span className="hero-flow-cta-icon" aria-hidden>
+        ✦
+      </span>
+      <span>
+        <strong>What do you want to do?</strong>
+        <span className="hero-flow-cta-sub">Scan · Listen · Read · Play · Focus</span>
+      </span>
+      <span className="chevron" aria-hidden>
+        ›
+      </span>
+    </Link>
+  );
+}
+
+function ZoneSection({
+  title,
+  subtitle,
+  links,
+  variant,
+}: {
+  title: string;
+  subtitle: string;
+  links: readonly { href: string; icon: string; label: string; detail: string }[];
+  variant: "kids" | "adult";
+}) {
+  return (
+    <section className="hero-zone">
+      <div className="hero-zone-head">
+        <p className="hero-zone-title">{title}</p>
+        <p className="hero-zone-sub">{subtitle}</p>
+      </div>
+      <div className={`hero-zone-grid hero-zone-${variant}`}>
+        {links.map((link) => (
+          <Link key={link.href + link.label} href={link.href} className="hero-zone-card">
+            <span className="hero-zone-icon" aria-hidden>
+              {link.icon}
+            </span>
+            <strong>{link.label}</strong>
+            <span>{link.detail}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function KidsHome({
@@ -37,39 +102,21 @@ function KidsHome({
       <header className="kids-header">
         <HeroBrand />
         <p className="kids-greeting">Hi, {name}! 👋</p>
+        <p className="hero-place-line">Your space to read, play, and explore differently.</p>
         <div className="mission-bar">
           <span>Today&apos;s mission</span>
-          <strong>
-            {missionDone}/5 activities
-          </strong>
+          <strong>{missionDone}/5 activities</strong>
           <div className="mission-track">
             <div className="mission-fill" style={{ width: `${(missionDone / 5) * 100}%` }} />
           </div>
         </div>
       </header>
 
-      <section className="kids-cards">
-        <Link href="/games" className="kids-card kids-card-orange">
-          <span>🐱</span>
-          <strong>Letter Quest</strong>
-          <span>Build words from sounds</span>
-        </Link>
-        <Link href="/read" className="kids-card kids-card-blue">
-          <span>🔤</span>
-          <strong>Sound Match</strong>
-          <span>Match letters and sounds</span>
-        </Link>
-        <Link href="/listen" className="kids-card kids-card-green">
-          <span>🎧</span>
-          <strong>Listen & Read</strong>
-          <span>Words light up as you hear them</span>
-        </Link>
-        <Link href="/scan" className="kids-card kids-card-purple">
-          <span>📷</span>
-          <strong>Scan a page</strong>
-          <span>Turn a photo into readable text</span>
-        </Link>
-      </section>
+      <HeroFlowButton variant="kids" />
+
+      <ZoneSection title="Play" subtitle="Games, adventures & achievements" links={PLAY_LINKS} variant="kids" />
+      <ZoneSection title="Grow" subtitle="Reading practice that builds confidence" links={GROW_LINKS} variant="kids" />
+      <ZoneSection title="Live" subtitle="Use HERO in everyday life" links={LIVE_LINKS} variant="kids" />
 
       <p className="kids-encourage">
         {summary.daysActiveThisWeek > 0
@@ -90,8 +137,9 @@ function AdultHome({
   return (
     <div className="dashboard adult-dashboard">
       <header className="adult-header">
-        <p className="adult-kicker">HERO Dashboard</p>
+        <p className="adult-kicker">HERO</p>
         <h1>Welcome back, {name}</h1>
+        <p className="hero-place-line">Your personalized space for reading, listening, learning, and getting things done differently.</p>
       </header>
 
       <div className="metric-row">
@@ -109,43 +157,19 @@ function AdultHome({
         </div>
       </div>
 
-      <Link href="/scan" className="hero-loop-card">
-        <p className="loop-label">HERO signature loop</p>
-        <strong>Scan → Read → Listen → Save</strong>
-        <span>Photograph text, transform how it looks, listen with highlights</span>
-      </Link>
+      <HeroFlowButton variant="adult" />
 
-      <p className="section-label">Continue</p>
-      <div className="adult-links">
-        <Link href="/read" className="home-practice-row">
-          <span>
-            <strong>HERO Read</strong>
-            <span className="home-practice-detail">Phonics, decoding, fluency</span>
-          </span>
-          <span className="chevron">›</span>
-        </Link>
-        <Link href="/games" className="home-practice-row">
-          <span>
-            <strong>Reading games</strong>
-            <span className="home-practice-detail">Adaptive phonics practice</span>
-          </span>
-          <span className="chevron">›</span>
-        </Link>
-        <Link href="/train" className="home-practice-row">
-          <span>
-            <strong>HERO Mind</strong>
-            <span className="home-practice-detail">Focus & memory—separate from dyslexia claims</span>
-          </span>
-          <span className="chevron">›</span>
-        </Link>
-        <Link href="/library" className="home-practice-row">
-          <span>
-            <strong>Library</strong>
-            <span className="home-practice-detail">Saved scans and passages</span>
-          </span>
-          <span className="chevron">›</span>
-        </Link>
-      </div>
+      <ZoneSection title="Play" subtitle="Challenges, games & mind training" links={PLAY_LINKS} variant="adult" />
+      <ZoneSection title="Grow" subtitle="Phonics, comprehension & progress" links={GROW_LINKS} variant="adult" />
+      <ZoneSection title="Live" subtitle="Scan, listen, simplify & save" links={LIVE_LINKS} variant="adult" />
+
+      <Link href="/progress" className="home-practice-row">
+        <span>
+          <strong>My Progress</strong>
+          <span className="home-practice-detail">Reading time, activities & consistency</span>
+        </span>
+        <span className="chevron">›</span>
+      </Link>
     </div>
   );
 }

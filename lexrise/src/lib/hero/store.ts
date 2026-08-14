@@ -1,4 +1,5 @@
 import {
+  DEFAULT_EXPERIENCE,
   DEFAULT_PROFILE,
   type ExerciseAttempt,
   type HeroProfile,
@@ -46,11 +47,58 @@ export function subscribeHero(onChange: () => void) {
 }
 
 export function getProfile(): HeroProfile {
-  return readJson(KEYS.profile, DEFAULT_PROFILE);
+  const raw = readJson(KEYS.profile, DEFAULT_PROFILE);
+  return {
+    ...DEFAULT_PROFILE,
+    ...raw,
+    experience: { ...DEFAULT_EXPERIENCE, ...raw.experience },
+    accessibility: { ...DEFAULT_PROFILE.accessibility, ...raw.accessibility },
+    tts: { ...DEFAULT_PROFILE.tts, ...raw.tts },
+    learning: { ...DEFAULT_PROFILE.learning, ...raw.learning },
+  };
 }
 
 export function saveProfile(patch: Partial<HeroProfile>) {
-  writeJson(KEYS.profile, { ...getProfile(), ...patch });
+  const current = getProfile();
+  writeJson(KEYS.profile, {
+    ...current,
+    ...patch,
+    experience: { ...current.experience, ...patch.experience },
+    accessibility: patch.accessibility ? { ...current.accessibility, ...patch.accessibility } : current.accessibility,
+  });
+}
+
+export function markIntroSeen() {
+  const current = getProfile();
+  saveProfile({
+    experience: {
+      ...current.experience,
+      introSeenOnce: true,
+      lastIntroAt: new Date().toISOString(),
+    },
+  });
+}
+
+/** Full letter-by-letter cinematic only on the very first visit */
+export function shouldPlayFullIntro(): boolean {
+  const { experience } = getProfile();
+  if (experience.skipIntro || experience.reduceMotion) return false;
+  return !experience.introSeenOnce;
+}
+
+/** Skip intro on return visits the same day, when disabled, or with reduce motion */
+export function shouldSkipIntroEntirely(): boolean {
+  const { experience } = getProfile();
+  if (experience.skipIntro) return true;
+  if (experience.introSeenOnce && experience.reduceMotion) return true;
+  const today = new Date().toISOString().slice(0, 10);
+  if (experience.introSeenOnce && experience.lastIntroAt?.slice(0, 10) === today) return true;
+  return false;
+}
+
+export function updateExperience(patch: Partial<HeroProfile["experience"]>) {
+  const current = getProfile();
+  saveProfile({ experience: { ...current.experience, ...patch } });
 }
 
 export function completeOnboarding(profile: Partial<HeroProfile>) {

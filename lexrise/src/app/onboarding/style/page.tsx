@@ -32,7 +32,7 @@ export default function StyleOnboardPage() {
         letterSpacing: spacing,
       },
     });
-    router.push("/home");
+    router.push("/intro");
   }
 
   return (
