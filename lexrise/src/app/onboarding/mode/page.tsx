@@ -51,6 +51,9 @@ export default function ModePage() {
 
       <button type="button" className="btn btn-white onboard-continue" disabled={!selected} onClick={continueNext}>
         Continue
+        <span className="btn-arrow" aria-hidden>
+          →
+        </span>
       </button>
     </div>
   );
