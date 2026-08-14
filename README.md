@@ -16,6 +16,7 @@ A free, non-commercial Bible mobile app (Genesis through Revelation) featuring a
 - Project rules (`.cursorrules`)
 - Environment template (`.env.example`)
 - ESV scripture service with local cache + mandatory attribution
+- Launch fade-in intro (same motion timing as the FitLife splash)
 - Genesis 1 webtoon reader screen with sticky ESV copyright footer and AI drawer placeholder
 
 ## Setup
