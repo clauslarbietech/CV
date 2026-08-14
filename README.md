@@ -1,11 +1,13 @@
-# LexRise — Dyslexia reading app
+# HERO — Inclusive reading platform
 
-This repository now includes **LexRise**, a Next.js app for dyslexia support (fonts, phonics games, accomplishments, research).
+Web MVP prototype lives in `lexrise/` (package name: **hero**).
 
 ```bash
-cd lexrise
-npm install
-npm run dev
+cd lexrise && npm install && npm run dev
 ```
 
-The original personal site HTML files remain at the repo root for reference.
+Start at `/splash` for onboarding.
+
+**Preview:** https://clauslarbietech.github.io/CV/lexrise/
+
+HERO supports reading and learning—it does not diagnose dyslexia.

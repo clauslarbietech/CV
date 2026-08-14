@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { recordAttempt } from "@/lib/hero/store";
 import {
   confusablePairs,
   cvcWords,
@@ -125,6 +126,13 @@ function UnscrambleRound({
     const guess = picked.join("");
     if (guess === current.word) {
       setMessage("Yes! You mapped the sounds to letters.");
+      recordAttempt({
+        exerciseId: "unscramble",
+        skill: "decoding",
+        correct: true,
+        responseMs: 0,
+        hintsUsed: 0,
+      });
       onCorrect();
     } else {
       setMessage("Not yet—say the sounds slowly, then try again.");
@@ -185,6 +193,13 @@ function LetterFlipGame() {
     setPicked(option);
     if (option === item.answer) {
       setScore((s) => s + 1);
+      recordAttempt({
+        exerciseId: "letter-flip",
+        skill: "mapping",
+        correct: true,
+        responseMs: 0,
+        hintsUsed: 0,
+      });
       setTimeout(() => {
         setIndex((i) => i + 1);
         setPicked(null);
@@ -235,6 +250,13 @@ function NonsenseGame() {
   function check() {
     if (guess.trim().toLowerCase() === item.word) {
       setScore((s) => s + 1);
+      recordAttempt({
+        exerciseId: "nonsense",
+        skill: "decoding",
+        correct: true,
+        responseMs: 0,
+        hintsUsed: 0,
+      });
       setFeedback("Decoded! That is pure phonics skill.");
       setGuess("");
       setIndex((i) => i + 1);

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Lexend } from "next/font/google";
-import { AppShell } from "@/components/AppShell";
+import { Atkinson_Hyperlegible, Lexend } from "next/font/google";
+import { HeroAccessibilityProvider } from "@/components/hero/HeroAccessibilityProvider";
+import { HeroShell } from "@/components/hero/HeroShell";
 import "./globals.css";
 
 const lexend = Lexend({
@@ -9,13 +10,20 @@ const lexend = Lexend({
   display: "swap",
 });
 
+const atkinson = Atkinson_Hyperlegible({
+  variable: "--font-atkinson",
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
-    default: "LexRise — Dyslexia reading training",
-    template: "%s · LexRise",
+    default: "HERO — Read differently. Learn differently. Be powerful.",
+    template: "%s · HERO",
   },
   description:
-    "Daily reading sessions, phonics games, font comfort tools, and accomplishments for people with dyslexia.",
+    "Inclusive reading and learning platform for children through adults. Supports—not diagnoses—dyslexia and alternative reading needs.",
 };
 
 export const viewport: Viewport = {
@@ -27,9 +35,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${lexend.variable} h-full`}>
+    <html lang="en" className={`${lexend.variable} ${atkinson.variable} h-full`}>
       <body className="min-h-full">
-        <AppShell>{children}</AppShell>
+        <HeroAccessibilityProvider />
+        <HeroShell>{children}</HeroShell>
       </body>
     </html>
   );
