@@ -1,19 +1,21 @@
 # Move to Dyslexia-support-app
 
-The HERO + Speed dyslexia reading app is prepared for:
+The HERO + Speed dyslexia reading app is prepared in this repo at:
 
-https://github.com/clauslarbietech/Dyslexia-support-app
+- `dyslexia-support-app/` — standalone app ready to push
+- `scripts/push-to-dyslexia-support-app.sh` — one-shot transfer script
 
-## Status
+Target: https://github.com/clauslarbietech/Dyslexia-support-app
 
-- Source of truth was built under `lexrise/` in this CV repo.
-- A port branch `cursor/port-lexrise-app-5aee` was prepared locally with:
-  - Full HERO platform (splash, onboarding, games, reader, learning profile)
-  - Speed fade-in intro logo
-  - Standalone `package.json` / README
-  - GitHub Pages `basePath`: `/Dyslexia-support-app`
-- Push failed with **403** because the Cursor agent token only has access to `clauslarbietech/CV`.
+## Why push is blocked for the agent
 
-## Unblock
+The Cursor GitHub App currently only has access to `clauslarbietech/CV`.
+Invite/collaborator alone is not enough — install/configure the **Cursor** GitHub App on `Dyslexia-support-app` (GitHub → Settings → Applications → Cursor → Repository access).
 
-Invite **cursor[bot]** (or add the repo to the Cloud Agent environment) with write access on Dyslexia-support-app, then ask the agent to push again.
+## After granting access
+
+Tell the agent to **proceed** again, or run locally:
+
+```bash
+./scripts/push-to-dyslexia-support-app.sh
+```
