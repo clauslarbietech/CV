@@ -6,7 +6,8 @@ import {
   getExerciseVisual,
   muscleLabel,
 } from '@/constants/exercises/exerciseVisuals';
-import { POSE_IMAGES } from '@/constants/exercises/poseImages';
+import { getPoseImage } from '@/constants/exercises/poseImages';
+import { useProfileStore } from '@/store/profileStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
 interface ExerciseGraphicProps {
@@ -19,6 +20,7 @@ export function ExerciseGraphic({
   compact = false,
 }: ExerciseGraphicProps) {
   const { colors } = useTheme();
+  const sex = useProfileStore((s) => s.profile?.sex);
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -118,7 +120,8 @@ export function ExerciseGraphic({
   );
 
   const visual = getExerciseVisual(exerciseName);
-  const image = POSE_IMAGES[visual.pose] ?? POSE_IMAGES.generic;
+  const image = getPoseImage(visual.pose, sex);
+  const bodyLabel = sex === 'female' ? 'Female form' : 'Male form';
 
   return (
     <View style={[styles.card, compact && styles.compact]}>
@@ -126,7 +129,9 @@ export function ExerciseGraphic({
         <View style={styles.badge}>
           <Text style={styles.badgeText}>FORM GUIDE</Text>
         </View>
-        <Text style={styles.hint}>Neon = working muscles</Text>
+        <Text style={styles.hint}>
+          {bodyLabel} · Neon = working muscles
+        </Text>
       </View>
 
       <View style={[styles.art, compact && styles.artCompact]}>
@@ -134,7 +139,7 @@ export function ExerciseGraphic({
           source={image}
           style={styles.image}
           resizeMode="cover"
-          accessibilityLabel={`${exerciseName} form illustration`}
+          accessibilityLabel={`${exerciseName} ${bodyLabel.toLowerCase()} illustration`}
         />
       </View>
 
@@ -151,7 +156,7 @@ export function ExerciseGraphic({
       {!compact ? (
         <View style={styles.mapBlock}>
           <Text style={styles.mapLabel}>Muscle recovery map</Text>
-          <MuscleMapSvg muscles={visual.muscles} />
+          <MuscleMapSvg muscles={visual.muscles} sex={sex} />
           <View style={styles.tips}>
             {visual.formTips.map((tip) => (
               <Text key={tip} style={styles.tip}>

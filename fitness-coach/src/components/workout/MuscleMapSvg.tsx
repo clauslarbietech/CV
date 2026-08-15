@@ -1,6 +1,7 @@
 import Svg, { Ellipse, G, Path } from 'react-native-svg';
 
 import { MuscleId } from '@/constants/exercises/exerciseVisuals';
+import { Sex } from '@/types';
 import { useTheme } from '@/theme';
 
 const BASE = '#C8C8C8';
@@ -9,6 +10,8 @@ interface MuscleMapSvgProps {
   muscles: MuscleId[];
   width?: number;
   height?: number;
+  /** Slightly adjusts silhouette proportions for female athletes. */
+  sex?: Sex | null;
 }
 
 /** Compact front + back anatomical map with neon active muscles. */
@@ -16,15 +19,24 @@ export function MuscleMapSvg({
   muscles,
   width = 200,
   height = 120,
+  sex,
 }: MuscleMapSvgProps) {
   const { colors } = useTheme();
   const activeColor = colors.accent;
   const set = new Set(muscles);
+  const female = sex === 'female';
 
   const fill = (id: MuscleId) => {
     if (set.has('full') || set.has(id)) return activeColor;
     return BASE;
   };
+
+  // Female-adapted proportions: narrower shoulders/chest, wider hips/glutes
+  const chestRx = female ? 10 : 12;
+  const shoulderR = female ? 5 : 6;
+  const hipRx = female ? 11 : 9;
+  const gluteRx = female ? 13 : 11;
+  const shoulderSpread = female ? 11 : 13;
 
   return (
     <Svg width={width} height={height} viewBox="0 0 200 120">
@@ -34,25 +46,43 @@ export function MuscleMapSvg({
         <Path
           d="M55 22 L55 58"
           stroke={fill('abs')}
-          strokeWidth="14"
+          strokeWidth={female ? 12 : 14}
           strokeLinecap="round"
         />
-        <Ellipse cx="55" cy="34" rx="12" ry="9" fill={fill('chest')} />
-        <Ellipse cx="42" cy="30" rx="6" ry="5" fill={fill('shoulders')} />
-        <Ellipse cx="68" cy="30" rx="6" ry="5" fill={fill('shoulders')} />
+        <Ellipse
+          cx="55"
+          cy="34"
+          rx={chestRx}
+          ry="9"
+          fill={fill('chest')}
+        />
+        <Ellipse
+          cx={55 - shoulderSpread}
+          cy="30"
+          rx={shoulderR}
+          ry="5"
+          fill={fill('shoulders')}
+        />
+        <Ellipse
+          cx={55 + shoulderSpread}
+          cy="30"
+          rx={shoulderR}
+          ry="5"
+          fill={fill('shoulders')}
+        />
         <Path
-          d="M42 34 L30 52"
+          d={`M${55 - shoulderSpread} 34 L30 52`}
           stroke={fill('triceps')}
           strokeWidth="6"
           strokeLinecap="round"
         />
         <Path
-          d="M68 34 L80 52"
+          d={`M${55 + shoulderSpread} 34 L80 52`}
           stroke={fill('biceps')}
           strokeWidth="6"
           strokeLinecap="round"
         />
-        <Ellipse cx="55" cy="50" rx="9" ry="8" fill={fill('abs')} />
+        <Ellipse cx="55" cy="50" rx={hipRx} ry="8" fill={fill('abs')} />
         <Path
           d="M55 58 L42 100"
           stroke={fill('quads')}
@@ -73,13 +103,37 @@ export function MuscleMapSvg({
         <Path
           d="M145 22 L145 58"
           stroke={fill('back')}
-          strokeWidth="14"
+          strokeWidth={female ? 12 : 14}
           strokeLinecap="round"
         />
-        <Ellipse cx="145" cy="36" rx="13" ry="10" fill={fill('back')} />
-        <Ellipse cx="132" cy="30" rx="6" ry="5" fill={fill('shoulders')} />
-        <Ellipse cx="158" cy="30" rx="6" ry="5" fill={fill('shoulders')} />
-        <Ellipse cx="145" cy="56" rx="11" ry="8" fill={fill('glutes')} />
+        <Ellipse
+          cx="145"
+          cy="36"
+          rx={female ? 11 : 13}
+          ry="10"
+          fill={fill('back')}
+        />
+        <Ellipse
+          cx={145 - shoulderSpread}
+          cy="30"
+          rx={shoulderR}
+          ry="5"
+          fill={fill('shoulders')}
+        />
+        <Ellipse
+          cx={145 + shoulderSpread}
+          cy="30"
+          rx={shoulderR}
+          ry="5"
+          fill={fill('shoulders')}
+        />
+        <Ellipse
+          cx="145"
+          cy="56"
+          rx={gluteRx}
+          ry="8"
+          fill={fill('glutes')}
+        />
         <Path
           d="M145 62 L132 100"
           stroke={fill('hamstrings')}

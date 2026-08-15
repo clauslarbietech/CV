@@ -29,6 +29,7 @@ interface ProfileState {
     email?: string;
   }) => void;
   setCoachPersonality: (personality: CoachPersonality) => void;
+  setSex: (sex: Sex) => void;
   addXp: (amount: number) => void;
   updateWeight: (kg: number) => void;
   resetOnboarding: () => void;
@@ -89,6 +90,18 @@ export const useProfileStore = create<ProfileState>()(
                 profile: {
                   ...state.profile,
                   coachPersonality: personality,
+                  updatedAt: new Date().toISOString(),
+                },
+              }
+            : state,
+        ),
+      setSex: (sex) =>
+        set((state) =>
+          state.profile
+            ? {
+                profile: {
+                  ...state.profile,
+                  sex,
                   updatedAt: new Date().toISOString(),
                 },
               }

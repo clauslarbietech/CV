@@ -10,13 +10,14 @@ import { Screen } from '@/components/ui/Screen';
 import { COACH_PERSONALITIES } from '@/constants/coach';
 import { useAuthStore } from '@/store/authStore';
 import { useProfileStore } from '@/store/profileStore';
-import { CoachPersonality } from '@/types';
+import { CoachPersonality, Sex } from '@/types';
 import { useTheme, spacing, typography } from '@/theme';
 
 export default function ProfileScreen() {
   const { colors } = useTheme();
   const profile = useProfileStore((s) => s.profile);
   const setCoachPersonality = useProfileStore((s) => s.setCoachPersonality);
+  const setSex = useProfileStore((s) => s.setSex);
   const resetOnboarding = useProfileStore((s) => s.resetOnboarding);
   const signOut = useAuthStore((s) => s.signOut);
 
@@ -61,6 +62,21 @@ export default function ProfileScreen() {
 
       <Text style={styles.section}>Appearance</Text>
       <AppearanceToggle />
+
+      <Text style={styles.section}>Body · form guide</Text>
+      <Text style={styles.subtitle}>
+        Mission graphics switch to a male or female anatomical model.
+      </Text>
+      <View style={styles.chips}>
+        {(['male', 'female'] as const).map((option) => (
+          <OptionChip
+            key={option}
+            label={option === 'male' ? 'Male' : 'Female'}
+            selected={profile?.sex === option}
+            onPress={() => setSex(option as Sex)}
+          />
+        ))}
+      </View>
 
       <Card>
         <Text style={styles.row}>Rank: {profile?.rank ?? 'Recruit'}</Text>
