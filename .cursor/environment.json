@@ -1,0 +1,12 @@
+{
+  "name": "Bible App",
+  "install": "npm install",
+  "start": "npx expo start --web --port 8081",
+  "terminals": [
+    {
+      "name": "web-preview",
+      "command": "npx expo start --web --port 8081"
+    }
+  ],
+  "ports": [8081]
+}
