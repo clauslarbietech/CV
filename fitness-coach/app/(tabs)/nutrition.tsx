@@ -1,5 +1,6 @@
 import { Linking, StyleSheet, Text, View } from 'react-native';
 
+import { DigestionGuide } from '@/components/nutrition/DigestionGuide';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import {
@@ -22,6 +23,8 @@ export default function NutritionScreen() {
         Default plan uses a 16:8 fasting window with tactical-style plates.
         Sources linked below.
       </Text>
+
+      <DigestionGuide />
 
       <Card accentBorder>
         <Text style={styles.planLabel}>{plan.label}</Text>
