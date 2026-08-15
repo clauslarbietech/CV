@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
-import { HeroBrand } from "@/components/hero/HeroShell";
 import { useHeroProfile } from "@/hooks/useHeroProfile";
 import { getSummary, subscribeHero } from "@/lib/hero/store";
 
@@ -14,58 +13,67 @@ const emptySummary = {
   daysActiveThisWeek: 0,
 };
 
-const EXPLORE_TILES = [
-  { href: "/games", label: "Play", visual: "play", icon: "🎮" },
-  { href: "/read", label: "Grow", visual: "grow", icon: "📖" },
-  { href: "/scan", label: "Live", visual: "live", icon: "📷" },
-  { href: "/train", label: "Focus", visual: "focus", icon: "🧠" },
+const FEATURED = [
+  { href: "/games?skill=morphology", title: "Word Parts", tag: "READING", tone: "crimson", icon: "🧩" },
+  { href: "/games?skill=phonemic", title: "Sound Quest", tag: "SOUNDS", tone: "teal", icon: "🔊" },
+  { href: "/games?skill=fluency", title: "Reader Flow", tag: "FLUENCY", tone: "indigo", icon: "🌊" },
 ] as const;
 
 export function HomeDashboard() {
   const profile = useHeroProfile();
   const summary = useSyncExternalStore(subscribeHero, getSummary, () => emptySummary);
-  const streak = Math.max(1, summary.daysActiveThisWeek || (summary.lastActiveDate ? 1 : 0));
+  const streak = Math.max(summary.daysActiveThisWeek, summary.lastActiveDate ? 1 : 0);
+  const xp = summary.activitiesCompleted * 40 + summary.totalMinutes * 5;
 
   return (
-    <div className={`dashboard mendi-home ${profile.mode === "kids" ? "mendi-kids" : "mendi-adult"}`}>
-      <header className="mendi-top">
-        <div className="mendi-streak" aria-label={`${streak} day streak`}>
-          <span aria-hidden>🔥</span>
-          <span>{streak} day{streak === 1 ? "" : "s"}</span>
-        </div>
-        <HeroBrand />
-        <Link href="/progress" className="icon-btn" aria-label="Progress">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" strokeWidth="1.6" />
-            <path d="M8 3v4M16 3v4M3 10h18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
-        </Link>
-      </header>
-
-      <Link href="/practice" className="start-session-card">
-        <span className="start-session-orb" aria-hidden>
-          ✦
-        </span>
-        <strong>Start session</strong>
-      </Link>
-      <p className="start-session-hint">
-        {profile.mode === "kids" ? "One short adventure today." : "Keep building your streak."}
-      </p>
-
-      <div className="explore-grid">
-        {EXPLORE_TILES.map((tile) => (
-          <Link key={tile.href} href={tile.href} className={`explore-tile explore-${tile.visual}`}>
-            <span className="explore-tile-label">{tile.label}</span>
-            <span className="explore-tile-art" aria-hidden>
-              {tile.icon}
-            </span>
-          </Link>
-        ))}
+    <div className="elevate-today">
+      <div className="elevate-banner">
+        <p>TRAIN YOUR READING BRAIN</p>
       </div>
 
-      <Link href="/flow" className="mendi-ghost-cta">
-        What do you need?
-      </Link>
+      <section className="elevate-sheet">
+        <div className="elevate-stat-row">
+          <div>
+            <span className="elevate-stat-label">STREAK</span>
+            <strong>🔥 {streak || 0} days</strong>
+          </div>
+          <div>
+            <span className="elevate-stat-label">XP</span>
+            <strong>{xp}</strong>
+          </div>
+          <div>
+            <span className="elevate-stat-label">DONE</span>
+            <strong>{summary.activitiesCompleted}</strong>
+          </div>
+        </div>
+
+        <Link href="/practice" className="elevate-start">
+          <span className="elevate-start-orb" aria-hidden>
+            ✦
+          </span>
+          <span>
+            <strong>Start training</strong>
+            <span className="elevate-start-sub">Hi {profile.displayName || "there"}</span>
+          </span>
+        </Link>
+
+        <div className="elevate-section-head">
+          <h2>Featured</h2>
+          <Link href="/games">See all</Link>
+        </div>
+
+        <div className="elevate-feature-scroll">
+          {FEATURED.map((game) => (
+            <Link key={game.href} href={game.href} className={`elevate-game-card tone-${game.tone}`}>
+              <span className="elevate-game-icon" aria-hidden>
+                {game.icon}
+              </span>
+              <strong>{game.title}</strong>
+              <span className="elevate-game-tag">{game.tag}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

@@ -92,25 +92,19 @@ export function GamesHub({ initialTab = "decoding" }: { initialTab?: GameTab }) 
 
   return (
     <div>
-      <p className="science-practice-note">
-        Structured Literacy practice — explicit instruction, not discovery-only guessing.
-      </p>
-      <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Literacy practice">
+      <p className="elevate-kicker">Structured Literacy</p>
+      <div className="elevate-pills" role="tablist" aria-label="Literacy practice">
         {TABS.map(({ id, label }) => (
           <button
             key={id}
             type="button"
             role="tab"
             aria-selected={tab === id}
-            className="btn btn-ghost min-h-10 px-4 text-sm"
+            className="elevate-pill"
+            data-active={tab === id}
             onClick={() => setTab(id)}
-            style={
-              tab === id
-                ? { background: "rgba(255,122,61,0.18)", borderColor: "rgba(255,122,61,0.45)" }
-                : undefined
-            }
           >
-            {label}
+            {label.toUpperCase()}
           </button>
         ))}
       </div>

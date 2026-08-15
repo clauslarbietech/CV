@@ -1,42 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { ScienceBadge } from "@/components/hero/ScienceBadge";
 import { READ_SKILLS } from "@/lib/hero/types";
+
+const TONES = ["crimson", "teal", "indigo", "amber", "violet", "ocean", "pink"] as const;
 
 export default function ReadPage() {
   return (
-    <div>
-      <header className="module-header">
-        <h1>Grow</h1>
-        <ScienceBadge tier="evidence-based" />
-      </header>
-
-      <Link href="/practice" className="start-session-card" style={{ minHeight: 120, marginBottom: 16 }}>
-        <span className="start-session-orb" aria-hidden>
-          ✦
-        </span>
-        <strong>Science session</strong>
-      </Link>
-
-      <div className="explore-grid">
-        {READ_SKILLS.map((skill) => (
-          <Link key={skill.id} href={`/games?skill=${skill.id}`} className="explore-tile explore-grow">
-            <span className="explore-tile-label">{skill.label}</span>
-            <span className="explore-tile-art" aria-hidden>
-              {skill.id === "phonemic"
-                ? "🔊"
-                : skill.id === "morphology"
-                  ? "🧩"
-                  : skill.id === "fluency"
-                    ? "🌊"
-                    : skill.id === "spelling"
-                      ? "✏️"
-                      : "Aa"}
-            </span>
-          </Link>
-        ))}
+    <div className="elevate-games">
+      <div className="elevate-banner">
+        <p>GROW YOUR READING SKILLS</p>
       </div>
+      <section className="elevate-sheet">
+        <Link href="/practice" className="elevate-start">
+          <span className="elevate-start-orb" aria-hidden>
+            ✦
+          </span>
+          <span>
+            <strong>Science session</strong>
+            <span className="elevate-start-sub">Guided practice</span>
+          </span>
+        </Link>
+        <div className="elevate-card-grid">
+          {READ_SKILLS.map((skill, i) => (
+            <Link key={skill.id} href={`/games?skill=${skill.id}`} className={`elevate-game-card tone-${TONES[i % TONES.length]}`}>
+              <span className="elevate-game-icon" aria-hidden>
+                {skill.id === "phonemic" ? "🔊" : skill.id === "morphology" ? "🧩" : skill.id === "fluency" ? "🌊" : "Aa"}
+              </span>
+              <strong>{skill.label}</strong>
+              <span className="elevate-game-tag">READING</span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

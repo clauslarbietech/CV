@@ -11,79 +11,70 @@ export default function ProfilePage() {
   const { experience } = profile;
 
   return (
-    <div className="mendi-profile">
-      <header className="mendi-profile-top">
-        <HeroBrand />
-      </header>
-
-      <div className="mendi-identity">
-        <h1>{profile.displayName || "HERO"}</h1>
-        <p>{profile.mode === "kids" ? "Kids & Teens" : "Adult"}</p>
-        <div className="mendi-badges" aria-hidden>
-          <span>⭐</span>
-          <span>🎯</span>
-          <span>📚</span>
-          <span>🎧</span>
-        </div>
+    <div className="elevate-me">
+      <div className="elevate-banner elevate-banner-warm">
+        <p>YOUR HERO SPACE</p>
       </div>
 
-      <Link href="/practice" className="profile-cta-card">
-        <span className="profile-cta-kicker">Ready when you are</span>
-        <strong>Continue your journey</strong>
-        <span className="profile-cta-btn">Start session</span>
-      </Link>
+      <section className="elevate-sheet">
+        <div className="elevate-me-identity">
+          <HeroBrand />
+          <h1>{profile.displayName || "HERO"}</h1>
+          <p>{profile.mode === "kids" ? "Kids & Teens" : "Adult"}</p>
+        </div>
 
-      <p className="section-label">Settings</p>
-      <div className="list-group">
-        <Link href="/style" className="list-row">
-          <span className="list-icon">Aa</span>
-          <span>Reading Style</span>
-          <span className="chevron">›</span>
+        <Link href="/practice" className="elevate-start">
+          <span className="elevate-start-orb" aria-hidden>
+            ✦
+          </span>
+          <span>
+            <strong>Continue training</strong>
+            <span className="elevate-start-sub">Science session</span>
+          </span>
         </Link>
-        <Link href="/progress" className="list-row">
-          <span className="list-icon">◎</span>
-          <span>Progress</span>
-          <span className="chevron">›</span>
-        </Link>
-        <Link href="/library" className="list-row">
-          <span className="list-icon">▤</span>
-          <span>Library</span>
-          <span className="chevron">›</span>
-        </Link>
-        <Link href="/research" className="list-row">
-          <span className="list-icon">◈</span>
-          <span>Science</span>
-          <span className="chevron">›</span>
-        </Link>
-        {profile.mode === "kids" ? (
-          <Link href="/parent" className="list-row">
-            <span className="list-icon">☺</span>
-            <span>Parent</span>
+
+        <div className="list-group elevate-list">
+          <Link href="/progress" className="list-row">
+            <span className="list-icon">◎</span>
+            <span>Progress</span>
             <span className="chevron">›</span>
           </Link>
-        ) : null}
-      </div>
+          <Link href="/style" className="list-row">
+            <span className="list-icon">Aa</span>
+            <span>Reading Style</span>
+            <span className="chevron">›</span>
+          </Link>
+          <Link href="/library" className="list-row">
+            <span className="list-icon">▤</span>
+            <span>Library</span>
+            <span className="chevron">›</span>
+          </Link>
+          <Link href="/flow" className="list-row">
+            <span className="list-icon">✦</span>
+            <span>Quick actions</span>
+            <span className="chevron">›</span>
+          </Link>
+          <Link href="/research" className="list-row">
+            <span className="list-icon">◈</span>
+            <span>Science</span>
+            <span className="chevron">›</span>
+          </Link>
+        </div>
 
-      <p className="section-label">Preferences</p>
-      <div className="list-group">
-        <ToggleRow label="Reduce motion" checked={experience.reduceMotion} onChange={(v) => updateExperience({ reduceMotion: v })} />
-        <ToggleRow label="Skip intro" checked={experience.skipIntro} onChange={(v) => updateExperience({ skipIntro: v })} />
-        <ToggleRow label="Sound off" checked={experience.soundOff} onChange={(v) => updateExperience({ soundOff: v })} />
-      </div>
+        <div className="list-group elevate-list">
+          <ToggleRow label="Reduce motion" checked={experience.reduceMotion} onChange={(v) => updateExperience({ reduceMotion: v })} />
+          <ToggleRow label="Skip intro" checked={experience.skipIntro} onChange={(v) => updateExperience({ skipIntro: v })} />
+          <ToggleRow label="Sound off" checked={experience.soundOff} onChange={(v) => updateExperience({ soundOff: v })} />
+        </div>
 
-      <div className="mode-switch mendi-mode-switch">
-        {(["kids", "adult"] as HeroMode[]).map((mode) => (
-          <button
-            key={mode}
-            type="button"
-            className="btn btn-ghost"
-            data-active={profile.mode === mode}
-            onClick={() => saveProfile({ mode })}
-          >
-            {mode === "kids" ? "Kids" : "Adult"}
-          </button>
-        ))}
-      </div>
+        <div className="mode-switch mendi-mode-switch">
+          {(["kids", "adult"] as HeroMode[]).map((mode) => (
+            <button key={mode} type="button" className="btn btn-ghost" data-active={profile.mode === mode} onClick={() => saveProfile({ mode })}>
+              {mode === "kids" ? "Kids" : "Adult"}
+            </button>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

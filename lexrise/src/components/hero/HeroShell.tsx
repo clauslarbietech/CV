@@ -6,9 +6,9 @@ import type { ReactNode } from "react";
 import { useHeroProfile } from "@/hooks/useHeroProfile";
 
 const NAV = [
-  { href: "/flow", label: "Explore", icon: "◎" },
-  { href: "/home", label: "Training", icon: "✦" },
-  { href: "/profile", label: "Profile", icon: "☺" },
+  { href: "/home", label: "Today", icon: "⬡" },
+  { href: "/games", label: "Games", icon: "▣" },
+  { href: "/profile", label: "Me", icon: "☺" },
 ];
 
 const FULL_BLEED_ROUTES = ["/intro", "/splash"];
@@ -22,10 +22,8 @@ export function HeroShell({ children }: { children: ReactNode }) {
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/reader");
 
-  const modeClass = profile.mode === "kids" ? "hero-kids" : "hero-adult";
-
   return (
-    <div className={`app-frame ${modeClass}`}>
+    <div className="app-frame elevate-shell">
       <div className={`app-content${fullBleed ? " app-content-full" : ""}`}>{children}</div>
       {!hideNav && profile.onboardingComplete ? <HeroNav pathname={pathname} /> : null}
     </div>
@@ -34,14 +32,14 @@ export function HeroShell({ children }: { children: ReactNode }) {
 
 function HeroNav({ pathname }: { pathname: string }) {
   return (
-    <nav className="bottom-nav" aria-label="Primary">
+    <nav className="bottom-nav elevate-nav" aria-label="Primary">
       {NAV.map(({ href, label, icon }) => {
         const active =
           href === "/home"
-            ? pathname === "/home" || pathname.startsWith("/practice") || pathname.startsWith("/read") || pathname.startsWith("/games")
-            : href === "/flow"
-              ? pathname.startsWith("/flow") || pathname.startsWith("/scan") || pathname.startsWith("/listen") || pathname.startsWith("/simplify")
-              : pathname.startsWith("/profile") || pathname.startsWith("/progress") || pathname.startsWith("/style");
+            ? pathname === "/home" || pathname.startsWith("/practice")
+            : href === "/games"
+              ? pathname.startsWith("/games") || pathname.startsWith("/read") || pathname.startsWith("/session") || pathname.startsWith("/train")
+              : pathname.startsWith("/profile") || pathname.startsWith("/progress") || pathname.startsWith("/style") || pathname.startsWith("/library");
         return (
           <Link key={href} href={href} className="nav-item" data-active={active} aria-current={active ? "page" : undefined}>
             <span className="nav-icon" aria-hidden>
