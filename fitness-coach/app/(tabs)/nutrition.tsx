@@ -1,17 +1,22 @@
-import { Linking, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { DigestionGuide } from '@/components/nutrition/DigestionGuide';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import {
+  FUEL_TRACKS,
   NUTRITION_SOURCES,
-  TACTICAL_FASTING_PLAN,
   VIRAL_MILITARY_DIET_DAYS,
 } from '@/constants/nutrition/militaryFuel';
 import { colors, radii, spacing, typography } from '@/theme';
 
+type TrackId = (typeof FUEL_TRACKS)[number]['id'];
+
 export default function NutritionScreen() {
-  const plan = TACTICAL_FASTING_PLAN;
+  const [trackId, setTrackId] = useState<TrackId>('short');
+  const track = FUEL_TRACKS.find((t) => t.id === trackId) ?? FUEL_TRACKS[0];
+  const plan = track.plan;
 
   return (
     <Screen>
@@ -20,9 +25,40 @@ export default function NutritionScreen() {
         Eat to <Text style={styles.accent}>Shred</Text>
       </Text>
       <Text style={styles.subtitle}>
-        Default plan uses a 16:8 fasting window with tactical-style plates.
-        Sources linked below.
+        Short-term ops fuel, Tactical 16:8, and long-train warfighter plates —
+        researched for military-style blocks.
       </Text>
+
+      <View style={styles.trackRow}>
+        {FUEL_TRACKS.map((item) => (
+          <Pressable
+            key={item.id}
+            onPress={() => setTrackId(item.id)}
+            style={[styles.trackChip, trackId === item.id && styles.trackChipOn]}
+          >
+            <Text
+              style={[
+                styles.trackLabel,
+                trackId === item.id && styles.trackLabelOn,
+              ]}
+            >
+              {item.label}
+            </Text>
+            <Text style={styles.trackHorizon}>{item.horizon}</Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <Card accentBorder>
+        <Text style={styles.planLabel}>{track.label}</Text>
+        <Text style={styles.focus}>{track.summary}</Text>
+        <Text style={styles.window}>Use with: {track.whenToUse.join(' · ')}</Text>
+        {track.principles.map((line) => (
+          <Text key={line} style={styles.item}>
+            • {line}
+          </Text>
+        ))}
+      </Card>
 
       <DigestionGuide />
 
@@ -58,7 +94,7 @@ export default function NutritionScreen() {
       <Text style={styles.section}>Optional 3-day viral “Military Diet”</Text>
       <Text style={styles.subtitle}>
         Short low-calorie internet plan (NOT official military nutrition). Use
-        sparingly — prefer Tactical 16:8 on hard training days.
+        sparingly — prefer Short-Term Ops or Tactical 16:8 on hard training days.
       </Text>
       {VIRAL_MILITARY_DIET_DAYS.map((day) => (
         <Card key={day.id} style={styles.viralCard}>
@@ -104,6 +140,36 @@ const styles = StyleSheet.create({
   subtitle: {
     ...typography.body,
     color: colors.textSecondary,
+  },
+  trackRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  trackChip: {
+    flexGrow: 1,
+    minWidth: '28%',
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.lg,
+    padding: spacing.sm,
+    backgroundColor: colors.surface,
+  },
+  trackChipOn: {
+    borderColor: colors.accent,
+    backgroundColor: colors.accentSoft,
+  },
+  trackLabel: {
+    ...typography.bodyBold,
+    color: colors.textSecondary,
+  },
+  trackLabelOn: {
+    color: colors.accent,
+  },
+  trackHorizon: {
+    ...typography.caption,
+    color: colors.textMuted,
   },
   planLabel: {
     ...typography.overline,

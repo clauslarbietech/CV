@@ -2,6 +2,7 @@ import { Linking, StyleSheet, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
 import {
+  LONG_TRAIN_SCIENCE,
   PROGRAM_MILESTONES,
   SHORT_SESSION_SCIENCE,
   milestoneForCompletedDays,
@@ -24,6 +25,23 @@ export function ResearchMilestonesCard({
         <Text style={styles.title}>{SHORT_SESSION_SCIENCE.title}</Text>
         <Text style={styles.body}>{SHORT_SESSION_SCIENCE.summary}</Text>
         {SHORT_SESSION_SCIENCE.points.map((point) => (
+          <View key={point.source.url} style={styles.point}>
+            <Text style={styles.bullet}>• {point.claim}</Text>
+            <Text
+              style={styles.link}
+              onPress={() => Linking.openURL(point.source.url)}
+            >
+              {point.source.title} →
+            </Text>
+          </View>
+        ))}
+      </Card>
+
+      <Card>
+        <Text style={styles.kicker}>LONG TRAIN</Text>
+        <Text style={styles.title}>{LONG_TRAIN_SCIENCE.title}</Text>
+        <Text style={styles.body}>{LONG_TRAIN_SCIENCE.summary}</Text>
+        {LONG_TRAIN_SCIENCE.points.map((point) => (
           <View key={point.source.url} style={styles.point}>
             <Text style={styles.bullet}>• {point.claim}</Text>
             <Text

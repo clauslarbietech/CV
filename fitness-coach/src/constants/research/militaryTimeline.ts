@@ -132,3 +132,83 @@ export function milestoneForCompletedDays(completed: number): MilestoneHorizon |
   if (completed >= 10) return 10;
   return null;
 }
+
+/** Long-train research framing (8–12+ weeks). */
+export const LONG_TRAIN_SCIENCE = {
+  title: 'Why long military-style blocks work',
+  summary:
+    'Recruit / PRT literature and multi-week HIIT studies show the big fitness and body-composition shifts land across weeks to months — not just a 3-day crash cut.',
+  points: [
+    {
+      claim:
+        'U.S. Army PRT doctrine sequences toughening then sustaining work (FM 7-22): foundational skill and fitness first, then harder conditions at the same standards.',
+      source: {
+        title: 'FM 7-22 Army Physical Readiness Training',
+        url: 'https://armyrotc.siu.edu/_common/documents/fm-7-22.pdf',
+      },
+    },
+    {
+      claim:
+        'Basic Combat Training ramps across ~10 weeks (Red / White / Blue phases) with progressive physical and tactical demand — long train mirrors that patience.',
+      source: {
+        title: 'Fort Jackson BCT phase overview',
+        url: 'https://armygradweek.com/jackson/guides/training-schedule',
+      },
+    },
+    {
+      claim:
+        '12-week recruit training studies document meaningful fitness and body-composition change when training is hard and nutrition supports it.',
+      source: {
+        title: '12-week recruit training body composition & fitness',
+        url: 'https://doi.org/10.70252/urnt4484',
+      },
+    },
+    {
+      claim:
+        'Tabata / HIIT reviews commonly report VO₂max and anaerobic gains across ~4–12 weeks of consistent high-intensity work.',
+      source: {
+        title: 'Tabata training review (J Physiol Sci, 2019)',
+        url: 'https://link.springer.com/article/10.1007/s12576-019-00676-7',
+      },
+    },
+  ],
+} as const;
+
+export const TRAINING_TRACKS = [
+  {
+    id: 'short',
+    label: 'Short term',
+    horizon: '10–14 days',
+    programHint: 'OPERATION IRON 14 + express missions',
+    fuelHint: 'Short-Term Ops Fuel',
+    outcomes: [
+      'Work-capacity ignition and habit lock-in',
+      'Better pacing / technique under fatigue',
+      'Early aerobic / HIIT adaptations — not major scale change yet',
+    ],
+  },
+  {
+    id: 'medium',
+    label: 'Standard block',
+    horizon: '30 days',
+    programHint: 'OPERATION IRON 30',
+    fuelHint: 'Tactical 16:8',
+    outcomes: [
+      'Measurable density gains (reps, rounds, recovery)',
+      'Visible conditioning if nutrition holds',
+      'Stronger daily mission discipline',
+    ],
+  },
+  {
+    id: 'long',
+    label: 'Long train',
+    horizon: '12 weeks (84 days)',
+    programHint: 'OPERATION LONG TRAIN',
+    fuelHint: 'Long-Train Warfighter Fuel',
+    outcomes: [
+      'Toughening → build → sustaining progression',
+      'Lasting endurance and muscular endurance',
+      'Sustainable body-comp change with warfighter fueling',
+    ],
+  },
+] as const;

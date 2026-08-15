@@ -63,9 +63,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="coach"
         options={{
-          title: 'Coach',
+          title: 'Squad',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubble-ellipses" color={color} size={size} />
+            <Ionicons name="people" color={color} size={size} />
           ),
         }}
       />
