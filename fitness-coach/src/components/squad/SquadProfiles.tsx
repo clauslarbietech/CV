@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Share, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 
@@ -12,9 +12,40 @@ import {
 } from '@/constants/programs';
 import { useProgramStore } from '@/store/programStore';
 import { useSquadStore } from '@/store/squadStore';
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 export function SquadProfiles() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: { gap: spacing.md },
+        heading: { ...typography.heading, color: colors.textPrimary },
+        gap: { gap: spacing.sm },
+        label: { ...typography.bodyBold, color: colors.textPrimary },
+        hint: { ...typography.caption, color: colors.textSecondary },
+        input: {
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: radii.lg,
+          padding: spacing.md,
+          color: colors.textPrimary,
+          backgroundColor: colors.backgroundElevated,
+        },
+        meta: { ...typography.caption, color: colors.accent },
+        error: { ...typography.caption, color: colors.danger },
+        buddyRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.xs,
+          marginTop: spacing.sm,
+        },
+        buddyName: { ...typography.bodyBold, color: colors.textPrimary },
+        smallBtn: { minHeight: 40, paddingHorizontal: spacing.md },
+      }),
+    [colors],
+  );
+
   const profile = useSquadStore((s) => s.profile);
   const buddies = useSquadStore((s) => s.buddies);
   const sharedProgramId = useSquadStore((s) => s.sharedProgramId);
@@ -224,29 +255,3 @@ export function SquadProfiles() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: { gap: spacing.md },
-  heading: { ...typography.heading, color: colors.textPrimary },
-  gap: { gap: spacing.sm },
-  label: { ...typography.bodyBold, color: colors.textPrimary },
-  hint: { ...typography.caption, color: colors.textSecondary },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.lg,
-    padding: spacing.md,
-    color: colors.textPrimary,
-    backgroundColor: colors.backgroundElevated,
-  },
-  meta: { ...typography.caption, color: colors.accent },
-  error: { ...typography.caption, color: colors.danger },
-  buddyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    marginTop: spacing.sm,
-  },
-  buddyName: { ...typography.bodyBold, color: colors.textPrimary },
-  smallBtn: { minHeight: 40, paddingHorizontal: spacing.md },
-});

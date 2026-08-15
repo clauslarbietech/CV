@@ -1,8 +1,9 @@
+import { useMemo } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { INTRO_BODY_IMAGES, IntroBodySex } from '@/constants/intro';
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 interface BodyWelcomeProps {
   sex: IntroBodySex | null;
@@ -17,6 +18,88 @@ export function BodyWelcome({
   onContinue,
   onSkipToSessions,
 }: BodyWelcomeProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: {
+          gap: spacing.md,
+          paddingTop: spacing.lg,
+        },
+        brand: {
+          ...typography.overline,
+          color: colors.accent,
+        },
+        title: {
+          ...typography.hero,
+          color: colors.textPrimary,
+        },
+        accent: {
+          color: colors.accent,
+        },
+        support: {
+          ...typography.body,
+          color: colors.textSecondary,
+          maxWidth: 360,
+        },
+        stage: {
+          marginTop: spacing.sm,
+          height: 360,
+          borderRadius: radii.xxl,
+          overflow: 'hidden',
+          backgroundColor: '#070707',
+        },
+        body: {
+          width: '100%',
+          height: '100%',
+        },
+        bodyDim: {
+          opacity: 0.45,
+        },
+        overlay: {
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          paddingBottom: spacing.xl,
+          backgroundColor: 'rgba(0,0,0,0.25)',
+        },
+        overlayText: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+        },
+        sexRow: {
+          flexDirection: 'row',
+          gap: spacing.sm,
+        },
+        sexBtn: {
+          flex: 1,
+          minHeight: 54,
+          borderRadius: radii.pill,
+          borderWidth: 1.5,
+          borderColor: colors.border,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'transparent',
+        },
+        sexBtnActive: {
+          borderColor: colors.accent,
+          backgroundColor: 'rgba(192,255,0,0.12)',
+        },
+        sexLabel: {
+          ...typography.subheading,
+          color: colors.textSecondary,
+        },
+        sexLabelActive: {
+          color: colors.accent,
+        },
+      }),
+    [colors],
+  );
+
   const preview = sex ? INTRO_BODY_IMAGES[sex] : INTRO_BODY_IMAGES.male;
 
   return (
@@ -77,80 +160,3 @@ export function BodyWelcome({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    gap: spacing.md,
-    paddingTop: spacing.lg,
-  },
-  brand: {
-    ...typography.overline,
-    color: colors.accent,
-  },
-  title: {
-    ...typography.hero,
-    color: colors.textPrimary,
-  },
-  accent: {
-    color: colors.accent,
-  },
-  support: {
-    ...typography.body,
-    color: colors.textSecondary,
-    maxWidth: 360,
-  },
-  stage: {
-    marginTop: spacing.sm,
-    height: 360,
-    borderRadius: radii.xxl,
-    overflow: 'hidden',
-    backgroundColor: '#070707',
-  },
-  body: {
-    width: '100%',
-    height: '100%',
-  },
-  bodyDim: {
-    opacity: 0.45,
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: spacing.xl,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-  },
-  overlayText: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-  },
-  sexRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  sexBtn: {
-    flex: 1,
-    minHeight: 54,
-    borderRadius: radii.pill,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  sexBtnActive: {
-    borderColor: colors.accent,
-    backgroundColor: 'rgba(192,255,0,0.12)',
-  },
-  sexLabel: {
-    ...typography.subheading,
-    color: colors.textSecondary,
-  },
-  sexLabelActive: {
-    color: colors.accent,
-  },
-});

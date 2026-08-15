@@ -24,7 +24,7 @@ import { useProgramStore } from '@/store/programStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { formatDuration, formatRest } from '@/utils/format';
 import { getProgramDay, resolveExercise } from '@/utils/workout';
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 
 function parseExpressBudget(value?: string): ExpressBudget | undefined {
   const n = Number(value);
@@ -33,6 +33,71 @@ function parseExpressBudget(value?: string): ExpressBudget | undefined {
 }
 
 export default function WorkoutSessionScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        centered: { flexGrow: 1, justifyContent: 'center' },
+        kicker: { ...typography.overline, color: colors.militaryAccent },
+        title: { ...typography.title, color: colors.textPrimary },
+        meta: { ...typography.body, color: colors.textSecondary },
+        body: { ...typography.body, color: colors.textSecondary },
+        sectionLabel: {
+          ...typography.overline,
+          color: colors.textMuted,
+          marginTop: spacing.sm,
+        },
+        moveRow: { ...typography.body, color: colors.textPrimary },
+        blockTitle: {
+          ...typography.subheading,
+          color: colors.militaryAccent,
+          marginBottom: spacing.xs,
+        },
+        coach: {
+          ...typography.body,
+          color: colors.textSecondary,
+          fontStyle: 'italic',
+        },
+        holdRing: {
+          width: 220,
+          height: 220,
+          borderRadius: 110,
+          borderWidth: 8,
+          borderColor: colors.action,
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignSelf: 'center',
+          backgroundColor: colors.surface,
+          marginVertical: spacing.lg,
+        },
+        holdTimer: {
+          fontSize: 56,
+          fontWeight: '800',
+          color: colors.textPrimary,
+          textAlign: 'center',
+        },
+        row: { flexDirection: 'row', gap: spacing.sm },
+        flex: { flex: 1 },
+        ratings: {
+          flexDirection: 'row',
+          gap: spacing.xs,
+          marginVertical: spacing.md,
+        },
+        rateBtn: { flex: 1, minHeight: 48, paddingHorizontal: 0 },
+        stat: {
+          ...typography.body,
+          color: colors.textSecondary,
+          marginBottom: spacing.xs,
+        },
+        badge: {
+          ...typography.subheading,
+          color: colors.militaryAccent,
+          marginTop: spacing.sm,
+        },
+      }),
+    [colors],
+  );
+
   const {
     programId,
     day: dayParam,
@@ -387,63 +452,3 @@ export default function WorkoutSessionScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  centered: { flexGrow: 1, justifyContent: 'center' },
-  kicker: { ...typography.overline, color: colors.militaryAccent },
-  title: { ...typography.title, color: colors.textPrimary },
-  meta: { ...typography.body, color: colors.textSecondary },
-  body: { ...typography.body, color: colors.textSecondary },
-  sectionLabel: {
-    ...typography.overline,
-    color: colors.textMuted,
-    marginTop: spacing.sm,
-  },
-  moveRow: { ...typography.body, color: colors.textPrimary },
-  blockTitle: {
-    ...typography.subheading,
-    color: colors.militaryAccent,
-    marginBottom: spacing.xs,
-  },
-  coach: {
-    ...typography.body,
-    color: colors.textSecondary,
-    fontStyle: 'italic',
-  },
-  holdRing: {
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    borderWidth: 8,
-    borderColor: colors.action,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    backgroundColor: colors.surface,
-    marginVertical: spacing.lg,
-  },
-  holdTimer: {
-    fontSize: 56,
-    fontWeight: '800',
-    color: colors.textPrimary,
-    textAlign: 'center',
-  },
-  row: { flexDirection: 'row', gap: spacing.sm },
-  flex: { flex: 1 },
-  ratings: {
-    flexDirection: 'row',
-    gap: spacing.xs,
-    marginVertical: spacing.md,
-  },
-  rateBtn: { flex: 1, minHeight: 48, paddingHorizontal: 0 },
-  stat: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginBottom: spacing.xs,
-  },
-  badge: {
-    ...typography.subheading,
-    color: colors.militaryAccent,
-    marginTop: spacing.sm,
-  },
-});

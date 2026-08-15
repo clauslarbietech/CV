@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -5,13 +6,7 @@ import {
   DIGESTION_FOODS,
   DigestionCategory,
 } from '@/constants/nutrition/digestionTimes';
-import { colors, radii, spacing, typography } from '@/theme';
-
-function categoryColor(category: DigestionCategory): string {
-  if (category === 'fast') return colors.accent;
-  if (category === 'moderate') return colors.action;
-  return colors.militaryAccent;
-}
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 function categoryLabel(category: DigestionCategory): string {
   if (category === 'fast') return 'FAST CLEAR';
@@ -20,6 +15,98 @@ function categoryLabel(category: DigestionCategory): string {
 }
 
 export function DigestionGuide() {
+  const { colors } = useTheme();
+
+  const categoryColor = (category: DigestionCategory): string => {
+    if (category === 'fast') return colors.accent;
+    if (category === 'moderate') return colors.action;
+    return colors.militaryAccent;
+  };
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: {
+          gap: spacing.sm,
+          marginTop: spacing.sm,
+        },
+        kicker: {
+          ...typography.overline,
+          color: colors.accent,
+        },
+        title: {
+          ...typography.heading,
+          color: colors.textPrimary,
+        },
+        accent: {
+          color: colors.accent,
+        },
+        subtitle: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        grid: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.sm,
+          marginTop: spacing.xs,
+        },
+        cell: {
+          width: '31%',
+          flexGrow: 1,
+          minWidth: 100,
+          maxWidth: '33%',
+          alignItems: 'center',
+          gap: 4,
+        },
+        art: {
+          width: '100%',
+          aspectRatio: 1,
+          borderRadius: radii.lg,
+          overflow: 'hidden',
+          backgroundColor: '#0A0A0A',
+          borderWidth: 1,
+          borderColor: colors.border,
+        },
+        image: {
+          width: '100%',
+          height: '100%',
+        },
+        labelPill: {
+          marginTop: spacing.xs,
+          backgroundColor: colors.surface,
+          borderRadius: radii.pill,
+          borderWidth: 1,
+          borderColor: colors.borderAccent,
+          paddingHorizontal: spacing.sm,
+          paddingVertical: 4,
+        },
+        foodName: {
+          ...typography.caption,
+          color: colors.textPrimary,
+          fontWeight: '800',
+          letterSpacing: 0.4,
+        },
+        time: {
+          ...typography.caption,
+          color: colors.textSecondary,
+          textAlign: 'center',
+        },
+        badge: {
+          ...typography.overline,
+          fontSize: 9,
+          letterSpacing: 0.8,
+        },
+        disclaimer: {
+          ...typography.caption,
+          color: colors.textMuted,
+          fontStyle: 'italic',
+          marginTop: spacing.sm,
+        },
+      }),
+    [colors],
+  );
+
   return (
     <View style={styles.wrap}>
       <Text style={styles.kicker}>DIGESTION MAP</Text>
@@ -59,83 +146,3 @@ export function DigestionGuide() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  kicker: {
-    ...typography.overline,
-    color: colors.accent,
-  },
-  title: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  accent: {
-    color: colors.accent,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  cell: {
-    width: '31%',
-    flexGrow: 1,
-    minWidth: 100,
-    maxWidth: '33%',
-    alignItems: 'center',
-    gap: 4,
-  },
-  art: {
-    width: '100%',
-    aspectRatio: 1,
-    borderRadius: radii.lg,
-    overflow: 'hidden',
-    backgroundColor: '#0A0A0A',
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  labelPill: {
-    marginTop: spacing.xs,
-    backgroundColor: colors.surface,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: colors.borderAccent,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-  },
-  foodName: {
-    ...typography.caption,
-    color: colors.textPrimary,
-    fontWeight: '800',
-    letterSpacing: 0.4,
-  },
-  time: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  badge: {
-    ...typography.overline,
-    fontSize: 9,
-    letterSpacing: 0.8,
-  },
-  disclaimer: {
-    ...typography.caption,
-    color: colors.textMuted,
-    fontStyle: 'italic',
-    marginTop: spacing.sm,
-  },
-});

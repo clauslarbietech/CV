@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
@@ -7,7 +8,7 @@ import {
   EXPRESS_SOURCES,
   ExpressBudget,
 } from '@/constants/programs/expressMissions';
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 
 interface ExpressTimeCardProps {
   onSelect: (budget: ExpressBudget) => void;
@@ -15,6 +16,55 @@ interface ExpressTimeCardProps {
 }
 
 export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        kicker: {
+          ...typography.overline,
+          color: colors.accent,
+        },
+        title: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+          marginTop: spacing.xs,
+        },
+        body: {
+          ...typography.body,
+          color: colors.textSecondary,
+          marginVertical: spacing.sm,
+        },
+        row: {
+          flexDirection: 'row',
+          gap: spacing.xs,
+          marginBottom: spacing.sm,
+        },
+        btn: {
+          flex: 1,
+          paddingHorizontal: spacing.sm,
+          minHeight: 48,
+        },
+        meta: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginBottom: 4,
+        },
+        sourceLabel: {
+          ...typography.overline,
+          color: colors.textMuted,
+          marginTop: spacing.md,
+          marginBottom: spacing.xs,
+        },
+        link: {
+          ...typography.caption,
+          color: colors.accent,
+          marginBottom: 4,
+          fontWeight: '700',
+        },
+      }),
+    [colors],
+  );
+
   return (
     <Card accentBorder>
       <Text style={styles.kicker}>SHORT ON TIME?</Text>
@@ -58,47 +108,3 @@ export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  kicker: {
-    ...typography.overline,
-    color: colors.accent,
-  },
-  title: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-    marginTop: spacing.xs,
-  },
-  body: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginVertical: spacing.sm,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: spacing.xs,
-    marginBottom: spacing.sm,
-  },
-  btn: {
-    flex: 1,
-    paddingHorizontal: spacing.sm,
-    minHeight: 48,
-  },
-  meta: {
-    ...typography.caption,
-    color: colors.textMuted,
-    marginBottom: 4,
-  },
-  sourceLabel: {
-    ...typography.overline,
-    color: colors.textMuted,
-    marginTop: spacing.md,
-    marginBottom: spacing.xs,
-  },
-  link: {
-    ...typography.caption,
-    color: colors.accent,
-    marginBottom: 4,
-    fontWeight: '700',
-  },
-});

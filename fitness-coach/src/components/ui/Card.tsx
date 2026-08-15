@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 
-import { colors, radii, spacing } from '@/theme';
+import { useTheme, radii, spacing } from '@/theme';
 
 interface CardProps {
   children: ReactNode;
@@ -16,6 +16,29 @@ export function Card({
   military = false,
   accentBorder = false,
 }: CardProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        card: {
+          backgroundColor: colors.surface,
+          borderRadius: radii.xl,
+          borderWidth: 1,
+          borderColor: colors.border,
+          padding: spacing.lg,
+        },
+        military: {
+          backgroundColor: colors.militarySurface,
+          borderColor: colors.militaryBorder,
+        },
+        accentBorder: {
+          borderColor: colors.borderAccent,
+          borderWidth: 1.5,
+        },
+      }),
+    [colors],
+  );
+
   return (
     <View
       style={[
@@ -29,21 +52,3 @@ export function Card({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radii.xl,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: spacing.lg,
-  },
-  military: {
-    backgroundColor: colors.militarySurface,
-    borderColor: colors.militaryBorder,
-  },
-  accentBorder: {
-    borderColor: colors.borderAccent,
-    borderWidth: 1.5,
-  },
-});

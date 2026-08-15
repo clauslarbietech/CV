@@ -1,10 +1,11 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { ExerciseGraphic } from '@/components/workout/ExerciseGraphic';
 import { DifficultyTier, ExerciseDefinition } from '@/types';
 import { formatExerciseTarget } from '@/utils/workout';
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 
 interface ExerciseStepProps {
   exercise: ExerciseDefinition;
@@ -29,6 +30,47 @@ export function ExerciseStep({
   onSkip,
   onModify,
 }: ExerciseStepProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: {
+          gap: spacing.md,
+          paddingVertical: spacing.lg,
+        },
+        meta: {
+          ...typography.overline,
+          color: colors.accent,
+        },
+        name: {
+          ...typography.hero,
+          color: colors.textPrimary,
+        },
+        target: {
+          fontSize: 48,
+          fontWeight: '800',
+          color: colors.accent,
+          letterSpacing: -1.5,
+        },
+        setLine: {
+          ...typography.caption,
+          color: colors.textMuted,
+        },
+        note: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        row: {
+          flexDirection: 'row',
+          gap: spacing.sm,
+        },
+        flex: {
+          flex: 1,
+        },
+      }),
+    [colors],
+  );
+
   const target = formatExerciseTarget(exercise, tier);
 
   return (
@@ -68,39 +110,3 @@ export function ExerciseStep({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    gap: spacing.md,
-    paddingVertical: spacing.lg,
-  },
-  meta: {
-    ...typography.overline,
-    color: colors.accent,
-  },
-  name: {
-    ...typography.hero,
-    color: colors.textPrimary,
-  },
-  target: {
-    fontSize: 48,
-    fontWeight: '800',
-    color: colors.accent,
-    letterSpacing: -1.5,
-  },
-  setLine: {
-    ...typography.caption,
-    color: colors.textMuted,
-  },
-  note: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  flex: {
-    flex: 1,
-  },
-});

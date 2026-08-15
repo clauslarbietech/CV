@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { BodyWelcome } from '@/components/intro/BodyWelcome';
@@ -15,11 +15,28 @@ import { useAuthStore } from '@/store/authStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { ExperienceLevel, FitnessGoal } from '@/types';
-import { colors, spacing } from '@/theme';
+import { useTheme, spacing } from '@/theme';
 
 type Step = 'splash' | 'body' | 'questions' | 'sessions';
 
 export default function WelcomeScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        root: {
+          flex: 1,
+          backgroundColor: colors.black,
+        },
+        content: {
+          flexGrow: 1,
+          paddingTop: spacing.md,
+          paddingBottom: spacing.huge,
+        },
+      }),
+    [colors],
+  );
+
   const continueAsGuest = useAuthStore((s) => s.continueAsGuest);
   const completeOnboarding = useProfileStore((s) => s.completeOnboarding);
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
@@ -122,15 +139,3 @@ export default function WelcomeScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.black,
-  },
-  content: {
-    flexGrow: 1,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.huge,
-  },
-});

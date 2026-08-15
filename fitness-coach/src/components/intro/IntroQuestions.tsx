@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
@@ -7,7 +8,7 @@ import {
   INTRO_TIME,
 } from '@/constants/intro';
 import { ExperienceLevel, FitnessGoal } from '@/types';
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 
 interface IntroQuestionsProps {
   firstName: string;
@@ -27,11 +28,19 @@ function Choice({
   hint,
   active,
   onPress,
+  styles,
 }: {
   label: string;
   hint: string;
   active: boolean;
   onPress: () => void;
+  styles: {
+    choice: object;
+    choiceActive: object;
+    choiceLabel: object;
+    choiceLabelActive: object;
+    choiceHint: object;
+  };
 }) {
   return (
     <Pressable
@@ -60,6 +69,70 @@ export function IntroQuestions({
   onFinish,
   onSkipToSessions,
 }: IntroQuestionsProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: {
+          gap: spacing.md,
+          paddingTop: spacing.lg,
+        },
+        brand: {
+          ...typography.overline,
+          color: colors.accent,
+        },
+        title: {
+          ...typography.hero,
+          color: colors.textPrimary,
+        },
+        accent: {
+          color: colors.accent,
+        },
+        support: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        label: {
+          ...typography.overline,
+          color: colors.textMuted,
+          marginTop: spacing.sm,
+        },
+        input: {
+          backgroundColor: 'transparent',
+          borderBottomWidth: 2,
+          borderBottomColor: colors.borderAccent,
+          color: colors.textPrimary,
+          paddingVertical: spacing.md,
+          ...typography.subheading,
+        },
+        stack: {
+          gap: spacing.sm,
+        },
+        choice: {
+          paddingVertical: spacing.md,
+          paddingHorizontal: spacing.sm,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.border,
+        },
+        choiceActive: {
+          borderBottomColor: colors.accent,
+        },
+        choiceLabel: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+        },
+        choiceLabelActive: {
+          color: colors.accent,
+        },
+        choiceHint: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginTop: 2,
+        },
+      }),
+    [colors],
+  );
+
   const ready = Boolean(firstName.trim() && goal && experience && minutes);
 
   return (
@@ -93,6 +166,7 @@ export function IntroQuestions({
             hint={item.hint}
             active={goal === item.id}
             onPress={() => onChangeGoal(item.id)}
+            styles={styles}
           />
         ))}
       </View>
@@ -106,6 +180,7 @@ export function IntroQuestions({
             hint={item.hint}
             active={experience === item.id}
             onPress={() => onChangeExperience(item.id)}
+            styles={styles}
           />
         ))}
       </View>
@@ -119,6 +194,7 @@ export function IntroQuestions({
             hint={item.hint}
             active={minutes === item.minutes}
             onPress={() => onChangeMinutes(item.minutes)}
+            styles={styles}
           />
         ))}
       </View>
@@ -136,62 +212,3 @@ export function IntroQuestions({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    gap: spacing.md,
-    paddingTop: spacing.lg,
-  },
-  brand: {
-    ...typography.overline,
-    color: colors.accent,
-  },
-  title: {
-    ...typography.hero,
-    color: colors.textPrimary,
-  },
-  accent: {
-    color: colors.accent,
-  },
-  support: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  label: {
-    ...typography.overline,
-    color: colors.textMuted,
-    marginTop: spacing.sm,
-  },
-  input: {
-    backgroundColor: 'transparent',
-    borderBottomWidth: 2,
-    borderBottomColor: colors.borderAccent,
-    color: colors.textPrimary,
-    paddingVertical: spacing.md,
-    ...typography.subheading,
-  },
-  stack: {
-    gap: spacing.sm,
-  },
-  choice: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  choiceActive: {
-    borderBottomColor: colors.accent,
-  },
-  choiceLabel: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-  },
-  choiceLabelActive: {
-    color: colors.accent,
-  },
-  choiceHint: {
-    ...typography.caption,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-});

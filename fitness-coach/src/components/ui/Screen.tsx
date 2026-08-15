@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors, spacing } from '@/theme';
+import { useTheme, spacing } from '@/theme';
 
 interface ScreenProps {
   children: ReactNode;
@@ -22,6 +22,23 @@ export function Screen({
   style,
   contentStyle,
 }: ScreenProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        safe: {
+          flex: 1,
+          backgroundColor: colors.background,
+        },
+        content: {
+          paddingHorizontal: spacing.lg,
+          paddingBottom: spacing.huge,
+          gap: spacing.md,
+        },
+      }),
+    [colors],
+  );
+
   if (!scroll) {
     return (
       <SafeAreaView style={[styles.safe, style]} edges={['top', 'left', 'right']}>
@@ -41,15 +58,3 @@ export function Screen({
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.huge,
-    gap: spacing.md,
-  },
-});

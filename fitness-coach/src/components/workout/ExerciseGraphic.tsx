@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { MuscleMapSvg } from '@/components/workout/MuscleMapSvg';
@@ -6,7 +7,7 @@ import {
   muscleLabel,
 } from '@/constants/exercises/exerciseVisuals';
 import { POSE_IMAGES } from '@/constants/exercises/poseImages';
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 interface ExerciseGraphicProps {
   exerciseName: string;
@@ -17,6 +18,105 @@ export function ExerciseGraphic({
   exerciseName,
   compact = false,
 }: ExerciseGraphicProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        card: {
+          backgroundColor: colors.surface,
+          borderRadius: radii.xxl,
+          borderWidth: 1,
+          borderColor: colors.borderAccent,
+          padding: spacing.lg,
+          gap: spacing.sm,
+        },
+        compact: {
+          padding: spacing.md,
+        },
+        badgeRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        },
+        badge: {
+          backgroundColor: colors.accent,
+          borderRadius: radii.pill,
+          paddingHorizontal: spacing.sm,
+          paddingVertical: spacing.xxs,
+        },
+        badgeText: {
+          ...typography.caption,
+          color: colors.black,
+          fontWeight: '800',
+        },
+        hint: {
+          ...typography.caption,
+          color: colors.textMuted,
+        },
+        art: {
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#0A0A0A',
+          borderRadius: radii.xl,
+          overflow: 'hidden',
+          aspectRatio: 1,
+          width: '100%',
+        },
+        artCompact: {
+          aspectRatio: 1.15,
+        },
+        image: {
+          width: '100%',
+          height: '100%',
+        },
+        cue: {
+          ...typography.body,
+          color: colors.textPrimary,
+          fontWeight: '600',
+        },
+        muscleRow: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.xs,
+        },
+        chip: {
+          borderWidth: 1,
+          borderColor: colors.accent,
+          backgroundColor: 'rgba(192,255,0,0.12)',
+          borderRadius: radii.sm,
+          paddingHorizontal: spacing.sm,
+          paddingVertical: 4,
+        },
+        chipText: {
+          ...typography.caption,
+          color: colors.accent,
+          fontWeight: '700',
+        },
+        mapBlock: {
+          marginTop: spacing.xs,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+          paddingTop: spacing.sm,
+          alignItems: 'center',
+          gap: spacing.xs,
+        },
+        mapLabel: {
+          ...typography.overline,
+          color: colors.textMuted,
+          alignSelf: 'flex-start',
+        },
+        tips: {
+          alignSelf: 'stretch',
+          gap: 2,
+        },
+        tip: {
+          ...typography.caption,
+          color: colors.textSecondary,
+        },
+      }),
+    [colors],
+  );
+
   const visual = getExerciseVisual(exerciseName);
   const image = POSE_IMAGES[visual.pose] ?? POSE_IMAGES.generic;
 
@@ -64,97 +164,3 @@ export function ExerciseGraphic({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radii.xxl,
-    borderWidth: 1,
-    borderColor: colors.borderAccent,
-    padding: spacing.lg,
-    gap: spacing.sm,
-  },
-  compact: {
-    padding: spacing.md,
-  },
-  badgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  badge: {
-    backgroundColor: colors.accent,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs,
-  },
-  badgeText: {
-    ...typography.caption,
-    color: colors.black,
-    fontWeight: '800',
-  },
-  hint: {
-    ...typography.caption,
-    color: colors.textMuted,
-  },
-  art: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#0A0A0A',
-    borderRadius: radii.xl,
-    overflow: 'hidden',
-    aspectRatio: 1,
-    width: '100%',
-  },
-  artCompact: {
-    aspectRatio: 1.15,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  cue: {
-    ...typography.body,
-    color: colors.textPrimary,
-    fontWeight: '600',
-  },
-  muscleRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-  },
-  chip: {
-    borderWidth: 1,
-    borderColor: colors.accent,
-    backgroundColor: 'rgba(192,255,0,0.12)',
-    borderRadius: radii.sm,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-  },
-  chipText: {
-    ...typography.caption,
-    color: colors.accent,
-    fontWeight: '700',
-  },
-  mapBlock: {
-    marginTop: spacing.xs,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingTop: spacing.sm,
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  mapLabel: {
-    ...typography.overline,
-    color: colors.textMuted,
-    alignSelf: 'flex-start',
-  },
-  tips: {
-    alignSelf: 'stretch',
-    gap: 2,
-  },
-  tip: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-});

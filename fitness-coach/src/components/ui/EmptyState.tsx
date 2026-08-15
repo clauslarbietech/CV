@@ -1,6 +1,7 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 import { AppButton } from './AppButton';
 
 interface EmptyStateProps {
@@ -16,6 +17,28 @@ export function EmptyState({
   actionLabel,
   onAction,
 }: EmptyStateProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: {
+          gap: spacing.sm,
+          paddingVertical: spacing.xxl,
+          alignItems: 'flex-start',
+        },
+        title: {
+          ...typography.heading,
+          color: colors.textPrimary,
+        },
+        description: {
+          ...typography.body,
+          color: colors.textSecondary,
+          marginBottom: spacing.sm,
+        },
+      }),
+    [colors],
+  );
+
   return (
     <View style={styles.wrap}>
       <Text style={styles.title}>{title}</Text>
@@ -26,20 +49,3 @@ export function EmptyState({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    gap: spacing.sm,
-    paddingVertical: spacing.xxl,
-    alignItems: 'flex-start',
-  },
-  title: {
-    ...typography.heading,
-    color: colors.textPrimary,
-  },
-  description: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-  },
-});

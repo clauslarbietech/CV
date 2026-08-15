@@ -1,8 +1,9 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { SKIP_SESSIONS, SkipSessionOption } from '@/constants/intro';
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 
 interface SessionSkipPickerProps {
   selectedId: string | null;
@@ -17,6 +18,57 @@ export function SessionSkipPicker({
   onStart,
   onBack,
 }: SessionSkipPickerProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: {
+          gap: spacing.md,
+          paddingTop: spacing.lg,
+        },
+        brand: {
+          ...typography.overline,
+          color: colors.accent,
+        },
+        title: {
+          ...typography.hero,
+          color: colors.textPrimary,
+        },
+        accent: {
+          color: colors.accent,
+        },
+        support: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        list: {
+          gap: spacing.sm,
+          marginTop: spacing.sm,
+        },
+        row: {
+          paddingVertical: spacing.lg,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.border,
+        },
+        rowActive: {
+          borderBottomColor: colors.accent,
+        },
+        rowTitle: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+        },
+        rowTitleActive: {
+          color: colors.accent,
+        },
+        rowSub: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginTop: 4,
+        },
+      }),
+    [colors],
+  );
+
   return (
     <View style={styles.wrap}>
       <Text style={styles.brand}>JUMP IN</Text>
@@ -57,49 +109,3 @@ export function SessionSkipPicker({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    gap: spacing.md,
-    paddingTop: spacing.lg,
-  },
-  brand: {
-    ...typography.overline,
-    color: colors.accent,
-  },
-  title: {
-    ...typography.hero,
-    color: colors.textPrimary,
-  },
-  accent: {
-    color: colors.accent,
-  },
-  support: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  list: {
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  row: {
-    paddingVertical: spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  rowActive: {
-    borderBottomColor: colors.accent,
-  },
-  rowTitle: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-  },
-  rowTitleActive: {
-    color: colors.accent,
-  },
-  rowSub: {
-    ...typography.caption,
-    color: colors.textMuted,
-    marginTop: 4,
-  },
-});

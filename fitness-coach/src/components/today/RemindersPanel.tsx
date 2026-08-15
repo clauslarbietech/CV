@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -10,13 +10,127 @@ import {
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import { useNotesStore } from '@/store/notesStore';
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 /**
  * Locked daily panel: meds checklist + work notes.
  * Tracking/reminders only — not medical advice.
  */
 export function RemindersPanel() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: {
+          gap: spacing.md,
+        },
+        section: {
+          ...typography.heading,
+          color: colors.textPrimary,
+          marginTop: spacing.sm,
+        },
+        headerRow: {
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: spacing.xs,
+        },
+        cardTitle: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+        },
+        badge: {
+          ...typography.caption,
+          color: colors.black,
+          backgroundColor: colors.accent,
+          overflow: 'hidden',
+          borderRadius: radii.pill,
+          paddingHorizontal: spacing.sm,
+          paddingVertical: 4,
+          fontWeight: '800',
+        },
+        disclaimer: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginBottom: spacing.sm,
+        },
+        medRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          paddingVertical: spacing.sm,
+          paddingHorizontal: spacing.sm,
+          borderRadius: radii.md,
+          backgroundColor: colors.backgroundElevated,
+          marginBottom: spacing.xs,
+          borderWidth: 1,
+          borderColor: colors.border,
+          minHeight: 52,
+        },
+        medRowDone: {
+          borderColor: colors.accent,
+          backgroundColor: colors.accentSoft,
+        },
+        check: {
+          width: 28,
+          height: 28,
+          borderRadius: 14,
+          borderWidth: 2,
+          borderColor: colors.border,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        checkOn: {
+          backgroundColor: colors.accent,
+          borderColor: colors.accent,
+        },
+        checkMark: {
+          color: colors.black,
+          fontWeight: '800',
+          fontSize: 14,
+        },
+        medText: {
+          flex: 1,
+        },
+        medName: {
+          ...typography.bodyBold,
+          color: colors.textPrimary,
+        },
+        medMeta: {
+          ...typography.caption,
+          color: colors.textSecondary,
+        },
+        addRow: {
+          flexDirection: 'row',
+          gap: spacing.xs,
+          marginTop: spacing.sm,
+          alignItems: 'center',
+        },
+        input: {
+          flex: 1,
+          backgroundColor: colors.backgroundElevated,
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: radii.md,
+          color: colors.textPrimary,
+          paddingHorizontal: spacing.md,
+          paddingVertical: spacing.sm,
+          minHeight: 48,
+          ...typography.body,
+        },
+        addBtn: {
+          minHeight: 48,
+          paddingHorizontal: spacing.md,
+        },
+        notesBox: {
+          marginTop: spacing.sm,
+          minHeight: 96,
+          textAlignVertical: 'top',
+        },
+      }),
+    [colors],
+  );
+
   const meds = useNotesStore((s) => s.meds);
   const workNotes = useNotesStore((s) => s.workNotes);
   const personalNotes = useNotesStore((s) => s.personalNotes);
@@ -113,112 +227,3 @@ export function RemindersPanel() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    gap: spacing.md,
-  },
-  section: {
-    ...typography.heading,
-    color: colors.textPrimary,
-    marginTop: spacing.sm,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.xs,
-  },
-  cardTitle: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-  },
-  badge: {
-    ...typography.caption,
-    color: colors.black,
-    backgroundColor: colors.accent,
-    overflow: 'hidden',
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    fontWeight: '800',
-  },
-  disclaimer: {
-    ...typography.caption,
-    color: colors.textMuted,
-    marginBottom: spacing.sm,
-  },
-  medRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.sm,
-    borderRadius: radii.md,
-    backgroundColor: colors.backgroundElevated,
-    marginBottom: spacing.xs,
-    borderWidth: 1,
-    borderColor: colors.border,
-    minHeight: 52,
-  },
-  medRowDone: {
-    borderColor: colors.accent,
-    backgroundColor: colors.accentSoft,
-  },
-  check: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkOn: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-  },
-  checkMark: {
-    color: colors.black,
-    fontWeight: '800',
-    fontSize: 14,
-  },
-  medText: {
-    flex: 1,
-  },
-  medName: {
-    ...typography.bodyBold,
-    color: colors.textPrimary,
-  },
-  medMeta: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  addRow: {
-    flexDirection: 'row',
-    gap: spacing.xs,
-    marginTop: spacing.sm,
-    alignItems: 'center',
-  },
-  input: {
-    flex: 1,
-    backgroundColor: colors.backgroundElevated,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.md,
-    color: colors.textPrimary,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    minHeight: 48,
-    ...typography.body,
-  },
-  addBtn: {
-    minHeight: 48,
-    paddingHorizontal: spacing.md,
-  },
-  notesBox: {
-    marginTop: spacing.sm,
-    minHeight: 96,
-    textAlignVertical: 'top',
-  },
-});

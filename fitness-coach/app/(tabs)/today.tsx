@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { DailyMissionCard } from '@/components/today/DailyMissionCard';
@@ -14,9 +15,51 @@ import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { getProgramDay } from '@/utils/workout';
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 
 export default function TodayScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        kicker: {
+          ...typography.overline,
+          color: colors.militaryAccent,
+        },
+        greeting: {
+          ...typography.caption,
+          color: colors.textMuted,
+        },
+        title: {
+          ...typography.title,
+          color: colors.textPrimary,
+        },
+        accent: {
+          color: colors.accent,
+        },
+        body: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        progressLine: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginBottom: spacing.xs,
+        },
+        section: {
+          ...typography.heading,
+          color: colors.textPrimary,
+          marginTop: spacing.sm,
+        },
+        metrics: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.sm,
+        },
+      }),
+    [colors],
+  );
+
   const profile = useProfileStore((s) => s.profile);
   const enrollment = useProgramStore((s) => s.enrollment);
   const streaks = useProgramStore((s) => s.streaks);
@@ -169,40 +212,3 @@ export default function TodayScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  kicker: {
-    ...typography.overline,
-    color: colors.militaryAccent,
-  },
-  greeting: {
-    ...typography.caption,
-    color: colors.textMuted,
-  },
-  title: {
-    ...typography.title,
-    color: colors.textPrimary,
-  },
-  accent: {
-    color: colors.accent,
-  },
-  body: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  progressLine: {
-    ...typography.caption,
-    color: colors.textMuted,
-    marginBottom: spacing.xs,
-  },
-  section: {
-    ...typography.heading,
-    color: colors.textPrimary,
-    marginTop: spacing.sm,
-  },
-  metrics: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-});

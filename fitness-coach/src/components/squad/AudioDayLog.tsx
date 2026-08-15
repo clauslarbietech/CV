@@ -1,4 +1,4 @@
-import { createElement, useEffect, useRef, useState } from 'react';
+import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Platform,
   Pressable,
@@ -15,7 +15,7 @@ import {
   stashAudioForLog,
   useDayLogStore,
 } from '@/store/dayLogStore';
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 import { todayKey } from '@/utils/format';
 
 type RecorderState = 'idle' | 'recording' | 'ready';
@@ -25,6 +25,39 @@ type RecorderState = 'idle' | 'recording' | 'ready';
  * Not workout TTS — personal journal / motivation only.
  */
 export function AudioDayLog() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: { gap: spacing.sm },
+        heading: { ...typography.heading, color: colors.textPrimary },
+        hint: { ...typography.caption, color: colors.textSecondary },
+        input: {
+          minHeight: 88,
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: radii.lg,
+          padding: spacing.md,
+          color: colors.textPrimary,
+          backgroundColor: colors.surface,
+          textAlignVertical: 'top',
+        },
+        row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+        audioReady: { ...typography.caption, color: colors.accent },
+        error: { ...typography.caption, color: colors.danger },
+        entry: { gap: spacing.xs },
+        entryMeta: { ...typography.overline, color: colors.textMuted },
+        entryText: { ...typography.body, color: colors.textSecondary },
+        player: { marginTop: spacing.xs },
+        remove: {
+          ...typography.caption,
+          color: colors.danger,
+          marginTop: spacing.xs,
+        },
+      }),
+    [colors],
+  );
+
   const addEntry = useDayLogStore((s) => s.addEntry);
   const removeEntry = useDayLogStore((s) => s.removeEntry);
   const entries = useDayLogStore((s) => s.entriesForDate(todayKey()));
@@ -211,27 +244,3 @@ export function AudioDayLog() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: { gap: spacing.sm },
-  heading: { ...typography.heading, color: colors.textPrimary },
-  hint: { ...typography.caption, color: colors.textSecondary },
-  input: {
-    minHeight: 88,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.lg,
-    padding: spacing.md,
-    color: colors.textPrimary,
-    backgroundColor: colors.surface,
-    textAlignVertical: 'top',
-  },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  audioReady: { ...typography.caption, color: colors.accent },
-  error: { ...typography.caption, color: colors.danger },
-  entry: { gap: spacing.xs },
-  entryMeta: { ...typography.overline, color: colors.textMuted },
-  entryText: { ...typography.body, color: colors.textSecondary },
-  player: { marginTop: spacing.xs },
-  remove: { ...typography.caption, color: colors.danger, marginTop: spacing.xs },
-});

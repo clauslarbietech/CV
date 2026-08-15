@@ -1,14 +1,37 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Image, StyleSheet, View } from 'react-native';
 
 import { INTRO_LOGO } from '@/constants/intro';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 
 interface SplashLogoProps {
   onDone: () => void;
 }
 
 export function SplashLogo({ onDone }: SplashLogoProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: {
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          backgroundColor: colors.black,
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 20,
+        },
+        logo: {
+          width: 280,
+          height: 280,
+        },
+      }),
+    [colors],
+  );
+
   const scale = useRef(new Animated.Value(0.72)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -50,21 +73,3 @@ export function SplashLogo({ onDone }: SplashLogoProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: colors.black,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 20,
-  },
-  logo: {
-    width: 280,
-    height: 280,
-  },
-});

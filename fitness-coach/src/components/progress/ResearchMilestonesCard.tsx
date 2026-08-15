@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
@@ -7,7 +8,7 @@ import {
   SHORT_SESSION_SCIENCE,
   milestoneForCompletedDays,
 } from '@/constants/research/militaryTimeline';
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 
 interface ResearchMilestonesCardProps {
   completedDays?: number;
@@ -16,6 +17,65 @@ interface ResearchMilestonesCardProps {
 export function ResearchMilestonesCard({
   completedDays = 0,
 }: ResearchMilestonesCardProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: { gap: spacing.sm },
+        kicker: { ...typography.overline, color: colors.accent },
+        title: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+          marginTop: spacing.xs,
+        },
+        body: {
+          ...typography.body,
+          color: colors.textSecondary,
+          marginVertical: spacing.sm,
+        },
+        section: {
+          ...typography.heading,
+          color: colors.textPrimary,
+          marginTop: spacing.sm,
+        },
+        point: { marginBottom: spacing.sm },
+        bullet: {
+          ...typography.caption,
+          color: colors.textSecondary,
+          marginBottom: 4,
+        },
+        link: {
+          ...typography.caption,
+          color: colors.accent,
+          fontWeight: '700',
+          marginBottom: 2,
+        },
+        milestoneLabel: {
+          ...typography.overline,
+          color: colors.militaryAccent,
+        },
+        milestoneTitle: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+          marginBottom: spacing.xs,
+        },
+        caveat: {
+          ...typography.caption,
+          color: colors.textMuted,
+          fontStyle: 'italic',
+          marginTop: spacing.xs,
+        },
+        sourceLabel: {
+          ...typography.overline,
+          color: colors.textMuted,
+          marginTop: spacing.sm,
+          marginBottom: 2,
+        },
+        dim: { opacity: 0.72 },
+      }),
+    [colors],
+  );
+
   const reached = milestoneForCompletedDays(completedDays);
 
   return (
@@ -92,57 +152,3 @@ export function ResearchMilestonesCard({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: { gap: spacing.sm },
-  kicker: { ...typography.overline, color: colors.accent },
-  title: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-    marginTop: spacing.xs,
-  },
-  body: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginVertical: spacing.sm,
-  },
-  section: {
-    ...typography.heading,
-    color: colors.textPrimary,
-    marginTop: spacing.sm,
-  },
-  point: { marginBottom: spacing.sm },
-  bullet: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginBottom: 4,
-  },
-  link: {
-    ...typography.caption,
-    color: colors.accent,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  milestoneLabel: {
-    ...typography.overline,
-    color: colors.militaryAccent,
-  },
-  milestoneTitle: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-  caveat: {
-    ...typography.caption,
-    color: colors.textMuted,
-    fontStyle: 'italic',
-    marginTop: spacing.xs,
-  },
-  sourceLabel: {
-    ...typography.overline,
-    color: colors.textMuted,
-    marginTop: spacing.sm,
-    marginBottom: 2,
-  },
-  dim: { opacity: 0.72 },
-});

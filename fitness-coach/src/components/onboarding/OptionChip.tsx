@@ -1,6 +1,7 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 interface OptionChipProps {
   label: string;
@@ -15,7 +16,31 @@ export function OptionChip({
   onPress,
   tone = 'green',
 }: OptionChipProps) {
+  const { colors } = useTheme();
   const selectedBg = tone === 'blue' ? colors.action : colors.accent;
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        chip: {
+          minHeight: 48,
+          paddingHorizontal: spacing.md,
+          paddingVertical: spacing.sm,
+          borderRadius: radii.md,
+          borderWidth: 1,
+          borderColor: colors.border,
+          backgroundColor: colors.surface,
+        },
+        label: {
+          ...typography.bodyBold,
+          color: colors.textPrimary,
+        },
+        selectedLabel: {
+          color: colors.black,
+        },
+      }),
+    [colors],
+  );
 
   return (
     <Pressable
@@ -31,22 +56,3 @@ export function OptionChip({
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  chip: {
-    minHeight: 48,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-  },
-  label: {
-    ...typography.bodyBold,
-    color: colors.textPrimary,
-  },
-  selectedLabel: {
-    color: colors.black,
-  },
-});

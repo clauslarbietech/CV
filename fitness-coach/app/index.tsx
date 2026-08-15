@@ -1,11 +1,26 @@
 import { Redirect } from 'expo-router';
+import { useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useAuthStore } from '@/store/authStore';
 import { useProfileStore } from '@/store/profileStore';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 
 export default function Index() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        boot: {
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.background,
+        },
+      }),
+    [colors],
+  );
+
   const isHydrated = useAuthStore((s) => s.isHydrated);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const profile = useProfileStore((s) => s.profile);
@@ -30,12 +45,3 @@ export default function Index() {
 
   return <Redirect href="/(tabs)/today" />;
 }
-
-const styles = StyleSheet.create({
-  boot: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-});

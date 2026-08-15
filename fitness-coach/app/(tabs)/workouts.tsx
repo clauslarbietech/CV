@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ProgramCard } from '@/components/workout/ProgramCard';
@@ -13,9 +14,67 @@ import {
 import { LONG_TRAIN_PHASES } from '@/constants/programs/operationLongTrain';
 import { TRAINING_TRACKS } from '@/constants/research/militaryTimeline';
 import { useProgramStore } from '@/store/programStore';
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 
 export default function WorkoutsScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        kicker: {
+          ...typography.overline,
+          color: colors.militaryAccent,
+        },
+        title: {
+          ...typography.title,
+          color: colors.textPrimary,
+        },
+        accent: {
+          color: colors.accent,
+        },
+        subtitle: {
+          ...typography.body,
+          color: colors.textSecondary,
+          marginBottom: spacing.sm,
+        },
+        trackCard: {
+          gap: spacing.md,
+          marginBottom: spacing.sm,
+        },
+        sectionTitle: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+        },
+        trackBlock: { gap: 2 },
+        trackLabel: {
+          ...typography.bodyBold,
+          color: colors.accent,
+        },
+        trackMeta: {
+          ...typography.caption,
+          color: colors.textMuted,
+        },
+        outcome: {
+          ...typography.caption,
+          color: colors.textSecondary,
+        },
+        actions: {
+          gap: spacing.sm,
+        },
+        section: {
+          ...typography.heading,
+          color: colors.textPrimary,
+          marginTop: spacing.md,
+        },
+        longTitle: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+          marginBottom: spacing.xs,
+        },
+      }),
+    [colors],
+  );
+
   const enrollment = useProgramStore((s) => s.enrollment);
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
 
@@ -131,56 +190,3 @@ export default function WorkoutsScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  kicker: {
-    ...typography.overline,
-    color: colors.militaryAccent,
-  },
-  title: {
-    ...typography.title,
-    color: colors.textPrimary,
-  },
-  accent: {
-    color: colors.accent,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-  },
-  trackCard: {
-    gap: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  sectionTitle: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-  },
-  trackBlock: { gap: 2 },
-  trackLabel: {
-    ...typography.bodyBold,
-    color: colors.accent,
-  },
-  trackMeta: {
-    ...typography.caption,
-    color: colors.textMuted,
-  },
-  outcome: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  actions: {
-    gap: spacing.sm,
-  },
-  section: {
-    ...typography.heading,
-    color: colors.textPrimary,
-    marginTop: spacing.md,
-  },
-  longTitle: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-});

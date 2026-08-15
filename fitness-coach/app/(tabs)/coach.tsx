@@ -1,12 +1,30 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AudioDayLog } from '@/components/squad/AudioDayLog';
 import { SquadChat } from '@/components/squad/SquadChat';
 import { SquadProfiles } from '@/components/squad/SquadProfiles';
 import { Screen } from '@/components/ui/Screen';
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 
 export default function CoachScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        kicker: { ...typography.overline, color: colors.accent },
+        title: { ...typography.title, color: colors.textPrimary },
+        accent: { color: colors.accent },
+        subtitle: {
+          ...typography.body,
+          color: colors.textSecondary,
+          marginBottom: spacing.sm,
+        },
+        stack: { gap: spacing.xl },
+      }),
+    [colors],
+  );
+
   return (
     <Screen>
       <Text style={styles.kicker}>SQUAD SHARED APP</Text>
@@ -26,15 +44,3 @@ export default function CoachScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  kicker: { ...typography.overline, color: colors.accent },
-  title: { ...typography.title, color: colors.textPrimary },
-  accent: { color: colors.accent },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-  },
-  stack: { gap: spacing.xl },
-});

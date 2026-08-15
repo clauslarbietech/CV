@@ -6,7 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
 
 import { useAuthStore } from '@/store/authStore';
-import { colors } from '@/theme';
+import { ThemeProvider, useTheme } from '@/theme';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,13 +17,54 @@ const queryClient = new QueryClient({
   },
 });
 
-const headerOptions = {
-  headerShown: true,
-  headerStyle: { backgroundColor: colors.background },
-  headerTintColor: colors.textPrimary,
-  headerTitleStyle: { fontWeight: '700' as const },
-  headerShadowVisible: false,
-} as const;
+function RootNavigator() {
+  const { colors } = useTheme();
+
+  const headerOptions = {
+    headerShown: true,
+    headerStyle: { backgroundColor: colors.background },
+    headerTintColor: colors.textPrimary,
+    headerTitleStyle: { fontWeight: '700' as const },
+    headerShadowVisible: false,
+  } as const;
+
+  return (
+    <>
+      <StatusBar style={colors.statusBarStyle} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: colors.background },
+          animation: 'fade',
+        }}
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="program/[id]"
+          options={{ ...headerOptions, title: 'Program' }}
+        />
+        <Stack.Screen
+          name="session/[programId]"
+          options={{
+            ...headerOptions,
+            title: 'Mission',
+            presentation: 'modal',
+          }}
+        />
+        <Stack.Screen
+          name="profile"
+          options={{
+            ...headerOptions,
+            title: 'Settings',
+            presentation: 'modal',
+          }}
+        />
+      </Stack>
+    </>
+  );
+}
 
 export default function RootLayout() {
   useEffect(() => {
@@ -38,38 +79,9 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <QueryClientProvider client={queryClient}>
-        <StatusBar style="light" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: colors.background },
-            animation: 'fade',
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen
-            name="program/[id]"
-            options={{ ...headerOptions, title: 'Program' }}
-          />
-          <Stack.Screen
-            name="session/[programId]"
-            options={{
-              ...headerOptions,
-              title: 'Mission',
-              presentation: 'modal',
-            }}
-          />
-          <Stack.Screen
-            name="profile"
-            options={{
-              ...headerOptions,
-              title: 'Profile',
-              presentation: 'modal',
-            }}
-          />
-        </Stack>
+        <ThemeProvider>
+          <RootNavigator />
+        </ThemeProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>
   );
@@ -78,6 +90,5 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.background,
   },
 });

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
@@ -5,7 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { DifficultyTier, ProgramDay, WorkoutProgram } from '@/types';
 import { formatDuration } from '@/utils/format';
 import { formatExerciseTarget } from '@/utils/workout';
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 interface DailyMissionCardProps {
   program: WorkoutProgram;
@@ -22,6 +23,78 @@ export function DailyMissionCard({
   completed,
   onStart,
 }: DailyMissionCardProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        card: {
+          gap: spacing.sm,
+        },
+        kicker: {
+          ...typography.overline,
+          color: colors.accent,
+        },
+        dayLabel: {
+          ...typography.title,
+          color: colors.textPrimary,
+        },
+        program: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        roundsPill: {
+          alignSelf: 'flex-start',
+          backgroundColor: colors.accentSoft,
+          borderRadius: radii.pill,
+          paddingHorizontal: spacing.sm,
+          paddingVertical: spacing.xxs,
+          marginTop: spacing.xs,
+        },
+        rounds: {
+          ...typography.caption,
+          color: colors.accent,
+          fontWeight: '700',
+        },
+        list: {
+          gap: spacing.sm,
+          marginVertical: spacing.sm,
+        },
+        exerciseRow: {
+          flexDirection: 'row',
+          alignItems: 'flex-start',
+          gap: spacing.sm,
+        },
+        bullet: {
+          width: 8,
+          height: 8,
+          borderRadius: 4,
+          backgroundColor: colors.accent,
+          marginTop: 8,
+        },
+        exercise: {
+          ...typography.body,
+          color: colors.textPrimary,
+          flex: 1,
+        },
+        exerciseTarget: {
+          color: colors.accent,
+          fontWeight: '700',
+        },
+        eta: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginBottom: spacing.sm,
+        },
+        coach: {
+          ...typography.body,
+          color: colors.textSecondary,
+          fontStyle: 'italic',
+          marginBottom: spacing.sm,
+        },
+      }),
+    [colors],
+  );
+
   return (
     <Card military accentBorder style={styles.card}>
       <Text style={styles.kicker}>TODAY&apos;S MISSION</Text>
@@ -72,70 +145,3 @@ export function DailyMissionCard({
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    gap: spacing.sm,
-  },
-  kicker: {
-    ...typography.overline,
-    color: colors.accent,
-  },
-  dayLabel: {
-    ...typography.title,
-    color: colors.textPrimary,
-  },
-  program: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  roundsPill: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.accentSoft,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs,
-    marginTop: spacing.xs,
-  },
-  rounds: {
-    ...typography.caption,
-    color: colors.accent,
-    fontWeight: '700',
-  },
-  list: {
-    gap: spacing.sm,
-    marginVertical: spacing.sm,
-  },
-  exerciseRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.sm,
-  },
-  bullet: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.accent,
-    marginTop: 8,
-  },
-  exercise: {
-    ...typography.body,
-    color: colors.textPrimary,
-    flex: 1,
-  },
-  exerciseTarget: {
-    color: colors.accent,
-    fontWeight: '700',
-  },
-  eta: {
-    ...typography.caption,
-    color: colors.textMuted,
-    marginBottom: spacing.sm,
-  },
-  coach: {
-    ...typography.body,
-    color: colors.textSecondary,
-    fontStyle: 'italic',
-    marginBottom: spacing.sm,
-  },
-});

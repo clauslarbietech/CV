@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { DigestionGuide } from '@/components/nutrition/DigestionGuide';
@@ -9,11 +9,117 @@ import {
   NUTRITION_SOURCES,
   VIRAL_MILITARY_DIET_DAYS,
 } from '@/constants/nutrition/militaryFuel';
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 type TrackId = (typeof FUEL_TRACKS)[number]['id'];
 
 export default function NutritionScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        kicker: {
+          ...typography.overline,
+          color: colors.accent,
+        },
+        title: {
+          ...typography.title,
+          color: colors.textPrimary,
+        },
+        accent: {
+          color: colors.accent,
+        },
+        subtitle: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        trackRow: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.sm,
+          marginBottom: spacing.sm,
+        },
+        trackChip: {
+          flexGrow: 1,
+          minWidth: '28%',
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: radii.lg,
+          padding: spacing.sm,
+          backgroundColor: colors.surface,
+        },
+        trackChipOn: {
+          borderColor: colors.accent,
+          backgroundColor: colors.accentSoft,
+        },
+        trackLabel: {
+          ...typography.bodyBold,
+          color: colors.textSecondary,
+        },
+        trackLabelOn: {
+          color: colors.accent,
+        },
+        trackHorizon: {
+          ...typography.caption,
+          color: colors.textMuted,
+        },
+        planLabel: {
+          ...typography.overline,
+          color: colors.accent,
+        },
+        focus: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+          marginVertical: spacing.xs,
+        },
+        window: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        hydro: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginTop: spacing.sm,
+        },
+        mealName: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+          marginBottom: spacing.xs,
+        },
+        cal: {
+          ...typography.caption,
+          color: colors.accent,
+          marginBottom: spacing.xs,
+        },
+        item: {
+          ...typography.body,
+          color: colors.textSecondary,
+          marginBottom: 2,
+        },
+        section: {
+          ...typography.heading,
+          color: colors.textPrimary,
+          marginTop: spacing.sm,
+        },
+        note: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        viralCard: {
+          borderRadius: radii.xl,
+        },
+        viralMeal: {
+          marginBottom: spacing.sm,
+        },
+        link: {
+          ...typography.bodyBold,
+          color: colors.accent,
+          marginTop: spacing.sm,
+        },
+      }),
+    [colors],
+  );
+
   const [trackId, setTrackId] = useState<TrackId>('short');
   const track = FUEL_TRACKS.find((t) => t.id === trackId) ?? FUEL_TRACKS[0];
   const plan = track.plan;
@@ -124,104 +230,3 @@ export default function NutritionScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  kicker: {
-    ...typography.overline,
-    color: colors.accent,
-  },
-  title: {
-    ...typography.title,
-    color: colors.textPrimary,
-  },
-  accent: {
-    color: colors.accent,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  trackRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-  trackChip: {
-    flexGrow: 1,
-    minWidth: '28%',
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.lg,
-    padding: spacing.sm,
-    backgroundColor: colors.surface,
-  },
-  trackChipOn: {
-    borderColor: colors.accent,
-    backgroundColor: colors.accentSoft,
-  },
-  trackLabel: {
-    ...typography.bodyBold,
-    color: colors.textSecondary,
-  },
-  trackLabelOn: {
-    color: colors.accent,
-  },
-  trackHorizon: {
-    ...typography.caption,
-    color: colors.textMuted,
-  },
-  planLabel: {
-    ...typography.overline,
-    color: colors.accent,
-  },
-  focus: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-    marginVertical: spacing.xs,
-  },
-  window: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  hydro: {
-    ...typography.caption,
-    color: colors.textMuted,
-    marginTop: spacing.sm,
-  },
-  mealName: {
-    ...typography.subheading,
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-  cal: {
-    ...typography.caption,
-    color: colors.accent,
-    marginBottom: spacing.xs,
-  },
-  item: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginBottom: 2,
-  },
-  section: {
-    ...typography.heading,
-    color: colors.textPrimary,
-    marginTop: spacing.sm,
-  },
-  note: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  viralCard: {
-    borderRadius: radii.xl,
-  },
-  viralMeal: {
-    marginBottom: spacing.sm,
-  },
-  link: {
-    ...typography.bodyBold,
-    color: colors.accent,
-    marginTop: spacing.sm,
-  },
-});

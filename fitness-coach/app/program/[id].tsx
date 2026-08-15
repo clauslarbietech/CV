@@ -1,4 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
@@ -8,9 +9,67 @@ import { ExerciseRow } from '@/components/workout/ExerciseRow';
 import { getProgramById } from '@/constants/programs';
 import { useProgramStore } from '@/store/programStore';
 import { formatDuration, formatRest } from '@/utils/format';
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 export default function ProgramDetailScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        kicker: { ...typography.overline, color: colors.militaryAccent },
+        title: { ...typography.hero, color: colors.textPrimary },
+        subtitle: { ...typography.subheading, color: colors.textSecondary },
+        tagline: { ...typography.body, color: colors.textMuted },
+        meta: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+        metaText: {
+          ...typography.caption,
+          color: colors.textSecondary,
+          backgroundColor: colors.surface,
+          paddingHorizontal: spacing.sm,
+          paddingVertical: spacing.xxs,
+          borderRadius: radii.sm,
+        },
+        section: {
+          ...typography.heading,
+          color: colors.textPrimary,
+          marginTop: spacing.md,
+        },
+        tiers: { flexDirection: 'row', gap: spacing.xs },
+        tier: {
+          flex: 1,
+          minHeight: 44,
+          borderRadius: radii.md,
+          borderWidth: 1,
+          borderColor: colors.border,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.surface,
+        },
+        tierActive: {
+          borderColor: colors.accent,
+          backgroundColor: colors.accent,
+        },
+        tierText: { ...typography.caption, color: colors.textSecondary },
+        tierTextActive: { color: colors.black, fontWeight: '800' },
+        dayCard: {
+          backgroundColor: colors.militarySurface,
+          borderRadius: radii.lg,
+          borderWidth: 1,
+          borderColor: colors.militaryBorder,
+          padding: spacing.md,
+          gap: spacing.xxs,
+        },
+        dayDone: { borderColor: colors.accent },
+        dayTitle: { ...typography.subheading, color: colors.textPrimary },
+        dayMeta: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginBottom: spacing.xs,
+        },
+      }),
+    [colors],
+  );
+
   const { id } = useLocalSearchParams<{ id: string }>();
   const program = getProgramById(id);
   const enrollment = useProgramStore((s) => s.enrollment);
@@ -141,56 +200,3 @@ export default function ProgramDetailScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  kicker: { ...typography.overline, color: colors.militaryAccent },
-  title: { ...typography.hero, color: colors.textPrimary },
-  subtitle: { ...typography.subheading, color: colors.textSecondary },
-  tagline: { ...typography.body, color: colors.textMuted },
-  meta: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  metaText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    backgroundColor: colors.surface,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs,
-    borderRadius: radii.sm,
-  },
-  section: {
-    ...typography.heading,
-    color: colors.textPrimary,
-    marginTop: spacing.md,
-  },
-  tiers: { flexDirection: 'row', gap: spacing.xs },
-  tier: {
-    flex: 1,
-    minHeight: 44,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.surface,
-  },
-  tierActive: {
-    borderColor: colors.accent,
-    backgroundColor: colors.accent,
-  },
-  tierText: { ...typography.caption, color: colors.textSecondary },
-  tierTextActive: { color: colors.black, fontWeight: '800' },
-  dayCard: {
-    backgroundColor: colors.militarySurface,
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    borderColor: colors.militaryBorder,
-    padding: spacing.md,
-    gap: spacing.xxs,
-  },
-  dayDone: { borderColor: colors.accent },
-  dayTitle: { ...typography.subheading, color: colors.textPrimary },
-  dayMeta: {
-    ...typography.caption,
-    color: colors.textMuted,
-    marginBottom: spacing.xs,
-  },
-});

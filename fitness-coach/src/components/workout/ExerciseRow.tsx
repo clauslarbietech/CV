@@ -1,8 +1,9 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { DifficultyTier, ExerciseDefinition } from '@/types';
 import { formatExerciseTarget } from '@/utils/workout';
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 interface ExerciseRowProps {
   exercise: ExerciseDefinition;
@@ -11,6 +12,55 @@ interface ExerciseRowProps {
 }
 
 export function ExerciseRow({ exercise, tier, index }: ExerciseRowProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        row: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.md,
+          paddingVertical: spacing.md,
+          paddingHorizontal: spacing.sm,
+          backgroundColor: colors.surface,
+          borderRadius: radii.lg,
+          marginBottom: spacing.xs,
+          borderWidth: 1,
+          borderColor: colors.border,
+        },
+        indexBadge: {
+          width: 32,
+          height: 32,
+          borderRadius: 16,
+          backgroundColor: colors.accentSoft,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        index: {
+          ...typography.caption,
+          color: colors.accent,
+          fontWeight: '800',
+        },
+        content: {
+          flex: 1,
+          gap: 2,
+        },
+        name: {
+          ...typography.bodyBold,
+          color: colors.textPrimary,
+        },
+        meta: {
+          ...typography.caption,
+          color: colors.textSecondary,
+        },
+        notes: {
+          ...typography.caption,
+          color: colors.textMuted,
+        },
+      }),
+    [colors],
+  );
+
   const target = formatExerciseTarget(exercise, tier);
 
   return (
@@ -31,47 +81,3 @@ export function ExerciseRow({ exercise, tier, index }: ExerciseRowProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.sm,
-    backgroundColor: colors.surface,
-    borderRadius: radii.lg,
-    marginBottom: spacing.xs,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  indexBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.accentSoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  index: {
-    ...typography.caption,
-    color: colors.accent,
-    fontWeight: '800',
-  },
-  content: {
-    flex: 1,
-    gap: 2,
-  },
-  name: {
-    ...typography.bodyBold,
-    color: colors.textPrimary,
-  },
-  meta: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  notes: {
-    ...typography.caption,
-    color: colors.textMuted,
-  },
-});

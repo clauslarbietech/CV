@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ResearchMilestonesCard } from '@/components/progress/ResearchMilestonesCard';
@@ -8,9 +9,27 @@ import { Screen } from '@/components/ui/Screen';
 import { getActiveProgram } from '@/constants/programs';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
-import { colors, spacing, typography } from '@/theme';
+import { useTheme, spacing, typography } from '@/theme';
 
 export default function ProgressScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        kicker: { ...typography.overline, color: colors.militaryAccent },
+        title: { ...typography.title, color: colors.textPrimary },
+        accent: { color: colors.accent },
+        section: {
+          ...typography.heading,
+          color: colors.textPrimary,
+          marginTop: spacing.sm,
+        },
+        metrics: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+        row: { ...typography.body, color: colors.textSecondary },
+      }),
+    [colors],
+  );
+
   const profile = useProfileStore((s) => s.profile);
   const enrollment = useProgramStore((s) => s.enrollment);
   const sessions = useProgramStore((s) => s.sessions);
@@ -68,16 +87,3 @@ export default function ProgressScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  kicker: { ...typography.overline, color: colors.militaryAccent },
-  title: { ...typography.title, color: colors.textPrimary },
-  accent: { color: colors.accent },
-  section: {
-    ...typography.heading,
-    color: colors.textPrimary,
-    marginTop: spacing.sm,
-  },
-  metrics: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  row: { ...typography.body, color: colors.textSecondary },
-});

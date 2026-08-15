@@ -2,9 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Tabs, router } from 'expo-router';
 import { Pressable, StyleSheet } from 'react-native';
 
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 
 export default function TabsLayout() {
+  const { colors } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
@@ -19,22 +21,26 @@ export default function TabsLayout() {
         headerRight: () => (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Open profile"
+            accessibilityLabel="Open settings"
             onPress={() => router.push('/profile')}
             style={styles.profileBtn}
             hitSlop={12}
           >
-            <Ionicons name="person-circle-outline" size={28} color={colors.textPrimary} />
+            <Ionicons
+              name="settings-outline"
+              size={24}
+              color={colors.textPrimary}
+            />
           </Pressable>
         ),
         tabBarStyle: {
-          backgroundColor: '#0A0A0A',
+          backgroundColor: colors.tabBar,
           borderTopColor: colors.border,
           height: 68,
           paddingTop: 8,
           paddingBottom: 10,
         },
-        tabBarActiveTintColor: colors.accent,
+        tabBarActiveTintColor: colors.militaryAccent,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
           fontSize: 11,

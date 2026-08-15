@@ -12,11 +12,70 @@ import { Card } from '@/components/ui/Card';
 import { MOTIVATION_PROMPTS, useChatStore } from '@/store/chatStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useSquadStore } from '@/store/squadStore';
-import { colors, radii, spacing, typography } from '@/theme';
+import { useTheme, radii, spacing, typography } from '@/theme';
 
 type Channel = 'coach' | 'buddy';
 
 export function SquadChat() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrap: { gap: spacing.sm },
+        heading: { ...typography.heading, color: colors.textPrimary },
+        tabs: { flexDirection: 'row', gap: spacing.sm },
+        tab: {
+          paddingVertical: spacing.sm,
+          paddingHorizontal: spacing.md,
+          borderRadius: radii.pill,
+          borderWidth: 1,
+          borderColor: colors.border,
+        },
+        tabOn: {
+          borderColor: colors.accent,
+          backgroundColor: colors.accentSoft,
+        },
+        tabLabel: { ...typography.bodyBold, color: colors.textSecondary },
+        tabLabelOn: { color: colors.accent },
+        hint: { ...typography.caption, color: colors.textSecondary },
+        thread: { gap: spacing.sm, maxHeight: 320 },
+        bubble: {
+          padding: spacing.sm,
+          borderRadius: radii.lg,
+          gap: 2,
+        },
+        mine: {
+          backgroundColor: colors.actionSoft,
+          alignSelf: 'flex-end',
+          maxWidth: '92%',
+        },
+        theirs: {
+          backgroundColor: colors.backgroundElevated,
+          alignSelf: 'flex-start',
+          maxWidth: '92%',
+        },
+        from: { ...typography.overline, color: colors.textMuted },
+        body: { ...typography.body, color: colors.textPrimary },
+        prompts: { gap: spacing.xs },
+        promptChip: {
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: radii.lg,
+          padding: spacing.sm,
+        },
+        promptText: { ...typography.caption, color: colors.textSecondary },
+        input: {
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: radii.lg,
+          padding: spacing.md,
+          color: colors.textPrimary,
+          backgroundColor: colors.surface,
+        },
+      }),
+    [colors],
+  );
+
   const messages = useChatStore((s) => s.messages);
   const sendMessage = useChatStore((s) => s.sendMessage);
   const buddies = useSquadStore((s) => s.buddies);
@@ -120,57 +179,3 @@ export function SquadChat() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: { gap: spacing.sm },
-  heading: { ...typography.heading, color: colors.textPrimary },
-  tabs: { flexDirection: 'row', gap: spacing.sm },
-  tab: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  tabOn: {
-    borderColor: colors.accent,
-    backgroundColor: colors.accentSoft,
-  },
-  tabLabel: { ...typography.bodyBold, color: colors.textSecondary },
-  tabLabelOn: { color: colors.accent },
-  hint: { ...typography.caption, color: colors.textSecondary },
-  thread: { gap: spacing.sm, maxHeight: 320 },
-  bubble: {
-    padding: spacing.sm,
-    borderRadius: radii.lg,
-    gap: 2,
-  },
-  mine: {
-    backgroundColor: colors.actionSoft,
-    alignSelf: 'flex-end',
-    maxWidth: '92%',
-  },
-  theirs: {
-    backgroundColor: colors.backgroundElevated,
-    alignSelf: 'flex-start',
-    maxWidth: '92%',
-  },
-  from: { ...typography.overline, color: colors.textMuted },
-  body: { ...typography.body, color: colors.textPrimary },
-  prompts: { gap: spacing.xs },
-  promptChip: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.lg,
-    padding: spacing.sm,
-  },
-  promptText: { ...typography.caption, color: colors.textSecondary },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.lg,
-    padding: spacing.md,
-    color: colors.textPrimary,
-    backgroundColor: colors.surface,
-  },
-});
