@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { DailyMissionCard } from '@/components/today/DailyMissionCard';
 import { ExpressTimeCard } from '@/components/today/ExpressTimeCard';
@@ -8,8 +9,15 @@ import { RemindersPanel } from '@/components/today/RemindersPanel';
 import { AppButton } from '@/components/ui/AppButton';
 import { MetricCard } from '@/components/ui/MetricCard';
 import { Screen } from '@/components/ui/Screen';
+import { HeroProgramCard } from '@/components/workout/HeroProgramCard';
 import { ExpressBudget } from '@/constants/programs/expressMissions';
-import { getActiveProgram, OPERATION_IRON_30 } from '@/constants/programs';
+import {
+  OPERATION_IRON_14,
+  OPERATION_IRON_30,
+  OPERATION_LONG_TRAIN,
+  getActiveProgram,
+  WORKOUT_PROGRAMS,
+} from '@/constants/programs';
 import { useNotesStore } from '@/store/notesStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
@@ -17,25 +25,50 @@ import { useSessionStore } from '@/store/sessionStore';
 import { getProgramDay } from '@/utils/workout';
 import { useTheme, spacing, typography } from '@/theme';
 
-export default function TodayScreen() {
+export default function MyStuffScreen() {
   const { colors } = useTheme();
   const styles = useMemo(
     () =>
       StyleSheet.create({
-        kicker: {
-          ...typography.overline,
-          color: colors.militaryAccent,
+        headerRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         },
-        greeting: {
+        helpChip: {
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: 999,
+          paddingHorizontal: spacing.sm,
+          paddingVertical: spacing.xxs,
+          backgroundColor: colors.surface,
+        },
+        helpText: {
           ...typography.caption,
-          color: colors.textMuted,
+          color: colors.textPrimary,
+          fontWeight: '700',
         },
         title: {
           ...typography.title,
           color: colors.textPrimary,
+          letterSpacing: 1,
+          textTransform: 'uppercase',
+          textAlign: 'center',
+          flex: 1,
         },
-        accent: {
-          color: colors.accent,
+        iconBtn: { padding: spacing.xxs },
+        greeting: {
+          ...typography.caption,
+          color: colors.textMuted,
+        },
+        name: {
+          ...typography.heading,
+          color: colors.textPrimary,
+        },
+        section: {
+          ...typography.heading,
+          color: colors.textPrimary,
+          marginTop: spacing.sm,
         },
         body: {
           ...typography.body,
@@ -46,16 +79,12 @@ export default function TodayScreen() {
           color: colors.textMuted,
           marginBottom: spacing.xs,
         },
-        section: {
-          ...typography.heading,
-          color: colors.textPrimary,
-          marginTop: spacing.sm,
-        },
         metrics: {
           flexDirection: 'row',
           flexWrap: 'wrap',
           gap: spacing.sm,
         },
+        catalog: { gap: spacing.md },
       }),
     [colors],
   );
@@ -69,70 +98,92 @@ export default function TodayScreen() {
   const meds = useNotesStore((s) => s.meds);
   const isMedTakenToday = useNotesStore((s) => s.isMedTakenToday);
 
-  const startIron30 = () => {
-    enrollInProgram(OPERATION_IRON_30.id, 'soldier');
+  const openProgram = (programId: string) => {
+    router.push({ pathname: '/program/[id]', params: { id: programId } });
+  };
+
+  const playProgram = (programId: string) => {
+    const current = useProgramStore.getState().enrollment;
+    if (!current || current.programId !== programId) {
+      enrollInProgram(programId, 'soldier');
+    }
+    const day = useProgramStore.getState().enrollment?.currentDay ?? 1;
     router.push({
       pathname: '/session/[programId]',
-      params: { programId: OPERATION_IRON_30.id, day: '1' },
+      params: { programId, day: String(day) },
     });
   };
+
+  const catalog = [
+    OPERATION_LONG_TRAIN,
+    OPERATION_IRON_30,
+    OPERATION_IRON_14,
+  ].filter((p) => WORKOUT_PROGRAMS.some((w) => w.id === p.id));
 
   if (!enrollment) {
     return (
       <Screen>
-        <Text style={styles.kicker}>READY TO TRAIN</Text>
-        <Text style={styles.title}>
-          Start <Text style={styles.accent}>Day 1</Text>
+        <View style={styles.headerRow}>
+          <Pressable
+            style={styles.helpChip}
+            onPress={() => router.push('/(tabs)/coach')}
+          >
+            <Text style={styles.helpText}>NEED HELP?</Text>
+          </Pressable>
+          <Text style={styles.title}>My Stuff</Text>
+          <Pressable
+            style={styles.iconBtn}
+            onPress={() => router.push('/profile')}
+            accessibilityLabel="Settings"
+          >
+            <Ionicons
+              name="notifications-outline"
+              size={22}
+              color={colors.textPrimary}
+            />
+          </Pressable>
+        </View>
+
+        <Text style={styles.greeting}>
+          Welcome{profile?.firstName ? `, ${profile.firstName}` : ''}
         </Text>
+        <Text style={styles.name}>Pick your transformation</Text>
         <Text style={styles.body}>
-          OPERATION IRON 30 — no equipment. Tap below to begin testing the
-          workout engine.
+          Short, 30-day, or 12-week long train — same military bodyweight system.
+          Tap a card to open the calendar, diet steps, and squad link.
         </Text>
-        <AppButton
-          label="START DAY 1 MISSION"
-          variant="military"
-          onPress={startIron30}
-        />
-        <AppButton
-          label="View nutrition & fasting"
-          variant="secondary"
-          onPress={() => router.push('/(tabs)/nutrition')}
-        />
-        <RemindersPanel />
+
+        <View style={styles.catalog}>
+          {catalog.map((program) => (
+            <HeroProgramCard
+              key={program.id}
+              program={program}
+              locationLabel={
+                program.durationDays >= 60
+                  ? '12-week long train · Home'
+                  : program.durationDays <= 14
+                    ? 'Short block · Home'
+                    : '30-day shred · Home'
+              }
+              onGetStarted={() => openProgram(program.id)}
+              onPlay={() => playProgram(program.id)}
+            />
+          ))}
+        </View>
       </Screen>
     );
   }
 
   const program = getActiveProgram(enrollment.programId);
-  const day =
-    getProgramDay(program, enrollment.currentDay) ?? program.days[0];
-  const dayCompleted = enrollment.completedDayIds.includes(day.day);
-  const completedCount = enrollment.completedDayIds.length;
-  const lastSession = sessions.find((s) => s.day === day.day);
+  const dayPlan = getProgramDay(program, enrollment.currentDay);
   const medsDone = meds.filter((m) => isMedTakenToday(m.id)).length;
-  const clearSession = useSessionStore((s) => s.clear);
-  const resumable =
-    active &&
-    active.programId === program.id &&
-    active.day === day.day &&
-    active.phase !== 'complete' &&
-    active.phase !== 'briefing';
 
-  const openMission = (express?: ExpressBudget) => {
-    // Restart if switching between full day and an express budget (or between budgets).
-    if (
-      active &&
-      active.programId === program.id &&
-      active.day === day.day &&
-      active.expressMinutes !== express
-    ) {
-      clearSession();
-    }
+  const startMission = (express?: ExpressBudget) => {
     router.push({
       pathname: '/session/[programId]',
       params: {
         programId: program.id,
-        day: String(day.day),
+        day: String(enrollment.currentDay),
         ...(express ? { express: String(express) } : {}),
       },
     });
@@ -140,71 +191,106 @@ export default function TodayScreen() {
 
   return (
     <Screen>
-      <Text style={styles.kicker}>TODAY&apos;S MISSION</Text>
-      <Text style={styles.greeting}>
-        {profile?.firstName ?? 'Athlete'} · {enrollment.difficulty.toUpperCase()}
-      </Text>
-      <Text style={styles.progressLine}>
-        {completedCount}/{program.durationDays} missions · Streak{' '}
-        {streaks.workoutStreak} · Meds {medsDone}/{meds.length}
-      </Text>
+      <View style={styles.headerRow}>
+        <Pressable
+          style={styles.helpChip}
+          onPress={() => router.push('/(tabs)/coach')}
+        >
+          <Text style={styles.helpText}>NEED HELP?</Text>
+        </Pressable>
+        <Text style={styles.title}>My Stuff</Text>
+        <Pressable
+          style={styles.iconBtn}
+          onPress={() => router.push('/profile')}
+          accessibilityLabel="Settings"
+        >
+          <Ionicons
+            name="notifications-outline"
+            size={22}
+            color={colors.textPrimary}
+          />
+        </Pressable>
+      </View>
 
-      <DailyMissionCard
+      <Text style={styles.greeting}>
+        {profile?.firstName ?? 'Athlete'} · {profile?.rank ?? 'Recruit'}
+      </Text>
+      <Text style={styles.name}>Your active program</Text>
+
+      <HeroProgramCard
         program={program}
-        day={day}
-        tier={enrollment.difficulty}
-        completed={dayCompleted}
-        onStart={() => openMission()}
+        enrolled
+        currentDay={enrollment.currentDay}
+        locationLabel="Home · No equipment"
+        onGetStarted={() => openProgram(program.id)}
+        onPlay={() => startMission()}
       />
 
-      {resumable ? (
+      <Text style={styles.progressLine}>
+        Day {enrollment.currentDay} of {program.durationDays} · Streak{' '}
+        {streaks.workoutStreak} · Sessions {sessions.length}
+      </Text>
+
+      {active ? (
         <AppButton
-          label={
-            active.expressMinutes
-              ? `Resume ${active.expressMinutes}-min express`
-              : 'Resume active mission'
+          label="Resume active mission"
+          variant="action"
+          onPress={() =>
+            router.push({
+              pathname: '/session/[programId]',
+              params: {
+                programId: active.programId,
+                day: String(active.day),
+              },
+            })
           }
-          variant="military"
-          onPress={() => openMission(active.expressMinutes)}
         />
       ) : null}
 
-      <ExpressTimeCard
-        disabled={dayCompleted}
-        onSelect={(budget) => openMission(budget)}
-      />
+      {dayPlan ? (
+        <DailyMissionCard
+          program={program}
+          day={dayPlan}
+          tier={enrollment.difficulty}
+          onStart={() => startMission()}
+        />
+      ) : null}
 
-      <AppButton
-        label="Open nutrition & fasting plan"
-        variant="secondary"
-        onPress={() => router.push('/(tabs)/nutrition')}
-      />
+      <ExpressTimeCard onSelect={(mins) => startMission(mins)} />
 
-      <Text style={styles.section}>Mission metrics</Text>
+      <Text style={styles.section}>All programs</Text>
+      <View style={styles.catalog}>
+        {catalog.map((item) => (
+          <HeroProgramCard
+            key={item.id}
+            program={item}
+            enrolled={enrollment.programId === item.id}
+            currentDay={
+              enrollment.programId === item.id
+                ? enrollment.currentDay
+                : undefined
+            }
+            locationLabel={
+              item.durationDays >= 60
+                ? '12-week long train · Home'
+                : item.durationDays <= 14
+                  ? 'Short block · Home'
+                  : '30-day shred · Home'
+            }
+            onGetStarted={() => openProgram(item.id)}
+            onPlay={() => playProgram(item.id)}
+          />
+        ))}
+      </View>
+
+      <Text style={styles.section}>Today snapshot</Text>
       <View style={styles.metrics}>
+        <MetricCard label="Streak" value={`${streaks.workoutStreak}d`} />
+        <MetricCard label="Meds" value={`${medsDone}/${meds.length}`} />
         <MetricCard
-          label="Program day"
-          value={`${day.day}`}
-          subtitle={`of ${program.durationDays}`}
-        />
-        <MetricCard
-          label="Completed"
-          value={`${completedCount}`}
-          subtitle="missions"
-          complete={completedCount > 0}
-        />
-        <MetricCard
-          label="Last duration"
-          value={
-            lastSession?.durationSec
-              ? `${Math.round(lastSession.durationSec / 60)}m`
-              : '—'
-          }
-        />
-        <MetricCard
-          label="Meds today"
-          value={`${medsDone}/${meds.length}`}
-          complete={meds.length > 0 && medsDone === meds.length}
+          label="XP"
+          value={`${profile?.xp ?? 0}`}
+          accentColor={colors.accent}
         />
       </View>
 

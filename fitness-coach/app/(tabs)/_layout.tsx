@@ -51,16 +51,16 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="today"
         options={{
-          title: 'Today',
+          title: 'My Stuff',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="flash" color={color} size={size} />
+            <Ionicons name="home" color={color} size={size} />
           ),
         }}
       />
       <Tabs.Screen
         name="workouts"
         options={{
-          title: 'Workouts',
+          title: 'Discover',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="barbell" color={color} size={size} />
           ),

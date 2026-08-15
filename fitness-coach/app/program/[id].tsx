@@ -1,38 +1,83 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  ImageBackground,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Screen } from '@/components/ui/Screen';
-import { ExerciseRow } from '@/components/workout/ExerciseRow';
+import { ProgramMonthGrid } from '@/components/workout/ProgramMonthGrid';
+import { ProgramStartSteps } from '@/components/workout/ProgramStartSteps';
 import { getProgramById } from '@/constants/programs';
 import { useProgramStore } from '@/store/programStore';
-import { formatDuration, formatRest } from '@/utils/format';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
+const HERO_BY_ID: Record<string, number> = {
+  'operation-iron-30': require('../../assets/exercises/burpee.png'),
+  'operation-iron-14': require('../../assets/exercises/pushup.png'),
+  'operation-long-train': require('../../assets/exercises/squat.png'),
+};
+
 export default function ProgramDetailScreen() {
-  const { colors } = useTheme();
+  const { colors, isDay } = useTheme();
   const styles = useMemo(
     () =>
       StyleSheet.create({
-        kicker: { ...typography.overline, color: colors.militaryAccent },
-        title: { ...typography.hero, color: colors.textPrimary },
-        subtitle: { ...typography.subheading, color: colors.textSecondary },
-        tagline: { ...typography.body, color: colors.textMuted },
-        meta: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-        metaText: {
-          ...typography.caption,
-          color: colors.textSecondary,
-          backgroundColor: colors.surface,
-          paddingHorizontal: spacing.sm,
-          paddingVertical: spacing.xxs,
-          borderRadius: radii.sm,
+        hero: {
+          height: 220,
+          borderRadius: radii.xl,
+          overflow: 'hidden',
+          marginBottom: spacing.sm,
+          borderWidth: 1,
+          borderColor: colors.border,
         },
+        heroImage: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+        playBadge: {
+          width: 64,
+          height: 64,
+          borderRadius: 32,
+          backgroundColor: 'rgba(255,255,255,0.92)',
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        playTriangle: {
+          width: 0,
+          height: 0,
+          marginLeft: 4,
+          borderTopWidth: 12,
+          borderBottomWidth: 12,
+          borderLeftWidth: 18,
+          borderTopColor: 'transparent',
+          borderBottomColor: 'transparent',
+          borderLeftColor: colors.action,
+        },
+        kicker: { ...typography.overline, color: colors.action },
+        title: { ...typography.hero, color: colors.textPrimary, fontSize: 28 },
+        body: { ...typography.body, color: colors.textSecondary },
         section: {
           ...typography.heading,
           color: colors.textPrimary,
           marginTop: spacing.md,
+        },
+        startOver: {
+          minHeight: 52,
+          borderRadius: radii.md,
+          backgroundColor: colors.action,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: spacing.sm,
+        },
+        startOverText: {
+          ...typography.bodyBold,
+          color: colors.white,
+          letterSpacing: 1,
+          textTransform: 'uppercase',
         },
         tiers: { flexDirection: 'row', gap: spacing.xs },
         tier: {
@@ -46,34 +91,33 @@ export default function ProgramDetailScreen() {
           backgroundColor: colors.surface,
         },
         tierActive: {
-          borderColor: colors.accent,
-          backgroundColor: colors.accent,
+          borderColor: colors.action,
+          backgroundColor: colors.action,
         },
         tierText: { ...typography.caption, color: colors.textSecondary },
-        tierTextActive: { color: colors.black, fontWeight: '800' },
-        dayCard: {
-          backgroundColor: colors.militarySurface,
-          borderRadius: radii.lg,
-          borderWidth: 1,
-          borderColor: colors.militaryBorder,
-          padding: spacing.md,
-          gap: spacing.xxs,
+        tierTextActive: { color: colors.white, fontWeight: '800' },
+        metaRow: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.sm,
         },
-        dayDone: { borderColor: colors.accent },
-        dayTitle: { ...typography.subheading, color: colors.textPrimary },
-        dayMeta: {
+        meta: {
           ...typography.caption,
-          color: colors.textMuted,
-          marginBottom: spacing.xs,
+          color: colors.textSecondary,
+          backgroundColor: isDay ? colors.backgroundElevated : colors.surface,
+          paddingHorizontal: spacing.sm,
+          paddingVertical: spacing.xxs,
+          borderRadius: radii.sm,
         },
       }),
-    [colors],
+    [colors, isDay],
   );
 
   const { id } = useLocalSearchParams<{ id: string }>();
   const program = getProgramById(id);
   const enrollment = useProgramStore((s) => s.enrollment);
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
+  const startOver = useProgramStore((s) => s.startOver);
   const setDifficulty = useProgramStore((s) => s.setDifficulty);
 
   if (!program) {
@@ -82,7 +126,7 @@ export default function ProgramDetailScreen() {
         <EmptyState
           title="Program not found"
           description="This program is not available yet."
-          actionLabel="Back to workouts"
+          actionLabel="Back to My Stuff"
           onAction={() => router.back()}
         />
       </Screen>
@@ -92,21 +136,110 @@ export default function ProgramDetailScreen() {
   const hasDays = program.days.length > 0;
   const tier = enrollment?.difficulty ?? 'soldier';
   const isEnrolled = enrollment?.programId === program.id;
+  const currentDay = isEnrolled ? enrollment?.currentDay ?? 1 : undefined;
+  const heroSource =
+    HERO_BY_ID[program.id] ?? require('../../assets/exercises/generic.png');
+
+  const openDay = (day: number) => {
+    if (!isEnrolled) enrollInProgram(program.id, tier);
+    router.push({
+      pathname: '/session/[programId]',
+      params: { programId: program.id, day: String(day) },
+    });
+  };
+
+  const playToday = () => {
+    const day = isEnrolled
+      ? useProgramStore.getState().enrollment?.currentDay ?? 1
+      : 1;
+    if (!isEnrolled) enrollInProgram(program.id, tier);
+    openDay(day);
+  };
 
   return (
     <Screen>
+      <View style={styles.hero}>
+        <Pressable onPress={playToday} style={{ flex: 1 }}>
+          <ImageBackground
+            source={heroSource}
+            style={styles.heroImage}
+            resizeMode="cover"
+          >
+            <LinearGradient
+              colors={[
+                'rgba(0,0,0,0.2)',
+                'rgba(0,0,0,0.45)',
+                'rgba(0,0,0,0.7)',
+              ]}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={styles.playBadge}>
+              <View style={styles.playTriangle} />
+            </View>
+          </ImageBackground>
+        </Pressable>
+      </View>
+
       <Text style={styles.kicker}>
-        {program.featured ? 'FEATURED CHALLENGE' : 'PROGRAM'}
+        {program.featured ? 'FEATURED PROGRAM' : 'YOUR PROGRAM'}
       </Text>
       <Text style={styles.title}>{program.name}</Text>
-      <Text style={styles.subtitle}>{program.subtitle}</Text>
-      <Text style={styles.tagline}>{program.tagline}</Text>
+      <Text style={styles.body}>
+        Welcome. Follow the mission calendar in order — short blocks or the full
+        long train. Complete Step 1 & 2 below, then start your transformation.
+      </Text>
 
-      <View style={styles.meta}>
-        <Text style={styles.metaText}>{program.durationDays} days</Text>
-        <Text style={styles.metaText}>{program.equipment}</Text>
-        <Text style={styles.metaText}>{program.averageWorkout}</Text>
+      <View style={styles.metaRow}>
+        <Text style={styles.meta}>{program.durationDays} days</Text>
+        <Text style={styles.meta}>{program.equipment}</Text>
+        <Text style={styles.meta}>{program.averageWorkout}</Text>
       </View>
+
+      <Text style={styles.section}>Get set up</Text>
+      <ProgramStartSteps
+        steps={[
+          {
+            number: 1,
+            title: 'Link your squad',
+            actions: [
+              {
+                id: 'squad',
+                label: 'Open Squad · chat & buddy',
+                icon: 'people',
+                onPress: () => router.push('/(tabs)/coach'),
+              },
+              {
+                id: 'audio',
+                label: 'Log a motivational day note',
+                icon: 'mic',
+                onPress: () => router.push('/(tabs)/coach'),
+              },
+            ],
+          },
+          {
+            number: 2,
+            title:
+              program.durationDays >= 60
+                ? 'Long-train fuel plan'
+                : program.durationDays <= 14
+                  ? 'Short-term ops fuel'
+                  : 'Tactical 16:8 diet',
+            actions: [
+              {
+                id: 'diet',
+                label:
+                  program.durationDays >= 60
+                    ? 'Open Long-Train Warfighter Fuel'
+                    : program.durationDays <= 14
+                      ? 'Open Short-Term Ops Fuel'
+                      : 'Create your fuel plan',
+                icon: 'restaurant',
+                onPress: () => router.push('/(tabs)/nutrition'),
+              },
+            ],
+          },
+        ]}
+      />
 
       {hasDays ? (
         <>
@@ -136,60 +269,34 @@ export default function ProgramDetailScreen() {
           <AppButton
             label={
               isEnrolled
-                ? `Continue Day ${enrollment?.currentDay ?? 1}`
+                ? `Continue Day ${currentDay ?? 1}`
                 : 'Enroll & start Day 1'
             }
-            variant="military"
-            onPress={() => {
-              if (!isEnrolled) enrollInProgram(program.id, tier);
-              const day =
-                useProgramStore.getState().enrollment?.currentDay ?? 1;
-              router.push({
-                pathname: '/session/[programId]',
-                params: { programId: program.id, day: String(day) },
-              });
-            }}
+            variant="action"
+            onPress={playToday}
           />
 
+          {isEnrolled ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Start over"
+              onPress={() => startOver(program.id, tier)}
+              style={styles.startOver}
+            >
+              <Text style={styles.startOverText}>Start over</Text>
+            </Pressable>
+          ) : null}
+
           <Text style={styles.section}>Mission calendar</Text>
-          {program.days.map((day) => {
-            const done = enrollment?.completedDayIds.includes(day.day);
-            return (
-              <Pressable
-                key={day.day}
-                style={[styles.dayCard, done && styles.dayDone]}
-                onPress={() =>
-                  router.push({
-                    pathname: '/session/[programId]',
-                    params: {
-                      programId: program.id,
-                      day: String(day.day),
-                    },
-                  })
-                }
-              >
-                <Text style={styles.dayTitle}>
-                  DAY {day.day} — {day.title}
-                </Text>
-                <Text style={styles.dayMeta}>
-                  {formatDuration(day.estimatedMinutes)}
-                  {day.rounds ? ` · ${day.rounds} rounds` : ''}
-                  {formatRest(day.restSec)
-                    ? ` · Rest ${formatRest(day.restSec)}`
-                    : ''}
-                  {done ? ' · Complete' : ''}
-                </Text>
-                {day.exercises.slice(0, 3).map((exercise, index) => (
-                  <ExerciseRow
-                    key={exercise.id}
-                    exercise={exercise}
-                    tier={tier}
-                    index={index + 1}
-                  />
-                ))}
-              </Pressable>
-            );
-          })}
+          <ProgramMonthGrid
+            totalDays={program.durationDays}
+            daysPerMonth={program.durationDays >= 60 ? 28 : 30}
+            completedDayIds={
+              isEnrolled ? enrollment?.completedDayIds ?? [] : []
+            }
+            currentDay={currentDay}
+            onSelectDay={openDay}
+          />
         </>
       ) : (
         <EmptyState

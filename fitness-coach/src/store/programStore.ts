@@ -54,6 +54,8 @@ interface ProgramState {
   ) => void;
   /** @deprecated use enrollInProgram — kept for older call sites */
   enrollInIron14: (difficulty?: DifficultyTier) => void;
+  /** Reset progress and restart the active (or given) program at Day 1. */
+  startOver: (programId?: string, difficulty?: DifficultyTier) => void;
   setDifficulty: (tier: DifficultyTier) => void;
   completeWorkout: (input: CompleteWorkoutInput) => WorkoutSessionLog | null;
   isDayCompleted: (day: number) => boolean;
@@ -87,6 +89,22 @@ export const useProgramStore = create<ProgramState>()(
       },
       enrollInIron14: (difficulty = 'soldier') => {
         get().enrollInProgram('operation-iron-14', difficulty);
+      },
+      startOver: (programId, difficulty = 'soldier') => {
+        const current = get().enrollment;
+        const id = programId ?? current?.programId ?? OPERATION_IRON_30.id;
+        const tier = difficulty ?? current?.difficulty ?? 'soldier';
+        set({
+          enrollment: {
+            programId: id,
+            currentDay: 1,
+            difficulty: tier,
+            startedAt: new Date().toISOString(),
+            completedDayIds: [],
+          },
+          sessions: get().sessions.filter((s) => s.programId !== id),
+          daily: emptyDaily(),
+        });
       },
       setDifficulty: (tier) =>
         set((state) =>
