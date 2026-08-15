@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { MuscleMapSvg } from '@/components/workout/MuscleMapSvg';
 import {
@@ -8,6 +8,7 @@ import {
 } from '@/constants/exercises/exerciseVisuals';
 import { getPoseImage } from '@/constants/exercises/poseImages';
 import { useProfileStore } from '@/store/profileStore';
+import { Sex } from '@/types';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
 interface ExerciseGraphicProps {
@@ -15,12 +16,22 @@ interface ExerciseGraphicProps {
   compact?: boolean;
 }
 
+type FormBody = 'male' | 'female';
+
+function resolveFormBody(sex?: Sex | null): FormBody {
+  return sex === 'female' ? 'female' : 'male';
+}
+
 export function ExerciseGraphic({
   exerciseName,
   compact = false,
 }: ExerciseGraphicProps) {
   const { colors } = useTheme();
-  const sex = useProfileStore((s) => s.profile?.sex);
+  const profileSex = useProfileStore((s) => s.profile?.sex);
+  const setSex = useProfileStore((s) => s.setSex);
+  const [overrideBody, setOverrideBody] = useState<FormBody | null>(null);
+  const formBody = overrideBody ?? resolveFormBody(profileSex);
+
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -39,6 +50,7 @@ export function ExerciseGraphic({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
+          gap: spacing.sm,
         },
         badge: {
           backgroundColor: colors.accent,
@@ -54,6 +66,37 @@ export function ExerciseGraphic({
         hint: {
           ...typography.caption,
           color: colors.textMuted,
+          flexShrink: 1,
+          textAlign: 'right',
+        },
+        bodyToggle: {
+          flexDirection: 'row',
+          gap: spacing.xs,
+        },
+        bodyChip: {
+          flex: 1,
+          minHeight: 40,
+          borderRadius: radii.md,
+          borderWidth: 1,
+          borderColor: colors.border,
+          backgroundColor: colors.backgroundElevated,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: spacing.sm,
+        },
+        bodyChipOn: {
+          borderColor: colors.accent,
+          backgroundColor: colors.accent,
+        },
+        bodyChipText: {
+          ...typography.caption,
+          color: colors.textSecondary,
+          fontWeight: '800',
+          textTransform: 'uppercase',
+          letterSpacing: 0.6,
+        },
+        bodyChipTextOn: {
+          color: colors.black,
         },
         art: {
           alignItems: 'center',
@@ -120,8 +163,13 @@ export function ExerciseGraphic({
   );
 
   const visual = getExerciseVisual(exerciseName);
-  const image = getPoseImage(visual.pose, sex);
-  const bodyLabel = sex === 'female' ? 'Female form' : 'Male form';
+  const image = getPoseImage(visual.pose, formBody);
+  const bodyLabel = formBody === 'female' ? 'Female form' : 'Male form';
+
+  const selectBody = (next: FormBody) => {
+    setOverrideBody(next);
+    setSex(next);
+  };
 
   return (
     <View style={[styles.card, compact && styles.compact]}>
@@ -129,13 +177,34 @@ export function ExerciseGraphic({
         <View style={styles.badge}>
           <Text style={styles.badgeText}>FORM GUIDE</Text>
         </View>
-        <Text style={styles.hint}>
-          {bodyLabel} · Neon = working muscles
-        </Text>
+        <Text style={styles.hint}>Neon = working muscles</Text>
+      </View>
+
+      <View style={styles.bodyToggle}>
+        {(['male', 'female'] as FormBody[]).map((option) => {
+          const on = formBody === option;
+          return (
+            <Pressable
+              key={option}
+              accessibilityRole="button"
+              accessibilityState={{ selected: on }}
+              accessibilityLabel={`${option} form guide`}
+              onPress={() => selectBody(option)}
+              style={[styles.bodyChip, on && styles.bodyChipOn]}
+            >
+              <Text
+                style={[styles.bodyChipText, on && styles.bodyChipTextOn]}
+              >
+                {option === 'female' ? 'Women' : 'Men'}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
 
       <View style={[styles.art, compact && styles.artCompact]}>
         <Image
+          key={`pose-${formBody}-${visual.pose}`}
           source={image}
           style={styles.image}
           resizeMode="cover"
@@ -156,7 +225,7 @@ export function ExerciseGraphic({
       {!compact ? (
         <View style={styles.mapBlock}>
           <Text style={styles.mapLabel}>Muscle recovery map</Text>
-          <MuscleMapSvg muscles={visual.muscles} sex={sex} />
+          <MuscleMapSvg muscles={visual.muscles} sex={formBody} />
           <View style={styles.tips}>
             {visual.formTips.map((tip) => (
               <Text key={tip} style={styles.tip}>
