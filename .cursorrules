@@ -1,0 +1,6 @@
+- Architecture: React Native with Expo SDK (TypeScript).
+- Styling: NativeWind (Tailwind CSS) for all UI components and layouts.
+- Performance: Use React Native Reanimated for smooth 60fps/120fps gesture animations.
+- Audio Engine: Implement 'expo-audio' hooks with background controls.
+- Scripture Source: Dynamic fetching via official Crossway ESV API (api.esv.org) with local caching. Never bundle full raw offline Bibles.
+- Mandatory Legal Attribution: Include Crossway's copyright notice on every reading screen.
