@@ -204,15 +204,15 @@ export default function ProgramDetailScreen() {
             actions: [
               {
                 id: 'squad',
-                label: 'Open Squad · chat & buddy',
+                label: 'Open Squad · buddy profiles',
                 icon: 'people',
                 onPress: () => router.push('/(tabs)/coach'),
               },
               {
                 id: 'audio',
-                label: 'Log a motivational day note',
-                icon: 'mic',
-                onPress: () => router.push('/(tabs)/coach'),
+                label: 'Notes · chat & day log',
+                icon: 'chatbubble-ellipses',
+                onPress: () => router.push('/(tabs)/notes'),
               },
             ],
           },

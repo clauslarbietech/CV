@@ -1,12 +1,13 @@
+import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { AudioDayLog } from '@/components/squad/AudioDayLog';
-import { SquadChat } from '@/components/squad/SquadChat';
 import { SquadProfiles } from '@/components/squad/SquadProfiles';
+import { AppButton } from '@/components/ui/AppButton';
 import { Screen } from '@/components/ui/Screen';
 import { useTheme, spacing, typography } from '@/theme';
 
+/** Squad profiles + shared missions. Chat lives under Notes. */
 export default function CoachScreen() {
   const { colors } = useTheme();
   const styles = useMemo(
@@ -20,26 +21,29 @@ export default function CoachScreen() {
           color: colors.textSecondary,
           marginBottom: spacing.sm,
         },
-        stack: { gap: spacing.xl },
       }),
     [colors],
   );
 
   return (
     <Screen>
-      <Text style={styles.kicker}>SQUAD SHARED APP</Text>
+      <Text style={styles.kicker}>SQUAD</Text>
       <Text style={styles.title}>
         Train <Text style={styles.accent}>Together</Text>
       </Text>
       <Text style={styles.subtitle}>
-        Profiles, shared missions, motivational chat, and an audio day log —
-        so you and a buddy stay accountable on short or long military tracks.
+        Link a buddy, share a mission, and check in. Chat and day logs are in
+        the Notes tab.
       </Text>
 
-      <View style={styles.stack}>
+      <AppButton
+        label="Open Notes · chat & day log"
+        variant="action"
+        onPress={() => router.push('/(tabs)/notes')}
+      />
+
+      <View style={{ marginTop: spacing.md }}>
         <SquadProfiles />
-        <SquadChat />
-        <AudioDayLog />
       </View>
     </Screen>
   );

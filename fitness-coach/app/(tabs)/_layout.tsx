@@ -67,11 +67,11 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="coach"
+        name="notes"
         options={{
-          title: 'Squad',
+          title: 'Notes',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people" color={color} size={size} />
+            <Ionicons name="chatbubble-ellipses" color={color} size={size} />
           ),
         }}
       />
@@ -91,6 +91,14 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="stats-chart" color={color} size={size} />
           ),
+        }}
+      />
+      {/* Squad profiles kept as a route; opened from Notes */}
+      <Tabs.Screen
+        name="coach"
+        options={{
+          href: null,
+          title: 'Squad',
         }}
       />
     </Tabs>

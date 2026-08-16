@@ -5,9 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { DailyMissionCard } from '@/components/today/DailyMissionCard';
 import { ExpressTimeCard } from '@/components/today/ExpressTimeCard';
-import { RemindersPanel } from '@/components/today/RemindersPanel';
+import { HomeStatsGraphs } from '@/components/today/HomeStatsGraphs';
 import { AppButton } from '@/components/ui/AppButton';
-import { MetricCard } from '@/components/ui/MetricCard';
 import { Screen } from '@/components/ui/Screen';
 import { HeroProgramCard } from '@/components/workout/HeroProgramCard';
 import { ExpressBudget } from '@/constants/programs/expressMissions';
@@ -35,25 +34,11 @@ export default function MyStuffScreen() {
           alignItems: 'center',
           justifyContent: 'space-between',
         },
-        helpChip: {
-          borderWidth: 1,
-          borderColor: colors.border,
-          borderRadius: 999,
-          paddingHorizontal: spacing.sm,
-          paddingVertical: spacing.xxs,
-          backgroundColor: colors.surface,
-        },
-        helpText: {
-          ...typography.caption,
-          color: colors.textPrimary,
-          fontWeight: '700',
-        },
         title: {
           ...typography.title,
           color: colors.textPrimary,
           letterSpacing: 1,
           textTransform: 'uppercase',
-          textAlign: 'center',
           flex: 1,
         },
         iconBtn: { padding: spacing.xxs },
@@ -65,26 +50,35 @@ export default function MyStuffScreen() {
           ...typography.heading,
           color: colors.textPrimary,
         },
-        section: {
-          ...typography.heading,
-          color: colors.textPrimary,
-          marginTop: spacing.sm,
-        },
         body: {
           ...typography.body,
           color: colors.textSecondary,
         },
-        progressLine: {
+        catalog: { gap: spacing.md },
+        quickRow: {
+          flexDirection: 'row',
+          gap: spacing.sm,
+          flexWrap: 'wrap',
+        },
+        quickChip: {
+          flexGrow: 1,
+          minWidth: '45%',
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: 12,
+          padding: spacing.md,
+          backgroundColor: colors.surface,
+          gap: 4,
+        },
+        quickLabel: {
           ...typography.caption,
           color: colors.textMuted,
-          marginBottom: spacing.xs,
+          fontWeight: '700',
         },
-        metrics: {
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          gap: spacing.sm,
+        quickValue: {
+          ...typography.subheading,
+          color: colors.textPrimary,
         },
-        catalog: { gap: spacing.md },
       }),
     [colors],
   );
@@ -124,12 +118,6 @@ export default function MyStuffScreen() {
     return (
       <Screen>
         <View style={styles.headerRow}>
-          <Pressable
-            style={styles.helpChip}
-            onPress={() => router.push('/(tabs)/coach')}
-          >
-            <Text style={styles.helpText}>NEED HELP?</Text>
-          </Pressable>
           <Text style={styles.title}>My Stuff</Text>
           <Pressable
             style={styles.iconBtn}
@@ -137,8 +125,8 @@ export default function MyStuffScreen() {
             accessibilityLabel="Settings"
           >
             <Ionicons
-              name="notifications-outline"
-              size={22}
+              name="settings-outline"
+              size={24}
               color={colors.textPrimary}
             />
           </Pressable>
@@ -149,8 +137,7 @@ export default function MyStuffScreen() {
         </Text>
         <Text style={styles.name}>Pick your transformation</Text>
         <Text style={styles.body}>
-          Short, 30-day, or 12-week long train — same military bodyweight system.
-          Tap a card to open the calendar, diet steps, and squad link.
+          Choose a track to start. Notes, chat, and meds live in the Notes tab.
         </Text>
 
         <View style={styles.catalog}>
@@ -177,6 +164,11 @@ export default function MyStuffScreen() {
   const program = getActiveProgram(enrollment.programId);
   const dayPlan = getProgramDay(program, enrollment.currentDay);
   const medsDone = meds.filter((m) => isMedTakenToday(m.id)).length;
+  const programProgress =
+    program.durationDays > 0
+      ? (enrollment.completedDayIds.length || Math.max(0, enrollment.currentDay - 1)) /
+        program.durationDays
+      : 0;
 
   const startMission = (express?: ExpressBudget) => {
     router.push({
@@ -192,12 +184,6 @@ export default function MyStuffScreen() {
   return (
     <Screen>
       <View style={styles.headerRow}>
-        <Pressable
-          style={styles.helpChip}
-          onPress={() => router.push('/(tabs)/coach')}
-        >
-          <Text style={styles.helpText}>NEED HELP?</Text>
-        </Pressable>
         <Text style={styles.title}>My Stuff</Text>
         <Pressable
           style={styles.iconBtn}
@@ -205,8 +191,8 @@ export default function MyStuffScreen() {
           accessibilityLabel="Settings"
         >
           <Ionicons
-            name="notifications-outline"
-            size={22}
+            name="settings-outline"
+            size={24}
             color={colors.textPrimary}
           />
         </Pressable>
@@ -215,7 +201,7 @@ export default function MyStuffScreen() {
       <Text style={styles.greeting}>
         {profile?.firstName ?? 'Athlete'} · {profile?.rank ?? 'Recruit'}
       </Text>
-      <Text style={styles.name}>Your active program</Text>
+      <Text style={styles.name}>Today&apos;s mission</Text>
 
       <HeroProgramCard
         program={program}
@@ -225,11 +211,6 @@ export default function MyStuffScreen() {
         onGetStarted={() => openProgram(program.id)}
         onPlay={() => startMission()}
       />
-
-      <Text style={styles.progressLine}>
-        Day {enrollment.currentDay} of {program.durationDays} · Streak{' '}
-        {streaks.workoutStreak} · Sessions {sessions.length}
-      </Text>
 
       {active ? (
         <AppButton
@@ -247,6 +228,15 @@ export default function MyStuffScreen() {
         />
       ) : null}
 
+      <HomeStatsGraphs
+        programProgress={programProgress}
+        programLabel={`${program.name} · Day ${enrollment.currentDay}/${program.durationDays}`}
+        streakDays={streaks.workoutStreak}
+        medsDone={medsDone}
+        medsTotal={meds.length}
+        sessionsCount={sessions.length}
+      />
+
       {dayPlan ? (
         <DailyMissionCard
           program={program}
@@ -258,43 +248,22 @@ export default function MyStuffScreen() {
 
       <ExpressTimeCard onSelect={(mins) => startMission(mins)} />
 
-      <Text style={styles.section}>All programs</Text>
-      <View style={styles.catalog}>
-        {catalog.map((item) => (
-          <HeroProgramCard
-            key={item.id}
-            program={item}
-            enrolled={enrollment.programId === item.id}
-            currentDay={
-              enrollment.programId === item.id
-                ? enrollment.currentDay
-                : undefined
-            }
-            locationLabel={
-              item.durationDays >= 60
-                ? '12-week long train · Home'
-                : item.durationDays <= 14
-                  ? 'Short block · Home'
-                  : '30-day shred · Home'
-            }
-            onGetStarted={() => openProgram(item.id)}
-            onPlay={() => playProgram(item.id)}
-          />
-        ))}
+      <View style={styles.quickRow}>
+        <Pressable
+          style={styles.quickChip}
+          onPress={() => router.push('/(tabs)/notes')}
+        >
+          <Text style={styles.quickLabel}>NOTES</Text>
+          <Text style={styles.quickValue}>Chat · meds · log</Text>
+        </Pressable>
+        <Pressable
+          style={styles.quickChip}
+          onPress={() => router.push('/(tabs)/workouts')}
+        >
+          <Text style={styles.quickLabel}>DISCOVER</Text>
+          <Text style={styles.quickValue}>All programs</Text>
+        </Pressable>
       </View>
-
-      <Text style={styles.section}>Today snapshot</Text>
-      <View style={styles.metrics}>
-        <MetricCard label="Streak" value={`${streaks.workoutStreak}d`} />
-        <MetricCard label="Meds" value={`${medsDone}/${meds.length}`} />
-        <MetricCard
-          label="XP"
-          value={`${profile?.xp ?? 0}`}
-          accentColor={colors.accentText}
-        />
-      </View>
-
-      <RemindersPanel />
     </Screen>
   );
 }
