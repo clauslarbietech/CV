@@ -43,7 +43,7 @@ export function AudioDayLog() {
           textAlignVertical: 'top',
         },
         row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-        audioReady: { ...typography.caption, color: colors.accent },
+        audioReady: { ...typography.caption, color: colors.accentText },
         error: { ...typography.caption, color: colors.danger },
         entry: { gap: spacing.xs },
         entryMeta: { ...typography.overline, color: colors.textMuted },

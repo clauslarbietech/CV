@@ -28,14 +28,14 @@ export function SessionSkipPicker({
         },
         brand: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         title: {
           ...typography.hero,
           color: colors.textPrimary,
         },
         accent: {
-          color: colors.accent,
+          color: colors.accentText,
         },
         support: {
           ...typography.body,
@@ -58,7 +58,7 @@ export function SessionSkipPicker({
           color: colors.textPrimary,
         },
         rowTitleActive: {
-          color: colors.accent,
+          color: colors.accentText,
         },
         rowSub: {
           ...typography.caption,

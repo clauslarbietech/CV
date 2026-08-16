@@ -12,9 +12,9 @@ export default function CoachScreen() {
   const styles = useMemo(
     () =>
       StyleSheet.create({
-        kicker: { ...typography.overline, color: colors.accent },
+        kicker: { ...typography.overline, color: colors.accentText },
         title: { ...typography.title, color: colors.textPrimary },
-        accent: { color: colors.accent },
+        accent: { color: colors.accentText },
         subtitle: {
           ...typography.body,
           color: colors.textSecondary,

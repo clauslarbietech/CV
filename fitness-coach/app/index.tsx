@@ -28,7 +28,7 @@ export default function Index() {
   if (!isHydrated) {
     return (
       <View style={styles.boot}>
-        <ActivityIndicator color={colors.accent} size="large" />
+        <ActivityIndicator color={colors.accentText} size="large" />
       </View>
     );
   }

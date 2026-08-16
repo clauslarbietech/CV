@@ -290,7 +290,7 @@ export default function MyStuffScreen() {
         <MetricCard
           label="XP"
           value={`${profile?.xp ?? 0}`}
-          accentColor={colors.accent}
+          accentColor={colors.accentText}
         />
       </View>
 

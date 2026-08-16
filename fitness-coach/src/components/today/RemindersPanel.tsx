@@ -41,7 +41,7 @@ export function RemindersPanel() {
         },
         badge: {
           ...typography.caption,
-          color: colors.black,
+          color: colors.onAccent,
           backgroundColor: colors.accent,
           overflow: 'hidden',
           borderRadius: radii.pill,
@@ -85,7 +85,7 @@ export function RemindersPanel() {
           borderColor: colors.accent,
         },
         checkMark: {
-          color: colors.black,
+          color: colors.onAccent,
           fontWeight: '800',
           fontSize: 14,
         },

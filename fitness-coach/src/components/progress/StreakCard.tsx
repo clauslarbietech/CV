@@ -32,7 +32,7 @@ export function StreakCard({ streaks, xp, rank }: StreakCardProps) {
         },
         value: {
           ...typography.metric,
-          color: colors.accent,
+          color: colors.accentText,
         },
         label: {
           ...typography.caption,

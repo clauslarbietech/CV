@@ -28,14 +28,14 @@ export function BodyWelcome({
         },
         brand: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         title: {
           ...typography.hero,
           color: colors.textPrimary,
         },
         accent: {
-          color: colors.accent,
+          color: colors.accentText,
         },
         support: {
           ...typography.body,
@@ -94,7 +94,7 @@ export function BodyWelcome({
           color: colors.textSecondary,
         },
         sexLabelActive: {
-          color: colors.accent,
+          color: colors.accentText,
         },
       }),
     [colors],

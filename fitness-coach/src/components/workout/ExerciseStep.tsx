@@ -40,7 +40,7 @@ export function ExerciseStep({
         },
         meta: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         name: {
           ...typography.hero,
@@ -49,7 +49,7 @@ export function ExerciseStep({
         target: {
           fontSize: 48,
           fontWeight: '800',
-          color: colors.accent,
+          color: colors.accentText,
           letterSpacing: -1.5,
         },
         setLine: {

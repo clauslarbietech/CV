@@ -53,7 +53,7 @@ export function ProgramStartSteps({ steps }: ProgramStartStepsProps) {
         actionPressed: { opacity: 0.9 },
         actionLabel: {
           ...typography.bodyBold,
-          color: colors.white,
+          color: colors.onAction,
         },
       }),
     [colors],
@@ -77,7 +77,7 @@ export function ProgramStartSteps({ steps }: ProgramStartStepsProps) {
                 pressed && styles.actionPressed,
               ]}
             >
-              <Ionicons name={action.icon} size={20} color={colors.white} />
+              <Ionicons name={action.icon} size={20} color={colors.onAction} />
               <Text style={styles.actionLabel}>{action.label}</Text>
             </Pressable>
           ))}

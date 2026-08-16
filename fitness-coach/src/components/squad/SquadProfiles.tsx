@@ -32,7 +32,7 @@ export function SquadProfiles() {
           color: colors.textPrimary,
           backgroundColor: colors.backgroundElevated,
         },
-        meta: { ...typography.caption, color: colors.accent },
+        meta: { ...typography.caption, color: colors.accentText },
         error: { ...typography.caption, color: colors.danger },
         buddyRow: {
           flexDirection: 'row',

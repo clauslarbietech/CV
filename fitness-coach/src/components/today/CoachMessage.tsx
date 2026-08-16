@@ -23,7 +23,7 @@ export function CoachMessage({ message, personalityLabel }: CoachMessageProps) {
         },
         label: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         message: {
           ...typography.body,

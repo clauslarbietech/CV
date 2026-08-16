@@ -18,6 +18,7 @@ export function OptionChip({
 }: OptionChipProps) {
   const { colors } = useTheme();
   const selectedBg = tone === 'blue' ? colors.action : colors.accent;
+  const selectedLabelColor = tone === 'blue' ? colors.onAction : colors.onAccent;
 
   const styles = useMemo(
     () =>
@@ -36,10 +37,10 @@ export function OptionChip({
           color: colors.textPrimary,
         },
         selectedLabel: {
-          color: colors.black,
+          color: selectedLabelColor,
         },
       }),
-    [colors],
+    [colors, selectedLabelColor],
   );
 
   return (

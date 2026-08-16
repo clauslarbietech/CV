@@ -69,7 +69,7 @@ export function HeroProgramCard({
         },
         getStartedText: {
           ...typography.caption,
-          color: colors.white,
+          color: colors.onAction,
           fontWeight: '800',
           letterSpacing: 0.6,
           textTransform: 'uppercase',
@@ -142,7 +142,7 @@ export function HeroProgramCard({
             onPress={onPlay}
             style={styles.play}
           >
-            <Ionicons name="play" size={22} color={colors.white} />
+            <Ionicons name="play" size={22} color={colors.onAction} />
           </Pressable>
         </View>
       </ImageBackground>

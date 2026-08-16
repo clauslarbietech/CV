@@ -22,7 +22,7 @@ export function ResearchMilestonesCard({
     () =>
       StyleSheet.create({
         wrap: { gap: spacing.sm },
-        kicker: { ...typography.overline, color: colors.accent },
+        kicker: { ...typography.overline, color: colors.accentText },
         title: {
           ...typography.subheading,
           color: colors.textPrimary,
@@ -46,7 +46,7 @@ export function ResearchMilestonesCard({
         },
         link: {
           ...typography.caption,
-          color: colors.accent,
+          color: colors.accentText,
           fontWeight: '700',
           marginBottom: 2,
         },

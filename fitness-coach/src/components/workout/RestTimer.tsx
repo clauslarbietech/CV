@@ -23,7 +23,7 @@ export function RestTimer({ seconds, onSkip, label = 'REST' }: RestTimerProps) {
         },
         label: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         ring: {
           width: 220,

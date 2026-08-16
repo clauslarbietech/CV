@@ -18,7 +18,7 @@ export default function ProgressScreen() {
       StyleSheet.create({
         kicker: { ...typography.overline, color: colors.militaryAccent },
         title: { ...typography.title, color: colors.textPrimary },
-        accent: { color: colors.accent },
+        accent: { color: colors.accentText },
         section: {
           ...typography.heading,
           color: colors.textPrimary,

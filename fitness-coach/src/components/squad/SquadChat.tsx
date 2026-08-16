@@ -36,7 +36,7 @@ export function SquadChat() {
           backgroundColor: colors.accentSoft,
         },
         tabLabel: { ...typography.bodyBold, color: colors.textSecondary },
-        tabLabelOn: { color: colors.accent },
+        tabLabelOn: { color: colors.accentText },
         hint: { ...typography.caption, color: colors.textSecondary },
         thread: { gap: spacing.sm, maxHeight: 320 },
         bubble: {

@@ -60,7 +60,7 @@ export function ExerciseGraphic({
         },
         badgeText: {
           ...typography.caption,
-          color: colors.black,
+          color: colors.onAccent,
           fontWeight: '800',
         },
         hint: {
@@ -96,7 +96,7 @@ export function ExerciseGraphic({
           letterSpacing: 0.6,
         },
         bodyChipTextOn: {
-          color: colors.black,
+          color: colors.onAccent,
         },
         art: {
           alignItems: 'center',
@@ -134,7 +134,7 @@ export function ExerciseGraphic({
         },
         chipText: {
           ...typography.caption,
-          color: colors.accent,
+          color: colors.accentText,
           fontWeight: '700',
         },
         mapBlock: {

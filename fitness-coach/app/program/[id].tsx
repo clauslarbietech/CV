@@ -57,7 +57,7 @@ export default function ProgramDetailScreen() {
           borderBottomColor: 'transparent',
           borderLeftColor: colors.action,
         },
-        kicker: { ...typography.overline, color: colors.action },
+        kicker: { ...typography.overline, color: colors.actionText },
         title: { ...typography.hero, color: colors.textPrimary, fontSize: 28 },
         body: { ...typography.body, color: colors.textSecondary },
         section: {
@@ -75,7 +75,7 @@ export default function ProgramDetailScreen() {
         },
         startOverText: {
           ...typography.bodyBold,
-          color: colors.white,
+          color: colors.onAction,
           letterSpacing: 1,
           textTransform: 'uppercase',
         },
@@ -95,7 +95,7 @@ export default function ProgramDetailScreen() {
           backgroundColor: colors.action,
         },
         tierText: { ...typography.caption, color: colors.textSecondary },
-        tierTextActive: { color: colors.white, fontWeight: '800' },
+        tierTextActive: { color: colors.onAction, fontWeight: '800' },
         metaRow: {
           flexDirection: 'row',
           flexWrap: 'wrap',

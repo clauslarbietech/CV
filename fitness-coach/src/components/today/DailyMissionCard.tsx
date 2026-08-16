@@ -32,7 +32,7 @@ export function DailyMissionCard({
         },
         kicker: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         dayLabel: {
           ...typography.title,
@@ -52,7 +52,7 @@ export function DailyMissionCard({
         },
         rounds: {
           ...typography.caption,
-          color: colors.accent,
+          color: colors.accentText,
           fontWeight: '700',
         },
         list: {
@@ -77,7 +77,7 @@ export function DailyMissionCard({
           flex: 1,
         },
         exerciseTarget: {
-          color: colors.accent,
+          color: colors.accentText,
           fontWeight: '700',
         },
         eta: {

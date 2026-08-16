@@ -30,7 +30,7 @@ export default function WorkoutsScreen() {
           color: colors.textPrimary,
         },
         accent: {
-          color: colors.accent,
+          color: colors.accentText,
         },
         subtitle: {
           ...typography.body,
@@ -48,7 +48,7 @@ export default function WorkoutsScreen() {
         trackBlock: { gap: 2 },
         trackLabel: {
           ...typography.bodyBold,
-          color: colors.accent,
+          color: colors.accentText,
         },
         trackMeta: {
           ...typography.caption,

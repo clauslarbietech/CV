@@ -1,7 +1,11 @@
 /**
  * FitLife color palettes — night (default) and day.
- * Accent stays volt green in both; day uses a cool sage-tinted light field
- * (not cream/terracotta).
+ * Tuned for WCAG 2.1 AA contrast (4.5:1 text, 3:1 UI).
+ *
+ * Button rule:
+ * - accent / military fills → use onAccent (black) for labels
+ * - action / danger fills → use onAction / onDanger (white) for labels
+ * - accent-colored text on surfaces → use accentText (not raw accent in day mode)
  */
 
 export type ThemeMode = 'day' | 'night';
@@ -18,14 +22,25 @@ export type ThemeColors = {
   textSecondary: string;
   textMuted: string;
   textInverse: string;
+  /** Bright volt fill (buttons, badges, neon highlights). Pair with onAccent. */
   accent: string;
+  /** AA text/icon color derived from accent for use on bg/surface. */
+  accentText: string;
+  /** Label color on accent-filled controls (≥4.5:1). */
+  onAccent: string;
   accentMuted: string;
   accentSoft: string;
   accentGlow: string;
+  /** Primary action blue fill. Pair with onAction. */
   action: string;
+  /** AA blue text on bg/surface. */
+  actionText: string;
+  /** Label color on action-filled controls (≥4.5:1). */
+  onAction: string;
   actionSoft: string;
   warning: string;
   danger: string;
+  onDanger: string;
   info: string;
   militaryAccent: string;
   militarySurface: string;
@@ -43,7 +58,6 @@ export type ThemeColors = {
   cardGreen: string;
   cardYellow: string;
   cardBlue: string;
-  /** Tab bar / chrome */
   tabBar: string;
   statusBarStyle: 'light' | 'dark';
 };
@@ -53,46 +67,53 @@ export const nightColors: ThemeColors = {
   backgroundElevated: '#0C0C0E',
   surface: '#1C1C1E',
   surfaceHover: '#2C2C2E',
-  border: '#2C2C2E',
-  borderSubtle: '#1F1F21',
-  borderAccent: 'rgba(192, 255, 0, 0.45)',
+  border: '#3A3A3C',
+  borderSubtle: '#2C2C2E',
+  borderAccent: 'rgba(192, 255, 0, 0.55)',
 
   textPrimary: '#FFFFFF',
-  textSecondary: '#8E8E93',
-  textMuted: '#636366',
+  textSecondary: '#C7C7CC',
+  /** ≥4.5:1 on black */
+  textMuted: '#A1A1A6',
   textInverse: '#000000',
 
   accent: '#C0FF00',
-  accentMuted: '#8FBF00',
-  accentSoft: 'rgba(192, 255, 0, 0.14)',
+  accentText: '#C0FF00',
+  onAccent: '#000000',
+  accentMuted: '#A8E000',
+  accentSoft: 'rgba(192, 255, 0, 0.16)',
   accentGlow: 'rgba(192, 255, 0, 0.22)',
 
-  action: '#3B82F6',
-  actionSoft: 'rgba(59, 130, 246, 0.18)',
+  /** Darkened so white labels clear 4.5:1 (was #3B82F6 @ ~3.7:1) */
+  action: '#1D4ED8',
+  actionText: '#93C5FD',
+  onAction: '#FFFFFF',
+  actionSoft: 'rgba(29, 78, 216, 0.22)',
 
-  warning: '#FF9F43',
-  danger: '#FF4B32',
-  info: '#4B91F1',
+  warning: '#FFB020',
+  danger: '#B91C1C',
+  onDanger: '#FFFFFF',
+  info: '#60A5FA',
 
   militaryAccent: '#C0FF00',
   militarySurface: '#141814',
-  militaryBorder: 'rgba(192, 255, 0, 0.35)',
+  militaryBorder: 'rgba(192, 255, 0, 0.4)',
 
   white: '#FFFFFF',
   black: '#000000',
   overlay: 'rgba(0, 0, 0, 0.72)',
 
   success: '#C0FF00',
-  intensity: '#FF4B32',
-  protein: '#4B91F1',
-  carbs: '#FF9F43',
-  fat: '#E07AFF',
-  water: '#5BC0EB',
-  steps: '#A78BFA',
+  intensity: '#F87171',
+  protein: '#93C5FD',
+  carbs: '#FFB020',
+  fat: '#E879F9',
+  water: '#67E8F9',
+  steps: '#C4B5FD',
 
-  cardGreen: '#1FA855',
-  cardYellow: '#E6B800',
-  cardBlue: '#2E5BFF',
+  cardGreen: '#22C55E',
+  cardYellow: '#EAB308',
+  cardBlue: '#1D4ED8',
 
   tabBar: '#0A0A0A',
   statusBarStyle: 'light',
@@ -103,45 +124,53 @@ export const dayColors: ThemeColors = {
   backgroundElevated: '#F4F7F1',
   surface: '#FFFFFF',
   surfaceHover: '#E2E9DD',
-  border: '#C5D0BE',
-  borderSubtle: '#D5DED0',
-  borderAccent: 'rgba(90, 130, 0, 0.45)',
+  border: '#8A9684',
+  borderSubtle: '#B8C2B2',
+  borderAccent: 'rgba(63, 90, 0, 0.45)',
 
   textPrimary: '#0B120A',
-  textSecondary: '#4A5546',
-  textMuted: '#6E7A68',
+  textSecondary: '#3A4338',
+  /** ≥4.5:1 on day background / white surface */
+  textMuted: '#4F5A4C',
   textInverse: '#FFFFFF',
 
-  accent: '#A8D400',
-  accentMuted: '#6F9400',
-  accentSoft: 'rgba(120, 160, 0, 0.16)',
-  accentGlow: 'rgba(120, 160, 0, 0.22)',
+  /** Bright fill still OK with black labels */
+  accent: '#C0FF00',
+  /** Dark green for text/links on light surfaces (≥4.5:1) */
+  accentText: '#3F5A00',
+  onAccent: '#000000',
+  accentMuted: '#4F7000',
+  accentSoft: 'rgba(63, 90, 0, 0.12)',
+  accentGlow: 'rgba(63, 90, 0, 0.18)',
 
-  action: '#2563EB',
-  actionSoft: 'rgba(37, 99, 235, 0.14)',
+  action: '#1D4ED8',
+  actionText: '#1D4ED8',
+  onAction: '#FFFFFF',
+  actionSoft: 'rgba(29, 78, 216, 0.12)',
 
-  warning: '#D97706',
-  danger: '#DC2626',
-  info: '#2563EB',
+  warning: '#B45309',
+  danger: '#B91C1C',
+  onDanger: '#FFFFFF',
+  info: '#1D4ED8',
 
-  militaryAccent: '#5F8200',
+  militaryAccent: '#3F5A00',
   militarySurface: '#E4ECD9',
-  militaryBorder: 'rgba(95, 130, 0, 0.4)',
+  militaryBorder: 'rgba(63, 90, 0, 0.45)',
 
   white: '#FFFFFF',
   black: '#000000',
   overlay: 'rgba(11, 18, 10, 0.45)',
 
-  success: '#5F8200',
-  intensity: '#DC2626',
-  protein: '#2563EB',
-  carbs: '#D97706',
-  fat: '#C026D3',
-  water: '#0284C7',
-  steps: '#7C3AED',
+  success: '#3F5A00',
+  intensity: '#B91C1C',
+  protein: '#1D4ED8',
+  carbs: '#B45309',
+  fat: '#A21CAF',
+  water: '#0E7490',
+  steps: '#6D28D9',
 
   cardGreen: '#15803D',
-  cardYellow: '#CA8A04',
+  cardYellow: '#A16207',
   cardBlue: '#1D4ED8',
 
   tabBar: '#F4F7F1',

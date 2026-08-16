@@ -34,7 +34,7 @@ export function ProgramCard({ program, onPress, featured }: ProgramCardProps) {
         },
         badge: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
           marginBottom: spacing.xxs,
         },
         name: {
@@ -78,7 +78,7 @@ export function ProgramCard({ program, onPress, featured }: ProgramCardProps) {
         },
         tagText: {
           ...typography.caption,
-          color: colors.accent,
+          color: colors.accentText,
           textTransform: 'capitalize',
           fontWeight: '700',
         },

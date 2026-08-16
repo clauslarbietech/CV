@@ -79,14 +79,14 @@ export function IntroQuestions({
         },
         brand: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         title: {
           ...typography.hero,
           color: colors.textPrimary,
         },
         accent: {
-          color: colors.accent,
+          color: colors.accentText,
         },
         support: {
           ...typography.body,
@@ -122,7 +122,7 @@ export function IntroQuestions({
           color: colors.textPrimary,
         },
         choiceLabelActive: {
-          color: colors.accent,
+          color: colors.accentText,
         },
         choiceHint: {
           ...typography.caption,

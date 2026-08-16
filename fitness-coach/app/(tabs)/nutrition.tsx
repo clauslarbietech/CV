@@ -20,14 +20,14 @@ export default function NutritionScreen() {
       StyleSheet.create({
         kicker: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         title: {
           ...typography.title,
           color: colors.textPrimary,
         },
         accent: {
-          color: colors.accent,
+          color: colors.accentText,
         },
         subtitle: {
           ...typography.body,
@@ -57,7 +57,7 @@ export default function NutritionScreen() {
           color: colors.textSecondary,
         },
         trackLabelOn: {
-          color: colors.accent,
+          color: colors.accentText,
         },
         trackHorizon: {
           ...typography.caption,
@@ -65,7 +65,7 @@ export default function NutritionScreen() {
         },
         planLabel: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         focus: {
           ...typography.subheading,
@@ -88,7 +88,7 @@ export default function NutritionScreen() {
         },
         cal: {
           ...typography.caption,
-          color: colors.accent,
+          color: colors.accentText,
           marginBottom: spacing.xs,
         },
         item: {
@@ -113,7 +113,7 @@ export default function NutritionScreen() {
         },
         link: {
           ...typography.bodyBold,
-          color: colors.accent,
+          color: colors.accentText,
           marginTop: spacing.sm,
         },
       }),

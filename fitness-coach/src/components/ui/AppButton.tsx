@@ -23,68 +23,66 @@ export function AppButton({
   accessibilityHint,
 }: AppButtonProps) {
   const { colors } = useTheme();
-  const darkLabel =
-    variant === 'primary' || variant === 'military' || variant === 'action';
 
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        base: {
-          minHeight: 54,
-          borderRadius: radii.pill,
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingHorizontal: spacing.xl,
-        },
-        primary: {
-          backgroundColor: colors.accent,
-        },
-        secondary: {
-          backgroundColor: colors.surface,
-          borderWidth: 1,
-          borderColor: colors.border,
-        },
-        ghost: {
-          backgroundColor: 'transparent',
-        },
-        military: {
-          backgroundColor: colors.accent,
-        },
-        action: {
-          backgroundColor: colors.action,
-        },
-        danger: {
-          backgroundColor: colors.danger,
-        },
-        pressed: {
-          opacity: 0.9,
-          transform: [{ scale: 0.985 }],
-        },
-        disabled: {
-          opacity: 0.4,
-        },
-        label: {
-          ...typography.bodyBold,
-          color: colors.white,
-        },
-        darkLabel: {
-          color: colors.black,
-        },
-        secondaryLabel: {
-          color: colors.textPrimary,
-        },
-        ghostLabel: {
-          color: colors.accent,
-        },
-      }),
-    [colors],
-  );
+  const styles = useMemo(() => {
+    const labelByVariant: Record<Variant, string> = {
+      primary: colors.onAccent,
+      military: colors.onAccent,
+      action: colors.onAction,
+      danger: colors.onDanger,
+      secondary: colors.textPrimary,
+      ghost: colors.accentText,
+    };
+
+    return StyleSheet.create({
+      base: {
+        minHeight: 54,
+        borderRadius: radii.pill,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: spacing.xl,
+      },
+      primary: {
+        backgroundColor: colors.accent,
+      },
+      secondary: {
+        backgroundColor: colors.surface,
+        borderWidth: 1.5,
+        borderColor: colors.border,
+      },
+      ghost: {
+        backgroundColor: 'transparent',
+      },
+      military: {
+        backgroundColor: colors.accent,
+      },
+      action: {
+        backgroundColor: colors.action,
+      },
+      danger: {
+        backgroundColor: colors.danger,
+      },
+      pressed: {
+        opacity: 0.9,
+        transform: [{ scale: 0.985 }],
+      },
+      disabled: {
+        opacity: 0.45,
+      },
+      label: {
+        ...typography.bodyBold,
+        fontSize: 16,
+        color: labelByVariant[variant],
+      },
+    });
+  }, [colors, variant]);
 
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
+      accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [
@@ -95,16 +93,7 @@ export function AppButton({
         style,
       ]}
     >
-      <Text
-        style={[
-          styles.label,
-          darkLabel && styles.darkLabel,
-          variant === 'ghost' && styles.ghostLabel,
-          variant === 'secondary' && styles.secondaryLabel,
-        ]}
-      >
-        {label}
-      </Text>
+      <Text style={styles.label}>{label}</Text>
     </Pressable>
   );
 }

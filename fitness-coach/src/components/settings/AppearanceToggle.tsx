@@ -22,7 +22,7 @@ export function AppearanceToggle() {
           </Text>
         </View>
         <View style={styles.toggleCol}>
-          <Text style={[styles.modeLabel, { color: colors.accent }]}>
+          <Text style={[styles.modeLabel, { color: colors.accentText }]}>
             {isDay ? 'Day' : 'Night'}
           </Text>
           <Switch

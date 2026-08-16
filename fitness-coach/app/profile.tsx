@@ -26,7 +26,7 @@ export default function ProfileScreen() {
       StyleSheet.create({
         kicker: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         title: {
           ...typography.hero,

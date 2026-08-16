@@ -38,7 +38,7 @@ export function ExerciseRow({ exercise, tier, index }: ExerciseRowProps) {
         },
         index: {
           ...typography.caption,
-          color: colors.accent,
+          color: colors.accentText,
           fontWeight: '800',
         },
         content: {

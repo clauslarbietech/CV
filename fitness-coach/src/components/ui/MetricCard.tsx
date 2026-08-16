@@ -19,7 +19,7 @@ export function MetricCard({
   complete,
 }: MetricCardProps) {
   const { colors } = useTheme();
-  const resolvedAccent = accentColor ?? colors.accent;
+  const resolvedAccent = accentColor ?? colors.accentText;
   const styles = useMemo(
     () =>
       StyleSheet.create({

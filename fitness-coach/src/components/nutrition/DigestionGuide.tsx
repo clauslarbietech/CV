@@ -18,8 +18,8 @@ export function DigestionGuide() {
   const { colors } = useTheme();
 
   const categoryColor = (category: DigestionCategory): string => {
-    if (category === 'fast') return colors.accent;
-    if (category === 'moderate') return colors.action;
+    if (category === 'fast') return colors.accentText;
+    if (category === 'moderate') return colors.actionText;
     return colors.militaryAccent;
   };
 
@@ -32,14 +32,14 @@ export function DigestionGuide() {
         },
         kicker: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         title: {
           ...typography.heading,
           color: colors.textPrimary,
         },
         accent: {
-          color: colors.accent,
+          color: colors.accentText,
         },
         subtitle: {
           ...typography.body,

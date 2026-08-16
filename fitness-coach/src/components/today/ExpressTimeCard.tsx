@@ -22,7 +22,7 @@ export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
       StyleSheet.create({
         kicker: {
           ...typography.overline,
-          color: colors.accent,
+          color: colors.accentText,
         },
         title: {
           ...typography.subheading,
@@ -57,7 +57,7 @@ export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
         },
         link: {
           ...typography.caption,
-          color: colors.accent,
+          color: colors.accentText,
           marginBottom: 4,
           fontWeight: '700',
         },

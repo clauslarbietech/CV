@@ -90,7 +90,7 @@ export function ProgramMonthGrid({
           color: colors.militaryAccent,
         },
         dayCurrent: {
-          color: colors.action,
+          color: colors.actionText,
         },
       }),
     [colors, isDay],
