@@ -7,6 +7,7 @@ import { Screen } from '@/components/ui/Screen';
 import {
   FUEL_TRACKS,
   NUTRITION_SOURCES,
+  SARDINE_EGG_ELECTROLYTE_5DAY_LESSON,
   VIRAL_MILITARY_DIET_DAYS,
 } from '@/constants/nutrition/militaryFuel';
 import { useTheme, radii, spacing, typography } from '@/theme';
@@ -116,6 +117,13 @@ export default function NutritionScreen() {
           color: colors.accentText,
           marginTop: spacing.sm,
         },
+        verdict: {
+          ...typography.caption,
+          color: colors.actionText,
+          fontWeight: '700',
+          textTransform: 'uppercase',
+          marginBottom: spacing.xs,
+        },
       }),
     [colors],
   );
@@ -196,6 +204,39 @@ export default function NutritionScreen() {
           • {note}
         </Text>
       ))}
+
+      <Text style={styles.section}>Lesson: 5-day sardine + egg + electrolytes</Text>
+      <Card accentBorder>
+        <Text style={styles.planLabel}>{SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.label}</Text>
+        <Text style={styles.verdict}>
+          Verdict: {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.verdict}
+        </Text>
+        <Text style={styles.item}>{SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.scope}</Text>
+        <Text style={styles.mealName}>How people run it</Text>
+        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.protocol.map((line) => (
+          <Text key={line} style={styles.item}>
+            • {line}
+          </Text>
+        ))}
+        <Text style={styles.mealName}>Why it may feel effective</Text>
+        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.whyItMayWork.map((line) => (
+          <Text key={line} style={styles.item}>
+            • {line}
+          </Text>
+        ))}
+        <Text style={styles.mealName}>Risks & limits</Text>
+        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.risksAndLimits.map((line) => (
+          <Text key={line} style={styles.item}>
+            • {line}
+          </Text>
+        ))}
+        <Text style={styles.mealName}>Stop rules</Text>
+        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.stopRules.map((line) => (
+          <Text key={line} style={styles.item}>
+            • {line}
+          </Text>
+        ))}
+      </Card>
 
       <Text style={styles.section}>Optional 3-day viral “Military Diet”</Text>
       <Text style={styles.subtitle}>

@@ -43,6 +43,24 @@ export const NUTRITION_SOURCES = [
     url: 'https://www.healthline.com/nutrition/the-military-diet-101',
     note: 'Explains the viral 3-on / 4-off low-calorie plan. Not an official military diet.',
   },
+  {
+    id: 'fda-epa-fish-advice',
+    title: 'FDA/EPA Fish Advice (sardines = Best Choice)',
+    url: 'https://www.fda.gov/media/102331/download',
+    note: 'Sardines are a low-mercury fish; still rotate seafood and keep portions sane.',
+  },
+  {
+    id: 'egg-breakfast-rct',
+    title: 'Egg breakfast RCT during energy restriction',
+    url: 'https://mdpi-res.com/d_attachment/ijerph/ijerph-17-08827/article_deploy/ijerph-17-08827.pdf?version=1606490125',
+    note: 'Egg breakfasts can support adherence but did not beat matched cereal for long-term weight loss.',
+  },
+  {
+    id: 'low-carb-electrolyte-review',
+    title: 'Low-carb review: sodium/potassium needs shift',
+    url: 'https://doi.org/10.3390/nu13103299',
+    note: 'Low-carb phases increase sodium and fluid losses; electrolyte strategy can reduce headache/cramp fatigue.',
+  },
 ] as const;
 
 export type MealSlot = {
@@ -298,6 +316,74 @@ export const FUEL_TRACKS: FuelTrack[] = [
     plan: LONG_TERM_WARFIGHTER_FUEL,
   },
 ];
+
+export type NutritionLesson = {
+  id: string;
+  label: string;
+  scope: string;
+  verdict: 'evidence-supported' | 'mixed evidence' | 'not evidence-based';
+  whenToUse: string[];
+  protocol: string[];
+  whyItMayWork: string[];
+  risksAndLimits: string[];
+  stopRules: string[];
+  references: Array<{ title: string; url: string }>;
+};
+
+/**
+ * User-requested short protocol: sardines + eggs + electrolytes for 5 days.
+ * Evidence summary: no RCT supports this exact protocol; any scale drop is
+ * mostly water + glycogen depletion and calorie restriction.
+ */
+export const SARDINE_EGG_ELECTROLYTE_5DAY_LESSON: NutritionLesson = {
+  id: 'sardine-egg-5day',
+  label: '5-Day Sardine + Egg + Electrolytes',
+  scope: 'Short-term reset only (max 3–5 days)',
+  verdict: 'not evidence-based',
+  whenToUse: [
+    'Optional short adherence reset before returning to balanced tactical fuel',
+    'Never as a long-term military or athlete nutrition strategy',
+  ],
+  protocol: [
+    '2–3 meals/day built from sardines + eggs + low-carb vegetables',
+    'Hydration baseline: water + broth / electrolytes (no mega-dosing)',
+    'Aim sodium/potassium/magnesium from food first; supplement only if needed',
+    'After Day 5, transition to Short-Term Ops or Tactical 16:8 immediately',
+  ],
+  whyItMayWork: [
+    'High protein can improve fullness and simplify calorie control.',
+    'Very low carbohydrate intake can drop water weight quickly via glycogen loss.',
+    'Electrolyte support can reduce low-carb transition symptoms (headache/cramps).',
+  ],
+  risksAndLimits: [
+    'No direct clinical evidence this exact sardine+egg protocol improves fat loss beyond standard energy-restricted plans.',
+    'Low food variety: fiber, vitamin C, and phytochemical gaps if extended too long.',
+    'Sardine-heavy intake can push sodium high and may not fit hypertension / kidney / gout contexts.',
+    'Early weight change is often water, not true tissue fat change.',
+  ],
+  stopRules: [
+    'Stop if dizziness, sustained fatigue, palpitations, severe cramps, GI distress, or worsening headaches occur.',
+    'Avoid during pregnancy/breastfeeding, kidney disease, gout flares, or clinician-advised sodium restriction unless medically supervised.',
+  ],
+  references: [
+    {
+      title: 'Low-carb review: sodium/potassium shifts + keto side effects',
+      url: 'https://doi.org/10.3390/nu13103299',
+    },
+    {
+      title: 'Egg breakfast during 6-month energy restriction (RCT)',
+      url: 'https://mdpi-res.com/d_attachment/ijerph/ijerph-17-08827/article_deploy/ijerph-17-08827.pdf?version=1606490125',
+    },
+    {
+      title: 'FDA/EPA fish advice: sardines in Best Choices',
+      url: 'https://www.fda.gov/media/102331/download',
+    },
+    {
+      title: 'Review summary: sardine fast lacks direct clinical evidence',
+      url: 'https://zoe.com/learn/sardine-fast-what-is-it-and-is-it-healthy',
+    },
+  ],
+};
 
 /** Viral 3-day “military diet” — labeled clearly as unofficial */
 export const VIRAL_MILITARY_DIET_DAYS: DayMealPlan[] = [

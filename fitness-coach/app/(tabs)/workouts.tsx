@@ -3,9 +3,11 @@ import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ProgramCard } from '@/components/workout/ProgramCard';
+import { ExerciseGraphic } from '@/components/workout/ExerciseGraphic';
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
+import { CALISTHENICS_LESSON_PLANS } from '@/constants/programs/calisthenicsLessonPlans';
 import {
   OPERATION_IRON_14,
   OPERATION_IRON_30,
@@ -70,6 +72,9 @@ export default function WorkoutsScreen() {
           ...typography.subheading,
           color: colors.textPrimary,
           marginBottom: spacing.xs,
+        },
+        lessonCard: {
+          gap: spacing.sm,
         },
       }),
     [colors],
@@ -187,6 +192,49 @@ export default function WorkoutsScreen() {
           });
         }}
       />
+
+      <Text style={styles.section}>Calisthenics lesson plans</Text>
+      <Text style={styles.subtitle}>
+        Same mission style, same target-muscle graphics, different training horizons.
+      </Text>
+      {CALISTHENICS_LESSON_PLANS.map((plan) => (
+        <Card key={plan.id} accentBorder style={styles.lessonCard}>
+          <Text style={styles.longTitle}>
+            {plan.label} · {plan.duration}
+          </Text>
+          <Text style={styles.trackMeta}>{plan.focus}</Text>
+          <Text style={styles.trackLabel}>Weekly flow</Text>
+          {plan.weeklyFlow.map((line) => (
+            <Text key={line} style={styles.outcome}>
+              • {line}
+            </Text>
+          ))}
+          <Text style={styles.trackLabel}>Progression rules</Text>
+          {plan.progressionRules.map((line) => (
+            <Text key={line} style={styles.outcome}>
+              • {line}
+            </Text>
+          ))}
+          <Text style={styles.trackLabel}>Target-location form guides</Text>
+          {plan.anchorExercises.map((exerciseName) => (
+            <ExerciseGraphic
+              key={`${plan.id}-${exerciseName}`}
+              exerciseName={exerciseName}
+              compact
+            />
+          ))}
+          <AppButton
+            label="Open linked program"
+            variant="action"
+            onPress={() =>
+              router.push({
+                pathname: '/program/[id]',
+                params: { id: plan.linkedProgramId },
+              })
+            }
+          />
+        </Card>
+      ))}
     </Screen>
   );
 }
