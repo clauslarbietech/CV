@@ -13,7 +13,8 @@
     "export:web:vercel": "EXPO_PUBLIC_BASE_URL= expo export --platform web --output-dir dist",
     "deploy:pages": "npm run export:web && node scripts/deploy-fitlife-pages.mjs",
     "deploy:pages:legacy-root": "EXPO_PUBLIC_BASE_URL=/CV expo export --platform web --output-dir dist && node scripts/deploy-gh-pages.mjs",
-    "deploy:vercel": "npm run export:web:vercel && npx vercel deploy --prebuilt --yes"
+    "deploy:vercel": "npm run export:web:vercel && npx vercel deploy --prebuilt --yes",
+    "deploy:vercel:preview": "node scripts/deploy-vercel-fitlife.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
