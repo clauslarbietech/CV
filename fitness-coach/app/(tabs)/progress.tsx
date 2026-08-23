@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { DayCompletionStrip } from '@/components/charts/DayCompletionStrip';
+import { MissionDashboard } from '@/components/charts/MissionDashboard';
 import { ResearchMilestonesCard } from '@/components/progress/ResearchMilestonesCard';
-import { StreakCard } from '@/components/progress/StreakCard';
 import { Card } from '@/components/ui/Card';
-import { MetricCard } from '@/components/ui/MetricCard';
 import { Screen } from '@/components/ui/Screen';
 import { getActiveProgram } from '@/constants/programs';
 import { useProfileStore } from '@/store/profileStore';
@@ -12,6 +12,7 @@ import { useProgramStore } from '@/store/programStore';
 import { useTheme, spacing, typography } from '@/theme';
 
 export default function ProgressScreen() {
+  const [showResearch, setShowResearch] = useState(false);
   const { colors } = useTheme();
   const styles = useMemo(
     () =>
@@ -24,8 +25,17 @@ export default function ProgressScreen() {
           color: colors.textPrimary,
           marginTop: spacing.sm,
         },
-        metrics: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-        row: { ...typography.body, color: colors.textSecondary },
+        hint: {
+          ...typography.caption,
+          color: colors.textSecondary,
+          marginBottom: spacing.sm,
+        },
+        more: {
+          ...typography.caption,
+          color: colors.actionText,
+          fontWeight: '700',
+          marginTop: spacing.sm,
+        },
       }),
     [colors],
   );
@@ -34,16 +44,15 @@ export default function ProgressScreen() {
   const enrollment = useProgramStore((s) => s.enrollment);
   const sessions = useProgramStore((s) => s.sessions);
   const streaks = useProgramStore((s) => s.streaks);
+  const daily = useProgramStore((s) => s.daily);
   const program = getActiveProgram(enrollment?.programId);
 
   const completed = enrollment?.completedDayIds.length ?? 0;
   const totalMinutes = Math.round(
     sessions.reduce((sum, s) => sum + (s.durationSec ?? 0), 0) / 60,
   );
-  const totalSets = sessions.reduce(
-    (sum, s) => sum + (s.exerciseLogs?.length ?? 0),
-    0,
-  );
+  const programProgress =
+    program.durationDays > 0 ? completed / program.durationDays : 0;
 
   return (
     <Screen>
@@ -52,38 +61,41 @@ export default function ProgressScreen() {
         Track <Text style={styles.accent}>Progress</Text>
       </Text>
 
-      <View style={styles.metrics}>
-        <MetricCard
-          label="Missions"
-          value={`${completed}`}
-          subtitle={`/ ${program.durationDays}`}
-          complete={completed > 0}
-        />
-        <MetricCard label="Minutes" value={`${totalMinutes}`} />
-        <MetricCard label="Sets logged" value={`${totalSets}`} />
-        <MetricCard
-          label="Current day"
-          value={`${enrollment?.currentDay ?? 1}`}
-          accentColor={colors.militaryAccent}
-        />
-      </View>
-
-      <StreakCard
-        streaks={streaks}
-        xp={profile?.xp ?? 0}
-        rank={profile?.rank ?? 'Recruit'}
+      <MissionDashboard
+        compact
+        programLabel={`${program.name} · ${completed}/${program.durationDays} missions`}
+        programProgress={programProgress}
+        currentDay={enrollment?.currentDay ?? 1}
+        totalDays={program.durationDays}
+        streakDays={streaks.workoutStreak}
+        longestStreak={streaks.longestWorkoutStreak}
+        medsDone={daily.medicationsLogged ? 1 : 0}
+        medsTotal={1}
+        sessionsCount={sessions.length}
+        totalMinutes={totalMinutes}
+        daily={daily}
+        completedDays={completed}
       />
 
       <Text style={styles.section}>Completed days</Text>
+      <Text style={styles.hint}>
+        Each dot is a program day — filled = done, blue = today.
+      </Text>
       <Card military accentBorder>
-        <Text style={styles.row}>
-          {enrollment?.completedDayIds.length
-            ? enrollment.completedDayIds.map((d) => `Day ${d}`).join(' · ')
-            : 'No missions completed yet. Start Day 1.'}
-        </Text>
+        <DayCompletionStrip
+          totalDays={program.durationDays}
+          completedDayIds={enrollment?.completedDayIds ?? []}
+          currentDay={enrollment?.currentDay ?? 1}
+        />
       </Card>
 
-      <ResearchMilestonesCard completedDays={completed} />
+      <Pressable onPress={() => setShowResearch((v) => !v)} accessibilityRole="button">
+        <Text style={styles.more}>
+          {showResearch ? 'Hide research briefs ↑' : 'View research briefs & milestones →'}
+        </Text>
+      </Pressable>
+
+      {showResearch ? <ResearchMilestonesCard completedDays={completed} /> : null}
     </Screen>
   );
 }

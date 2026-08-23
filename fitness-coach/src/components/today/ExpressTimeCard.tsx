@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { Linking, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
@@ -16,6 +16,7 @@ interface ExpressTimeCardProps {
 }
 
 export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
+  const [expanded, setExpanded] = useState(false);
   const { colors } = useTheme();
   const styles = useMemo(
     () =>
@@ -44,6 +45,12 @@ export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
           paddingHorizontal: spacing.sm,
           minHeight: 48,
         },
+        more: {
+          ...typography.caption,
+          color: colors.actionText,
+          fontWeight: '700',
+          marginTop: spacing.xs,
+        },
         meta: {
           ...typography.caption,
           color: colors.textMuted,
@@ -68,12 +75,9 @@ export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
   return (
     <Card accentBorder>
       <Text style={styles.kicker}>SHORT ON TIME?</Text>
-      <Text style={styles.title}>Military express strategies</Text>
+      <Text style={styles.title}>Express mission</Text>
       <Text style={styles.body}>
-        Don&apos;t have 20–30 minutes? Convert today&apos;s mission using tactical
-        Tabata density or condensed Army PRT-style sessions. Research shows short
-        high-intensity blocks can still raise aerobic power and work capacity —
-        see Progress for Day 10 / 14 / 30 expectations.
+        Pick a condensed block — same mission, less time.
       </Text>
 
       <View style={styles.row}>
@@ -89,22 +93,32 @@ export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
         ))}
       </View>
 
-      {EXPRESS_OPTIONS.map((option) => (
-        <Text key={option.strategy} style={styles.meta}>
-          {option.label}: {option.strategy} — {option.description}
-        </Text>
-      ))}
+      <Pressable onPress={() => setExpanded((v) => !v)} accessibilityRole="button">
+        <Text style={styles.more}>{expanded ? 'Show less ↑' : 'View research & details →'}</Text>
+      </Pressable>
 
-      <Text style={styles.sourceLabel}>Sources</Text>
-      {EXPRESS_SOURCES.map((source) => (
-        <Text
-          key={source.url}
-          style={styles.link}
-          onPress={() => Linking.openURL(source.url)}
-        >
-          {source.title} →
-        </Text>
-      ))}
+      {expanded
+        ? EXPRESS_OPTIONS.map((option) => (
+            <Text key={option.strategy} style={styles.meta}>
+              {option.label}: {option.strategy} — {option.description}
+            </Text>
+          ))
+        : null}
+
+      {expanded ? (
+        <>
+          <Text style={styles.sourceLabel}>Sources</Text>
+          {EXPRESS_SOURCES.map((source) => (
+            <Text
+              key={source.url}
+              style={styles.link}
+              onPress={() => Linking.openURL(source.url)}
+            >
+              {source.title} →
+            </Text>
+          ))}
+        </>
+      ) : null}
     </Card>
   );
 }

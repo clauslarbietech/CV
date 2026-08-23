@@ -87,6 +87,7 @@ export default function MyStuffScreen() {
   const enrollment = useProgramStore((s) => s.enrollment);
   const streaks = useProgramStore((s) => s.streaks);
   const sessions = useProgramStore((s) => s.sessions);
+  const daily = useProgramStore((s) => s.daily);
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
   const active = useSessionStore((s) => s.active);
   const meds = useNotesStore((s) => s.meds);
@@ -164,6 +165,9 @@ export default function MyStuffScreen() {
   const program = getActiveProgram(enrollment.programId);
   const dayPlan = getProgramDay(program, enrollment.currentDay);
   const medsDone = meds.filter((m) => isMedTakenToday(m.id)).length;
+  const totalMinutes = Math.round(
+    sessions.reduce((sum, s) => sum + (s.durationSec ?? 0), 0) / 60,
+  );
   const programProgress =
     program.durationDays > 0
       ? (enrollment.completedDayIds.length || Math.max(0, enrollment.currentDay - 1)) /
@@ -231,10 +235,16 @@ export default function MyStuffScreen() {
       <HomeStatsGraphs
         programProgress={programProgress}
         programLabel={`${program.name} · Day ${enrollment.currentDay}/${program.durationDays}`}
+        currentDay={enrollment.currentDay}
+        totalDays={program.durationDays}
         streakDays={streaks.workoutStreak}
+        longestStreak={streaks.longestWorkoutStreak}
         medsDone={medsDone}
         medsTotal={meds.length}
         sessionsCount={sessions.length}
+        totalMinutes={totalMinutes}
+        daily={daily}
+        completedDays={enrollment.completedDayIds.length}
       />
 
       {dayPlan ? (
