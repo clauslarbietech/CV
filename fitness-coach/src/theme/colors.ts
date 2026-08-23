@@ -120,17 +120,18 @@ export const nightColors: ThemeColors = {
 };
 
 export const dayColors: ThemeColors = {
-  background: '#E7EDE4',
-  backgroundElevated: '#F4F7F1',
+  /** True white light mode — not sage/gray wash */
+  background: '#FFFFFF',
+  backgroundElevated: '#FFFFFF',
   surface: '#FFFFFF',
-  surfaceHover: '#E2E9DD',
-  border: '#8A9684',
-  borderSubtle: '#B8C2B2',
+  surfaceHover: '#F5F5F5',
+  border: '#D4D4D4',
+  borderSubtle: '#E8E8E8',
   borderAccent: 'rgba(63, 90, 0, 0.45)',
 
   textPrimary: '#0B120A',
   textSecondary: '#3A4338',
-  /** ≥4.5:1 on day background / white surface */
+  /** ≥4.5:1 on white */
   textMuted: '#4F5A4C',
   textInverse: '#FFFFFF',
 
@@ -154,7 +155,7 @@ export const dayColors: ThemeColors = {
   info: '#1D4ED8',
 
   militaryAccent: '#3F5A00',
-  militarySurface: '#E4ECD9',
+  militarySurface: '#FFFFFF',
   militaryBorder: 'rgba(63, 90, 0, 0.45)',
 
   white: '#FFFFFF',
@@ -173,7 +174,7 @@ export const dayColors: ThemeColors = {
   cardYellow: '#A16207',
   cardBlue: '#1D4ED8',
 
-  tabBar: '#F4F7F1',
+  tabBar: '#FFFFFF',
   statusBarStyle: 'dark',
 };
 
