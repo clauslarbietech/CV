@@ -16,6 +16,7 @@ import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { ExperienceLevel, FitnessGoal } from '@/types';
 import { useTheme, spacing } from '@/theme';
+import { wasLaunchSplashShown } from '@/utils/launchSplash';
 
 type Step = 'splash' | 'body' | 'questions' | 'sessions';
 
@@ -41,7 +42,10 @@ export default function WelcomeScreen() {
   const completeOnboarding = useProfileStore((s) => s.completeOnboarding);
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
 
-  const [step, setStep] = useState<Step>('splash');
+  // Cold start already played the logo on index — skip a second splash.
+  const [step, setStep] = useState<Step>(() =>
+    wasLaunchSplashShown() ? 'body' : 'splash',
+  );
   const [sex, setSex] = useState<IntroBodySex | null>(null);
   const [firstName, setFirstName] = useState('');
   const [goal, setGoal] = useState<FitnessGoal | null>(null);

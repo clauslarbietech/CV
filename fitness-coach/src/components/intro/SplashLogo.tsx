@@ -34,9 +34,11 @@ export function SplashLogo({ onDone }: SplashLogoProps) {
 
   const scale = useRef(new Animated.Value(0.72)).current;
   const opacity = useRef(new Animated.Value(0)).current;
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
-    Animated.sequence([
+    const animation = Animated.sequence([
       Animated.parallel([
         Animated.timing(opacity, {
           toValue: 1,
@@ -60,13 +62,19 @@ export function SplashLogo({ onDone }: SplashLogoProps) {
         duration: 400,
         useNativeDriver: true,
       }),
-    ]).start(({ finished }) => {
-      if (finished) onDone();
+    ]);
+
+    animation.start(({ finished }) => {
+      if (finished) onDoneRef.current();
     });
-  }, [onDone, opacity, scale]);
+
+    return () => {
+      animation.stop();
+    };
+  }, [opacity, scale]);
 
   return (
-    <View style={styles.wrap}>
+    <View style={styles.wrap} accessibilityLabel="FitLife logo intro">
       <Animated.View style={{ opacity, transform: [{ scale }] }}>
         <Image source={INTRO_LOGO} style={styles.logo} resizeMode="contain" />
       </Animated.View>

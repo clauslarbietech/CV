@@ -12,6 +12,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useProfileStore } from '@/store/profileStore';
 import { CoachPersonality, Sex } from '@/types';
 import { useTheme, spacing, typography } from '@/theme';
+import { resetLaunchSplash } from '@/utils/launchSplash';
 
 export default function ProfileScreen() {
   const { colors } = useTheme();
@@ -109,6 +110,7 @@ export default function ProfileScreen() {
         label="Replay intro"
         variant="secondary"
         onPress={() => {
+          resetLaunchSplash();
           resetOnboarding();
           router.replace('/(auth)/welcome');
         }}
@@ -117,6 +119,7 @@ export default function ProfileScreen() {
         label="Sign out"
         variant="ghost"
         onPress={async () => {
+          resetLaunchSplash();
           resetOnboarding();
           await signOut();
           router.replace('/(auth)/welcome');
