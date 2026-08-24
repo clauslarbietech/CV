@@ -1,5 +1,5 @@
 import { Redirect } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { SplashLogo } from '@/components/intro/SplashLogo';
@@ -11,8 +11,15 @@ import {
   wasLaunchSplashShown,
 } from '@/utils/launchSplash';
 
+/**
+ * Always show the FitLife logo fade-in on a cold load before routing.
+ * Returning users previously skipped welcome and never saw the splash.
+ */
 export default function Index() {
   const { colors } = useTheme();
+  const [hydrated, setHydrated] = useState(
+    () => useAuthStore.getState().isHydrated,
+  );
   const [splashDone, setSplashDone] = useState(wasLaunchSplashShown);
   const styles = useMemo(
     () =>
@@ -21,24 +28,25 @@ export default function Index() {
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: colors.black,
+          backgroundColor: '#000000',
         },
       }),
     [colors],
   );
 
-  const isHydrated = useAuthStore((s) => s.isHydrated);
+  useEffect(() => {
+    const mark = () => setHydrated(true);
+    if (useAuthStore.getState().isHydrated) {
+      mark();
+      return;
+    }
+    return useAuthStore.persist.onFinishHydration(mark);
+  }, []);
+
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const profile = useProfileStore((s) => s.profile);
 
-  if (!isHydrated) {
-    return (
-      <View style={styles.boot}>
-        <ActivityIndicator color={colors.accentText} size="large" />
-      </View>
-    );
-  }
-
+  // Show splash as soon as we can — don't wait on spinner if already hydrated.
   if (!splashDone) {
     return (
       <View style={styles.boot}>
@@ -52,7 +60,14 @@ export default function Index() {
     );
   }
 
-  // New intro requires a completed profile with body sex selection.
+  if (!hydrated) {
+    return (
+      <View style={styles.boot}>
+        <ActivityIndicator color={colors.accentText} size="large" />
+      </View>
+    );
+  }
+
   const needsIntro =
     !isAuthenticated ||
     !profile?.onboardingCompleted ||
