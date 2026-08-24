@@ -20,7 +20,7 @@ export function LaunchSplashOverlay() {
   const [playKey, setPlayKey] = useState(generation);
   const appState = useRef<AppStateStatus>(AppState.currentState);
   const playing = useRef(true);
-  const lastHiddenAt = useRef(0);
+  const lastHiddenAt = useRef(Date.now());
   const lastFinishedAt = useRef(0);
 
   useEffect(() => {

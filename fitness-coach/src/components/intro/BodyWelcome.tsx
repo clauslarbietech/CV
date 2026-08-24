@@ -1,5 +1,12 @@
-import { useMemo } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { createElement, useMemo } from 'react';
+import {
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
 import { INTRO_BODY_IMAGES, IntroBodySex } from '@/constants/intro';
@@ -25,6 +32,7 @@ export function BodyWelcome({
         wrap: {
           gap: spacing.md,
           paddingTop: spacing.lg,
+          flex: 1,
         },
         brand: {
           ...typography.overline,
@@ -102,6 +110,55 @@ export function BodyWelcome({
 
   const preview = sex ? INTRO_BODY_IMAGES[sex] : INTRO_BODY_IMAGES.male;
 
+  const renderSexButton = (option: IntroBodySex) => {
+    const active = sex === option;
+    const label = option === 'male' ? 'Male' : 'Female';
+    const onPick = () => onSelectSex(option);
+
+    // Native <button> on web — RN Pressable was not receiving taps in GH Pages / Chrome automation.
+    if (Platform.OS === 'web') {
+      return createElement(
+        'button',
+        {
+          key: option,
+          type: 'button',
+          onClick: onPick,
+          'aria-pressed': active,
+          'aria-label': label,
+          style: {
+            flex: 1,
+            minHeight: 54,
+            borderRadius: 999,
+            borderWidth: 1.5,
+            borderStyle: 'solid',
+            borderColor: active ? colors.accent : colors.border,
+            backgroundColor: active ? 'rgba(192,255,0,0.12)' : 'transparent',
+            color: active ? colors.accentText : colors.textSecondary,
+            fontWeight: 700,
+            fontSize: 16,
+            cursor: 'pointer',
+          },
+        },
+        label,
+      );
+    }
+
+    return (
+      <Pressable
+        key={option}
+        onPress={onPick}
+        style={[styles.sexBtn, active && styles.sexBtnActive]}
+        accessibilityRole="button"
+        accessibilityState={{ selected: active }}
+        accessibilityLabel={label}
+      >
+        <Text style={[styles.sexLabel, active && styles.sexLabelActive]}>
+          {label}
+        </Text>
+      </Pressable>
+    );
+  };
+
   return (
     <View style={styles.wrap}>
       <Text style={styles.brand}>FITLIFE</Text>
@@ -120,37 +177,17 @@ export function BodyWelcome({
           resizeMode="cover"
         />
         {!sex ? (
-          <View style={styles.overlay}>
+          <View style={styles.overlay} pointerEvents="none">
             <Text style={styles.overlayText}>Pick male or female to begin</Text>
           </View>
         ) : null}
       </View>
 
       <View style={styles.sexRow}>
-        {(['male', 'female'] as IntroBodySex[]).map((option) => {
-          const active = sex === option;
-          return (
-            <Pressable
-              key={option}
-              onPress={() => onSelectSex(option)}
-              style={[styles.sexBtn, active && styles.sexBtnActive]}
-              accessibilityRole="button"
-              accessibilityState={{ selected: active }}
-              accessibilityLabel={option}
-            >
-              <Text style={[styles.sexLabel, active && styles.sexLabelActive]}>
-                {option === 'male' ? 'Male' : 'Female'}
-              </Text>
-            </Pressable>
-          );
-        })}
+        {(['male', 'female'] as IntroBodySex[]).map(renderSexButton)}
       </View>
 
-      <AppButton
-        label="Continue"
-        disabled={!sex}
-        onPress={onContinue}
-      />
+      <AppButton label="Continue" disabled={!sex} onPress={onContinue} />
       <AppButton
         label="Skip to a workout session"
         variant="ghost"

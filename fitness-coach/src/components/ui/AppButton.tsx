@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
 
 import { useTheme, radii, spacing, typography } from '@/theme';
 
@@ -77,6 +77,15 @@ export function AppButton({
     });
   }, [colors, variant]);
 
+  const webClickProps =
+    Platform.OS === 'web'
+      ? {
+          onClick: disabled ? undefined : onPress,
+          role: 'button' as const,
+          tabIndex: (disabled ? -1 : 0) as 0 | -1,
+        }
+      : {};
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -85,12 +94,16 @@ export function AppButton({
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
+      {...webClickProps}
       style={({ pressed }) => [
         styles.base,
         styles[variant],
         pressed && !disabled && styles.pressed,
         disabled && styles.disabled,
         style,
+        Platform.OS === 'web'
+          ? ({ cursor: disabled ? 'default' : 'pointer' } as ViewStyle)
+          : null,
       ]}
     >
       <Text style={styles.label}>{label}</Text>
