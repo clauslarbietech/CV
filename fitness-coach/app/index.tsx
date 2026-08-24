@@ -2,25 +2,19 @@ import { Redirect } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import { SplashLogo } from '@/components/intro/SplashLogo';
 import { useAuthStore } from '@/store/authStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useTheme } from '@/theme';
-import {
-  markLaunchSplashShown,
-  wasLaunchSplashShown,
-} from '@/utils/launchSplash';
 
 /**
- * Always show the FitLife logo fade-in on a cold load before routing.
- * Returning users previously skipped welcome and never saw the splash.
+ * Boot router only — logo fade-in is owned by LaunchSplashOverlay in root layout
+ * so it replays whenever the user comes back into the app.
  */
 export default function Index() {
   const { colors } = useTheme();
   const [hydrated, setHydrated] = useState(
     () => useAuthStore.getState().isHydrated,
   );
-  const [splashDone, setSplashDone] = useState(wasLaunchSplashShown);
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -45,20 +39,6 @@ export default function Index() {
 
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const profile = useProfileStore((s) => s.profile);
-
-  // Show splash as soon as we can — don't wait on spinner if already hydrated.
-  if (!splashDone) {
-    return (
-      <View style={styles.boot}>
-        <SplashLogo
-          onDone={() => {
-            markLaunchSplashShown();
-            setSplashDone(true);
-          }}
-        />
-      </View>
-    );
-  }
 
   if (!hydrated) {
     return (

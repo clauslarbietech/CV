@@ -5,7 +5,6 @@ import { StyleSheet, View } from 'react-native';
 import { BodyWelcome } from '@/components/intro/BodyWelcome';
 import { IntroQuestions } from '@/components/intro/IntroQuestions';
 import { SessionSkipPicker } from '@/components/intro/SessionSkipPicker';
-import { SplashLogo } from '@/components/intro/SplashLogo';
 import { Screen } from '@/components/ui/Screen';
 import {
   IntroBodySex,
@@ -16,9 +15,8 @@ import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { ExperienceLevel, FitnessGoal } from '@/types';
 import { useTheme, spacing } from '@/theme';
-import { wasLaunchSplashShown } from '@/utils/launchSplash';
 
-type Step = 'splash' | 'body' | 'questions' | 'sessions';
+type Step = 'body' | 'questions' | 'sessions';
 
 export default function WelcomeScreen() {
   const { colors } = useTheme();
@@ -42,10 +40,8 @@ export default function WelcomeScreen() {
   const completeOnboarding = useProfileStore((s) => s.completeOnboarding);
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
 
-  // Cold start already played the logo on index — skip a second splash.
-  const [step, setStep] = useState<Step>(() =>
-    wasLaunchSplashShown() ? 'body' : 'splash',
-  );
+  // Logo fade-in is global (root overlay) — welcome starts on body selection.
+  const [step, setStep] = useState<Step>('body');
   const [sex, setSex] = useState<IntroBodySex | null>(null);
   const [firstName, setFirstName] = useState('');
   const [goal, setGoal] = useState<FitnessGoal | null>(null);
@@ -102,12 +98,8 @@ export default function WelcomeScreen() {
 
   return (
     <View style={styles.root}>
-      {step === 'splash' ? (
-        <SplashLogo onDone={() => setStep('body')} />
-      ) : null}
-
       <Screen contentStyle={styles.content}>
-        {step === 'body' || step === 'splash' ? (
+        {step === 'body' ? (
           <BodyWelcome
             sex={sex}
             onSelectSex={setSex}

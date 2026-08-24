@@ -9,10 +9,10 @@ import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import { COACH_PERSONALITIES } from '@/constants/coach';
 import { useAuthStore } from '@/store/authStore';
+import { useLaunchSplashStore } from '@/store/launchSplashStore';
 import { useProfileStore } from '@/store/profileStore';
 import { CoachPersonality, Sex } from '@/types';
 import { useTheme, spacing, typography } from '@/theme';
-import { resetLaunchSplash } from '@/utils/launchSplash';
 
 export default function ProfileScreen() {
   const { colors } = useTheme();
@@ -20,6 +20,7 @@ export default function ProfileScreen() {
   const setCoachPersonality = useProfileStore((s) => s.setCoachPersonality);
   const setSex = useProfileStore((s) => s.setSex);
   const resetOnboarding = useProfileStore((s) => s.resetOnboarding);
+  const requestSplash = useLaunchSplashStore((s) => s.requestSplash);
   const signOut = useAuthStore((s) => s.signOut);
 
   const styles = useMemo(
@@ -110,8 +111,8 @@ export default function ProfileScreen() {
         label="Replay intro"
         variant="secondary"
         onPress={() => {
-          resetLaunchSplash();
           resetOnboarding();
+          requestSplash();
           router.replace('/(auth)/welcome');
         }}
       />
@@ -119,9 +120,9 @@ export default function ProfileScreen() {
         label="Sign out"
         variant="ghost"
         onPress={async () => {
-          resetLaunchSplash();
           resetOnboarding();
           await signOut();
+          requestSplash();
           router.replace('/(auth)/welcome');
         }}
       />
