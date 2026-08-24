@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
 
+import { LaunchSplashOverlay } from '@/components/intro/LaunchSplashOverlay';
 import { useAuthStore } from '@/store/authStore';
 import { ThemeProvider, useTheme } from '@/theme';
 
@@ -62,6 +63,7 @@ function RootNavigator() {
           }}
         />
       </Stack>
+      <LaunchSplashOverlay />
     </>
   );
 }
