@@ -12,20 +12,43 @@ import {
   cpSync,
   existsSync,
   mkdtempSync,
+  mkdirSync,
   rmSync,
   writeFileSync,
   copyFileSync,
   renameSync,
   readFileSync,
-  readdirSync,
-  statSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 const repoRoot = join(process.cwd(), '..');
 const dist = join(process.cwd(), 'dist');
 const PREVIEW = 'https://clauslarbietech.github.io/CV/fitlife/';
+
+/**
+ * GitHub project Pages only uses the ROOT 404.html (Pix Bible here).
+ * So /CV/fitlife/welcome would fall through to Pix Bible unless we
+ * pre-write a real fitlife/welcome/index.html SPA shell.
+ */
+const SPA_ROUTES = [
+  'welcome',
+  'today',
+  'workouts',
+  'nutrition',
+  'progress',
+  'notes',
+  'coach',
+  'profile',
+  'program',
+  'program/operation-iron-14',
+  'program/operation-iron-30',
+  'program/operation-long-train',
+  'session',
+  'session/operation-iron-14',
+  'session/operation-iron-30',
+  'session/operation-long-train',
+];
 
 if (!existsSync(join(dist, 'index.html'))) {
   console.error('Missing dist/index.html. Run export with EXPO_PUBLIC_BASE_URL=/CV/fitlife first.');
@@ -48,6 +71,14 @@ if (existsSync(expoDir)) {
     writeFileSync(path, html);
   }
 }
+
+const shellHtml = readFileSync(join(dist, 'index.html'), 'utf8');
+for (const route of SPA_ROUTES) {
+  const out = join(dist, route, 'index.html');
+  mkdirSync(dirname(out), { recursive: true });
+  writeFileSync(out, shellHtml);
+}
+console.log(`Wrote ${SPA_ROUTES.length} SPA route shells under dist/`);
 
 const worktree = mkdtempSync(join(tmpdir(), 'fitlife-gh-pages-'));
 
