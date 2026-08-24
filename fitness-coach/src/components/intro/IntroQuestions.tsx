@@ -1,5 +1,12 @@
-import { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { createElement, useMemo } from 'react';
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
 import {
@@ -29,6 +36,7 @@ function Choice({
   active,
   onPress,
   styles,
+  colors,
 }: {
   label: string;
   hint: string;
@@ -41,7 +49,54 @@ function Choice({
     choiceLabelActive: object;
     choiceHint: object;
   };
+  colors: { accent: string; border: string; textPrimary: string; accentText: string; textMuted: string };
 }) {
+  if (Platform.OS === 'web') {
+    return createElement(
+      'button',
+      {
+        type: 'button',
+        onClick: onPress,
+        'aria-pressed': active,
+        style: {
+          display: 'block',
+          width: '100%',
+          textAlign: 'left',
+          paddingTop: 16,
+          paddingBottom: 16,
+          paddingLeft: 8,
+          paddingRight: 8,
+          border: 'none',
+          borderBottom: `1px solid ${active ? colors.accent : colors.border}`,
+          background: 'transparent',
+          cursor: 'pointer',
+        },
+      },
+      createElement(
+        'div',
+        {
+          style: {
+            fontWeight: 700,
+            fontSize: 16,
+            color: active ? colors.accentText : colors.textPrimary,
+          },
+        },
+        label,
+      ),
+      createElement(
+        'div',
+        {
+          style: {
+            marginTop: 2,
+            fontSize: 13,
+            color: colors.textMuted,
+          },
+        },
+        hint,
+      ),
+    );
+  }
+
   return (
     <Pressable
       onPress={onPress}
@@ -167,6 +222,7 @@ export function IntroQuestions({
             active={goal === item.id}
             onPress={() => onChangeGoal(item.id)}
             styles={styles}
+            colors={colors}
           />
         ))}
       </View>
@@ -181,6 +237,7 @@ export function IntroQuestions({
             active={experience === item.id}
             onPress={() => onChangeExperience(item.id)}
             styles={styles}
+            colors={colors}
           />
         ))}
       </View>
@@ -195,6 +252,7 @@ export function IntroQuestions({
             active={minutes === item.minutes}
             onPress={() => onChangeMinutes(item.minutes)}
             styles={styles}
+            colors={colors}
           />
         ))}
       </View>
