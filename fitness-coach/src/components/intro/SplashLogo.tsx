@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -20,6 +20,7 @@ const USE_NATIVE = Platform.OS !== 'web';
 
 export function SplashLogo({ onDone }: SplashLogoProps) {
   const { colors } = useTheme();
+  const [blocking, setBlocking] = useState(true);
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -44,8 +45,16 @@ export function SplashLogo({ onDone }: SplashLogoProps) {
   const finishedRef = useRef(false);
   onDoneRef.current = onDone;
 
+  const finish = () => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    setBlocking(false);
+    onDoneRef.current();
+  };
+
   useEffect(() => {
     finishedRef.current = false;
+    setBlocking(true);
 
     const animation = Animated.sequence([
       Animated.parallel([
@@ -69,26 +78,22 @@ export function SplashLogo({ onDone }: SplashLogoProps) {
         useNativeDriver: USE_NATIVE,
       }),
       Animated.delay(450),
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 500,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: USE_NATIVE,
-      }),
+      // Release UI during fade-out so taps are never trapped under an invisible layer.
+      Animated.delay(0),
     ]);
 
     animation.start(({ finished }) => {
-      if (!finished || finishedRef.current) return;
-      finishedRef.current = true;
-      onDoneRef.current();
+      if (!finished) return;
+      setBlocking(false);
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 450,
+        easing: Easing.in(Easing.cubic),
+        useNativeDriver: USE_NATIVE,
+      }).start(() => finish());
     });
 
-    // Safety net: never leave users stuck on splash if animation aborts (web/HMR).
-    const failSafe = setTimeout(() => {
-      if (finishedRef.current) return;
-      finishedRef.current = true;
-      onDoneRef.current();
-    }, 4500);
+    const failSafe = setTimeout(finish, 3200);
 
     return () => {
       clearTimeout(failSafe);
@@ -97,7 +102,11 @@ export function SplashLogo({ onDone }: SplashLogoProps) {
   }, [opacity, scale]);
 
   return (
-    <View style={styles.wrap} accessibilityLabel="FitLife logo intro">
+    <View
+      style={styles.wrap}
+      pointerEvents={blocking ? 'auto' : 'none'}
+      accessibilityLabel="FitLife logo intro"
+    >
       <Animated.View style={{ opacity, transform: [{ scale }] }}>
         <Image source={INTRO_LOGO} style={styles.logo} resizeMode="contain" />
       </Animated.View>
