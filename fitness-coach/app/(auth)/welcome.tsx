@@ -98,7 +98,7 @@ export default function WelcomeScreen() {
 
   return (
     <View style={styles.root}>
-      <Screen contentStyle={styles.content}>
+      <Screen scroll={false} contentStyle={styles.content}>
         {step === 'body' ? (
           <BodyWelcome
             sex={sex}
