@@ -35,7 +35,6 @@ export function LaunchSplashOverlay() {
         return;
       }
       if (next === 'active' && (prev === 'background' || prev === 'inactive')) {
-        // Ignore tiny inactive blips (permission sheets, etc.)
         if (Date.now() - lastHiddenAt.current < 400) return;
         if (playing.current) return;
         requestSplash();
@@ -72,7 +71,7 @@ export function LaunchSplashOverlay() {
   if (!visible) return null;
 
   return (
-    <View style={styles.layer} pointerEvents="auto">
+    <View style={styles.layer} pointerEvents="box-none">
       <SplashLogo
         key={playKey}
         onDone={() => {
