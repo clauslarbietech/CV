@@ -1,0 +1,273 @@
+import { useMemo, useState } from 'react';
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { DigestionGuide } from '@/components/nutrition/DigestionGuide';
+import { Card } from '@/components/ui/Card';
+import { Screen } from '@/components/ui/Screen';
+import {
+  FUEL_TRACKS,
+  NUTRITION_SOURCES,
+  SARDINE_EGG_ELECTROLYTE_5DAY_LESSON,
+  VIRAL_MILITARY_DIET_DAYS,
+} from '@/constants/nutrition/militaryFuel';
+import { useTheme, radii, spacing, typography } from '@/theme';
+
+type TrackId = (typeof FUEL_TRACKS)[number]['id'];
+
+export default function NutritionScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        kicker: {
+          ...typography.overline,
+          color: colors.accentText,
+        },
+        title: {
+          ...typography.title,
+          color: colors.textPrimary,
+        },
+        accent: {
+          color: colors.accentText,
+        },
+        subtitle: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        trackRow: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.sm,
+          marginBottom: spacing.sm,
+        },
+        trackChip: {
+          flexGrow: 1,
+          minWidth: '28%',
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: radii.lg,
+          padding: spacing.sm,
+          backgroundColor: colors.surface,
+        },
+        trackChipOn: {
+          borderColor: colors.accent,
+          backgroundColor: colors.accentSoft,
+        },
+        trackLabel: {
+          ...typography.bodyBold,
+          color: colors.textSecondary,
+        },
+        trackLabelOn: {
+          color: colors.accentText,
+        },
+        trackHorizon: {
+          ...typography.caption,
+          color: colors.textMuted,
+        },
+        planLabel: {
+          ...typography.overline,
+          color: colors.accentText,
+        },
+        focus: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+          marginVertical: spacing.xs,
+        },
+        window: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        hydro: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginTop: spacing.sm,
+        },
+        mealName: {
+          ...typography.subheading,
+          color: colors.textPrimary,
+          marginBottom: spacing.xs,
+        },
+        cal: {
+          ...typography.caption,
+          color: colors.accentText,
+          marginBottom: spacing.xs,
+        },
+        item: {
+          ...typography.body,
+          color: colors.textSecondary,
+          marginBottom: 2,
+        },
+        section: {
+          ...typography.heading,
+          color: colors.textPrimary,
+          marginTop: spacing.sm,
+        },
+        note: {
+          ...typography.body,
+          color: colors.textSecondary,
+        },
+        viralCard: {
+          borderRadius: radii.xl,
+        },
+        viralMeal: {
+          marginBottom: spacing.sm,
+        },
+        link: {
+          ...typography.bodyBold,
+          color: colors.accentText,
+          marginTop: spacing.sm,
+        },
+        verdict: {
+          ...typography.caption,
+          color: colors.actionText,
+          fontWeight: '700',
+          textTransform: 'uppercase',
+          marginBottom: spacing.xs,
+        },
+      }),
+    [colors],
+  );
+
+  const [trackId, setTrackId] = useState<TrackId>('short');
+  const track = FUEL_TRACKS.find((t) => t.id === trackId) ?? FUEL_TRACKS[0];
+  const plan = track.plan;
+
+  return (
+    <Screen>
+      <Text style={styles.kicker}>FUEL + FASTING</Text>
+      <Text style={styles.title}>
+        Eat to <Text style={styles.accent}>Shred</Text>
+      </Text>
+      <Text style={styles.subtitle}>
+        Short-term ops fuel, Tactical 16:8, and long-train warfighter plates —
+        researched for military-style blocks.
+      </Text>
+
+      <View style={styles.trackRow}>
+        {FUEL_TRACKS.map((item) => (
+          <Pressable
+            key={item.id}
+            onPress={() => setTrackId(item.id)}
+            style={[styles.trackChip, trackId === item.id && styles.trackChipOn]}
+          >
+            <Text
+              style={[
+                styles.trackLabel,
+                trackId === item.id && styles.trackLabelOn,
+              ]}
+            >
+              {item.label}
+            </Text>
+            <Text style={styles.trackHorizon}>{item.horizon}</Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <Card accentBorder>
+        <Text style={styles.planLabel}>{track.label}</Text>
+        <Text style={styles.focus}>{track.summary}</Text>
+        <Text style={styles.window}>Use with: {track.whenToUse.join(' · ')}</Text>
+        {track.principles.map((line) => (
+          <Text key={line} style={styles.item}>
+            • {line}
+          </Text>
+        ))}
+      </Card>
+
+      <DigestionGuide />
+
+      <Card accentBorder>
+        <Text style={styles.planLabel}>{plan.label}</Text>
+        <Text style={styles.focus}>{plan.focus}</Text>
+        <Text style={styles.window}>Fast: {plan.fastingWindow}</Text>
+        <Text style={styles.window}>Eat: {plan.eatingWindow}</Text>
+        <Text style={styles.hydro}>{plan.hydration}</Text>
+      </Card>
+
+      {plan.meals.map((meal) => (
+        <Card key={meal.name}>
+          <Text style={styles.mealName}>{meal.name}</Text>
+          {meal.caloriesApprox ? (
+            <Text style={styles.cal}>~{meal.caloriesApprox} kcal</Text>
+          ) : null}
+          {meal.items.map((item) => (
+            <Text key={item} style={styles.item}>
+              • {item}
+            </Text>
+          ))}
+        </Card>
+      ))}
+
+      <Text style={styles.section}>Notes</Text>
+      {plan.notes.map((note) => (
+        <Text key={note} style={styles.note}>
+          • {note}
+        </Text>
+      ))}
+
+      <Text style={styles.section}>Lesson: 5-day sardine + egg + electrolytes</Text>
+      <Card accentBorder>
+        <Text style={styles.planLabel}>{SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.label}</Text>
+        <Text style={styles.verdict}>
+          Verdict: {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.verdict}
+        </Text>
+        <Text style={styles.item}>{SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.scope}</Text>
+        <Text style={styles.mealName}>How people run it</Text>
+        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.protocol.map((line) => (
+          <Text key={line} style={styles.item}>
+            • {line}
+          </Text>
+        ))}
+        <Text style={styles.mealName}>Why it may feel effective</Text>
+        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.whyItMayWork.map((line) => (
+          <Text key={line} style={styles.item}>
+            • {line}
+          </Text>
+        ))}
+        <Text style={styles.mealName}>Risks & limits</Text>
+        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.risksAndLimits.map((line) => (
+          <Text key={line} style={styles.item}>
+            • {line}
+          </Text>
+        ))}
+        <Text style={styles.mealName}>Stop rules</Text>
+        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.stopRules.map((line) => (
+          <Text key={line} style={styles.item}>
+            • {line}
+          </Text>
+        ))}
+      </Card>
+
+      <Text style={styles.section}>Optional 3-day viral “Military Diet”</Text>
+      <Text style={styles.subtitle}>
+        Short low-calorie internet plan (NOT official military nutrition). Use
+        sparingly — prefer Short-Term Ops or Tactical 16:8 on hard training days.
+      </Text>
+      {VIRAL_MILITARY_DIET_DAYS.map((day) => (
+        <Card key={day.id} style={styles.viralCard}>
+          <Text style={styles.mealName}>{day.label}</Text>
+          {day.meals.map((meal) => (
+            <View key={meal.name} style={styles.viralMeal}>
+              <Text style={styles.cal}>{meal.name}</Text>
+              <Text style={styles.item}>{meal.items.join(' · ')}</Text>
+            </View>
+          ))}
+        </Card>
+      ))}
+
+      <Text style={styles.section}>Best sources</Text>
+      {NUTRITION_SOURCES.map((source) => (
+        <Card key={source.id}>
+          <Text style={styles.mealName}>{source.title}</Text>
+          <Text style={styles.item}>{source.note}</Text>
+          <Text
+            style={styles.link}
+            onPress={() => Linking.openURL(source.url)}
+          >
+            Open source →
+          </Text>
+        </Card>
+      ))}
+    </Screen>
+  );
+}
