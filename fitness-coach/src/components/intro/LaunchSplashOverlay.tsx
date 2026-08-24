@@ -4,10 +4,14 @@ import { AppState, AppStateStatus, Platform, StyleSheet, View } from 'react-nati
 import { SplashLogo } from '@/components/intro/SplashLogo';
 import { useLaunchSplashStore } from '@/store/launchSplashStore';
 
+/** Ignore brief focus blips (DevTools, screenshots, OS sheets). */
+const MIN_HIDDEN_MS = 1500;
+/** Do not replay splash more often than this (prevents tap-blocking loops). */
+const MIN_REPLAY_GAP_MS = 8000;
+
 /**
  * Full-screen FitLife logo fade-in.
- * Plays on first mount and again whenever the user returns to the app
- * (background → active, or web tab hidden → visible).
+ * Plays on first mount and again when the user truly returns to the app.
  */
 export function LaunchSplashOverlay() {
   const generation = useLaunchSplashStore((s) => s.generation);
@@ -17,6 +21,7 @@ export function LaunchSplashOverlay() {
   const appState = useRef<AppStateStatus>(AppState.currentState);
   const playing = useRef(true);
   const lastHiddenAt = useRef(0);
+  const lastFinishedAt = useRef(0);
 
   useEffect(() => {
     if (generation !== playKey) {
@@ -27,6 +32,14 @@ export function LaunchSplashOverlay() {
   }, [generation, playKey]);
 
   useEffect(() => {
+    const maybeReplay = () => {
+      if (playing.current) return;
+      const hiddenFor = Date.now() - lastHiddenAt.current;
+      if (hiddenFor < MIN_HIDDEN_MS) return;
+      if (Date.now() - lastFinishedAt.current < MIN_REPLAY_GAP_MS) return;
+      requestSplash();
+    };
+
     const onChange = (next: AppStateStatus) => {
       const prev = appState.current;
       appState.current = next;
@@ -35,9 +48,7 @@ export function LaunchSplashOverlay() {
         return;
       }
       if (next === 'active' && (prev === 'background' || prev === 'inactive')) {
-        if (Date.now() - lastHiddenAt.current < 400) return;
-        if (playing.current) return;
-        requestSplash();
+        maybeReplay();
       }
     };
 
@@ -50,9 +61,7 @@ export function LaunchSplashOverlay() {
         return;
       }
       if (document.visibilityState === 'visible') {
-        if (Date.now() - lastHiddenAt.current < 400) return;
-        if (playing.current) return;
-        requestSplash();
+        maybeReplay();
       }
     };
 
@@ -76,6 +85,7 @@ export function LaunchSplashOverlay() {
         key={playKey}
         onDone={() => {
           playing.current = false;
+          lastFinishedAt.current = Date.now();
           setVisible(false);
         }}
       />
