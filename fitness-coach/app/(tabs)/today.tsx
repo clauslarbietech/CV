@@ -4,11 +4,15 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { DailyMissionCard } from '@/components/today/DailyMissionCard';
+import { EnergyRouteCard } from '@/components/today/EnergyRouteCard';
 import { ExpressTimeCard } from '@/components/today/ExpressTimeCard';
 import { HomeStatsGraphs } from '@/components/today/HomeStatsGraphs';
+import { ProgramSwitcher } from '@/components/today/ProgramSwitcher';
+import { VoiceCoachCard } from '@/components/today/VoiceCoachCard';
 import { AppButton } from '@/components/ui/AppButton';
 import { Screen } from '@/components/ui/Screen';
 import { HeroProgramCard } from '@/components/workout/HeroProgramCard';
+import { EnergyLevel, EnergyRoute } from '@/constants/programs/energyRoutes';
 import { ExpressBudget } from '@/constants/programs/expressMissions';
 import {
   OPERATION_IRON_14,
@@ -89,6 +93,8 @@ export default function MyStuffScreen() {
   const sessions = useProgramStore((s) => s.sessions);
   const daily = useProgramStore((s) => s.daily);
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
+  const setDifficulty = useProgramStore((s) => s.setDifficulty);
+  const updateDailyMetrics = useProgramStore((s) => s.updateDailyMetrics);
   const active = useSessionStore((s) => s.active);
   const meds = useNotesStore((s) => s.meds);
   const isMedTakenToday = useNotesStore((s) => s.isMedTakenToday);
@@ -185,6 +191,20 @@ export default function MyStuffScreen() {
     });
   };
 
+  const onEnergyChange = (level: EnergyLevel) => {
+    updateDailyMetrics({ energyLevel: level });
+  };
+
+  const onStartEnergyRoute = (route: EnergyRoute) => {
+    setDifficulty(route.difficulty);
+    startMission(route.expressMinutes);
+  };
+
+  const switchProgram = (programId: string) => {
+    enrollInProgram(programId, 'soldier');
+    router.push({ pathname: '/program/[id]', params: { id: programId } });
+  };
+
   return (
     <Screen>
       <View style={styles.headerRow}>
@@ -232,6 +252,12 @@ export default function MyStuffScreen() {
         />
       ) : null}
 
+      <EnergyRouteCard
+        value={(daily.energyLevel as EnergyLevel | null | undefined) ?? null}
+        onChange={onEnergyChange}
+        onStartRoute={onStartEnergyRoute}
+      />
+
       <HomeStatsGraphs
         programProgress={programProgress}
         programLabel={`${program.name} · Day ${enrollment.currentDay}/${program.durationDays}`}
@@ -247,6 +273,15 @@ export default function MyStuffScreen() {
         completedDays={enrollment.completedDayIds.length}
       />
 
+      <VoiceCoachCard
+        personality={profile?.coachPersonality ?? 'drill_sergeant'}
+        firstName={profile?.firstName}
+        programName={program.name}
+        day={enrollment.currentDay}
+        energy={(daily.energyLevel as EnergyLevel | null | undefined) ?? null}
+        workoutDone={daily.workoutCompleted}
+      />
+
       {dayPlan ? (
         <DailyMissionCard
           program={program}
@@ -257,6 +292,13 @@ export default function MyStuffScreen() {
       ) : null}
 
       <ExpressTimeCard onSelect={(mins) => startMission(mins)} />
+
+      <ProgramSwitcher
+        activeProgramId={program.id}
+        currentDay={enrollment.currentDay}
+        onOpen={openProgram}
+        onSwitch={switchProgram}
+      />
 
       <View style={styles.quickRow}>
         <Pressable

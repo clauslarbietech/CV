@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { DigestionGuide } from '@/components/nutrition/DigestionGuide';
+import { FoodScanCard } from '@/components/nutrition/FoodScanCard';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import {
@@ -10,6 +11,7 @@ import {
   SARDINE_EGG_ELECTROLYTE_5DAY_LESSON,
   VIRAL_MILITARY_DIET_DAYS,
 } from '@/constants/nutrition/militaryFuel';
+import { useProgramStore } from '@/store/programStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
 type TrackId = (typeof FUEL_TRACKS)[number]['id'];
@@ -131,6 +133,8 @@ export default function NutritionScreen() {
   const [trackId, setTrackId] = useState<TrackId>('short');
   const track = FUEL_TRACKS.find((t) => t.id === trackId) ?? FUEL_TRACKS[0];
   const plan = track.plan;
+  const updateDailyMetrics = useProgramStore((s) => s.updateDailyMetrics);
+  const daily = useProgramStore((s) => s.daily);
 
   return (
     <Screen>
@@ -142,6 +146,17 @@ export default function NutritionScreen() {
         Short-term ops fuel, Tactical 16:8, and long-train warfighter plates —
         researched for military-style blocks.
       </Text>
+
+      <FoodScanCard
+        onApplyProtein={(proteinG) =>
+          updateDailyMetrics({
+            proteinG: Math.min(
+              daily.proteinTarget + 40,
+              daily.proteinG + proteinG,
+            ),
+          })
+        }
+      />
 
       <View style={styles.trackRow}>
         {FUEL_TRACKS.map((item) => (

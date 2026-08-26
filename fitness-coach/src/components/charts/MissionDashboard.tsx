@@ -12,6 +12,10 @@ import { SegmentToggle } from './SegmentToggle';
 import { StatusLabel } from './StatusLabel';
 import { VitalTile } from './VitalTile';
 import {
+  energyToScore,
+  routeForEnergy,
+} from '@/constants/programs/energyRoutes';
+import {
   averageProgress,
   formatDuration,
   formatMl,
@@ -144,14 +148,20 @@ export function MissionDashboard({
   const medsProgress = medsTotal > 0 ? medsDone / medsTotal : 1;
 
   const fuelProgress = averageProgress([proteinRatio, waterRatio, stepsRatio, calorieRatio]);
-  const score = readinessScore({
+  const autoScore = readinessScore({
     programProgress,
     workoutDone: daily.workoutCompleted,
     medsProgress,
     fuelProgress,
     streakDays,
   });
-  const scoreStatus = readinessLabel(score);
+  const energyLevel = daily.energyLevel ?? null;
+  const score =
+    energyLevel != null ? energyToScore(energyLevel) : autoScore;
+  const scoreStatus =
+    energyLevel != null
+      ? routeForEnergy(energyLevel).status
+      : readinessLabel(score);
 
   const improvable: string[] = [];
   if (ratioStatus(daily.proteinG, daily.proteinTarget) === 'low') {

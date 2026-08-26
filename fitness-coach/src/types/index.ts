@@ -220,6 +220,8 @@ export interface DailyProgress {
   checkInCompleted: boolean;
   supplementsCompleted: boolean;
   medicationsLogged: boolean;
+  /** Self-reported energy (1–5). Drives score range + workout route. */
+  energyLevel?: 1 | 2 | 3 | 4 | 5 | null;
 }
 
 export interface StreakState {

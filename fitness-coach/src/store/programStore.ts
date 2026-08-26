@@ -30,6 +30,7 @@ function emptyDaily(date = todayKey()): DailyProgress {
     checkInCompleted: false,
     supplementsCompleted: false,
     medicationsLogged: false,
+    energyLevel: null,
   };
 }
 
