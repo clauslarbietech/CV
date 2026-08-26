@@ -1,6 +1,6 @@
 import { CoachPersonality } from '@/types';
 import { EnergyLevel } from '@/constants/programs/energyRoutes';
-import { COACH_PERSONALITIES } from '@/constants/coach';
+import { COACH_PERSONALITIES } from '@/constants/coach/index';
 
 export function personalityLabel(id: CoachPersonality): string {
   return COACH_PERSONALITIES.find((p) => p.id === id)?.name ?? 'Coach';
