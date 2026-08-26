@@ -1,13 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
-} from 'react-native-reanimated';
 
 import { MuscleMapSvg } from '@/components/workout/MuscleMapSvg';
 import {
@@ -38,38 +30,7 @@ export function ExerciseGraphic({
   const profileSex = useProfileStore((s) => s.profile?.sex);
   const setSex = useProfileStore((s) => s.setSex);
   const [overrideBody, setOverrideBody] = useState<FormBody | null>(null);
-  const [motionOn, setMotionOn] = useState(true);
   const formBody = overrideBody ?? resolveFormBody(profileSex);
-
-  const phase = useSharedValue(0);
-
-  useEffect(() => {
-    if (!motionOn) {
-      phase.value = withTiming(0, { duration: 200 });
-      return;
-    }
-    phase.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 900, easing: Easing.inOut(Easing.sin) }),
-        withTiming(0, { duration: 900, easing: Easing.inOut(Easing.sin) }),
-      ),
-      -1,
-      false,
-    );
-  }, [motionOn, phase]);
-
-  const motionStyle = useAnimatedStyle(() => {
-    const t = phase.value;
-    return {
-      transform: [
-        { perspective: 900 },
-        { rotateY: `${(-12 + t * 24).toFixed(2)}deg` },
-        { rotateX: `${(4 - t * 8).toFixed(2)}deg` },
-        { scale: 1 + t * 0.04 },
-        { translateY: t * -6 },
-      ],
-    };
-  });
 
   const styles = useMemo(
     () =>
@@ -197,10 +158,6 @@ export function ExerciseGraphic({
           ...typography.caption,
           color: colors.textSecondary,
         },
-        motionMeta: {
-          ...typography.caption,
-          color: colors.textMuted,
-        },
       }),
     [colors],
   );
@@ -218,9 +175,7 @@ export function ExerciseGraphic({
     <View style={[styles.card, compact && styles.compact]}>
       <View style={styles.badgeRow}>
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>
-            {motionOn ? '3D MOTION DEMO' : 'FORM GUIDE'}
-          </Text>
+          <Text style={styles.badgeText}>FORM GUIDE</Text>
         </View>
         <Text style={styles.hint}>Neon = working muscles</Text>
       </View>
@@ -247,48 +202,17 @@ export function ExerciseGraphic({
         })}
       </View>
 
-      <View style={styles.bodyToggle}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ selected: motionOn }}
-          onPress={() => setMotionOn(true)}
-          style={[styles.bodyChip, motionOn && styles.bodyChipOn]}
-        >
-          <Text style={[styles.bodyChipText, motionOn && styles.bodyChipTextOn]}>
-            Motion on
-          </Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ selected: !motionOn }}
-          onPress={() => setMotionOn(false)}
-          style={[styles.bodyChip, !motionOn && styles.bodyChipOn]}
-        >
-          <Text
-            style={[styles.bodyChipText, !motionOn && styles.bodyChipTextOn]}
-          >
-            Still
-          </Text>
-        </Pressable>
-      </View>
-
       <View style={[styles.art, compact && styles.artCompact]}>
-        <Animated.View style={[{ width: '100%', height: '100%' }, motionStyle]}>
-          <Image
-            key={`pose-${formBody}-${visual.pose}`}
-            source={image}
-            style={styles.image}
-            resizeMode="cover"
-            accessibilityLabel={`${exerciseName} ${bodyLabel.toLowerCase()} illustration`}
-          />
-        </Animated.View>
+        <Image
+          key={`pose-${formBody}-${visual.pose}`}
+          source={image}
+          style={styles.image}
+          resizeMode="cover"
+          accessibilityLabel={`${exerciseName} ${bodyLabel.toLowerCase()} illustration`}
+        />
       </View>
 
       <Text style={styles.cue}>{visual.cue}</Text>
-      <Text style={styles.motionMeta}>
-        Animated depth demo of the movement path — true mesh 3D can plug in here
-        later without changing the session flow.
-      </Text>
 
       <View style={styles.muscleRow}>
         {visual.muscles.map((muscle) => (
