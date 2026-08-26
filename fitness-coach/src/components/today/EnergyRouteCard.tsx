@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { createElement, useMemo } from 'react';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { StatusLabel } from '@/components/charts/StatusLabel';
 import { AppButton } from '@/components/ui/AppButton';
@@ -101,34 +101,75 @@ export function EnergyRouteCard({
   const route = value ? routeForEnergy(value) : null;
   const score = value ? energyToScore(value) : null;
 
+  const renderChip = (option: EnergyRoute) => {
+    const active = value === option.level;
+    const label = `${option.level} · ${option.label}`;
+    const content = (
+      <>
+        <Text style={styles.chipLabel}>{label}</Text>
+        <Text style={styles.chipRange}>{option.scoreRange}</Text>
+      </>
+    );
+
+    if (Platform.OS === 'web') {
+      return createElement(
+        'button',
+        {
+          key: option.level,
+          type: 'button',
+          onClick: (e: { stopPropagation?: () => void; preventDefault?: () => void }) => {
+            e.preventDefault?.();
+            e.stopPropagation?.();
+            onChange(option.level);
+          },
+          'aria-pressed': active,
+          style: {
+            minWidth: '30%',
+            flexGrow: 1,
+            borderWidth: 1,
+            borderStyle: 'solid',
+            borderColor: active ? colors.accent : colors.border,
+            borderRadius: 12,
+            paddingTop: 10,
+            paddingBottom: 10,
+            paddingLeft: 10,
+            paddingRight: 10,
+            backgroundColor: active ? colors.accentSoft : colors.surface,
+            cursor: 'pointer',
+            textAlign: 'left' as const,
+            display: 'flex',
+            flexDirection: 'column' as const,
+            gap: 2,
+          },
+        },
+        content,
+      );
+    }
+
+    return (
+      <Pressable
+        key={option.level}
+        onPress={() => onChange(option.level)}
+        style={[styles.chip, active && styles.chipActive]}
+        accessibilityRole="button"
+        accessibilityState={{ selected: active }}
+      >
+        {content}
+      </Pressable>
+    );
+  };
+
   return (
     <Card accentBorder>
       <Text style={styles.kicker}>ENERGY CHECK-IN</Text>
       <Text style={styles.title}>How do you feel right now?</Text>
       <Text style={styles.body}>
         Pick an energy band. We map it to a score range and the right workout
-        route — recovery express through elite full mission.
+        route — recovery express through elite full mission. Starting the route
+        is a separate step below.
       </Text>
 
-      <View style={styles.row}>
-        {ENERGY_ROUTES.map((option) => {
-          const active = value === option.level;
-          return (
-            <Pressable
-              key={option.level}
-              onPress={() => onChange(option.level)}
-              style={[styles.chip, active && styles.chipActive]}
-              accessibilityRole="button"
-              accessibilityState={{ selected: active }}
-            >
-              <Text style={styles.chipLabel}>
-                {option.level} · {option.label}
-              </Text>
-              <Text style={styles.chipRange}>{option.scoreRange}</Text>
-            </Pressable>
-          );
-        })}
-      </View>
+      <View style={styles.row}>{ENERGY_ROUTES.map(renderChip)}</View>
 
       {route && score != null ? (
         <View style={styles.routeBox}>
