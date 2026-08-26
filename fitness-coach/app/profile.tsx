@@ -4,19 +4,24 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { OptionChip } from '@/components/onboarding/OptionChip';
 import { AppearanceToggle } from '@/components/settings/AppearanceToggle';
+import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import { COACH_PERSONALITIES } from '@/constants/coach';
+import { getActiveProgram } from '@/constants/programs';
 import { useAuthStore } from '@/store/authStore';
 import { useLaunchSplashStore } from '@/store/launchSplashStore';
 import { useProfileStore } from '@/store/profileStore';
+import { useProgramStore } from '@/store/programStore';
 import { CoachPersonality, Sex } from '@/types';
 import { useTheme, spacing, typography } from '@/theme';
 
 export default function ProfileScreen() {
   const { colors } = useTheme();
   const profile = useProfileStore((s) => s.profile);
+  const enrollment = useProgramStore((s) => s.enrollment);
+  const activeProgram = getActiveProgram(enrollment?.programId);
   const setCoachPersonality = useProfileStore((s) => s.setCoachPersonality);
   const setSex = useProfileStore((s) => s.setSex);
   const resetOnboarding = useProfileStore((s) => s.resetOnboarding);
@@ -93,7 +98,21 @@ export default function ProfileScreen() {
         <Text style={styles.row}>
           Location: {profile?.workoutLocation ?? '—'}
         </Text>
+        <Text style={styles.row}>
+          Weight: {profile?.currentWeightKg != null ? `${profile.currentWeightKg} kg` : '—'}
+          {profile?.goalWeightKg != null ? ` → ${profile.goalWeightKg} kg` : ''}
+        </Text>
       </Card>
+
+      {enrollment ? (
+        <>
+          <Text style={styles.section}>Body vision</Text>
+          <BodyVisionSetup
+            programId={enrollment.programId}
+            programName={activeProgram.name}
+          />
+        </>
+      ) : null}
 
       <Text style={styles.section}>Coach personality</Text>
       <View style={styles.chips}>

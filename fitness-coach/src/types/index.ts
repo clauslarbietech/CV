@@ -67,6 +67,24 @@ export type MilitaryRank =
   | 'Colonel'
   | 'Elite';
 
+/** Visual body frame — not clothing size; used for Now/Goal silhouettes. */
+export type BodyFrameSize =
+  | 'small'
+  | 'mid'
+  | 'medium'
+  | 'large'
+  | 'xl'
+  | 'xxl'
+  | 'plus';
+
+export interface BodyVisionState {
+  currentFrame: BodyFrameSize;
+  goalFrame: BodyFrameSize;
+  currentPhotoUri?: string | null;
+  linkedProgramId?: string;
+  updatedAt: string;
+}
+
 export interface UserProfile {
   id: string;
   firstName: string;
@@ -76,6 +94,7 @@ export interface UserProfile {
   heightCm?: number;
   currentWeightKg?: number;
   goalWeightKg?: number;
+  bodyVision?: BodyVisionState;
   primaryGoal?: FitnessGoal;
   experienceLevel?: ExperienceLevel;
   activityLevel?: ActivityLevel;

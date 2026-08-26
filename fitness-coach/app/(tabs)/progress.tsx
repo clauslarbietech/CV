@@ -3,6 +3,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { DayCompletionStrip } from '@/components/charts/DayCompletionStrip';
 import { MissionDashboard } from '@/components/charts/MissionDashboard';
+import { BodyVisionCard } from '@/components/body/BodyVisionCard';
+import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
 import { ResearchMilestonesCard } from '@/components/progress/ResearchMilestonesCard';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
@@ -54,12 +56,32 @@ export default function ProgressScreen() {
   const programProgress =
     program.durationDays > 0 ? completed / program.durationDays : 0;
 
+  const bodyVision = profile?.bodyVision;
+
   return (
     <Screen>
       <Text style={styles.kicker}>{program.name} PROGRESS</Text>
       <Text style={styles.title}>
         Track <Text style={styles.accent}>Progress</Text>
       </Text>
+
+      {bodyVision?.currentFrame && bodyVision.goalFrame ? (
+        <BodyVisionCard
+          sex={profile?.sex}
+          currentFrame={bodyVision.currentFrame}
+          goalFrame={bodyVision.goalFrame}
+          currentWeightKg={profile?.currentWeightKg}
+          goalWeightKg={profile?.goalWeightKg}
+          currentPhotoUri={bodyVision.currentPhotoUri}
+          programProgress={programProgress}
+          programLabel={program.name}
+        />
+      ) : (
+        <BodyVisionSetup
+          programId={program.id}
+          programName={program.name}
+        />
+      )}
 
       <MissionDashboard
         compact

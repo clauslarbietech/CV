@@ -12,9 +12,11 @@ import {
 import { AppButton } from '@/components/ui/AppButton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Screen } from '@/components/ui/Screen';
+import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
 import { ProgramMonthGrid } from '@/components/workout/ProgramMonthGrid';
 import { ProgramStartSteps } from '@/components/workout/ProgramStartSteps';
 import { getProgramById } from '@/constants/programs';
+import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
@@ -22,6 +24,7 @@ const HERO_BY_ID: Record<string, number> = {
   'operation-iron-30': require('../../assets/exercises/burpee.png'),
   'operation-iron-14': require('../../assets/exercises/pushup.png'),
   'operation-long-train': require('../../assets/exercises/squat.png'),
+  'operation-calisthenics': require('../../assets/exercises/pike.png'),
 };
 
 export default function ProgramDetailScreen() {
@@ -119,6 +122,7 @@ export default function ProgramDetailScreen() {
   const enrollInProgram = useProgramStore((s) => s.enrollInProgram);
   const startOver = useProgramStore((s) => s.startOver);
   const setDifficulty = useProgramStore((s) => s.setDifficulty);
+  const bodyVision = useProfileStore((s) => s.profile?.bodyVision);
 
   if (!program) {
     return (
@@ -155,6 +159,11 @@ export default function ProgramDetailScreen() {
     if (!isEnrolled) enrollInProgram(program.id, tier);
     openDay(day);
   };
+
+  const visionReady =
+    bodyVision?.currentFrame &&
+    bodyVision?.goalFrame &&
+    bodyVision.linkedProgramId === program.id;
 
   return (
     <Screen>
@@ -239,6 +248,21 @@ export default function ProgramDetailScreen() {
             ],
           },
         ]}
+      />
+
+      <BodyVisionSetup
+        programId={program.id}
+        programName={program.name}
+        showContinue={!isEnrolled}
+        continueLabel={
+          visionReady ? 'Update & enroll · Day 1' : 'Save vision & enroll · Day 1'
+        }
+        onSaved={() => {
+          if (!isEnrolled) {
+            enrollInProgram(program.id, tier);
+            openDay(1);
+          }
+        }}
       />
 
       {hasDays ? (

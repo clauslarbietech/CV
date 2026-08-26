@@ -9,6 +9,7 @@ import {
   FitnessGoal,
   Sex,
   UserProfile,
+  BodyFrameSize,
 } from '@/types';
 
 interface ProfileState {
@@ -30,6 +31,14 @@ interface ProfileState {
   }) => void;
   setCoachPersonality: (personality: CoachPersonality) => void;
   setSex: (sex: Sex) => void;
+  setBodyVision: (args: {
+    currentFrame: BodyFrameSize;
+    goalFrame: BodyFrameSize;
+    currentPhotoUri?: string | null;
+    linkedProgramId?: string;
+    currentWeightKg?: number;
+    goalWeightKg?: number;
+  }) => void;
   addXp: (amount: number) => void;
   updateWeight: (kg: number) => void;
   resetOnboarding: () => void;
@@ -107,6 +116,33 @@ export const useProfileStore = create<ProfileState>()(
               }
             : state,
         ),
+      setBodyVision: ({
+        currentFrame,
+        goalFrame,
+        currentPhotoUri,
+        linkedProgramId,
+        currentWeightKg,
+        goalWeightKg,
+      }) =>
+        set((state) => {
+          if (!state.profile) return state;
+          const now = new Date().toISOString();
+          return {
+            profile: {
+              ...state.profile,
+              currentWeightKg: currentWeightKg ?? state.profile.currentWeightKg,
+              goalWeightKg: goalWeightKg ?? state.profile.goalWeightKg,
+              bodyVision: {
+                currentFrame,
+                goalFrame,
+                currentPhotoUri: currentPhotoUri ?? null,
+                linkedProgramId,
+                updatedAt: now,
+              },
+              updatedAt: now,
+            },
+          };
+        }),
       addXp: (amount) =>
         set((state) => {
           if (!state.profile) return state;
