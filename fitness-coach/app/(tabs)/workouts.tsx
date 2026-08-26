@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import { CALISTHENICS_LESSON_PLANS } from '@/constants/programs/calisthenicsLessonPlans';
 import {
+  OPERATION_CALISTHENICS,
   OPERATION_IRON_14,
   OPERATION_IRON_30,
   OPERATION_LONG_TRAIN,
@@ -148,6 +149,32 @@ export default function WorkoutsScreen() {
         />
       </View>
 
+      <Text style={styles.section}>Calisthenics · 21 days</Text>
+      <ProgramCard
+        program={OPERATION_CALISTHENICS}
+        featured
+        onPress={() =>
+          router.push({
+            pathname: '/program/[id]',
+            params: { id: OPERATION_CALISTHENICS.id },
+          })
+        }
+      />
+      <AppButton
+        label="Start Calisthenics Foundation"
+        variant="action"
+        onPress={() => {
+          enrollInProgram(OPERATION_CALISTHENICS.id, 'soldier');
+          router.push({
+            pathname: '/session/[programId]',
+            params: {
+              programId: OPERATION_CALISTHENICS.id,
+              day: '1',
+            },
+          });
+        }}
+      />
+
       <Text style={styles.section}>Short term · 14 days</Text>
       <ProgramCard
         program={OPERATION_IRON_14}
@@ -195,7 +222,8 @@ export default function WorkoutsScreen() {
 
       <Text style={styles.section}>Calisthenics lesson plans</Text>
       <Text style={styles.subtitle}>
-        Same mission style, same target-muscle graphics, different training horizons.
+        Prefer horizons inside the military Iron tracks, or enroll in the
+        dedicated Calisthenics Foundation program above.
       </Text>
       {CALISTHENICS_LESSON_PLANS.map((plan) => (
         <Card key={plan.id} accentBorder style={styles.lessonCard}>

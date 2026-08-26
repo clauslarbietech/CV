@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AppButton } from '@/components/ui/AppButton';
 import { HeroProgramCard } from '@/components/workout/HeroProgramCard';
 import {
+  OPERATION_CALISTHENICS,
   OPERATION_IRON_14,
   OPERATION_IRON_30,
   OPERATION_LONG_TRAIN,
@@ -19,9 +20,12 @@ type ProgramSwitcherProps = {
   onSwitch: (programId: string) => void;
 };
 
-const CATALOG = [OPERATION_LONG_TRAIN, OPERATION_IRON_30, OPERATION_IRON_14].filter(
-  (p) => WORKOUT_PROGRAMS.some((w) => w.id === p.id),
-);
+const CATALOG = [
+  OPERATION_LONG_TRAIN,
+  OPERATION_IRON_30,
+  OPERATION_IRON_14,
+  OPERATION_CALISTHENICS,
+].filter((p) => WORKOUT_PROGRAMS.some((w) => w.id === p.id));
 
 export function ProgramSwitcher({
   activeProgramId,
@@ -60,8 +64,8 @@ export function ProgramSwitcher({
       <Text style={styles.kicker}>PROGRAMS</Text>
       <Text style={styles.title}>More than Iron 30</Text>
       <Text style={styles.body}>
-        Switch tracks anytime — Short 14, Standard 30, or Long Train 12 weeks.
-        Your Discover tab stays available too.
+        Switch tracks anytime — Short 14, Standard 30, Calisthenics 21, or Long
+        Train 12 weeks. Your Discover tab stays available too.
       </Text>
       <View style={styles.list}>
         {CATALOG.map((program: WorkoutProgram) => {
@@ -76,11 +80,13 @@ export function ProgramSwitcher({
                 enrolled={active}
                 currentDay={active ? currentDay : undefined}
                 locationLabel={
-                  program.durationDays >= 60
-                    ? '12-week long train · Home'
-                    : program.durationDays <= 14
-                      ? 'Short block · Home'
-                      : '30-day shred · Home'
+                  program.id === 'operation-calisthenics'
+                    ? '21-day skill block · Home'
+                    : program.durationDays >= 60
+                      ? '12-week long train · Home'
+                      : program.durationDays <= 14
+                        ? 'Short block · Home'
+                        : '30-day shred · Home'
                 }
                 onGetStarted={() => onOpen(program.id)}
                 onPlay={() => (active ? onOpen(program.id) : onSwitch(program.id))}

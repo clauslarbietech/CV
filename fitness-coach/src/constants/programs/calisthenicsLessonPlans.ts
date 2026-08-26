@@ -1,4 +1,5 @@
 import {
+  OPERATION_CALISTHENICS,
   OPERATION_IRON_14,
   OPERATION_IRON_30,
   OPERATION_LONG_TRAIN,
@@ -17,8 +18,30 @@ export type CalisthenicsLessonPlan = {
 
 export const CALISTHENICS_LESSON_PLANS: CalisthenicsLessonPlan[] = [
   {
+    id: 'cal-foundation-21',
+    label: 'Calisthenics Foundation',
+    duration: '21 days',
+    linkedProgramId: OPERATION_CALISTHENICS.id,
+    focus: 'Dedicated progressive skill + volume block',
+    weeklyFlow: [
+      'Day 1: Push control',
+      'Day 2: Lower-body flow',
+      'Day 3: Core armor',
+      'Day 4: Full-body density',
+      'Day 5: Skill + volume',
+      'Day 6: Active recovery',
+      'Day 7: Weekly benchmark',
+    ],
+    anchorExercises: ['Push-Ups', 'Pike Push-Ups', 'Bodyweight Squats', 'Plank'],
+    progressionRules: [
+      'Each week densifies the same patterns (~15% more volume).',
+      'Keep 1–2 clean reps in reserve on every set.',
+      'Day 21 is the foundation test — quality over speed.',
+    ],
+  },
+  {
     id: 'cal-short-14',
-    label: 'Calisthenics Short Block',
+    label: 'Calisthenics Short Block (via Iron 14)',
     duration: '14 days',
     linkedProgramId: OPERATION_IRON_14.id,
     focus: 'Skill lock-in + fast conditioning',
@@ -40,7 +63,7 @@ export const CALISTHENICS_LESSON_PLANS: CalisthenicsLessonPlan[] = [
   },
   {
     id: 'cal-standard-30',
-    label: 'Calisthenics Standard Block',
+    label: 'Calisthenics Standard Block (via Iron 30)',
     duration: '30 days',
     linkedProgramId: OPERATION_IRON_30.id,
     focus: 'Body recomposition + volume tolerance',

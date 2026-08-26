@@ -1,12 +1,14 @@
 import { OPERATION_IRON_14 } from './operationIron14';
 import { OPERATION_IRON_30 } from './operationIron30';
 import { OPERATION_LONG_TRAIN } from './operationLongTrain';
+import { OPERATION_CALISTHENICS } from './operationCalisthenics';
 import { WorkoutProgram } from '@/types';
 
 /** Featured first: 30-day no-equipment military shred. */
 export const WORKOUT_PROGRAMS: WorkoutProgram[] = [
   OPERATION_IRON_30,
   OPERATION_IRON_14,
+  OPERATION_CALISTHENICS,
   OPERATION_LONG_TRAIN,
 ];
 
@@ -22,4 +24,5 @@ export {
   OPERATION_IRON_14,
   OPERATION_IRON_30,
   OPERATION_LONG_TRAIN,
+  OPERATION_CALISTHENICS,
 };

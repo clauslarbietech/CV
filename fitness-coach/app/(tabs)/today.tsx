@@ -15,6 +15,7 @@ import { HeroProgramCard } from '@/components/workout/HeroProgramCard';
 import { EnergyLevel, EnergyRoute } from '@/constants/programs/energyRoutes';
 import { ExpressBudget } from '@/constants/programs/expressMissions';
 import {
+  OPERATION_CALISTHENICS,
   OPERATION_IRON_14,
   OPERATION_IRON_30,
   OPERATION_LONG_TRAIN,
@@ -119,6 +120,7 @@ export default function MyStuffScreen() {
     OPERATION_LONG_TRAIN,
     OPERATION_IRON_30,
     OPERATION_IRON_14,
+    OPERATION_CALISTHENICS,
   ].filter((p) => WORKOUT_PROGRAMS.some((w) => w.id === p.id));
 
   if (!enrollment) {
@@ -153,11 +155,13 @@ export default function MyStuffScreen() {
               key={program.id}
               program={program}
               locationLabel={
-                program.durationDays >= 60
-                  ? '12-week long train · Home'
-                  : program.durationDays <= 14
-                    ? 'Short block · Home'
-                    : '30-day shred · Home'
+                program.id === 'operation-calisthenics'
+                  ? '21-day skill block · Home'
+                  : program.durationDays >= 60
+                    ? '12-week long train · Home'
+                    : program.durationDays <= 14
+                      ? 'Short block · Home'
+                      : '30-day shred · Home'
               }
               onGetStarted={() => openProgram(program.id)}
               onPlay={() => playProgram(program.id)}

@@ -86,4 +86,11 @@ export const SKIP_SESSIONS: SkipSessionOption[] = [
     programId: 'operation-iron-14',
     day: 1,
   },
+  {
+    id: 'calisthenics-day1',
+    title: 'CALISTHENICS FOUNDATION · Day 1',
+    subtitle: '21-day progressive bodyweight block',
+    programId: 'operation-calisthenics',
+    day: 1,
+  },
 ];
