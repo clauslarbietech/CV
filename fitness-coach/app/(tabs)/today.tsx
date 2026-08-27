@@ -151,6 +151,8 @@ export default function MyStuffScreen() {
           Choose a track to start. Notes, chat, and meds live in the Notes tab.
         </Text>
 
+        <WeightGoalsCard programId={OPERATION_IRON_30.id} />
+
         <View style={styles.catalog}>
           {catalog.map((program) => (
             <HeroProgramCard
