@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ExerciseGraphic } from '@/components/workout/ExerciseGraphic';
 import { ExerciseStep } from '@/components/workout/ExerciseStep';
 import { RestTimer } from '@/components/workout/RestTimer';
+import { WorkoutFuelCard } from '@/components/nutrition/WorkoutFuelCard';
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -247,6 +248,13 @@ export default function WorkoutSessionScreen() {
             {challengeDone ? 'CHALLENGE BADGE unlocked' : `Day ${nextDay} unlocked`}
           </Text>
         </Card>
+
+        <WorkoutFuelCard
+          expressMinutes={expressMinutes ?? active.expressMinutes}
+          estimatedMinutes={day.estimatedMinutes}
+          postWorkout
+        />
+
         <AppButton
           label="Text buddy this win"
           variant="action"
@@ -329,6 +337,11 @@ export default function WorkoutSessionScreen() {
               : 'Bodyweight only. Fat loss · definition · conditioning.'}
           </Text>
         </Card>
+
+        <WorkoutFuelCard
+          expressMinutes={expressMinutes}
+          estimatedMinutes={day.estimatedMinutes}
+        />
 
         {day.extraBlocks?.map((block) => (
           <Card key={block.title} military>

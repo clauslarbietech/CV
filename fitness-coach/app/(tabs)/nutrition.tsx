@@ -144,8 +144,20 @@ export default function NutritionScreen() {
       </Text>
       <Text style={styles.subtitle}>
         Short-block meals, Everyday 16:8, and long-train plates —
-        practical fueling for regular training weeks.
+        practical fueling for regular training weeks. Each workout also opens
+        with an automatic fuel list that gets lighter on carbs/fat for short
+        sessions and fuller for longer ones.
       </Text>
+
+      <Card accentBorder>
+        <Text style={styles.kicker}>ATTACHED TO EVERY WORKOUT</Text>
+        <Text style={styles.section}>Auto nutrition by session length</Text>
+        <Text style={styles.note}>
+          ≤15 min → low carb / low fat · 16–30 min → balanced · 30+ min → more
+          carbs for energy and recovery. Open any workout briefing to see
+          today’s list.
+        </Text>
+      </Card>
 
       <FoodScanCard
         onApplyProtein={(proteinG) =>
