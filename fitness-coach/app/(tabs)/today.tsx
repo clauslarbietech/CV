@@ -233,14 +233,7 @@ export default function MyStuffScreen() {
       </Text>
       <Text style={styles.name}>Today&apos;s workout</Text>
 
-      <WeightGoalsCard
-        currentWeightKg={profile?.currentWeightKg}
-        goalWeightKg={profile?.goalWeightKg}
-        currentFrame={profile?.bodyVision?.currentFrame}
-        goalFrame={profile?.bodyVision?.goalFrame}
-        primaryGoal={profile?.primaryGoal}
-        programId={program.id}
-      />
+      <WeightGoalsCard programId={program.id} />
 
       <HeroProgramCard
         program={program}

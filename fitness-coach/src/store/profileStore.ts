@@ -33,6 +33,7 @@ interface ProfileState {
   }) => void;
   setCoachPersonality: (personality: CoachPersonality) => void;
   setSex: (sex: Sex) => void;
+  setPrimaryGoal: (goal: FitnessGoal) => void;
   setBodyVision: (args: {
     currentFrame: BodyFrameSize;
     goalFrame: BodyFrameSize;
@@ -119,6 +120,18 @@ export const useProfileStore = create<ProfileState>()(
                 profile: {
                   ...state.profile,
                   sex,
+                  updatedAt: new Date().toISOString(),
+                },
+              }
+            : state,
+        ),
+      setPrimaryGoal: (goal) =>
+        set((state) =>
+          state.profile
+            ? {
+                profile: {
+                  ...state.profile,
+                  primaryGoal: goal,
                   updatedAt: new Date().toISOString(),
                 },
               }
