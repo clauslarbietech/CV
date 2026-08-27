@@ -77,10 +77,22 @@ export type BodyFrameSize =
   | 'xxl'
   | 'plus';
 
+export interface ProgressPhotoEntry {
+  id: string;
+  uri: string;
+  capturedAt: string;
+  weightKg?: number;
+  note?: string;
+}
+
 export interface BodyVisionState {
   currentFrame: BodyFrameSize;
   goalFrame: BodyFrameSize;
   currentPhotoUri?: string | null;
+  /** Weight when vision was first set — anchors weight-linked journey. */
+  startWeightKg?: number;
+  /** Dated full-body check-ins for side-by-side comparison. */
+  photoTimeline?: ProgressPhotoEntry[];
   linkedProgramId?: string;
   updatedAt: string;
 }

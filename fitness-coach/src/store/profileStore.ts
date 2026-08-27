@@ -4,12 +4,13 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { rankFromXp } from '@/constants/xp';
 import {
+  BodyFrameSize,
   CoachPersonality,
   ExperienceLevel,
   FitnessGoal,
+  ProgressPhotoEntry,
   Sex,
   UserProfile,
-  BodyFrameSize,
 } from '@/types';
 
 interface ProfileState {
@@ -39,6 +40,12 @@ interface ProfileState {
     currentWeightKg?: number;
     goalWeightKg?: number;
   }) => void;
+  addProgressPhoto: (args: {
+    uri: string;
+    weightKg?: number;
+    note?: string;
+  }) => ProgressPhotoEntry | null;
+  removeProgressPhoto: (id: string) => void;
   addXp: (amount: number) => void;
   updateWeight: (kg: number) => void;
   resetOnboarding: () => void;
@@ -82,7 +89,7 @@ function buildProfile(args: {
 
 export const useProfileStore = create<ProfileState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       profile: null,
       quickStart: ({ userId, firstName, email }) => {
         set({
@@ -127,6 +134,29 @@ export const useProfileStore = create<ProfileState>()(
         set((state) => {
           if (!state.profile) return state;
           const now = new Date().toISOString();
+          const prev = state.profile.bodyVision;
+          const startWeightKg =
+            prev?.startWeightKg ??
+            currentWeightKg ??
+            state.profile.currentWeightKg;
+
+          let photoTimeline = prev?.photoTimeline ?? [];
+          if (currentPhotoUri) {
+            const already = photoTimeline.some((p) => p.uri === currentPhotoUri);
+            if (!already) {
+              photoTimeline = [
+                {
+                  id: `photo-${Date.now()}`,
+                  uri: currentPhotoUri,
+                  capturedAt: now,
+                  weightKg: currentWeightKg ?? state.profile.currentWeightKg,
+                  note: 'Starting check-in',
+                },
+                ...photoTimeline,
+              ].slice(0, 24);
+            }
+          }
+
           return {
             profile: {
               ...state.profile,
@@ -136,10 +166,61 @@ export const useProfileStore = create<ProfileState>()(
                 currentFrame,
                 goalFrame,
                 currentPhotoUri: currentPhotoUri ?? null,
+                startWeightKg,
+                photoTimeline,
                 linkedProgramId,
                 updatedAt: now,
               },
               updatedAt: now,
+            },
+          };
+        }),
+      addProgressPhoto: ({ uri, weightKg, note }) => {
+        const profile = get().profile;
+        if (!profile?.bodyVision) return null;
+        const now = new Date().toISOString();
+        const entry: ProgressPhotoEntry = {
+          id: `photo-${Date.now()}`,
+          uri,
+          capturedAt: now,
+          weightKg: weightKg ?? profile.currentWeightKg,
+          note,
+        };
+        set({
+          profile: {
+            ...profile,
+            currentWeightKg: weightKg ?? profile.currentWeightKg,
+            bodyVision: {
+              ...profile.bodyVision,
+              currentPhotoUri: uri,
+              photoTimeline: [entry, ...(profile.bodyVision.photoTimeline ?? [])].slice(
+                0,
+                24,
+              ),
+              updatedAt: now,
+            },
+            updatedAt: now,
+          },
+        });
+        return entry;
+      },
+      removeProgressPhoto: (id) =>
+        set((state) => {
+          if (!state.profile?.bodyVision) return state;
+          const timeline = (state.profile.bodyVision.photoTimeline ?? []).filter(
+            (p) => p.id !== id,
+          );
+          const latest = timeline[0];
+          return {
+            profile: {
+              ...state.profile,
+              bodyVision: {
+                ...state.profile.bodyVision,
+                photoTimeline: timeline,
+                currentPhotoUri: latest?.uri ?? null,
+                updatedAt: new Date().toISOString(),
+              },
+              updatedAt: new Date().toISOString(),
             },
           };
         }),

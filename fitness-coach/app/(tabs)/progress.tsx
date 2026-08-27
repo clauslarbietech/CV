@@ -5,6 +5,7 @@ import { DayCompletionStrip } from '@/components/charts/DayCompletionStrip';
 import { MissionDashboard } from '@/components/charts/MissionDashboard';
 import { BodyVisionCard } from '@/components/body/BodyVisionCard';
 import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
+import { ProgressPhotoTimeline } from '@/components/body/ProgressPhotoTimeline';
 import { ResearchMilestonesCard } from '@/components/progress/ResearchMilestonesCard';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
@@ -72,6 +73,7 @@ export default function ProgressScreen() {
           goalFrame={bodyVision.goalFrame}
           currentWeightKg={profile?.currentWeightKg}
           goalWeightKg={profile?.goalWeightKg}
+          startWeightKg={bodyVision.startWeightKg}
           currentPhotoUri={bodyVision.currentPhotoUri}
           programProgress={programProgress}
           programLabel={program.name}
@@ -82,6 +84,10 @@ export default function ProgressScreen() {
           programName={program.name}
         />
       )}
+
+      {bodyVision ? (
+        <ProgressPhotoTimeline photos={bodyVision.photoTimeline ?? []} />
+      ) : null}
 
       <MissionDashboard
         compact

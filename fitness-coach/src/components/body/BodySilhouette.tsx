@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
-import { INTRO_BODY_IMAGES, IntroBodySex } from '@/constants/intro';
-import { frameScale } from '@/constants/bodyVision';
+import { BodyFrameSvg } from '@/components/body/BodyFrameSvg';
+import { BODY_FRAME_LABELS, frameScale } from '@/constants/bodyVision';
 import { BodyFrameSize, Sex } from '@/types';
 import { useTheme, radii, typography } from '@/theme';
 
@@ -11,26 +11,28 @@ type BodySilhouetteProps = {
   frame: BodyFrameSize;
   /** Override frame scale — e.g. interpolated journey progress. */
   scaleOverride?: number;
+  /** Override torso width for dedicated SVG journey blend. */
+  torsoOverride?: number;
   photoUri?: string | null;
   label?: string;
   compact?: boolean;
+  /** Prefer photo when set; otherwise dedicated frame graphic. */
+  preferGraphic?: boolean;
 };
-
-function resolveSex(sex?: Sex | null): IntroBodySex {
-  return sex === 'female' ? 'female' : 'male';
-}
 
 export function BodySilhouette({
   sex,
   frame,
   scaleOverride,
+  torsoOverride,
   photoUri,
   label,
   compact = false,
+  preferGraphic = false,
 }: BodySilhouetteProps) {
   const { colors } = useTheme();
-  const bodySex = resolveSex(sex);
   const scale = scaleOverride ?? frameScale(frame);
+  const showPhoto = Boolean(photoUri) && !preferGraphic;
 
   const styles = useMemo(
     () =>
@@ -47,13 +49,13 @@ export function BodySilhouette({
           backgroundColor: '#070707',
           overflow: 'hidden',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'center',
         },
         figureWrap: {
-          width: '78%',
-          height: '92%',
+          width: '90%',
+          height: '94%',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'center',
         },
         image: {
           width: '100%',
@@ -75,29 +77,37 @@ export function BodySilhouette({
     [colors, compact],
   );
 
-  const source: ImageSourcePropType | { uri: string } = photoUri
-    ? { uri: photoUri }
-    : INTRO_BODY_IMAGES[bodySex];
-
   return (
     <View style={styles.wrap}>
       {label ? <Text style={styles.caption}>{label}</Text> : null}
       <View style={styles.stage}>
-        <View
-          style={[
-            styles.figureWrap,
-            { transform: [{ scaleX: scale }, { scaleY: scale }] },
-          ]}
-        >
-          <Image
-            source={source}
-            style={styles.image}
-            resizeMode="contain"
-            accessibilityLabel={label ?? 'Body reference'}
-          />
-        </View>
+        {showPhoto && photoUri ? (
+          <View
+            style={[
+              styles.figureWrap,
+              { transform: [{ scaleX: scale }, { scaleY: scale }] },
+            ]}
+          >
+            <Image
+              source={{ uri: photoUri }}
+              style={styles.image}
+              resizeMode="cover"
+              accessibilityLabel={label ?? 'Body photo'}
+            />
+          </View>
+        ) : (
+          <View style={styles.figureWrap}>
+            <BodyFrameSvg
+              frame={frame}
+              torsoOverride={torsoOverride}
+              sex={sex}
+              width={compact ? 100 : 120}
+              height={compact ? 168 : 200}
+            />
+          </View>
+        )}
       </View>
-      {!photoUri ? <Text style={styles.sizeTag}>{frame.toUpperCase()}</Text> : null}
+      <Text style={styles.sizeTag}>{BODY_FRAME_LABELS[frame]}</Text>
     </View>
   );
 }

@@ -197,8 +197,8 @@ export function BodyVisionSetup({
       ) : null}
 
       <Text style={styles.note}>
-        Tip: retake or re-upload your photo every few weeks on the Progress tab
-        to compare against this starting point.
+        Tip: add dated full-body check-ins on the Progress tab. Journey uses
+        both completed missions and weight movement toward your goal.
       </Text>
 
       <AppButton

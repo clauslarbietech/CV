@@ -6,6 +6,9 @@ import { Card } from '@/components/ui/Card';
 import {
   BODY_FRAME_LABELS,
   interpolateBodyScale,
+  interpolateBodyTorso,
+  journeyProgress,
+  nearestFrameFromTorso,
 } from '@/constants/bodyVision';
 import { BodyFrameSize } from '@/types';
 import { useTheme, spacing, typography } from '@/theme';
@@ -16,6 +19,7 @@ type BodyVisionCardProps = {
   goalFrame: BodyFrameSize;
   currentWeightKg?: number;
   goalWeightKg?: number;
+  startWeightKg?: number;
   currentPhotoUri?: string | null;
   programProgress: number;
   programLabel?: string;
@@ -27,12 +31,29 @@ export function BodyVisionCard({
   goalFrame,
   currentWeightKg,
   goalWeightKg,
+  startWeightKg,
   currentPhotoUri,
   programProgress,
   programLabel,
 }: BodyVisionCardProps) {
   const { colors } = useTheme();
-  const journeyScale = interpolateBodyScale(currentFrame, goalFrame, programProgress);
+  const journey = journeyProgress({
+    programProgress,
+    startWeightKg: startWeightKg ?? currentWeightKg,
+    currentWeightKg,
+    goalWeightKg,
+  });
+  const journeyScale = interpolateBodyScale(
+    currentFrame,
+    goalFrame,
+    journey.progress,
+  );
+  const journeyTorso = interpolateBodyTorso(
+    currentFrame,
+    goalFrame,
+    journey.progress,
+  );
+  const journeyFrame = nearestFrameFromTorso(journeyTorso);
 
   const styles = useMemo(
     () =>
@@ -74,25 +95,51 @@ export function BodyVisionCard({
           flexDirection: 'row',
           justifyContent: 'space-between',
           marginTop: spacing.sm,
+          flexWrap: 'wrap',
+          gap: spacing.xs,
         },
         weight: {
           ...typography.caption,
           color: colors.textMuted,
         },
+        bars: {
+          width: '100%',
+          gap: 6,
+          marginTop: spacing.xs,
+        },
+        barTrack: {
+          height: 8,
+          borderRadius: 4,
+          backgroundColor: colors.borderSubtle,
+          overflow: 'hidden',
+        },
+        barFill: {
+          height: '100%',
+          backgroundColor: colors.accent,
+        },
+        barLabel: {
+          ...typography.caption,
+          color: colors.textMuted,
+          fontSize: 11,
+        },
       }),
     [colors],
   );
 
-  const pct = Math.round(programProgress * 100);
+  const pct = Math.round(journey.progress * 100);
+  const programPct = Math.round(programProgress * 100);
+  const weightPct =
+    journey.weightShare != null ? Math.round(journey.weightShare * 100) : null;
 
   return (
     <Card accentBorder>
       <Text style={styles.kicker}>BODY VISION</Text>
       <Text style={styles.title}>Now → Goal</Text>
       <Text style={styles.body}>
-        Pick silhouettes or a photo for where you are, and a target frame for
-        where you&apos;re headed. Your journey view blends toward the goal as
-        you complete missions{programLabel ? ` on ${programLabel}` : ''}.
+        Dedicated frame graphics for Small–Plus, plus your photo when uploaded.
+        Journey blends program days
+        {weightPct != null ? ' and scale movement' : ''}
+        {programLabel ? ` on ${programLabel}` : ''}.
       </Text>
 
       <View style={styles.row}>
@@ -106,14 +153,23 @@ export function BodyVisionCard({
           />
         </View>
         <View style={styles.col}>
-          <BodySilhouette sex={sex} frame={goalFrame} label="Goal" compact />
+          <BodySilhouette
+            sex={sex}
+            frame={goalFrame}
+            label="Goal"
+            compact
+            preferGraphic
+          />
         </View>
       </View>
 
-      {(currentWeightKg != null || goalWeightKg != null) && (
+      {(currentWeightKg != null || goalWeightKg != null || startWeightKg != null) && (
         <View style={styles.weightRow}>
           <Text style={styles.weight}>
-            Weight now: {currentWeightKg != null ? `${currentWeightKg} kg` : '—'}
+            Start: {startWeightKg != null ? `${startWeightKg} kg` : '—'}
+          </Text>
+          <Text style={styles.weight}>
+            Now: {currentWeightKg != null ? `${currentWeightKg} kg` : '—'}
           </Text>
           <Text style={styles.weight}>
             Target: {goalWeightKg != null ? `${goalWeightKg} kg` : '—'}
@@ -121,18 +177,36 @@ export function BodyVisionCard({
         </View>
       )}
 
+      <View style={styles.bars}>
+        <Text style={styles.barLabel}>Program · {programPct}%</Text>
+        <View style={styles.barTrack}>
+          <View style={[styles.barFill, { width: `${programPct}%` }]} />
+        </View>
+        {weightPct != null ? (
+          <>
+            <Text style={styles.barLabel}>Weight toward goal · {weightPct}%</Text>
+            <View style={styles.barTrack}>
+              <View style={[styles.barFill, { width: `${weightPct}%` }]} />
+            </View>
+          </>
+        ) : null}
+      </View>
+
       <View style={styles.journeyBox}>
-        <Text style={styles.journeyLabel}>Journey · {pct}%</Text>
+        <Text style={styles.journeyLabel}>
+          Journey · {pct}% · {journey.source}
+        </Text>
         <BodySilhouette
           sex={sex}
-          frame={currentFrame}
+          frame={journeyFrame}
           scaleOverride={journeyScale}
-          photoUri={currentPhotoUri && programProgress > 0 ? currentPhotoUri : null}
+          torsoOverride={journeyTorso}
+          preferGraphic
           compact
         />
         <Text style={styles.journeyMeta}>
           {BODY_FRAME_LABELS[currentFrame]} → {BODY_FRAME_LABELS[goalFrame]}
-          {pct > 0 ? ` · ${pct}% of program complete` : ' · start your first mission'}
+          {` · nearest frame now: ${BODY_FRAME_LABELS[journeyFrame]}`}
         </Text>
       </View>
     </Card>
