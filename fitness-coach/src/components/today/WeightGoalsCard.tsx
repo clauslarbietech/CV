@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { BODY_FRAME_LABELS, defaultGoalFrame } from '@/constants/bodyVision';
 import { INTRO_GOALS } from '@/constants/intro';
 import { useProfileStore } from '@/store/profileStore';
-import { BodyFrameSize, FitnessGoal } from '@/types';
+import { BodyFrameSize, FitnessGoal, Sex } from '@/types';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
 type WeightGoalsCardProps = {
@@ -35,6 +35,7 @@ export function WeightGoalsCard({
   const profile = useProfileStore((s) => s.profile);
   const setBodyVision = useProfileStore((s) => s.setBodyVision);
   const setPrimaryGoal = useProfileStore((s) => s.setPrimaryGoal);
+  const setSex = useProfileStore((s) => s.setSex);
 
   const hasSetup = Boolean(
     profile?.currentWeightKg != null ||
@@ -63,6 +64,9 @@ export function WeightGoalsCard({
   );
   const [goal, setGoal] = useState<FitnessGoal>(
     profile?.primaryGoal ?? 'general_fitness',
+  );
+  const [sex, setSexLocal] = useState<Sex>(
+    profile?.sex === 'female' ? 'female' : 'male',
   );
 
   const styles = useMemo(
@@ -116,6 +120,11 @@ export function WeightGoalsCard({
           flexWrap: 'wrap',
           gap: spacing.xs,
         },
+        previewHint: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginTop: spacing.sm,
+        },
         previewRow: {
           flexDirection: 'row',
           gap: spacing.sm,
@@ -140,6 +149,7 @@ export function WeightGoalsCard({
 
   const save = () => {
     if (!currentFrame || !goalFrame) return;
+    setSex(sex);
     setPrimaryGoal(goal);
     setBodyVision({
       currentFrame,
@@ -257,6 +267,24 @@ export function WeightGoalsCard({
         </View>
       </View>
 
+      <Text style={styles.section}>Body guide</Text>
+      <Text style={styles.body}>
+        Pick Men or Women — the preview uses a human figure that gets wider or
+        leaner as you change frames.
+      </Text>
+      <View style={styles.chips}>
+        <OptionChip
+          label="Men"
+          selected={sex === 'male'}
+          onPress={() => setSexLocal('male')}
+        />
+        <OptionChip
+          label="Women"
+          selected={sex === 'female'}
+          onPress={() => setSexLocal('female')}
+        />
+      </View>
+
       <BodyFramePicker
         title="How you look now"
         hint="Pick the closest frame — Small through Plus."
@@ -275,25 +303,19 @@ export function WeightGoalsCard({
       />
 
       {currentFrame && goalFrame ? (
-        <View style={styles.previewRow}>
-          <View style={styles.previewCol}>
-            <BodySilhouette
-              sex={profile?.sex}
-              frame={currentFrame}
-              label="Now"
-              compact
-            />
+        <>
+          <Text style={styles.previewHint}>
+            Now vs Goal — same person guide, different size
+          </Text>
+          <View style={styles.previewRow}>
+            <View style={styles.previewCol}>
+              <BodySilhouette sex={sex} frame={currentFrame} label="Now" compact />
+            </View>
+            <View style={styles.previewCol}>
+              <BodySilhouette sex={sex} frame={goalFrame} label="Goal" compact />
+            </View>
           </View>
-          <View style={styles.previewCol}>
-            <BodySilhouette
-              sex={profile?.sex}
-              frame={goalFrame}
-              label="Goal"
-              compact
-              preferGraphic
-            />
-          </View>
-        </View>
+        </>
       ) : null}
 
       <AppButton

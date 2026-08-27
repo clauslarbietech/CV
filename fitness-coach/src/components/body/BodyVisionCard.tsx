@@ -158,7 +158,6 @@ export function BodyVisionCard({
             frame={goalFrame}
             label="Goal"
             compact
-            preferGraphic
           />
         </View>
       </View>
@@ -201,7 +200,7 @@ export function BodyVisionCard({
           frame={journeyFrame}
           scaleOverride={journeyScale}
           torsoOverride={journeyTorso}
-          preferGraphic
+          forceSvg
           compact
         />
         <Text style={styles.journeyMeta}>

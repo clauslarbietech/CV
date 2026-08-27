@@ -20,26 +20,26 @@ export const BODY_FRAME_LABELS: Record<BodyFrameSize, string> = {
   plus: 'Plus',
 };
 
-/** Visual scale for silhouette preview (baseline = large). */
+/** Visual scale for photo/human preview (baseline = large). Wider spread so sizes read clearly. */
 export const BODY_FRAME_SCALE: Record<BodyFrameSize, number> = {
-  small: 0.72,
-  mid: 0.82,
-  medium: 0.9,
+  small: 0.62,
+  mid: 0.74,
+  medium: 0.86,
   large: 1,
-  xl: 1.08,
-  xxl: 1.16,
-  plus: 1.24,
+  xl: 1.14,
+  xxl: 1.28,
+  plus: 1.42,
 };
 
 /** Relative torso width used by dedicated frame graphics. */
 export const BODY_FRAME_TORSO: Record<BodyFrameSize, number> = {
-  small: 0.78,
-  mid: 0.86,
-  medium: 0.93,
+  small: 0.62,
+  mid: 0.76,
+  medium: 0.88,
   large: 1,
-  xl: 1.08,
-  xxl: 1.16,
-  plus: 1.26,
+  xl: 1.18,
+  xxl: 1.36,
+  plus: 1.55,
 };
 
 export function frameScale(size: BodyFrameSize): number {
