@@ -99,7 +99,7 @@ export const useSquadStore = create<SquadState>()(
       joinBuddy: ({ callsign, inviteCode, motto }) => {
         const name = callsign.trim();
         const code = inviteCode.trim().toUpperCase();
-        if (!name) return { ok: false, error: 'Enter their callsign.' };
+        if (!name) return { ok: false, error: 'Enter their nickname.' };
         if (code.length < 4) {
           return { ok: false, error: 'Enter the squad invite code they shared.' };
         }
@@ -108,7 +108,7 @@ export const useSquadStore = create<SquadState>()(
           return { ok: false, error: 'That is your code — ask your buddy for theirs.' };
         }
         if (get().buddies.some((b) => b.callsign.toLowerCase() === name.toLowerCase())) {
-          return { ok: false, error: 'That callsign is already in your squad.' };
+          return { ok: false, error: 'That nickname is already linked.' };
         }
         set((state) => ({
           buddies: [
