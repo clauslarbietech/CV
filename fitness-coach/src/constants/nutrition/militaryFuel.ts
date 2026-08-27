@@ -93,7 +93,7 @@ export type FuelTrack = {
 /** Default plan: 16:8 intermittent fasting + tactical-style plates */
 export const TACTICAL_FASTING_PLAN: DayMealPlan = {
   id: 'tactical-16-8',
-  label: 'Tactical 16:8 Fuel',
+  label: 'Everyday 16:8 Fuel',
   focus: 'Fat loss + training performance (recommended default)',
   fastingWindow: '8:00 PM → 12:00 PM (16 hours)',
   eatingWindow: '12:00 PM → 8:00 PM (8 hours)',
@@ -109,12 +109,12 @@ export const TACTICAL_FASTING_PLAN: DayMealPlan = {
       ],
     },
     {
-      name: 'Pre-mission snack (optional, 30–60 min before workout)',
+      name: 'Pre-workout snack (optional, 30–60 min before workout)',
       caloriesApprox: 150,
       items: ['Banana or rice cakes', 'Small protein (turkey / whey)', 'Water'],
     },
     {
-      name: 'Post-mission plate (within 45 min)',
+      name: 'Post-workout plate (within 45 min)',
       caloriesApprox: 550,
       items: [
         'Lean protein (chicken, tuna, turkey, tofu)',
@@ -144,7 +144,7 @@ export const TACTICAL_FASTING_PLAN: DayMealPlan = {
 /** Short-term (≤14 days): tight fueling for Iron 14 / rapid blocks */
 export const SHORT_TERM_MILITARY_FUEL: DayMealPlan = {
   id: 'short-term-ops',
-  label: 'Short-Term Ops Fuel (≤14 days)',
+  label: 'Short-Block Fuel (≤14 days)',
   focus: 'High adherence + training energy for Iron 14 / sprint blocks',
   fastingWindow: 'Optional 14:10 (lighter than 16:8 on hard days)',
   eatingWindow: '10:00 AM → 8:00 PM preferred on mission days',
@@ -159,7 +159,7 @@ export const SHORT_TERM_MILITARY_FUEL: DayMealPlan = {
       ],
     },
     {
-      name: 'Pre-mission (30–60 min out)',
+      name: 'Pre-workout (30–60 min out)',
       caloriesApprox: 180,
       items: [
         'Banana or pretzels (~25–40g carbs)',
@@ -168,7 +168,7 @@ export const SHORT_TERM_MILITARY_FUEL: DayMealPlan = {
       ],
     },
     {
-      name: 'Post-mission recovery (ASAP, ≤2 hrs)',
+      name: 'Post-workout recovery (ASAP, ≤2 hrs)',
       caloriesApprox: 500,
       items: [
         '≥50g carbs (rice, potato, fruit, bread)',
@@ -199,7 +199,7 @@ export const SHORT_TERM_MILITARY_FUEL: DayMealPlan = {
 /** Long-term (8–12+ weeks): warfighter-style sustaining fuel */
 export const LONG_TERM_WARFIGHTER_FUEL: DayMealPlan = {
   id: 'long-train-warfighter',
-  label: 'Long-Train Warfighter Fuel (8–12+ weeks)',
+  label: 'Long-Train Everyday Fuel (8–12+ weeks)',
   focus: 'Sustainable readiness — performance first, fat loss second',
   fastingWindow: 'Optional 12:12 or none — consistency beats aggressive fasting',
   eatingWindow: '3–4 meals across the day aligned to PT',
@@ -251,7 +251,7 @@ export const LONG_TERM_WARFIGHTER_FUEL: DayMealPlan = {
   hydration:
     'Daily hydration habit > hero liters. Scale up in heat. Track sweat losses on long marches / dense circuits.',
   notes: [
-    'Mirrors HPRC Warfighter / SOF readiness: balanced daily pattern, nutrient timing around hard sessions.',
+    'Balanced daily pattern with nutrient timing around hard sessions.',
     'Long programs (Iron Long Train / 12-week blocks) need enough carbs to protect performance — chronic low fuel stalls progress.',
     'Aim gradual fat loss (~0.5–1% body weight/week max) if recomposition is a goal; protect sleep and protein.',
     'Not medical advice — adapt for injuries, meds, and professional guidance.',
@@ -280,7 +280,7 @@ export const FUEL_TRACKS: FuelTrack[] = [
   },
   {
     id: 'tactical',
-    label: 'Tactical 16:8',
+    label: 'Everyday 16:8',
     horizon: 'Ongoing default',
     summary:
       'Intermittent fasting window plus tactical plates — best everyday default for fat loss with training.',
@@ -301,7 +301,7 @@ export const FUEL_TRACKS: FuelTrack[] = [
     label: 'Long train',
     horizon: '8–12+ weeks',
     summary:
-      'Warfighter sustaining fuel: performance and recovery first so a multi-month ramp doesn’t stall.',
+      'Sustaining fuel: performance and recovery first so a multi-month ramp doesn’t stall.',
     whenToUse: [
       'OPERATION LONG TRAIN (12 weeks)',
       'Post–Iron 30 continuation',
@@ -348,7 +348,7 @@ export const SARDINE_EGG_ELECTROLYTE_5DAY_LESSON: NutritionLesson = {
     '2–3 meals/day built from sardines + eggs + low-carb vegetables',
     'Hydration baseline: water + broth / electrolytes (no mega-dosing)',
     'Aim sodium/potassium/magnesium from food first; supplement only if needed',
-    'After Day 5, transition to Short-Term Ops or Tactical 16:8 immediately',
+    'After Day 5, transition to Short-Block or Everyday 16:8 immediately',
   ],
   whyItMayWork: [
     'High protein can improve fullness and simplify calorie control.',
@@ -389,7 +389,7 @@ export const SARDINE_EGG_ELECTROLYTE_5DAY_LESSON: NutritionLesson = {
 export const VIRAL_MILITARY_DIET_DAYS: DayMealPlan[] = [
   {
     id: 'viral-day-1',
-    label: 'Viral Military Diet · Day 1 (~1,400 kcal)',
+    label: 'Viral low-cal diet · Day 1 (~1,400 kcal)',
     focus: 'Short-term calorie cut (unofficial internet plan)',
     fastingWindow: 'No formal fast — 3 meals only, no snacks',
     eatingWindow: 'Breakfast · Lunch · Dinner',
@@ -414,12 +414,12 @@ export const VIRAL_MILITARY_DIET_DAYS: DayMealPlan[] = [
     notes: [
       'Source: Healthline / Medical News Today summaries of the viral “Military Diet”.',
       'NOT used by or affiliated with the U.S. military.',
-      'Use only short-term. Prefer Short-Term Ops or Tactical 16:8 on training days.',
+      'Use only short-term. Prefer Short-Block or Everyday 16:8 on training days.',
     ],
   },
   {
     id: 'viral-day-2',
-    label: 'Viral Military Diet · Day 2 (~1,200 kcal)',
+    label: 'Viral low-cal diet · Day 2 (~1,200 kcal)',
     focus: 'Short-term calorie cut (unofficial internet plan)',
     fastingWindow: 'No formal fast — 3 meals only',
     eatingWindow: 'Breakfast · Lunch · Dinner',
@@ -448,7 +448,7 @@ export const VIRAL_MILITARY_DIET_DAYS: DayMealPlan[] = [
   },
   {
     id: 'viral-day-3',
-    label: 'Viral Military Diet · Day 3 (~1,100 kcal)',
+    label: 'Viral low-cal diet · Day 3 (~1,100 kcal)',
     focus: 'Short-term calorie cut (unofficial internet plan)',
     fastingWindow: 'No formal fast — 3 meals only',
     eatingWindow: 'Breakfast · Lunch · Dinner',
@@ -466,7 +466,7 @@ export const VIRAL_MILITARY_DIET_DAYS: DayMealPlan[] = [
     hydration: 'Water freely. Black coffee/tea OK.',
     notes: [
       'After day 3, return to ~1,500+ kcal balanced eating for 4 days (viral protocol).',
-      'Prefer Short-Term Ops or Tactical 16:8 with training blocks.',
+      'Prefer Short-Block or Everyday 16:8 with training blocks.',
     ],
   },
 ];

@@ -168,7 +168,7 @@ export default function WorkoutSessionScreen() {
     return (
       <Screen>
         <EmptyState
-          title="Mission unavailable"
+          title="Workout unavailable"
           description="Could not load this workout day."
           actionLabel="Back to Today"
           onAction={() => router.replace('/(tabs)/today')}
@@ -182,7 +182,7 @@ export default function WorkoutSessionScreen() {
       <Screen>
         <EmptyState
           title="Not enrolled"
-          description="Start OPERATION IRON 30 from the Workouts tab."
+          description="Start IRON 30 from the Workouts tab."
           actionLabel="Go to Workouts"
           onAction={() => router.replace('/(tabs)/workouts')}
         />
@@ -231,7 +231,7 @@ export default function WorkoutSessionScreen() {
         </Text>
         <Card military accentBorder>
           <Text style={styles.stat}>
-            {completedCount} / {program.durationDays} Missions
+            {completedCount} / {program.durationDays} Workouts
           </Text>
           <Text style={styles.stat}>Duration: {formatClock(active.elapsedSec)}</Text>
           <Text style={styles.stat}>Sets logged: {active.exerciseLogs.length}</Text>
@@ -285,12 +285,12 @@ export default function WorkoutSessionScreen() {
         <Card military accentBorder>
           <Text style={styles.sectionLabel}>
             {expressMinutes
-              ? 'EXPRESS MILITARY STRATEGY'
+              ? 'EXPRESS WORKOUT STRATEGY'
               : 'NO EQUIPMENT MISSION'}
           </Text>
           <Text style={styles.body}>
             {expressMinutes
-              ? 'Time-boxed tactical density. Bodyweight only — keep the streak when you are short on time.'
+              ? 'Time-boxed density. Bodyweight only — keep the streak when you are short on time.'
               : 'Bodyweight only. Fat loss · definition · conditioning.'}
           </Text>
         </Card>
@@ -442,8 +442,8 @@ export default function WorkoutSessionScreen() {
     <Screen>
       <EmptyState
         title="Session error"
-        description="Could not render this mission phase."
-        actionLabel="Restart mission"
+        description="Could not render this workout phase."
+        actionLabel="Restart workout"
         onAction={() => {
           clearSession();
           resumeOrBegin({ programId: program.id, day, difficulty: tier });

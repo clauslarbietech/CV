@@ -91,7 +91,7 @@ export default function ProgressScreen() {
 
       <MissionDashboard
         compact
-        programLabel={`${program.name} · ${completed}/${program.durationDays} missions`}
+        programLabel={`${program.name} · ${completed}/${program.durationDays} workouts`}
         programProgress={programProgress}
         currentDay={enrollment?.currentDay ?? 1}
         totalDays={program.durationDays}

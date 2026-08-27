@@ -54,18 +54,19 @@ export type ProgramCategory =
   | 'strength'
   | 'endurance';
 
+/** Everyday fitness level (legacy military rank names may still exist in storage). */
 export type MilitaryRank =
-  | 'Recruit'
-  | 'Private'
-  | 'Corporal'
-  | 'Sergeant'
-  | 'Staff Sergeant'
-  | 'Master Sergeant'
-  | 'Lieutenant'
-  | 'Captain'
-  | 'Major'
-  | 'Colonel'
-  | 'Elite';
+  | 'Starter'
+  | 'Active'
+  | 'Steady'
+  | 'Strong'
+  | 'Dedicated'
+  | 'Advanced'
+  | 'Focused'
+  | 'Committed'
+  | 'Powerhouse'
+  | 'Champion'
+  | 'Peak';
 
 /** Visual body frame — not clothing size; used for Now/Goal silhouettes. */
 export type BodyFrameSize =

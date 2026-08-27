@@ -143,8 +143,8 @@ export default function NutritionScreen() {
         Eat to <Text style={styles.accent}>Shred</Text>
       </Text>
       <Text style={styles.subtitle}>
-        Short-term ops fuel, Tactical 16:8, and long-train warfighter plates —
-        researched for military-style blocks.
+        Short-block meals, Everyday 16:8, and long-train plates —
+        practical fueling for regular training weeks.
       </Text>
 
       <FoodScanCard
@@ -253,10 +253,10 @@ export default function NutritionScreen() {
         ))}
       </Card>
 
-      <Text style={styles.section}>Optional 3-day viral “Military Diet”</Text>
+      <Text style={styles.section}>Optional 3-day viral low-calorie diet</Text>
       <Text style={styles.subtitle}>
-        Short low-calorie internet plan (NOT official military nutrition). Use
-        sparingly — prefer Short-Term Ops or Tactical 16:8 on hard training days.
+        Short low-calorie internet plan (not a recommended training diet). Use
+        sparingly — prefer Short-Block or Everyday 16:8 on hard training days.
       </Text>
       {VIRAL_MILITARY_DIET_DAYS.map((day) => (
         <Card key={day.id} style={styles.viralCard}>

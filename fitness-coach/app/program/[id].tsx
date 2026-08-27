@@ -15,10 +15,12 @@ import { Screen } from '@/components/ui/Screen';
 import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
 import { ProgramMonthGrid } from '@/components/workout/ProgramMonthGrid';
 import { ProgramStartSteps } from '@/components/workout/ProgramStartSteps';
+import { difficultyLabel } from '@/constants/displayLabels';
 import { getProgramById } from '@/constants/programs';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
+import { DifficultyTier } from '@/types';
 
 const HERO_BY_ID: Record<string, number> = {
   'operation-iron-30': require('../../assets/exercises/burpee.png'),
@@ -194,8 +196,8 @@ export default function ProgramDetailScreen() {
       </Text>
       <Text style={styles.title}>{program.name}</Text>
       <Text style={styles.body}>
-        Welcome. Follow the mission calendar in order — short blocks or the full
-        long train. Complete Step 1 & 2 below, then start your transformation.
+        Welcome. Follow the workout calendar in order — short blocks or the full
+        long train. Complete the setup steps below, then start your plan.
       </Text>
 
       <View style={styles.metaRow}>
@@ -209,11 +211,11 @@ export default function ProgramDetailScreen() {
         steps={[
           {
             number: 1,
-            title: 'Link your squad',
+            title: 'Invite a buddy',
             actions: [
               {
                 id: 'squad',
-                label: 'Open Squad · buddy profiles',
+                label: 'Open Coach · buddy profiles',
                 icon: 'people',
                 onPress: () => router.push('/(tabs)/coach'),
               },
@@ -229,19 +231,19 @@ export default function ProgramDetailScreen() {
             number: 2,
             title:
               program.durationDays >= 60
-                ? 'Long-train fuel plan'
+                ? 'Long-train meal plan'
                 : program.durationDays <= 14
-                  ? 'Short-term ops fuel'
-                  : 'Tactical 16:8 diet',
+                  ? 'Short-block meal plan'
+                  : 'Everyday 16:8 meal plan',
             actions: [
               {
                 id: 'diet',
                 label:
                   program.durationDays >= 60
-                    ? 'Open Long-Train Warfighter Fuel'
+                    ? 'Open long-train nutrition'
                     : program.durationDays <= 14
-                      ? 'Open Short-Term Ops Fuel'
-                      : 'Create your fuel plan',
+                      ? 'Open short-block nutrition'
+                      : 'Create your meal plan',
                 icon: 'restaurant',
                 onPress: () => router.push('/(tabs)/nutrition'),
               },
@@ -269,7 +271,7 @@ export default function ProgramDetailScreen() {
         <>
           <Text style={styles.section}>Difficulty</Text>
           <View style={styles.tiers}>
-            {(['recruit', 'soldier', 'elite'] as const).map((item) => (
+            {(['recruit', 'soldier', 'elite'] as DifficultyTier[]).map((item) => (
               <Pressable
                 key={item}
                 onPress={() => {
@@ -284,7 +286,7 @@ export default function ProgramDetailScreen() {
                     tier === item && styles.tierTextActive,
                   ]}
                 >
-                  {item.toUpperCase()}
+                  {difficultyLabel(item).toUpperCase()}
                 </Text>
               </Pressable>
             ))}
@@ -311,7 +313,7 @@ export default function ProgramDetailScreen() {
             </Pressable>
           ) : null}
 
-          <Text style={styles.section}>Mission calendar</Text>
+          <Text style={styles.section}>Workout calendar</Text>
           <ProgramMonthGrid
             totalDays={program.durationDays}
             daysPerMonth={program.durationDays >= 60 ? 28 : 30}

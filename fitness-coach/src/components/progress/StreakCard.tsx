@@ -51,7 +51,7 @@ export function StreakCard({ streaks, xp, rank }: StreakCardProps) {
       </View>
       <View style={styles.row}>
         <Stat label="XP" value={`${xp}`} styles={styles} />
-        <Stat label="Rank" value={rank} styles={styles} />
+        <Stat label="Level" value={rank} styles={styles} />
       </View>
     </Card>
   );

@@ -41,19 +41,19 @@ export const EXPRESS_OPTIONS: Array<{
   {
     budget: 8,
     label: '8 MIN',
-    strategy: 'Tactical Tabata Blast',
+    strategy: 'Tabata Blast',
     description: '2 rounds · key compound moves · short rest (Tabata-inspired density).',
   },
   {
     budget: 10,
     label: '10 MIN',
-    strategy: 'Combat Express',
-    description: '3 hard rounds · push / squat / burpee focus · military HIIT density.',
+    strategy: 'Quick Circuit',
+    description: '3 hard rounds · push / squat / burpee focus · dense HIIT.',
   },
   {
     budget: 15,
     label: '15 MIN',
-    strategy: 'Condensed PRT Assault',
+    strategy: 'Condensed Full Circuit',
     description: '3–4 rounds · fuller stimulus · Army condensed-session style.',
   },
 ];
@@ -175,14 +175,14 @@ export function toExpressMission(
     coachMessage:
       budget <= 10
         ? 'Military density strategy: shorter rest, high effort, keep the mission alive.'
-        : 'Condensed PRT-style assault. Enough stimulus to count — then get back to your day.',
+        : 'Condensed full circuit. Enough stimulus to count — then get back to your day.',
     extraBlocks: [
       {
         title: 'Express protocol',
         description:
           budget === 8
             ? 'Inspired by Tabata density (short rest). Push hard on every set.'
-            : 'Inspired by Army condensed PRT / tactical HIIT when full sessions aren’t possible.',
+            : 'Inspired by short HIIT templates when full sessions aren’t possible.',
       },
     ],
   };

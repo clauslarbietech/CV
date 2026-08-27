@@ -2,10 +2,10 @@ import { WorkoutProgram } from '@/types';
 
 export const OPERATION_IRON_14: WorkoutProgram = {
   id: 'operation-iron-14',
-  name: 'OPERATION IRON 14',
+  name: 'IRON 14',
   slug: 'operation-iron-14',
-  tagline: '14 Days. No Excuses. Build Strength. Burn Fat. Finish the Mission.',
-  subtitle: '14-Day Military Calisthenics Challenge',
+  tagline: '14 days. No excuses — just short, doable bodyweight sessions.',
+  subtitle: '14-Day Bodyweight Kickstart',
   categories: ['fat_burn', 'muscle', 'conditioning', 'discipline', 'calisthenics'],
   durationDays: 14,
   equipment: 'Bodyweight',
@@ -16,15 +16,15 @@ export const OPERATION_IRON_14: WorkoutProgram = {
     'Improve cardiovascular conditioning',
     'Build and retain muscle',
     'Increase muscular endurance',
-    'Improve discipline',
+    'Build consistency',
     'Increase core strength',
   ],
   featured: true,
-  militaryThemed: true,
+  militaryThemed: false,
   days: [
     {
       day: 1,
-      title: 'BASIC TRAINING',
+      title: 'FOUNDATION DAY',
       focus: ['Full body', 'Foundation'],
       rounds: 4,
       restSec: { min: 60, max: 90 },
@@ -75,7 +75,7 @@ export const OPERATION_IRON_14: WorkoutProgram = {
     },
     {
       day: 2,
-      title: 'CARDIO ASSAULT',
+      title: 'CARDIO BLAST',
       focus: ['Fat Burn', 'Cardiovascular Conditioning'],
       rounds: 5,
       restSec: { min: 45, max: 75 },
@@ -125,7 +125,7 @@ export const OPERATION_IRON_14: WorkoutProgram = {
     },
     {
       day: 3,
-      title: 'UPPER BODY COMMAND',
+      title: 'UPPER BODY FOCUS',
       focus: ['Chest', 'Shoulders', 'Triceps', 'Core'],
       rounds: 5,
       restSec: { min: 60, max: 90 },
@@ -175,7 +175,7 @@ export const OPERATION_IRON_14: WorkoutProgram = {
     },
     {
       day: 4,
-      title: 'LOWER BODY ASSAULT',
+      title: 'LOWER BODY FOCUS',
       focus: ['Legs', 'Glutes', 'Endurance'],
       rounds: 5,
       restSec: { min: 60, max: 90 },
@@ -226,7 +226,7 @@ export const OPERATION_IRON_14: WorkoutProgram = {
     },
     {
       day: 5,
-      title: 'COMBAT CIRCUIT',
+      title: 'FULL-BODY CIRCUIT',
       focus: ['Full body', 'Conditioning'],
       rounds: 5,
       restSec: { min: 45, max: 75 },
@@ -276,7 +276,7 @@ export const OPERATION_IRON_14: WorkoutProgram = {
     },
     {
       day: 6,
-      title: 'ENDURANCE MARCH',
+      title: 'ENDURANCE PACE',
       focus: ['Cardio', 'Endurance'],
       rounds: 3,
       restSec: { min: 45, max: 60 },
@@ -384,7 +384,7 @@ export const OPERATION_IRON_14: WorkoutProgram = {
     },
     {
       day: 9,
-      title: 'COMBAT CONDITIONING',
+      title: 'CONDITIONING DAY',
       focus: ['Conditioning', 'Fat Burn'],
       rounds: 6,
       restSec: { min: 30, max: 60 },
@@ -426,7 +426,7 @@ export const OPERATION_IRON_14: WorkoutProgram = {
     },
     {
       day: 10,
-      title: 'UPPER BODY ASSAULT II',
+      title: 'UPPER BODY FOCUS II',
       focus: ['Chest', 'Shoulders', 'Triceps', 'Core'],
       rounds: 5,
       restSec: { min: 60, max: 90 },
@@ -686,7 +686,7 @@ export const OPERATION_IRON_14: WorkoutProgram = {
           elite: { durationSec: 360 },
         },
       ],
-      coachMessage: 'Finish the mission. Pace yourself. Complete every rep.',
+      coachMessage: 'Finish strong. Pace yourself. Complete every rep.',
     },
   ],
 };

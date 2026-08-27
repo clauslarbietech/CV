@@ -9,6 +9,7 @@ import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import { COACH_PERSONALITIES } from '@/constants/coach';
+import { displayRank } from '@/constants/displayLabels';
 import { getActiveProgram } from '@/constants/programs';
 import { useAuthStore } from '@/store/authStore';
 import { useLaunchSplashStore } from '@/store/launchSplashStore';
@@ -72,7 +73,7 @@ export default function ProfileScreen() {
 
       <Text style={styles.section}>Body · form guide</Text>
       <Text style={styles.subtitle}>
-        Mission graphics switch to a male or female anatomical model.
+        Workout graphics switch to a male or female anatomical model.
       </Text>
       <View style={styles.chips}>
         {(['male', 'female'] as const).map((option) => (
@@ -86,7 +87,7 @@ export default function ProfileScreen() {
       </View>
 
       <Card>
-        <Text style={styles.row}>Rank: {profile?.rank ?? 'Recruit'}</Text>
+        <Text style={styles.row}>Level: {displayRank(profile?.rank)}</Text>
         <Text style={styles.row}>XP: {profile?.xp ?? 0}</Text>
         <Text style={styles.row}>Body: {profile?.sex ?? '—'}</Text>
         <Text style={styles.row}>

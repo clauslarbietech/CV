@@ -1,4 +1,5 @@
 import { CoachPersonality } from '@/types';
+import { coachDisplayName } from '@/constants/displayLabels';
 
 export const COACH_PERSONALITIES: Array<{
   id: CoachPersonality;
@@ -8,26 +9,26 @@ export const COACH_PERSONALITIES: Array<{
 }> = [
   {
     id: 'drill_sergeant',
-    name: 'Drill Sergeant',
-    tone: 'Direct, intense, disciplined, military-inspired, motivating.',
+    name: coachDisplayName('drill_sergeant'),
+    tone: 'Direct, clear, no-nonsense motivation for busy people.',
     example: 'You said you wanted results. Day 1 starts now.',
   },
   {
     id: 'motivator',
-    name: 'Motivator',
+    name: coachDisplayName('motivator'),
     tone: 'Positive, energetic, encouraging.',
     example: "Yesterday wasn't perfect. Doesn't matter. We're getting back after it today.",
   },
   {
     id: 'professional_trainer',
-    name: 'Professional Trainer',
+    name: coachDisplayName('professional_trainer'),
     tone: 'Analytical, technical, measured.',
     example:
       "Your training volume increased this week. Today we're prioritizing recovery and lower-body strength.",
   },
   {
     id: 'calm_coach',
-    name: 'Calm Coach',
+    name: coachDisplayName('calm_coach'),
     tone: 'Supportive, low-pressure, thoughtful.',
     example: 'Listen to your body. Steady progress still counts as progress.',
   },
@@ -44,7 +45,7 @@ export function coachTipForDay(args: {
   if (proteinShortfallG > 20) {
     switch (personality) {
       case 'drill_sergeant':
-        return `You're ${proteinShortfallG}g short on protein. Fix the next meal. No excuses.`;
+        return `You're ${proteinShortfallG}g short on protein. Fix the next meal — keep it simple.`;
       case 'motivator':
         return `You're ${proteinShortfallG}g short of your protein target. Your next meal should prioritize protein. Want a recommendation?`;
       case 'professional_trainer':
@@ -56,7 +57,7 @@ export function coachTipForDay(args: {
 
   switch (personality) {
     case 'drill_sergeant':
-      return `Day ${day} of ${programName} is waiting. Mission first.`;
+      return `Day ${day} of ${programName} is waiting. Start when you can — even a short session counts.`;
     case 'motivator':
       return `Day ${day} of ${programName} — you've got this. Start when you're ready.`;
     case 'professional_trainer':

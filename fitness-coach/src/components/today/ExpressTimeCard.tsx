@@ -75,9 +75,9 @@ export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
   return (
     <Card accentBorder>
       <Text style={styles.kicker}>SHORT ON TIME?</Text>
-      <Text style={styles.title}>Express mission</Text>
+      <Text style={styles.title}>Express workout</Text>
       <Text style={styles.body}>
-        Pick a condensed block — same mission, less time.
+        Pick a shorter block — same day plan, less time.
       </Text>
 
       <View style={styles.row}>

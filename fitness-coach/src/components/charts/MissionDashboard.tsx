@@ -171,7 +171,7 @@ export function MissionDashboard({
     improvable.push(`Water ${formatMl(daily.waterMl)} / ${formatMl(daily.waterTarget)}`);
   }
   if (!daily.workoutCompleted) {
-    improvable.push('Mission not logged today');
+    improvable.push('Workout not logged today');
   }
   if (medsTotal > 0 && medsDone < medsTotal) {
     improvable.push(`Meds ${medsDone}/${medsTotal}`);
@@ -182,7 +182,7 @@ export function MissionDashboard({
 
   return (
     <Card accentBorder>
-      <Text style={styles.title}>Mission readiness</Text>
+      <Text style={styles.title}>Workout readiness</Text>
       <Text style={styles.subtitle}>{programLabel}</Text>
 
       <HeroScoreArc
@@ -207,7 +207,7 @@ export function MissionDashboard({
 
       <SegmentToggle
         options={[
-          { id: 'mission', label: 'Mission' },
+          { id: 'mission', label: 'Workout' },
           { id: 'fuel', label: 'Fuel' },
           { id: 'consistency', label: 'Streak' },
         ]}
@@ -218,7 +218,7 @@ export function MissionDashboard({
       {view === 'mission' ? (
         <View style={{ marginTop: spacing.md }}>
           <View style={styles.metricRow}>
-            <Text style={styles.metricLabel}>Missions complete</Text>
+            <Text style={styles.metricLabel}>Workouts complete</Text>
             <View style={{ alignItems: 'flex-end', gap: 2 }}>
               <Text style={styles.metricValue}>
                 {completedDays} / {totalDays}

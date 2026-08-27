@@ -7,7 +7,7 @@ import { AppButton } from '@/components/ui/AppButton';
 import { Screen } from '@/components/ui/Screen';
 import { useTheme, spacing, typography } from '@/theme';
 
-/** Squad profiles + shared missions. Chat lives under Notes. */
+/** Buddy profiles + shared workouts. Chat lives under Notes. */
 export default function CoachScreen() {
   const { colors } = useTheme();
   const styles = useMemo(
@@ -27,12 +27,12 @@ export default function CoachScreen() {
 
   return (
     <Screen>
-      <Text style={styles.kicker}>SQUAD</Text>
+      <Text style={styles.kicker}>BUDDIES</Text>
       <Text style={styles.title}>
         Train <Text style={styles.accent}>Together</Text>
       </Text>
       <Text style={styles.subtitle}>
-        Link a buddy, share a mission, and check in. Chat and day logs are in
+        Link a buddy, share a workout, and check in. Chat and day logs are in
         the Notes tab.
       </Text>
 

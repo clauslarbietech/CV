@@ -1,12 +1,16 @@
 import { CoachPersonality } from '@/types';
 import { EnergyLevel } from '@/constants/programs/energyRoutes';
+import { coachDisplayName } from '@/constants/displayLabels';
 import { COACH_PERSONALITIES } from '@/constants/coach/index';
 
 export function personalityLabel(id: CoachPersonality): string {
-  return COACH_PERSONALITIES.find((p) => p.id === id)?.name ?? 'Coach';
+  return (
+    COACH_PERSONALITIES.find((p) => p.id === id)?.name ??
+    coachDisplayName(id)
+  );
 }
 
-/** Live motivational line tailored to coach persona + context. */
+/** Motivational line tailored to coach persona + context. */
 export function generateMotivationalLine(args: {
   personality: CoachPersonality;
   firstName?: string;
@@ -30,9 +34,9 @@ export function generateMotivationalLine(args: {
   switch (args.personality) {
     case 'drill_sergeant':
       if (args.workoutDone) {
-        return `${name}. Day ${args.day} of ${args.programName} — logged. That’s discipline. Hydrate, then prep tomorrow’s kit.`;
+        return `${name}. Day ${args.day} of ${args.programName} — done. That’s consistency. Hydrate, then plan tomorrow.`;
       }
-      return `${name}. ${energyBit} is not an excuse. Start the assigned route for Day ${args.day} of ${args.programName}. Move.`;
+      return `${name}. ${energyBit} is real — still do the workout route for Day ${args.day} of ${args.programName}. Start now.`;
     case 'motivator':
       if (args.workoutDone) {
         return `Yes, ${name}! Day ${args.day} is in the books. That streak energy is contagious — celebrate it, then rest smart.`;

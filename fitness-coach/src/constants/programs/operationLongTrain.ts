@@ -385,10 +385,10 @@ const days: ProgramDay[] = Array.from({ length: 84 }, (_, index) => {
 
 export const OPERATION_LONG_TRAIN: WorkoutProgram = {
   id: 'operation-long-train',
-  name: 'OPERATION LONG TRAIN',
+  name: 'LONG TRAIN',
   slug: 'operation-long-train',
-  tagline: '12 Weeks. Toughen. Build. Sustain. Stay Mission-Ready.',
-  subtitle: '12-Week Military Long-Train (PRT-inspired phases)',
+  tagline: '12 weeks. Build up, get stronger, keep the habit.',
+  subtitle: '12-Week Progressive Bodyweight Program',
   categories: [
     'conditioning',
     'discipline',
@@ -402,12 +402,12 @@ export const OPERATION_LONG_TRAIN: WorkoutProgram = {
   difficulty: 'Beginner to Advanced',
   goals: [
     'Build lasting work capacity over 12 weeks',
-    'Progress through toughening → build → sustaining phases',
-    'Pair with Long-Train Warfighter fuel',
-    'Stay squad-accountable for the long haul',
+    'Progress through foundation → build → sustain phases',
+    'Pair with long-train nutrition',
+    'Stay accountable with friends for the long haul',
   ],
   featured: false,
-  militaryThemed: true,
+  militaryThemed: false,
   days,
 };
 

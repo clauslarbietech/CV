@@ -6,7 +6,7 @@
 export type MilestoneHorizon = 10 | 14 | 30;
 
 export const SHORT_SESSION_SCIENCE = {
-  title: 'Why short military sessions still work',
+  title: 'Why short sessions still work',
   summary:
     'High-intensity intermittent training (Tabata / HIIT density) can raise aerobic power and work capacity even when sessions are brief — intensity and consistency matter more than long duration.',
   points: [
@@ -78,11 +78,11 @@ export const PROGRAM_MILESTONES: Array<{
   {
     days: 14,
     label: '2 WEEKS',
-    headline: 'Condensed PRT window — capacity over cosmetics',
+    headline: 'Condensed window — capacity over cosmetics',
     accomplishments: [
       'Army ACFT guide publishes a 14-day condensed (~30 min) PRT schedule specifically for time-constrained training.',
       'Typical HIIT findings around this horizon: improved VO₂max / endurance and better fat oxidation during submaximal work — you feel fitter before you look dramatically different.',
-      'Practical win: higher round density, fewer form breakdowns, and clearer “soldier pace” on bodyweight circuits.',
+      'Practical win: higher round density, fewer form breakdowns, and clearer steady pace on bodyweight circuits.',
     ],
     caveat:
       'Strength/power events (deadlift, throws) need specific loading; short bodyweight circuits mainly drive endurance and muscular endurance.',
@@ -105,7 +105,7 @@ export const PROGRAM_MILESTONES: Array<{
       'A full month of progressive bodyweight density is long enough for noticeable work-capacity jumps (more reps, faster rounds, steadier heart-rate recovery).',
       'Military / recruit training literature over longer blocks (weeks–months) documents fat-mass drop + lean-mass hold/gain when training is hard and nutrition supports it — a 30-day civilian challenge is a shorter slice of that curve.',
       'Realistic civilian target with training + moderate deficit: roughly ~1–2 lb/week fat loss where appropriate, plus better muscle definition from lower fatigue and higher volume tolerance — not crash-diet water loss.',
-      'Track Day 1 vs Day 30: max push-ups, plank hold, and a fixed AMRAP or timed circuit — those are the “military scoreboard.”',
+      'Track Day 1 vs Day 30: max push-ups, plank hold, and a fixed AMRAP or timed circuit — those are your progress scoreboard.',
     ],
     caveat:
       'Viral “military diet” crash menus are not official military nutrition and mostly shed water; pair training with sustainable protein + fasting windows instead.',
@@ -135,9 +135,9 @@ export function milestoneForCompletedDays(completed: number): MilestoneHorizon |
 
 /** Long-train research framing (8–12+ weeks). */
 export const LONG_TRAIN_SCIENCE = {
-  title: 'Why long military-style blocks work',
+  title: 'Why longer training blocks work',
   summary:
-    'Recruit / PRT literature and multi-week HIIT studies show the big fitness and body-composition shifts land across weeks to months — not just a 3-day crash cut.',
+    'Training research and multi-week HIIT studies show the big fitness and body-composition shifts land across weeks to months — not just a 3-day crash cut.',
   points: [
     {
       claim:
@@ -179,8 +179,8 @@ export const TRAINING_TRACKS = [
     id: 'short',
     label: 'Short term',
     horizon: '10–14 days',
-    programHint: 'OPERATION IRON 14 + express missions',
-    fuelHint: 'Short-Term Ops Fuel',
+    programHint: 'IRON 14 + express workouts',
+    fuelHint: 'Short-Block Fuel',
     outcomes: [
       'Work-capacity ignition and habit lock-in',
       'Better pacing / technique under fatigue',
@@ -191,8 +191,8 @@ export const TRAINING_TRACKS = [
     id: 'medium',
     label: 'Standard block',
     horizon: '30 days',
-    programHint: 'OPERATION IRON 30',
-    fuelHint: 'Tactical 16:8',
+    programHint: 'IRON 30',
+    fuelHint: 'Everyday 16:8',
     outcomes: [
       'Measurable density gains (reps, rounds, recovery)',
       'Visible conditioning if nutrition holds',
@@ -203,12 +203,12 @@ export const TRAINING_TRACKS = [
     id: 'long',
     label: 'Long train',
     horizon: '12 weeks (84 days)',
-    programHint: 'OPERATION LONG TRAIN',
-    fuelHint: 'Long-Train Warfighter Fuel',
+    programHint: 'LONG TRAIN',
+    fuelHint: 'Long-Train Everyday Fuel',
     outcomes: [
       'Toughening → build → sustaining progression',
       'Lasting endurance and muscular endurance',
-      'Sustainable body-comp change with warfighter fueling',
+      'Sustainable body-comp change with everyday fueling',
     ],
   },
 ] as const;

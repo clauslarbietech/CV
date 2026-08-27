@@ -97,7 +97,7 @@ export function DailyMissionCard({
 
   return (
     <Card military accentBorder style={styles.card}>
-      <Text style={styles.kicker}>TODAY&apos;S MISSION</Text>
+      <Text style={styles.kicker}>TODAY&apos;S WORKOUT</Text>
       <Text style={styles.dayLabel}>
         DAY {day.day} — {day.title}
       </Text>
@@ -137,7 +137,7 @@ export function DailyMissionCard({
       ) : null}
 
       <AppButton
-        label={completed ? 'MISSION COMPLETE' : 'START MISSION'}
+        label={completed ? 'WORKOUT COMPLETE' : 'START WORKOUT'}
         variant="military"
         onPress={onStart}
         disabled={completed}

@@ -31,7 +31,7 @@ export const INTRO_EXPERIENCE: Array<{
   {
     id: 'intermediate',
     label: 'Some experience',
-    hint: 'Ready for a solid military pace',
+    hint: 'Ready for a solid everyday pace',
   },
   {
     id: 'advanced',
@@ -41,9 +41,9 @@ export const INTRO_EXPERIENCE: Array<{
 ];
 
 export const INTRO_TIME: Array<{ minutes: number; label: string; hint: string }> = [
-  { minutes: 10, label: 'About 10 minutes', hint: 'Express missions when life is busy' },
+  { minutes: 10, label: 'About 10 minutes', hint: 'Express workouts when life is busy' },
   { minutes: 20, label: '15–20 minutes', hint: 'Short, focused training blocks' },
-  { minutes: 30, label: '25–35 minutes', hint: 'Full Iron mission days' },
+  { minutes: 30, label: '25–35 minutes', hint: 'Full Iron workout days' },
 ];
 
 export type SkipSessionOption = {
@@ -58,14 +58,14 @@ export type SkipSessionOption = {
 export const SKIP_SESSIONS: SkipSessionOption[] = [
   {
     id: 'iron30-day1',
-    title: 'OPERATION IRON 30 · Day 1',
-    subtitle: 'Full basic training mission · ~20–30 min',
+    title: 'IRON 30 · Day 1',
+    subtitle: 'Full Day 1 workout · ~20–30 min',
     programId: 'operation-iron-30',
     day: 1,
   },
   {
     id: 'iron30-express-10',
-    title: '10-Minute Combat Express',
+    title: '10-Minute Express',
     subtitle: 'Short on time · Day 1 converted',
     programId: 'operation-iron-30',
     day: 1,
@@ -81,8 +81,8 @@ export const SKIP_SESSIONS: SkipSessionOption[] = [
   },
   {
     id: 'iron14-day1',
-    title: 'OPERATION IRON 14 · Day 1',
-    subtitle: '2-week military challenge start',
+    title: 'IRON 14 · Day 1',
+    subtitle: '2-week bodyweight kickstart',
     programId: 'operation-iron-14',
     day: 1,
   },

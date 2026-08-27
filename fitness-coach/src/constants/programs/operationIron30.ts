@@ -46,7 +46,7 @@ function ex(
 
 const TEMPLATES: DayTemplate[] = [
   {
-    title: 'BASIC TRAINING',
+    title: 'FOUNDATION DAY',
     focus: ['Full body', 'Foundation'],
     rounds: 4,
     rest: { min: 60, max: 90 },
@@ -60,7 +60,7 @@ const TEMPLATES: DayTemplate[] = [
     ],
   },
   {
-    title: 'CARDIO ASSAULT',
+    title: 'CARDIO BLAST',
     focus: ['Fat Burn', 'Conditioning'],
     rounds: 5,
     rest: { min: 45, max: 75 },
@@ -74,7 +74,7 @@ const TEMPLATES: DayTemplate[] = [
     ],
   },
   {
-    title: 'UPPER BODY COMMAND',
+    title: 'UPPER BODY FOCUS',
     focus: ['Chest', 'Shoulders', 'Triceps', 'Core'],
     rounds: 5,
     rest: { min: 60, max: 90 },
@@ -88,7 +88,7 @@ const TEMPLATES: DayTemplate[] = [
     ],
   },
   {
-    title: 'LOWER BODY ASSAULT',
+    title: 'LOWER BODY FOCUS',
     focus: ['Legs', 'Glutes'],
     rounds: 5,
     rest: { min: 60, max: 90 },
@@ -102,7 +102,7 @@ const TEMPLATES: DayTemplate[] = [
     ],
   },
   {
-    title: 'COMBAT CIRCUIT',
+    title: 'FULL-BODY CIRCUIT',
     focus: ['Full body', 'Conditioning'],
     rounds: 5,
     rest: { min: 45, max: 75 },
@@ -116,7 +116,7 @@ const TEMPLATES: DayTemplate[] = [
     ],
   },
   {
-    title: 'ENDURANCE MARCH',
+    title: 'ENDURANCE PACE',
     focus: ['Cardio', 'Endurance'],
     rounds: 3,
     rest: { min: 45, max: 60 },
@@ -260,7 +260,7 @@ const days: ProgramDay[] = Array.from({ length: 30 }, (_, index) => {
           notes: 'Accumulate total plank time across sets.',
         }),
       ],
-      coachMessage: 'Finish the mission. Pace yourself. Complete every rep.',
+      coachMessage: 'Finish strong. Pace yourself. Complete every rep.',
     };
   }
 
@@ -275,10 +275,10 @@ const days: ProgramDay[] = Array.from({ length: 30 }, (_, index) => {
 
 export const OPERATION_IRON_30: WorkoutProgram = {
   id: 'operation-iron-30',
-  name: 'OPERATION IRON 30',
+  name: 'IRON 30',
   slug: 'operation-iron-30',
-  tagline: '30 Days. No Equipment. Military Bodyweight Shred.',
-  subtitle: '30-Day No-Equipment Military Challenge',
+  tagline: '30 days. No equipment. Everyday bodyweight progress.',
+  subtitle: '30-Day No-Equipment Bodyweight Challenge',
   categories: ['fat_burn', 'conditioning', 'discipline', 'calisthenics'],
   durationDays: 30,
   equipment: 'None — bodyweight only',
@@ -288,9 +288,9 @@ export const OPERATION_IRON_30: WorkoutProgram = {
     'Burn fat with progressive bodyweight density',
     'Build muscular endurance',
     'Improve conditioning without a gym',
-    'Create daily mission discipline',
+    'Build a simple daily workout habit',
   ],
   featured: true,
-  militaryThemed: true,
+  militaryThemed: false,
   days,
 };

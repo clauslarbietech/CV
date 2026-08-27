@@ -50,7 +50,7 @@ function RootNavigator() {
           name="session/[programId]"
           options={{
             ...headerOptions,
-            title: 'Mission',
+            title: 'Workout',
             presentation: 'modal',
           }}
         />

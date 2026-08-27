@@ -198,7 +198,7 @@ export function BodyVisionSetup({
 
       <Text style={styles.note}>
         Tip: add dated full-body check-ins on the Progress tab. Journey uses
-        both completed missions and weight movement toward your goal.
+        both completed workouts and weight movement toward your goal.
       </Text>
 
       <AppButton

@@ -74,7 +74,7 @@ export function SquadProfiles() {
 
   const shareInvite = async () => {
     if (!profile) return;
-    const message = `Join my FitLife squad. Callsign: ${profile.callsign}. Invite code: ${profile.inviteCode}. Shared mission: ${sharedProgram?.name ?? 'pick a track'} Day ${sharedDay}.`;
+    const message = `Join my FitLife buddy group. Nickname: ${profile.callsign}. Invite code: ${profile.inviteCode}. Shared workout: ${sharedProgram?.name ?? 'pick a track'} Day ${sharedDay}.`;
     try {
       await Share.share({ message });
     } catch {
@@ -105,7 +105,7 @@ export function SquadProfiles() {
     <View style={styles.wrap}>
       <Text style={styles.heading}>Squad profiles</Text>
       <Card accentBorder style={styles.gap}>
-        <Text style={styles.label}>Your callsign</Text>
+        <Text style={styles.label}>Your nickname</Text>
         <TextInput
           value={callsign}
           onChangeText={setCallsign}
@@ -117,7 +117,7 @@ export function SquadProfiles() {
         <TextInput
           value={motto}
           onChangeText={setMotto}
-          placeholder="Shared mission. No excuses."
+          placeholder="Shared workout. Show up together."
           placeholderTextColor={colors.textMuted}
           style={styles.input}
         />
@@ -143,13 +143,13 @@ export function SquadProfiles() {
       <Card style={styles.gap}>
         <Text style={styles.label}>Link a buddy</Text>
         <Text style={styles.hint}>
-          Enter their callsign + the invite code they shared. Profiles stay on
+          Enter their nickname + the invite code they shared. Profiles stay on
           this device for shared check-ins and chat.
         </Text>
         <TextInput
           value={buddyName}
           onChangeText={setBuddyName}
-          placeholder="Buddy callsign"
+          placeholder="Buddy nickname"
           placeholderTextColor={colors.textMuted}
           style={styles.input}
         />

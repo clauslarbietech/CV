@@ -14,6 +14,7 @@ import { Screen } from '@/components/ui/Screen';
 import { HeroProgramCard } from '@/components/workout/HeroProgramCard';
 import { EnergyLevel, EnergyRoute } from '@/constants/programs/energyRoutes';
 import { ExpressBudget } from '@/constants/programs/expressMissions';
+import { displayRank } from '@/constants/displayLabels';
 import {
   OPERATION_CALISTHENICS,
   OPERATION_IRON_14,
@@ -227,9 +228,9 @@ export default function MyStuffScreen() {
       </View>
 
       <Text style={styles.greeting}>
-        {profile?.firstName ?? 'Athlete'} · {profile?.rank ?? 'Recruit'}
+        {profile?.firstName ?? 'Athlete'} · {displayRank(profile?.rank)}
       </Text>
-      <Text style={styles.name}>Today&apos;s mission</Text>
+      <Text style={styles.name}>Today&apos;s workout</Text>
 
       <HeroProgramCard
         program={program}
@@ -242,7 +243,7 @@ export default function MyStuffScreen() {
 
       {active ? (
         <AppButton
-          label="Resume active mission"
+          label="Resume active workout"
           variant="action"
           onPress={() =>
             router.push({

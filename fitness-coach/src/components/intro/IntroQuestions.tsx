@@ -197,7 +197,7 @@ export function IntroQuestions({
         A few easy questions — <Text style={styles.accent}>no quiz overload</Text>
       </Text>
       <Text style={styles.support}>
-        We use this to pace your missions. You can skip straight into a workout
+        We use this to pace your workouts. You can skip straight into a session
         anytime.
       </Text>
 

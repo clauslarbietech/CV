@@ -89,13 +89,13 @@ export default function WorkoutsScreen() {
 
   return (
     <Screen>
-      <Text style={styles.kicker}>MILITARY TRACKS</Text>
+      <Text style={styles.kicker}>WORKOUT TRACKS</Text>
       <Text style={styles.title}>
         Short · Standard · <Text style={styles.accent}>Long</Text>
       </Text>
       <Text style={styles.subtitle}>
-        Research-backed bodyweight tracks. Pair Nutrition fuel to the same
-        horizon. Squad up in Coach to share a mission.
+        Simple bodyweight tracks for everyday life. Pair Nutrition to the same
+        horizon. Invite a buddy in Coach to share a workout.
       </Text>
 
       <Card accentBorder style={styles.trackCard}>
@@ -222,7 +222,7 @@ export default function WorkoutsScreen() {
 
       <Text style={styles.section}>Calisthenics lesson plans</Text>
       <Text style={styles.subtitle}>
-        Prefer horizons inside the military Iron tracks, or enroll in the
+        Prefer horizons inside the Iron tracks, or enroll in the
         dedicated Calisthenics Foundation program above.
       </Text>
       {CALISTHENICS_LESSON_PLANS.map((plan) => (

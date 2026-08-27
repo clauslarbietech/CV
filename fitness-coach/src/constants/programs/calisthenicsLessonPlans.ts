@@ -80,7 +80,7 @@ export const CALISTHENICS_LESSON_PLANS: CalisthenicsLessonPlan[] = [
     progressionRules: [
       'Progress total completed rounds before chasing harder variations.',
       'Track one benchmark circuit weekly (same reps/rest).',
-      'Fuel with Tactical 16:8 or Short-Term Ops on hard days.',
+      'Fuel with Everyday 16:8 or Short-Block meals on hard days.',
     ],
   },
   {

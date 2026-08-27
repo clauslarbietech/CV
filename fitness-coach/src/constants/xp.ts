@@ -1,3 +1,4 @@
+import { displayRank } from '@/constants/displayLabels';
 import { MilitaryRank } from '@/types';
 
 export const XP_REWARDS = {
@@ -9,23 +10,23 @@ export const XP_REWARDS = {
 } as const;
 
 export const RANK_THRESHOLDS: Array<{ rank: MilitaryRank; xp: number }> = [
-  { rank: 'Recruit', xp: 0 },
-  { rank: 'Private', xp: 200 },
-  { rank: 'Corporal', xp: 500 },
-  { rank: 'Sergeant', xp: 1000 },
-  { rank: 'Staff Sergeant', xp: 1800 },
-  { rank: 'Master Sergeant', xp: 2800 },
-  { rank: 'Lieutenant', xp: 4000 },
-  { rank: 'Captain', xp: 5500 },
-  { rank: 'Major', xp: 7500 },
-  { rank: 'Colonel', xp: 10000 },
-  { rank: 'Elite', xp: 14000 },
+  { rank: 'Starter', xp: 0 },
+  { rank: 'Active', xp: 200 },
+  { rank: 'Steady', xp: 500 },
+  { rank: 'Strong', xp: 1000 },
+  { rank: 'Dedicated', xp: 1800 },
+  { rank: 'Advanced', xp: 2800 },
+  { rank: 'Focused', xp: 4000 },
+  { rank: 'Committed', xp: 5500 },
+  { rank: 'Powerhouse', xp: 7500 },
+  { rank: 'Champion', xp: 10000 },
+  { rank: 'Peak', xp: 14000 },
 ];
 
 export function rankFromXp(xp: number): MilitaryRank {
-  let current: MilitaryRank = 'Recruit';
+  let current: MilitaryRank = 'Starter';
   for (const tier of RANK_THRESHOLDS) {
     if (xp >= tier.xp) current = tier.rank;
   }
-  return current;
+  return displayRank(current);
 }

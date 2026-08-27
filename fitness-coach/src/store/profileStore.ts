@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { rankFromXp } from '@/constants/xp';
+import { displayRank } from '@/constants/displayLabels';
 import {
   BodyFrameSize,
   CoachPersonality,
@@ -81,7 +82,7 @@ function buildProfile(args: {
     notificationEnabled: true,
     onboardingCompleted: true,
     xp: 0,
-    rank: 'Recruit',
+    rank: 'Starter',
     createdAt: now,
     updatedAt: now,
   };
@@ -232,7 +233,7 @@ export const useProfileStore = create<ProfileState>()(
             profile: {
               ...state.profile,
               xp,
-              rank: rankFromXp(xp),
+              rank: displayRank(rankFromXp(xp)),
               updatedAt: new Date().toISOString(),
             },
           };

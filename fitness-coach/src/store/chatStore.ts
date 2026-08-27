@@ -9,7 +9,7 @@ export type ChatChannel = 'coach' | 'buddy';
 export type ChatMessage = {
   id: string;
   channel: ChatChannel;
-  /** 'me' | 'coach' | buddy callsign */
+  /** 'me' | 'coach' | buddy nickname */
   from: string;
   text: string;
   createdAt: string;
@@ -21,17 +21,17 @@ interface ChatState {
     channel: ChatChannel;
     text: string;
     from?: string;
-    buddyCallsign?: string;
+    buddyCallsign?: string; // nickname
     coachPersonality?: CoachPersonality;
   }) => void;
   clearChannel: (channel: ChatChannel) => void;
 }
 
 const MOTIVATION_PROMPTS = [
-  'Need a push before PT?',
+  'Need a push before your workout?',
   "What's one win from today?",
   'Tell me where you almost quit — then why you didn’t.',
-  'Squad check: how’s energy / sleep / fuel?',
+  'Quick check: how’s energy / sleep / meals?',
 ];
 
 function coachReply(
@@ -53,12 +53,12 @@ function coachReply(
   switch (personality) {
     case 'drill_sergeant':
       if (tired) {
-        return 'Fatigue is data, not an exit. Shorten the mission if needed — do not abandon it. Move.';
+        return 'Fatigue is data, not an exit. Shorten the workout if needed — don’t skip it entirely. Move.';
       }
       if (proud) {
         return 'Good. Log it. Hydrate. Prep tomorrow’s plate. Standards don’t sleep.';
       }
-      return 'Message received. Mission still stands. Start within the hour or lock a concrete start time.';
+      return 'Got it. Your workout still counts. Start within the hour or lock a concrete start time.';
     case 'motivator':
       if (tired) {
         return "Feeling drained is real — and you’re still here. Even a 8–10 min express keeps the streak alive. I’ve got you.";
@@ -74,7 +74,7 @@ function coachReply(
       if (proud) {
         return 'Solid execution. Note RPE and fuel timing — that data improves the next block.';
       }
-      return 'Acknowledged. Align today’s session with your enrolled program day and refuel within ~2 hours post-PT.';
+      return 'Acknowledged. Align today’s session with your enrolled program day and refuel within ~2 hours after training.';
     case 'calm_coach':
       if (tired) {
         return 'It’s okay to feel heavy. Choose gentler intensity or recovery. Consistency over punishment.';
@@ -97,7 +97,7 @@ function buddyReply(callsign: string, userText: string): string {
   if (lower.includes('done') || lower.includes('finished')) {
     return `That’s what I’m talking about. Proud of you. My turn next. — ${callsign}`;
   }
-  return `Copy. I’m with you. Shared mission still live — see you on the check-in. — ${callsign}`;
+  return `I’m with you. Shared workout still on — see you on the check-in. — ${callsign}`;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -108,14 +108,14 @@ export const useChatStore = create<ChatState>()(
           id: 'seed-coach-1',
           channel: 'coach',
           from: 'coach',
-          text: 'Squad channel online. Talk mission, fuel, or motivation anytime.',
+          text: 'Buddy chat online. Talk workouts, meals, or motivation anytime.',
           createdAt: new Date().toISOString(),
         },
         {
           id: 'seed-buddy-1',
           channel: 'buddy',
           from: 'system',
-          text: 'Link a buddy on the Squad tab, then use this chat for check-ins and pep talks.',
+          text: 'Link a buddy on the Coach tab, then use this chat for check-ins and pep talks.',
           createdAt: new Date().toISOString(),
         },
       ],

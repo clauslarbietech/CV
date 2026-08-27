@@ -4,7 +4,7 @@ import { OPERATION_LONG_TRAIN } from './operationLongTrain';
 import { OPERATION_CALISTHENICS } from './operationCalisthenics';
 import { WorkoutProgram } from '@/types';
 
-/** Featured first: 30-day no-equipment military shred. */
+/** Featured first: 30-day no-equipment bodyweight plan. */
 export const WORKOUT_PROGRAMS: WorkoutProgram[] = [
   OPERATION_IRON_30,
   OPERATION_IRON_14,

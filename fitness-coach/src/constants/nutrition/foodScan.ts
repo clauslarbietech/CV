@@ -34,7 +34,7 @@ export function analyzeFoodFromFilename(fileName: string, sizeBytes: number): Fo
       proteinG: 42,
       carbsG: 0,
       fatG: 8,
-      coachingNote: 'Excellent post-mission protein. Add rice or potatoes if this is a hard-training day.',
+      coachingNote: 'Excellent post-workout protein. Add rice or potatoes if this is a hard-training day.',
       tags: ['protein', 'lean'],
     };
   }

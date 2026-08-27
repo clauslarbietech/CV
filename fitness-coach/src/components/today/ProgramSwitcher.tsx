@@ -62,10 +62,10 @@ export function ProgramSwitcher({
   return (
     <View>
       <Text style={styles.kicker}>PROGRAMS</Text>
-      <Text style={styles.title}>More than Iron 30</Text>
+      <Text style={styles.title}>More programs</Text>
       <Text style={styles.body}>
         Switch tracks anytime — Short 14, Standard 30, Calisthenics 21, or Long
-        Train 12 weeks. Your Discover tab stays available too.
+        Train 12 weeks. Discover stays available too.
       </Text>
       <View style={styles.list}>
         {CATALOG.map((program: WorkoutProgram) => {
