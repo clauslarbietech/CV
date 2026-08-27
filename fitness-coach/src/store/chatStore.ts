@@ -4,15 +4,18 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { CoachPersonality } from '@/types';
 
-export type ChatChannel = 'coach' | 'buddy';
+/** AI Coach = in-app motivational coach. Live Trainer = human trainer inbox. */
+export type ChatChannel = 'coach' | 'live_trainer' | 'buddy';
 
 export type ChatMessage = {
   id: string;
   channel: ChatChannel;
-  /** 'me' | 'coach' | buddy nickname */
+  /** 'me' | 'coach' | 'live_trainer' | 'system' | buddy nickname */
   from: string;
   text: string;
   createdAt: string;
+  /** Shown under Live Trainer sends */
+  deliveryNote?: string;
 };
 
 interface ChatState {
@@ -21,17 +24,24 @@ interface ChatState {
     channel: ChatChannel;
     text: string;
     from?: string;
-    buddyCallsign?: string; // nickname
+    buddyCallsign?: string;
     coachPersonality?: CoachPersonality;
   }) => void;
   clearChannel: (channel: ChatChannel) => void;
 }
 
 const MOTIVATION_PROMPTS = [
-  'Need a push before your workout?',
-  "What's one win from today?",
-  'Tell me where you almost quit — then why you didn’t.',
-  'Quick check: how’s energy / sleep / meals?',
+  'Need a motivational push before my workout?',
+  "What's one win I should lock in today?",
+  'I feel like quitting — talk me through it.',
+  'Quick check: energy, sleep, and meals?',
+];
+
+const LIVE_TRAINER_PROMPTS = [
+  'Can we adjust today’s workout?',
+  'I’m sore — what should I change?',
+  'Form check: how should I do squats?',
+  'Help me plan this week’s sessions.',
 ];
 
 function coachReply(
@@ -43,38 +53,53 @@ function coachReply(
     lower.includes('tired') ||
     lower.includes('sore') ||
     lower.includes('skip') ||
+    lower.includes('quit') ||
     lower.includes('lazy');
   const proud =
     lower.includes('done') ||
     lower.includes('finished') ||
     lower.includes('crushed') ||
-    lower.includes('complete');
+    lower.includes('complete') ||
+    lower.includes('win');
+  const motivate =
+    lower.includes('push') ||
+    lower.includes('motivat') ||
+    lower.includes('pep');
 
   switch (personality) {
     case 'drill_sergeant':
       if (tired) {
-        return 'Fatigue is data, not an exit. Shorten the workout if needed — don’t skip it entirely. Move.';
+        return 'Fatigue is data, not an exit. Shorten the workout if needed — don’t skip it. Lace up and start the first move.';
       }
       if (proud) {
         return 'Good. Log it. Hydrate. Prep tomorrow’s plate. Standards don’t sleep.';
       }
-      return 'Got it. Your workout still counts. Start within the hour or lock a concrete start time.';
+      if (motivate) {
+        return 'Listen up: the only way out is through. Open today’s workout and earn the checkmark.';
+      }
+      return 'Got it. Your workout still counts. Start within the hour — or lock a concrete start time now.';
     case 'motivator':
       if (tired) {
-        return "Feeling drained is real — and you’re still here. Even a 8–10 min express keeps the streak alive. I’ve got you.";
+        return "Feeling drained is real — and you’re still here. Even an 8–10 min express keeps the streak alive. I’ve got you.";
       }
       if (proud) {
-        return 'That’s the energy. Celebrate the reps, then tell your buddy — shared wins hit different.';
+        return 'That’s the energy. Celebrate the reps, then tell your buddy or Live Trainer — shared wins hit different.';
+      }
+      if (motivate) {
+        return 'Here’s your speech: you already chose the hard path by opening this app. Take one round. Momentum does the rest.';
       }
       return "Love that you checked in. What’s the smallest next step you can take in the next 15 minutes?";
     case 'professional_trainer':
       if (tired) {
-        return 'If soreness is high, prioritize recovery volume or active recovery day. Keep protein + sleep on track.';
+        return 'If soreness is high, drop to Easy intensity or an express route. Keep protein and sleep on track.';
       }
       if (proud) {
-        return 'Solid execution. Note RPE and fuel timing — that data improves the next block.';
+        return 'Solid execution. Note how hard it felt and fuel within ~2 hours — that data improves the next block.';
       }
-      return 'Acknowledged. Align today’s session with your enrolled program day and refuel within ~2 hours after training.';
+      if (motivate) {
+        return 'Motivational brief: consistency compounds. Hit today’s programmed day, then message your Live Trainer if form or load needs eyes.';
+      }
+      return 'Acknowledged. Align today’s session with your enrolled program day and refuel after training.';
     case 'calm_coach':
       if (tired) {
         return 'It’s okay to feel heavy. Choose gentler intensity or recovery. Consistency over punishment.';
@@ -82,7 +107,10 @@ function coachReply(
       if (proud) {
         return 'Well done. Take a breath. Let your body absorb the work.';
       }
-      return 'Thanks for sharing. What would feel supportive for the rest of your day — movement, rest, or a talk with your buddy?';
+      if (motivate) {
+        return 'Soft pep talk: you don’t need perfect energy — just one honest session. Start when you’re ready; I’ll stay in your corner.';
+      }
+      return 'Thanks for sharing. What would feel supportive next — movement, rest, or a note to your Live Trainer?';
   }
 }
 
@@ -108,14 +136,21 @@ export const useChatStore = create<ChatState>()(
           id: 'seed-coach-1',
           channel: 'coach',
           from: 'coach',
-          text: 'Buddy chat online. Talk workouts, meals, or motivation anytime.',
+          text: 'AI Coach here — written pep talks and check-ins (not a robot voice). Ask for a push anytime.',
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: 'seed-live-1',
+          channel: 'live_trainer',
+          from: 'live_trainer',
+          text: 'This is your Live Trainer inbox — a real trainer conversation. Send questions about form, programming, or recovery. You’ll see a delivery note after each message; replies from your trainer appear here.',
           createdAt: new Date().toISOString(),
         },
         {
           id: 'seed-buddy-1',
           channel: 'buddy',
           from: 'system',
-          text: 'Link a buddy on the Coach tab, then use this chat for check-ins and pep talks.',
+          text: 'Link a buddy on Squad, then use this chat for peer check-ins.',
           createdAt: new Date().toISOString(),
         },
       ],
@@ -124,7 +159,7 @@ export const useChatStore = create<ChatState>()(
         text,
         from = 'me',
         buddyCallsign,
-        coachPersonality = 'drill_sergeant',
+        coachPersonality = 'calm_coach',
       }) => {
         const trimmed = text.trim();
         if (!trimmed) return;
@@ -135,6 +170,10 @@ export const useChatStore = create<ChatState>()(
           from,
           text: trimmed,
           createdAt: now,
+          deliveryNote:
+            channel === 'live_trainer' && from === 'me'
+              ? 'Sent to your Live Trainer · awaiting their reply'
+              : undefined,
         };
         const replies: ChatMessage[] = [];
         if (channel === 'coach' && from === 'me') {
@@ -155,6 +194,7 @@ export const useChatStore = create<ChatState>()(
             createdAt: new Date(Date.now() + 1).toISOString(),
           });
         }
+        // live_trainer: no auto AI reply — human inbox only
         set({ messages: [...get().messages, mine, ...replies].slice(-200) });
       },
       clearChannel: (channel) =>
@@ -169,4 +209,4 @@ export const useChatStore = create<ChatState>()(
   ),
 );
 
-export { MOTIVATION_PROMPTS };
+export { MOTIVATION_PROMPTS, LIVE_TRAINER_PROMPTS };

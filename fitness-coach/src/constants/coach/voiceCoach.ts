@@ -54,25 +54,3 @@ export function generateMotivationalLine(args: {
       return `${name}, notice ${energyBit} without judgment. We’ll take the route that fits — Day ${args.day} of ${args.programName}, one rep at a time.`;
   }
 }
-
-export function speakCoachLine(text: string): { ok: boolean; reason?: string } {
-  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-    return { ok: false, reason: 'Voice playback needs a browser with speech support.' };
-  }
-  try {
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = 1;
-    utter.pitch = 1;
-    window.speechSynthesis.speak(utter);
-    return { ok: true };
-  } catch {
-    return { ok: false, reason: 'Could not start voice playback.' };
-  }
-}
-
-export function stopCoachSpeech() {
-  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-  }
-}

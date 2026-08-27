@@ -39,8 +39,8 @@ export default function NotesScreen() {
       <Text style={styles.kicker}>NOTES · CHAT</Text>
       <Text style={styles.title}>Notes</Text>
       <Text style={styles.subtitle}>
-        Meds, work and training notes, plus coach/buddy chat and your audio day
-        log — all in one place.
+        Meds, notes, AI Coach pep talks, and your Live Trainer inbox — all in
+        one place.
       </Text>
 
       <AppButton

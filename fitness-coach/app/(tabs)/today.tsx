@@ -8,7 +8,8 @@ import { EnergyRouteCard } from '@/components/today/EnergyRouteCard';
 import { ExpressTimeCard } from '@/components/today/ExpressTimeCard';
 import { HomeStatsGraphs } from '@/components/today/HomeStatsGraphs';
 import { ProgramSwitcher } from '@/components/today/ProgramSwitcher';
-import { VoiceCoachCard } from '@/components/today/VoiceCoachCard';
+import { MotivationalCoachCard } from '@/components/today/MotivationalCoachCard';
+import { personalityLabel } from '@/constants/coach/voiceCoach';
 import { WeightGoalsCard } from '@/components/today/WeightGoalsCard';
 import { AppButton } from '@/components/ui/AppButton';
 import { Screen } from '@/components/ui/Screen';
@@ -283,13 +284,14 @@ export default function MyStuffScreen() {
         completedDays={enrollment.completedDayIds.length}
       />
 
-      <VoiceCoachCard
+      <MotivationalCoachCard
         personality={profile?.coachPersonality ?? 'calm_coach'}
+        personalityLabel={personalityLabel(
+          profile?.coachPersonality ?? 'calm_coach',
+        )}
         firstName={profile?.firstName}
         programName={program.name}
         day={enrollment.currentDay}
-        energy={(daily.energyLevel as EnergyLevel | null | undefined) ?? null}
-        workoutDone={daily.workoutCompleted}
       />
 
       {dayPlan ? (

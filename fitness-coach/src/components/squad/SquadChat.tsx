@@ -9,12 +9,29 @@ import {
 
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
-import { MOTIVATION_PROMPTS, useChatStore } from '@/store/chatStore';
+import {
+  ChatChannel,
+  LIVE_TRAINER_PROMPTS,
+  MOTIVATION_PROMPTS,
+  useChatStore,
+} from '@/store/chatStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useSquadStore } from '@/store/squadStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
-type Channel = 'coach' | 'buddy';
+const CHANNELS: Array<{ id: ChatChannel; label: string }> = [
+  { id: 'coach', label: 'AI Coach' },
+  { id: 'live_trainer', label: 'Live Trainer' },
+  { id: 'buddy', label: 'Buddy' },
+];
+
+function senderLabel(from: string, channel: ChatChannel): string {
+  if (from === 'me') return 'You';
+  if (from === 'coach') return 'AI Coach';
+  if (from === 'live_trainer') return 'Live Trainer';
+  if (from === 'system') return 'System';
+  return from;
+}
 
 export function SquadChat() {
   const { colors } = useTheme();
@@ -23,7 +40,23 @@ export function SquadChat() {
       StyleSheet.create({
         wrap: { gap: spacing.sm },
         heading: { ...typography.heading, color: colors.textPrimary },
-        tabs: { flexDirection: 'row', gap: spacing.sm },
+        banner: {
+          borderWidth: 1,
+          borderColor: colors.action,
+          backgroundColor: colors.actionSoft,
+          borderRadius: radii.lg,
+          padding: spacing.md,
+          gap: 4,
+        },
+        bannerTitle: {
+          ...typography.bodyBold,
+          color: colors.actionText,
+        },
+        bannerBody: {
+          ...typography.caption,
+          color: colors.textSecondary,
+        },
+        tabs: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
         tab: {
           paddingVertical: spacing.sm,
           paddingHorizontal: spacing.md,
@@ -35,10 +68,15 @@ export function SquadChat() {
           borderColor: colors.accent,
           backgroundColor: colors.accentSoft,
         },
+        tabLiveOn: {
+          borderColor: colors.action,
+          backgroundColor: colors.actionSoft,
+        },
         tabLabel: { ...typography.bodyBold, color: colors.textSecondary },
         tabLabelOn: { color: colors.accentText },
+        tabLabelLiveOn: { color: colors.actionText },
         hint: { ...typography.caption, color: colors.textSecondary },
-        thread: { gap: spacing.sm, maxHeight: 320 },
+        thread: { gap: spacing.sm, maxHeight: 360 },
         bubble: {
           padding: spacing.sm,
           borderRadius: radii.lg,
@@ -56,6 +94,12 @@ export function SquadChat() {
         },
         from: { ...typography.overline, color: colors.textMuted },
         body: { ...typography.body, color: colors.textPrimary },
+        delivery: {
+          ...typography.caption,
+          color: colors.actionText,
+          fontWeight: '600',
+          marginTop: 4,
+        },
         prompts: { gap: spacing.xs },
         promptChip: {
           borderWidth: 1,
@@ -80,9 +124,9 @@ export function SquadChat() {
   const sendMessage = useChatStore((s) => s.sendMessage);
   const buddies = useSquadStore((s) => s.buddies);
   const personality =
-    useProfileStore((s) => s.profile?.coachPersonality) ?? 'drill_sergeant';
+    useProfileStore((s) => s.profile?.coachPersonality) ?? 'calm_coach';
 
-  const [channel, setChannel] = useState<Channel>('coach');
+  const [channel, setChannel] = useState<ChatChannel>('coach');
   const [draft, setDraft] = useState('');
 
   const buddyCallsign = buddies[0]?.callsign;
@@ -91,6 +135,13 @@ export function SquadChat() {
     () => messages.filter((m) => m.channel === channel),
     [messages, channel],
   );
+
+  const prompts =
+    channel === 'live_trainer'
+      ? LIVE_TRAINER_PROMPTS
+      : channel === 'coach'
+        ? MOTIVATION_PROMPTS
+        : MOTIVATION_PROMPTS.slice(0, 2);
 
   const send = (text: string) => {
     sendMessage({
@@ -104,24 +155,58 @@ export function SquadChat() {
 
   return (
     <View style={styles.wrap}>
-      <Text style={styles.heading}>Motivational chat</Text>
+      <Text style={styles.heading}>Coaching & messages</Text>
+
+      {channel === 'live_trainer' ? (
+        <View style={styles.banner}>
+          <Text style={styles.bannerTitle}>LIVE TRAINER · HUMAN</Text>
+          <Text style={styles.bannerBody}>
+            You’re messaging a live trainer — not the AI Coach. Ask about form,
+            programming, or recovery. Messages are marked as sent to your
+            trainer.
+          </Text>
+        </View>
+      ) : null}
+
+      {channel === 'coach' ? (
+        <Text style={styles.hint}>
+          AI Coach · motivational speech in text (no robot voice). For a real
+          trainer, switch to Live Trainer.
+        </Text>
+      ) : null}
+
       <View style={styles.tabs}>
-        {(['coach', 'buddy'] as Channel[]).map((key) => (
-          <Pressable
-            key={key}
-            onPress={() => setChannel(key)}
-            style={[styles.tab, channel === key && styles.tabOn]}
-          >
-            <Text style={[styles.tabLabel, channel === key && styles.tabLabelOn]}>
-              {key === 'coach' ? 'Coach' : 'Buddy'}
-            </Text>
-          </Pressable>
-        ))}
+        {CHANNELS.map((item) => {
+          const on = channel === item.id;
+          const live = item.id === 'live_trainer';
+          return (
+            <Pressable
+              key={item.id}
+              onPress={() => setChannel(item.id)}
+              style={[
+                styles.tab,
+                on && (live ? styles.tabLiveOn : styles.tabOn),
+              ]}
+              accessibilityRole="button"
+              accessibilityState={{ selected: on }}
+              accessibilityLabel={item.label}
+            >
+              <Text
+                style={[
+                  styles.tabLabel,
+                  on && (live ? styles.tabLabelLiveOn : styles.tabLabelOn),
+                ]}
+              >
+                {item.label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
 
       {channel === 'buddy' && !buddyCallsign ? (
         <Text style={styles.hint}>
-          Link a buddy above to unlock squad pep-talk replies.
+          Link a buddy on Squad to unlock peer check-ins.
         </Text>
       ) : null}
 
@@ -134,47 +219,52 @@ export function SquadChat() {
               msg.from === 'me' ? styles.mine : styles.theirs,
             ]}
           >
-            <Text style={styles.from}>
-              {msg.from === 'me'
-                ? 'You'
-                : msg.from === 'coach'
-                  ? 'Coach'
-                  : msg.from}
-            </Text>
+            <Text style={styles.from}>{senderLabel(msg.from, channel)}</Text>
             <Text style={styles.body}>{msg.text}</Text>
+            {msg.deliveryNote ? (
+              <Text style={styles.delivery}>{msg.deliveryNote}</Text>
+            ) : null}
           </View>
         ))}
       </Card>
 
-      <View style={styles.prompts}>
-        {MOTIVATION_PROMPTS.slice(0, 3).map((prompt) => (
-          <Pressable
-            key={prompt}
-            onPress={() => send(prompt)}
-            style={styles.promptChip}
-          >
-            <Text style={styles.promptText}>{prompt}</Text>
-          </Pressable>
-        ))}
-      </View>
+      {channel !== 'buddy' || buddyCallsign ? (
+        <View style={styles.prompts}>
+          {prompts.map((prompt) => (
+            <Pressable
+              key={prompt}
+              onPress={() => send(prompt)}
+              style={styles.promptChip}
+            >
+              <Text style={styles.promptText}>{prompt}</Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
 
       <TextInput
         value={draft}
         onChangeText={setDraft}
         placeholder={
           channel === 'coach'
-            ? 'Ask for a push, fuel tip, or check-in…'
-            : 'Message your buddy…'
+            ? 'Ask AI Coach for a motivational push…'
+            : channel === 'live_trainer'
+              ? 'Message your live trainer…'
+              : 'Message your buddy…'
         }
         placeholderTextColor={colors.textMuted}
         style={styles.input}
         onSubmitEditing={() => send(draft)}
       />
       <AppButton
-        label="Send"
-        variant="action"
+        label={
+          channel === 'live_trainer' ? 'Send to Live Trainer' : 'Send'
+        }
+        variant={channel === 'live_trainer' ? 'action' : 'military'}
         onPress={() => send(draft)}
-        disabled={!draft.trim()}
+        disabled={
+          !draft.trim() || (channel === 'buddy' && !buddyCallsign)
+        }
       />
     </View>
   );
