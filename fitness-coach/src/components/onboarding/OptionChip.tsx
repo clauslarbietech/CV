@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { createElement, useMemo } from 'react';
+import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 
 import { useTheme, radii, spacing, typography } from '@/theme';
 
@@ -42,6 +42,35 @@ export function OptionChip({
       }),
     [colors, selectedLabelColor],
   );
+
+  if (Platform.OS === 'web') {
+    return createElement(
+      'button',
+      {
+        type: 'button',
+        onClick: onPress,
+        'aria-pressed': Boolean(selected),
+        'aria-label': label,
+        style: {
+          minHeight: 48,
+          paddingLeft: spacing.md,
+          paddingRight: spacing.md,
+          paddingTop: spacing.sm,
+          paddingBottom: spacing.sm,
+          borderRadius: radii.md,
+          borderWidth: 1,
+          borderStyle: 'solid',
+          borderColor: selected ? selectedBg : colors.border,
+          backgroundColor: selected ? selectedBg : colors.surface,
+          color: selected ? selectedLabelColor : colors.textPrimary,
+          fontWeight: 700,
+          fontSize: 15,
+          cursor: 'pointer',
+        },
+      },
+      label,
+    );
+  }
 
   return (
     <Pressable
