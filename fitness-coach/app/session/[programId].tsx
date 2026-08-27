@@ -133,7 +133,7 @@ export default function WorkoutSessionScreen() {
       ? toExpressMission(baseDay, expressMinutes)
       : baseDay;
   }, [baseDay, expressMinutes]);
-  const tier = enrollment?.difficulty ?? 'soldier';
+  const tier = enrollment?.difficulty ?? 'recruit';
   const [savedNextDay, setSavedNextDay] = useState<number | null>(null);
 
   useEffect(() => {
@@ -182,7 +182,7 @@ export default function WorkoutSessionScreen() {
       <Screen>
         <EmptyState
           title="Not enrolled"
-          description="Start IRON 30 from the Workouts tab."
+          description="Start the 30-Day Home Plan from Discover."
           actionLabel="Go to Workouts"
           onAction={() => router.replace('/(tabs)/workouts')}
         />
@@ -290,7 +290,7 @@ export default function WorkoutSessionScreen() {
           </Text>
           <Text style={styles.body}>
             {expressMinutes
-              ? 'Time-boxed density. Bodyweight only — keep the streak when you are short on time.'
+              ? 'Shorter session. Bodyweight only — keep your streak when you’re short on time.'
               : 'Bodyweight only. Fat loss · definition · conditioning.'}
           </Text>
         </Card>

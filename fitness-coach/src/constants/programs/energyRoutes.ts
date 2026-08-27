@@ -30,7 +30,7 @@ export const ENERGY_ROUTES: EnergyRoute[] = [
     label: 'Low',
     scoreRange: '21–40',
     status: 'low',
-    description: 'Keep the streak with a short focused blast.',
+    description: 'Keep the streak with a short, doable session.',
     difficulty: 'recruit',
     expressMinutes: 10,
     routeLabel: 'Express · 10 min',
@@ -58,9 +58,9 @@ export const ENERGY_ROUTES: EnergyRoute[] = [
     label: 'Peak',
     scoreRange: '81–100',
     status: 'good',
-    description: 'Hard day — full workout at Hard intensity.',
+    description: 'Feeling great — full workout at Challenging intensity.',
     difficulty: 'elite',
-    routeLabel: 'Full workout · Hard',
+    routeLabel: 'Full workout · Challenging',
   },
 ];
 

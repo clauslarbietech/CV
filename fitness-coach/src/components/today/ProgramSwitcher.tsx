@@ -62,10 +62,10 @@ export function ProgramSwitcher({
   return (
     <View>
       <Text style={styles.kicker}>PROGRAMS</Text>
-      <Text style={styles.title}>More programs</Text>
+      <Text style={styles.title}>Choose another plan</Text>
       <Text style={styles.body}>
-        Switch tracks anytime — Short 14, Standard 30, Calisthenics 21, or Long
-        Train 12 weeks. Discover stays available too.
+        Switch anytime — 2-Week Starter, 30-Day Home, Bodyweight Basics, or
+        12-Week Steady. Discover stays available too.
       </Text>
       <View style={styles.list}>
         {CATALOG.map((program: WorkoutProgram) => {
@@ -86,7 +86,7 @@ export function ProgramSwitcher({
                       ? '12-week long train · Home'
                       : program.durationDays <= 14
                         ? 'Short block · Home'
-                        : '30-day shred · Home'
+                        : '30-day home plan · Home'
                 }
                 onGetStarted={() => onOpen(program.id)}
                 onPlay={() => (active ? onOpen(program.id) : onSwitch(program.id))}

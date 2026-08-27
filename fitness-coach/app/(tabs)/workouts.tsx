@@ -89,13 +89,13 @@ export default function WorkoutsScreen() {
 
   return (
     <Screen>
-      <Text style={styles.kicker}>WORKOUT TRACKS</Text>
+      <Text style={styles.kicker}>HOME WORKOUTS</Text>
       <Text style={styles.title}>
         Short · Standard · <Text style={styles.accent}>Long</Text>
       </Text>
       <Text style={styles.subtitle}>
-        Simple bodyweight tracks for everyday life. Pair Nutrition to the same
-        horizon. Invite a buddy in Coach to share a workout.
+        Simple bodyweight plans for busy days. Match meals in Nutrition, and
+        invite a buddy in Coach if you like company.
       </Text>
 
       <Card accentBorder style={styles.trackCard}>
@@ -132,11 +132,11 @@ export default function WorkoutsScreen() {
           label={
             onIron30
               ? `Continue Day ${onIron30.currentDay}`
-              : 'Start Iron 30 · Day 1'
+              : 'Start 30-Day Home Plan'
           }
           variant="military"
           onPress={() => {
-            if (!onIron30) enrollInProgram(OPERATION_IRON_30.id, 'soldier');
+            if (!onIron30) enrollInProgram(OPERATION_IRON_30.id, 'recruit');
             const day = useProgramStore.getState().enrollment?.currentDay ?? 1;
             router.push({
               pathname: '/session/[programId]',
@@ -161,10 +161,10 @@ export default function WorkoutsScreen() {
         }
       />
       <AppButton
-        label="Start Calisthenics Foundation"
+        label="Start Bodyweight Basics"
         variant="action"
         onPress={() => {
-          enrollInProgram(OPERATION_CALISTHENICS.id, 'soldier');
+          enrollInProgram(OPERATION_CALISTHENICS.id, 'recruit');
           router.push({
             pathname: '/session/[programId]',
             params: {
@@ -209,7 +209,7 @@ export default function WorkoutsScreen() {
         label="Enroll Long Train"
         variant="secondary"
         onPress={() => {
-          enrollInProgram(OPERATION_LONG_TRAIN.id, 'soldier');
+          enrollInProgram(OPERATION_LONG_TRAIN.id, 'recruit');
           router.push({
             pathname: '/session/[programId]',
             params: {
@@ -222,8 +222,8 @@ export default function WorkoutsScreen() {
 
       <Text style={styles.section}>Calisthenics lesson plans</Text>
       <Text style={styles.subtitle}>
-        Prefer horizons inside the Iron tracks, or enroll in the
-        dedicated Calisthenics Foundation program above.
+        Prefer the home plans above, or enroll in Bodyweight Basics for a
+        focused 21-day skill block.
       </Text>
       {CALISTHENICS_LESSON_PLANS.map((plan) => (
         <Card key={plan.id} accentBorder style={styles.lessonCard}>

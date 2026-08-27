@@ -140,7 +140,7 @@ export default function ProgramDetailScreen() {
   }
 
   const hasDays = program.days.length > 0;
-  const tier = enrollment?.difficulty ?? 'soldier';
+  const tier = enrollment?.difficulty ?? 'recruit';
   const isEnrolled = enrollment?.programId === program.id;
   const currentDay = isEnrolled ? enrollment?.currentDay ?? 1 : undefined;
   const heroSource =

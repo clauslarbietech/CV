@@ -10,7 +10,7 @@ export const COACH_PERSONALITIES: Array<{
   {
     id: 'drill_sergeant',
     name: coachDisplayName('drill_sergeant'),
-    tone: 'Direct, clear, no-nonsense motivation for busy people.',
+    tone: 'Clear, honest motivation for busy everyday people.',
     example: 'You said you wanted results. Day 1 starts now.',
   },
   {

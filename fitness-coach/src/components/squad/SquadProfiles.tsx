@@ -90,7 +90,7 @@ export function SquadProfiles() {
   const startShared = (programId: string) => {
     const current = useProgramStore.getState().enrollment;
     if (!current || current.programId !== programId) {
-      enrollInProgram(programId, 'soldier');
+      enrollInProgram(programId, 'recruit');
     }
     const day = useProgramStore.getState().enrollment?.currentDay ?? 1;
     setSharedMission(programId, day);

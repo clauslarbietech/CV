@@ -36,14 +36,14 @@ export const INTRO_EXPERIENCE: Array<{
   {
     id: 'advanced',
     label: 'Train regularly',
-    hint: 'Push density and intensity',
+    hint: 'Ready for longer or harder sessions',
   },
 ];
 
 export const INTRO_TIME: Array<{ minutes: number; label: string; hint: string }> = [
-  { minutes: 10, label: 'About 10 minutes', hint: 'Express workouts when life is busy' },
+  { minutes: 10, label: 'About 10 minutes', hint: 'Quick workouts when life is busy' },
   { minutes: 20, label: '15–20 minutes', hint: 'Short, focused training blocks' },
-  { minutes: 30, label: '25–35 minutes', hint: 'Full Iron workout days' },
+  { minutes: 30, label: '25–35 minutes', hint: 'Full home workout days' },
 ];
 
 export type SkipSessionOption = {
@@ -58,14 +58,14 @@ export type SkipSessionOption = {
 export const SKIP_SESSIONS: SkipSessionOption[] = [
   {
     id: 'iron30-day1',
-    title: 'IRON 30 · Day 1',
+    title: '30-Day Home Plan · Day 1',
     subtitle: 'Full Day 1 workout · ~20–30 min',
     programId: 'operation-iron-30',
     day: 1,
   },
   {
     id: 'iron30-express-10',
-    title: '10-Minute Express',
+    title: '10-Minute Quick Workout',
     subtitle: 'Short on time · Day 1 converted',
     programId: 'operation-iron-30',
     day: 1,
@@ -73,7 +73,7 @@ export const SKIP_SESSIONS: SkipSessionOption[] = [
   },
   {
     id: 'iron30-express-8',
-    title: '8-Minute Tabata Blast',
+    title: '8-Minute Quick Workout',
     subtitle: 'Fastest option · keep the streak',
     programId: 'operation-iron-30',
     day: 1,
@@ -81,15 +81,15 @@ export const SKIP_SESSIONS: SkipSessionOption[] = [
   },
   {
     id: 'iron14-day1',
-    title: 'IRON 14 · Day 1',
-    subtitle: '2-week bodyweight kickstart',
+    title: '2-Week Starter · Day 1',
+    subtitle: 'Friendly 2-week start at home',
     programId: 'operation-iron-14',
     day: 1,
   },
   {
     id: 'calisthenics-day1',
-    title: 'CALISTHENICS FOUNDATION · Day 1',
-    subtitle: '21-day progressive bodyweight block',
+    title: 'Bodyweight Basics · Day 1',
+    subtitle: '21 days of simple at-home moves',
     programId: 'operation-calisthenics',
     day: 1,
   },

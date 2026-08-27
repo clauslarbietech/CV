@@ -76,7 +76,7 @@ export const useProgramStore = create<ProgramState>()(
         nutritionStreak: 0,
         longestWorkoutStreak: 0,
       },
-      enrollInProgram: (programId = OPERATION_IRON_30.id, difficulty = 'soldier') => {
+      enrollInProgram: (programId = OPERATION_IRON_30.id, difficulty = 'recruit') => {
         set({
           enrollment: {
             programId,
@@ -88,13 +88,13 @@ export const useProgramStore = create<ProgramState>()(
           daily: emptyDaily(),
         });
       },
-      enrollInIron14: (difficulty = 'soldier') => {
+      enrollInIron14: (difficulty = 'recruit') => {
         get().enrollInProgram('operation-iron-14', difficulty);
       },
-      startOver: (programId, difficulty = 'soldier') => {
+      startOver: (programId, difficulty = 'recruit') => {
         const current = get().enrollment;
         const id = programId ?? current?.programId ?? OPERATION_IRON_30.id;
-        const tier = difficulty ?? current?.difficulty ?? 'soldier';
+        const tier = difficulty ?? current?.difficulty ?? 'recruit';
         set({
           enrollment: {
             programId: id,

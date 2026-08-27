@@ -9,6 +9,7 @@ import { ExpressTimeCard } from '@/components/today/ExpressTimeCard';
 import { HomeStatsGraphs } from '@/components/today/HomeStatsGraphs';
 import { ProgramSwitcher } from '@/components/today/ProgramSwitcher';
 import { VoiceCoachCard } from '@/components/today/VoiceCoachCard';
+import { WeightGoalsCard } from '@/components/today/WeightGoalsCard';
 import { AppButton } from '@/components/ui/AppButton';
 import { Screen } from '@/components/ui/Screen';
 import { HeroProgramCard } from '@/components/workout/HeroProgramCard';
@@ -108,7 +109,7 @@ export default function MyStuffScreen() {
   const playProgram = (programId: string) => {
     const current = useProgramStore.getState().enrollment;
     if (!current || current.programId !== programId) {
-      enrollInProgram(programId, 'soldier');
+      enrollInProgram(programId, 'recruit');
     }
     const day = useProgramStore.getState().enrollment?.currentDay ?? 1;
     router.push({
@@ -162,7 +163,7 @@ export default function MyStuffScreen() {
                     ? '12-week long train · Home'
                     : program.durationDays <= 14
                       ? 'Short block · Home'
-                      : '30-day shred · Home'
+                      : '30-day home plan · Home'
               }
               onGetStarted={() => openProgram(program.id)}
               onPlay={() => playProgram(program.id)}
@@ -206,7 +207,7 @@ export default function MyStuffScreen() {
   };
 
   const switchProgram = (programId: string) => {
-    enrollInProgram(programId, 'soldier');
+    enrollInProgram(programId, 'recruit');
     router.push({ pathname: '/program/[id]', params: { id: programId } });
   };
 
@@ -228,9 +229,18 @@ export default function MyStuffScreen() {
       </View>
 
       <Text style={styles.greeting}>
-        {profile?.firstName ?? 'Athlete'} · {displayRank(profile?.rank)}
+        {profile?.firstName ?? 'Hey there'} · {displayRank(profile?.rank)}
       </Text>
       <Text style={styles.name}>Today&apos;s workout</Text>
+
+      <WeightGoalsCard
+        currentWeightKg={profile?.currentWeightKg}
+        goalWeightKg={profile?.goalWeightKg}
+        currentFrame={profile?.bodyVision?.currentFrame}
+        goalFrame={profile?.bodyVision?.goalFrame}
+        primaryGoal={profile?.primaryGoal}
+        programId={program.id}
+      />
 
       <HeroProgramCard
         program={program}
@@ -279,7 +289,7 @@ export default function MyStuffScreen() {
       />
 
       <VoiceCoachCard
-        personality={profile?.coachPersonality ?? 'drill_sergeant'}
+        personality={profile?.coachPersonality ?? 'calm_coach'}
         firstName={profile?.firstName}
         programName={program.name}
         day={enrollment.currentDay}

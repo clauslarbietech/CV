@@ -4,7 +4,7 @@ import { CoachPersonality, DifficultyTier, MilitaryRank } from '@/types';
 export const DIFFICULTY_LABELS: Record<DifficultyTier, string> = {
   recruit: 'Easy',
   soldier: 'Standard',
-  elite: 'Hard',
+  elite: 'Challenging',
 };
 
 export function difficultyLabel(tier: DifficultyTier): string {
@@ -43,10 +43,10 @@ export function displayRank(rank?: string | null): MilitaryRank {
 }
 
 export const COACH_DISPLAY_NAMES: Record<CoachPersonality, string> = {
-  drill_sergeant: 'Direct Coach',
-  motivator: 'Motivator',
-  professional_trainer: 'Pro Trainer',
-  calm_coach: 'Calm Coach',
+  drill_sergeant: 'Straight Talk',
+  motivator: 'Cheer Coach',
+  professional_trainer: 'Pro Tips',
+  calm_coach: 'Gentle Guide',
 };
 
 export function coachDisplayName(id: CoachPersonality): string {

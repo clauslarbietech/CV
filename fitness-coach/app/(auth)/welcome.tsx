@@ -71,14 +71,14 @@ export default function WelcomeScreen() {
 
   const goToToday = () => {
     finishProfile();
-    enrollInProgram('operation-iron-30', 'soldier');
+    enrollInProgram('operation-iron-30', 'recruit');
     router.replace('/(tabs)/today');
   };
 
   const goToSelectedSession = () => {
     if (!selectedSession) return;
     finishProfile({ name: firstName || 'Athlete' });
-    enrollInProgram(selectedSession.programId, 'soldier');
+    enrollInProgram(selectedSession.programId, 'recruit');
     router.replace({
       pathname: '/session/[programId]',
       params: {

@@ -163,11 +163,11 @@ export function BodyWelcome({
     <View style={styles.wrap}>
       <Text style={styles.brand}>FITLIFE</Text>
       <Text style={styles.title}>
-        Meet your <Text style={styles.accent}>AI coach body</Text>
+        Built for <Text style={styles.accent}>everyday life</Text>
       </Text>
       <Text style={styles.support}>
-        Choose how you identify so we can show a body you can relate to —
-        especially if you&apos;re just getting started.
+        Pick a body guide that looks more like you — we keep workouts simple
+        and doable at home.
       </Text>
 
       <View style={styles.stage}>

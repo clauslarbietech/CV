@@ -179,7 +179,7 @@ export const TRAINING_TRACKS = [
     id: 'short',
     label: 'Short term',
     horizon: '10–14 days',
-    programHint: 'IRON 14 + express workouts',
+    programHint: '2-Week Starter + quick workouts',
     fuelHint: 'Short-Block Fuel',
     outcomes: [
       'Work-capacity ignition and habit lock-in',
@@ -191,7 +191,7 @@ export const TRAINING_TRACKS = [
     id: 'medium',
     label: 'Standard block',
     horizon: '30 days',
-    programHint: 'IRON 30',
+    programHint: '30-Day Home Plan',
     fuelHint: 'Everyday 16:8',
     outcomes: [
       'Measurable density gains (reps, rounds, recovery)',
@@ -203,7 +203,7 @@ export const TRAINING_TRACKS = [
     id: 'long',
     label: 'Long train',
     horizon: '12 weeks (84 days)',
-    programHint: 'LONG TRAIN',
+    programHint: '12-Week Steady Plan',
     fuelHint: 'Long-Train Everyday Fuel',
     outcomes: [
       'Toughening → build → sustaining progression',
