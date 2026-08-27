@@ -172,8 +172,7 @@ export function AudioDayLog() {
     <View style={styles.wrap}>
       <Text style={styles.heading}>Day log · text or audio</Text>
       <Text style={styles.hint}>
-        Journal the day or leave a motivational voice note for yourself / your
-        squad (not workout coaching speech).
+        Journal or leave yourself a voice note.
       </Text>
 
       <TextInput

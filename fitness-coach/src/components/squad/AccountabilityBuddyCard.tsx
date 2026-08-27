@@ -120,12 +120,8 @@ export function AccountabilityBuddyCard() {
   return (
     <Card accentBorder>
       <Text style={styles.kicker}>ACCOUNTABILITY BUDDY</Text>
-      <Text style={styles.title}>Text a friend your progress</Text>
-      <Text style={styles.body}>
-        Save a contact. After workouts — or anytime on Progress — send them
-        your program day, body vision, and weight goal so they can keep you
-        honest.
-      </Text>
+      <Text style={styles.title}>Text a friend</Text>
+      <Text style={styles.body}>Save a friend. Text them your progress anytime.</Text>
 
       {editing || !squadProfile?.accountabilityPhone ? (
         <>

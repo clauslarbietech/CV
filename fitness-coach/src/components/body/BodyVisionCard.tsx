@@ -146,16 +146,14 @@ export function BodyVisionCard({
   return (
     <Card accentBorder>
       <Text style={styles.kicker}>BODY VISION</Text>
-      <Text style={styles.title}>Now → Goal · full-body physique</Text>
+      <Text style={styles.title}>Now → Goal</Text>
       <Text style={styles.body}>
-        Head-to-toe guides (top-off style) so you can see the body you’re
-        building toward — pick different frames on My Stuff for Now vs Goal.
-        {programLabel ? ` Journey tracks ${programLabel}.` : ''}
+        Your Now → Goal body guide. Edit frames on My Stuff.
+        {programLabel ? ` · ${programLabel}` : ''}
       </Text>
       {sameFrame ? (
         <Text style={styles.warn}>
-          Now and Goal are both {BODY_FRAME_LABELS[currentFrame]}. Change Goal
-          (or Now) on My Stuff so the transformation is obvious.
+          Now and Goal match — change one on My Stuff.
         </Text>
       ) : null}
 
@@ -181,8 +179,7 @@ export function BodyVisionCard({
       </View>
       {currentPhotoUri ? (
         <Text style={styles.photoNote}>
-          Your check-in photo is saved in the timeline below — guides stay
-          full-body so size change stays clear.
+          Photo saved below. Guides stay full-body.
         </Text>
       ) : null}
 

@@ -215,12 +215,9 @@ export function WeightGoalsCard({
 
   return (
     <Card accentBorder>
-      <Text style={styles.kicker}>SET UP ON YOUR DASHBOARD</Text>
-      <Text style={styles.title}>Weight, goals & body target</Text>
-      <Text style={styles.body}>
-        This lives on My Stuff so you can update it anytime — no need to dig
-        through Settings.
-      </Text>
+      <Text style={styles.kicker}>SET UP</Text>
+      <Text style={styles.title}>Weight & goals</Text>
+      <Text style={styles.body}>Edit anytime on My Stuff.</Text>
 
       <Text style={styles.section}>Main goal</Text>
       <View style={styles.chips}>
@@ -269,9 +266,7 @@ export function WeightGoalsCard({
 
       <Text style={styles.section}>Body guide</Text>
       <Text style={styles.body}>
-        Pick Men or Women — full-body physique guides (top-off style) that get
-        wider or leaner as you change frames. Set Now and Goal to different
-        sizes so Progress shows a clear transformation.
+        Choose Men or Women, then set different Now and Goal sizes.
       </Text>
       <View style={styles.chips}>
         <OptionChip
@@ -305,9 +300,7 @@ export function WeightGoalsCard({
 
       {currentFrame && goalFrame ? (
         <>
-          <Text style={styles.previewHint}>
-            Now vs Goal — full-body physique, different sizes
-          </Text>
+          <Text style={styles.previewHint}>Now vs Goal</Text>
           <View style={styles.previewRow}>
             <View style={styles.previewCol}>
               <BodySilhouette sex={sex} frame={currentFrame} label="Now" compact forceSvg />

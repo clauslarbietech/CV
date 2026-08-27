@@ -34,7 +34,7 @@ export const WORKOUT_FUEL_PLANS: Record<WorkoutFuelBucket, WorkoutFuelPlan> = {
     label: 'Short session fuel',
     durationHint: 'About 15 min or less (express / quick blocks)',
     principle:
-      'You won’t burn a big carb load in a short workout — keep carbs and fat light so you don’t feel heavy. Lean protein + water is enough.',
+      'Keep carbs and fat light. Protein and water are enough.',
     carbLevel: 'Low',
     fatLevel: 'Low',
     proteinFocus: '15–25 g protein after (or a light snack before if hungry)',
@@ -78,7 +78,7 @@ export const WORKOUT_FUEL_PLANS: Record<WorkoutFuelBucket, WorkoutFuelPlan> = {
     label: 'Standard session fuel',
     durationHint: 'About 16–30 min (most home days)',
     principle:
-      'Balanced fuel: enough carbs to train hard, protein to recover, fat kept moderate so digestion stays easy.',
+      'Balanced carbs and protein; keep fat moderate.',
     carbLevel: 'Moderate',
     fatLevel: 'Moderate',
     proteinFocus: '20–30 g protein within ~2 hours after',
@@ -121,7 +121,7 @@ export const WORKOUT_FUEL_PLANS: Record<WorkoutFuelBucket, WorkoutFuelPlan> = {
     label: 'Longer session fuel',
     durationHint: 'Over ~30 min (long train / hard days)',
     principle:
-      'Longer work uses more muscle glycogen — bring more carbs around the workout, keep protein solid, and don’t load heavy fat right before.',
+      'More carbs around longer workouts; keep pre-workout fat low.',
     carbLevel: 'Higher',
     fatLevel: 'Low',
     proteinFocus: '25–40 g protein + solid carbs within ~2 hours',

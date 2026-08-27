@@ -68,10 +68,7 @@ export function MotivationalCoachCard({
   return (
     <Card accentBorder>
       <Text style={styles.kicker}>AI COACH · {personalityLabel.toUpperCase()}</Text>
-      <Text style={styles.title}>Today’s motivational speech</Text>
-      <Text style={styles.meta}>
-        Written coaching — no fake robot voice. Chat more in Notes → AI Coach.
-      </Text>
+      <Text style={styles.title}>Today’s pep talk</Text>
       <Text style={styles.body}>“{line}”</Text>
       <AppButton
         label="New pep talk"
@@ -87,9 +84,7 @@ export function MotivationalCoachCard({
           )
         }
       />
-      <Text style={styles.hint}>
-        Need a real person? Message your Live Trainer in Notes.
-      </Text>
+      <Text style={styles.hint}>Chat in Notes · Live Trainer for a person</Text>
     </Card>
   );
 }

@@ -102,7 +102,7 @@ export function WorkoutFuelCard({
 
   return (
     <Card accentBorder>
-      <Text style={styles.kicker}>AUTO NUTRITION · THIS WORKOUT</Text>
+      <Text style={styles.kicker}>FUEL · THIS WORKOUT</Text>
       <Text style={styles.title}>{plan.label}</Text>
       <Text style={styles.principle}>{plan.principle}</Text>
 
@@ -123,21 +123,19 @@ export function WorkoutFuelCard({
 
       <Text style={styles.section}>{primaryTitle}</Text>
       {primaryList.map((item) => (
-        <View key={item.label} style={styles.item}>
-          <Text style={styles.itemLabel}>• {item.label}</Text>
-          <Text style={styles.itemWhy}>{item.why}</Text>
-        </View>
+        <Text key={item.label} style={styles.itemLabel}>
+          • {item.label}
+        </Text>
       ))}
 
       <Text style={styles.section}>{secondaryTitle}</Text>
       {secondaryList.map((item) => (
-        <View key={item.label} style={styles.item}>
-          <Text style={styles.itemLabel}>• {item.label}</Text>
-          <Text style={styles.itemWhy}>{item.why}</Text>
-        </View>
+        <Text key={item.label} style={styles.itemLabel}>
+          • {item.label}
+        </Text>
       ))}
 
-      <Text style={styles.section}>Skip for this session</Text>
+      <Text style={styles.section}>Skip</Text>
       {plan.avoid.map((line) => (
         <Text key={line} style={styles.avoid}>
           • {line}

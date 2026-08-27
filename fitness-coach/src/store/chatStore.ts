@@ -136,21 +136,21 @@ export const useChatStore = create<ChatState>()(
           id: 'seed-coach-1',
           channel: 'coach',
           from: 'coach',
-          text: 'AI Coach here — written pep talks and check-ins (not a robot voice). Ask for a push anytime.',
+          text: 'AI Coach — ask for a pep talk anytime.',
           createdAt: new Date().toISOString(),
         },
         {
           id: 'seed-live-1',
           channel: 'live_trainer',
           from: 'live_trainer',
-          text: 'This is your Live Trainer inbox — a real trainer conversation. Send questions about form, programming, or recovery. You’ll see a delivery note after each message; replies from your trainer appear here.',
+          text: 'Live Trainer inbox. Ask about form, plan, or recovery.',
           createdAt: new Date().toISOString(),
         },
         {
           id: 'seed-buddy-1',
           channel: 'buddy',
           from: 'system',
-          text: 'Link a buddy on Squad, then use this chat for peer check-ins.',
+          text: 'Link a buddy on Squad, then chat here.',
           createdAt: new Date().toISOString(),
         },
       ],
@@ -172,7 +172,7 @@ export const useChatStore = create<ChatState>()(
           createdAt: now,
           deliveryNote:
             channel === 'live_trainer' && from === 'me'
-              ? 'Sent to your Live Trainer · awaiting their reply'
+              ? 'Sent · awaiting trainer'
               : undefined,
         };
         const replies: ChatMessage[] = [];

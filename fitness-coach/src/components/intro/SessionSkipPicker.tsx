@@ -76,8 +76,7 @@ export function SessionSkipPicker({
         Pick a <Text style={styles.accent}>session</Text>
       </Text>
       <Text style={styles.support}>
-        Skipping the questions is fine. Choose a workout and we&apos;ll take you
-        straight into the workout.
+        Skip setup — jump into a workout.
       </Text>
 
       <View style={styles.list}>

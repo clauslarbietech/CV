@@ -70,7 +70,7 @@ test.describe('FitLife final UX suite', () => {
     await completeOnboarding(page, { sex: 'Male' });
 
     // Edit goals card
-    const edit = page.getByText(/Edit weight & goals|SET UP ON YOUR DASHBOARD|Weight, goals/i).first();
+    const edit = page.getByText(/Edit weight & goals|SET UP|Weight & goals|Weight, goals/i).first();
     await edit.scrollIntoViewIfNeeded();
     if (await page.getByText(/Edit weight & goals/i).count()) {
       await page.getByText(/Edit weight & goals/i).click();

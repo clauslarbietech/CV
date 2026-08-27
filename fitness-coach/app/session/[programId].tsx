@@ -333,8 +333,8 @@ export default function WorkoutSessionScreen() {
           </Text>
           <Text style={styles.body}>
             {expressMinutes
-              ? 'Shorter session. Bodyweight only — keep your streak when you’re short on time.'
-              : 'Bodyweight only. Fat loss · definition · conditioning.'}
+              ? 'Quick bodyweight session to keep your streak.'
+              : 'Bodyweight — fat loss, tone, and fitness.'}
           </Text>
         </Card>
 

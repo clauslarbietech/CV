@@ -172,8 +172,7 @@ export function BodyWelcome({
         Built for <Text style={styles.accent}>everyday life</Text>
       </Text>
       <Text style={styles.support}>
-        Pick a body guide that looks more like you — we keep workouts simple
-        and doable at home.
+        Pick a body guide. Workouts stay simple at home.
       </Text>
 
       <View style={styles.stage}>

@@ -98,9 +98,7 @@ export function FoodScanCard({ onApplyProtein }: FoodScanCardProps) {
       <Text style={styles.kicker}>FOOD SCAN</Text>
       <Text style={styles.title}>Snap a meal · get a fuel read</Text>
       <Text style={styles.body}>
-        Take or upload a food photo. We identify likely items and estimate
-        macros so you can stay on track without manual logging every
-        time.
+        Upload a meal photo for a quick macro estimate.
       </Text>
 
       {Platform.OS === 'web'

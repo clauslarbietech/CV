@@ -164,9 +164,7 @@ export function EnergyRouteCard({
       <Text style={styles.kicker}>ENERGY CHECK-IN</Text>
       <Text style={styles.title}>How do you feel right now?</Text>
       <Text style={styles.body}>
-        Pick an energy band. We map it to a score range and the right workout
-        route — a short recovery session through a challenging full workout.
-        Starting the route is a separate step below.
+        Pick how you feel. We’ll suggest the right workout.
       </Text>
 
       <View style={styles.row}>{ENERGY_ROUTES.map(renderChip)}</View>

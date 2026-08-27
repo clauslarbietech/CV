@@ -77,7 +77,7 @@ export function ExpressTimeCard({ onSelect, disabled }: ExpressTimeCardProps) {
       <Text style={styles.kicker}>SHORT ON TIME?</Text>
       <Text style={styles.title}>Quick workout</Text>
       <Text style={styles.body}>
-        Only have a few minutes? Pick a shorter version of today&apos;s plan.
+        Short on time? Pick a quicker workout.
       </Text>
 
       <View style={styles.row}>

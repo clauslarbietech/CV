@@ -155,23 +155,20 @@ export function SquadChat() {
 
   return (
     <View style={styles.wrap}>
-      <Text style={styles.heading}>Coaching & messages</Text>
+      <Text style={styles.heading}>Messages</Text>
 
       {channel === 'live_trainer' ? (
         <View style={styles.banner}>
-          <Text style={styles.bannerTitle}>LIVE TRAINER · HUMAN</Text>
+          <Text style={styles.bannerTitle}>LIVE TRAINER</Text>
           <Text style={styles.bannerBody}>
-            You’re messaging a live trainer — not the AI Coach. Ask about form,
-            programming, or recovery. Messages are marked as sent to your
-            trainer.
+            Real trainer inbox — ask about form, plan, or recovery.
           </Text>
         </View>
       ) : null}
 
       {channel === 'coach' ? (
         <Text style={styles.hint}>
-          AI Coach · motivational speech in text (no robot voice). For a real
-          trainer, switch to Live Trainer.
+          Text coaching. Switch to Live Trainer for a person.
         </Text>
       ) : null}
 

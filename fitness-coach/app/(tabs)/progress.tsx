@@ -110,7 +110,7 @@ export default function ProgressScreen() {
 
       <Text style={styles.section}>Completed days</Text>
       <Text style={styles.hint}>
-        Each dot is a program day — filled = done, blue = today.
+        Filled = done · blue = today.
       </Text>
       <Card military accentBorder>
         <DayCompletionStrip

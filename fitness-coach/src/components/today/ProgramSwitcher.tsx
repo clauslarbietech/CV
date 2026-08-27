@@ -63,10 +63,7 @@ export function ProgramSwitcher({
     <View>
       <Text style={styles.kicker}>PROGRAMS</Text>
       <Text style={styles.title}>Choose another plan</Text>
-      <Text style={styles.body}>
-        Switch anytime — 2-Week Starter, 30-Day Home, Bodyweight Basics, or
-        12-Week Steady. Discover stays available too.
-      </Text>
+      <Text style={styles.body}>Switch plans anytime.</Text>
       <View style={styles.list}>
         {CATALOG.map((program: WorkoutProgram) => {
           const active = program.id === activeProgramId;

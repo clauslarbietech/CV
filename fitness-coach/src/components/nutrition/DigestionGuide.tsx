@@ -114,8 +114,7 @@ export function DigestionGuide() {
         How long foods take to <Text style={styles.accent}>digest</Text>
       </Text>
       <Text style={styles.subtitle}>
-        Use this to time meals around missions — lighter proteins and carbs before
-        training, denser plates after.
+        Lighter meals before training; bigger plates after.
       </Text>
 
       <View style={styles.grid}>

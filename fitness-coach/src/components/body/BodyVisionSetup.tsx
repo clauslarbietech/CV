@@ -125,10 +125,7 @@ export function BodyVisionSetup({
       <Text style={styles.kicker}>SET YOUR BODY VISION</Text>
       <Text style={styles.title}>Before {programName}</Text>
       <Text style={styles.body}>
-        Most feasible path: choose a frame for how you look now, a target frame
-        for where you want to be, and optionally upload a full-body photo. We
-        show Now | Goal side-by-side and a Journey view that moves toward your
-        goal as you finish program days — not a medical body scan.
+        Set Now and Goal frames. Optional photo. Journey updates as you train.
       </Text>
 
       <Text style={styles.section}>Current weight (kg)</Text>
@@ -199,8 +196,7 @@ export function BodyVisionSetup({
       ) : null}
 
       <Text style={styles.note}>
-        Tip: add dated full-body check-ins on the Progress tab. Journey uses
-        both completed workouts and weight movement toward your goal.
+        Add Progress photos. Journey tracks workouts and weight.
       </Text>
 
       <AppButton
