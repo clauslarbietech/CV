@@ -39,11 +39,15 @@ async function completeOnboarding(page, { sex = 'Female', name = 'Sam' } = {}) {
     await nameInput.fill(name);
   }
 
-  await page.getByRole('button', { name: /Feel healthier|Lose fat/i }).first().click();
-  await page.getByRole('button', { name: /New to working out|Some experience/i }).first().click();
-  await page.getByRole('button', { name: /25-35|15-25|35\+/i }).first().click();
+  await page.getByRole('button', { name: /Lose fat/i }).first().click();
+  await page.getByRole('button', { name: /New to working out/i }).first().click();
+
+  const timeBtn = page.getByRole('button', { name: /25.35 minutes|About 10 minutes|15.20 minutes/i }).first();
+  await timeBtn.scrollIntoViewIfNeeded();
+  await timeBtn.click();
 
   const start = page.getByRole('button', { name: /Start my coaching plan/i });
+  await start.scrollIntoViewIfNeeded();
   await expect(start).toBeEnabled({ timeout: 5000 });
   await start.click();
 
@@ -99,26 +103,21 @@ test.describe('FitLife final UX suite', () => {
     await fresh(page);
     await completeOnboarding(page);
 
-    const startMission = page.getByRole('button', { name: /START MISSION|Start mission|Start workout|Play/i }).first();
-    if (await startMission.count()) {
-      await startMission.click();
-    } else {
-      await page.getByText(/START MISSION|Start Day|Continue/i).first().click();
-    }
+    const startWorkout = page.getByRole('button', { name: /START WORKOUT/i }).first();
+    await startWorkout.scrollIntoViewIfNeeded();
+    await startWorkout.click();
 
     await page.waitForTimeout(1500);
     await shot(page, 'ux_06_workout_session');
 
-    // Briefing continue if present
-    const begin = page.getByRole('button', { name: /Begin|Start|Let's go|Continue/i }).first();
+    const begin = page.getByRole('button', { name: /Begin|Start workout|Let's go|Got it|Start session/i }).first();
     if (await begin.isVisible().catch(() => false)) {
       await begin.click();
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(1200);
     }
 
     await shot(page, 'ux_07_workout_form_guide');
-    // Soft assert — session UI loaded
-    await expect(page.getByText(/Workout|FORM GUIDE|ROUND|DAY|MOVE|Rest|Complete/i).first()).toBeVisible({
+    await expect(page.getByText('FORM GUIDE', { exact: true })).toBeVisible({
       timeout: 15000,
     });
   });
@@ -128,26 +127,28 @@ test.describe('FitLife final UX suite', () => {
     await completeOnboarding(page);
 
     const tabs = [
-      { name: /Discover/i, shot: 'ux_08_discover', expect: /plan|program|Iron|Home|Starter|Calisthenics|Horizon/i },
-      { name: /Notes/i, shot: 'ux_09_notes', expect: /med|note|chat|reminder|squad/i },
+      { name: /Discover/i, shot: 'ux_08_discover', expect: /plan|program|Home|Starter|Calisthenics|Horizon|30-Day/i },
+      { name: /Notes/i, shot: 'ux_09_notes', expect: /NOTES|Meds|Chat|Day log|Open squad/i },
       { name: /Nutrition/i, shot: 'ux_10_nutrition', expect: /fuel|meal|fast|food|scan|protein/i },
       { name: /Progress/i, shot: 'ux_11_progress', expect: /body|vision|journey|day|progress|frame/i },
     ];
 
     for (const t of tabs) {
-      await page.getByRole('tab', { name: t.name }).or(page.getByText(t.name).first()).click();
+      await page.getByRole('tab', { name: t.name }).click();
       await page.waitForTimeout(800);
       await shot(page, t.shot);
       await expect(page.getByText(t.expect).first()).toBeVisible({ timeout: 12000 });
     }
 
-    // Settings via gear if present
-    const gear = page.getByLabel(/Settings/i).first();
+    await page.getByRole('tab', { name: /My Stuff/i }).click();
+    const gear = page.getByLabel(/Open settings|Settings/i).first();
     if (await gear.count()) {
       await gear.click();
-      await page.waitForTimeout(600);
+      await page.waitForTimeout(800);
       await shot(page, 'ux_12_settings');
-      await expect(page.getByText(/Settings|Coach|Appearance|Sign out|Replay/i).first()).toBeVisible();
+      await expect(
+        page.getByText(/Sign out|Replay intro|Appearance|Day\/Night|Coach personality/i).first(),
+      ).toBeVisible({ timeout: 10000 });
     }
   });
 
@@ -155,9 +156,7 @@ test.describe('FitLife final UX suite', () => {
     await fresh(page);
     await completeOnboarding(page);
 
-    await page.getByText(/My Stuff/i).first().click().catch(() => {});
-    // Navigate via tab
-    await page.getByRole('tab', { name: /My Stuff/i }).or(page.getByText('My Stuff').first()).click();
+    await page.getByRole('tab', { name: /My Stuff/i }).click();
     await page.waitForTimeout(500);
 
     const energy = page.getByText(/energy|How's your energy|Drained|Ready/i).first();

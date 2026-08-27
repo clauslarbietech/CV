@@ -60,7 +60,14 @@ export function AudioDayLog() {
 
   const addEntry = useDayLogStore((s) => s.addEntry);
   const removeEntry = useDayLogStore((s) => s.removeEntry);
-  const entries = useDayLogStore((s) => s.entriesForDate(todayKey()));
+  const allEntries = useDayLogStore((s) => s.entries);
+  const today = todayKey();
+  // Select stable `entries` then filter — calling entriesForDate() in the
+  // selector returns a new array every time and loops React updates (#185).
+  const entries = useMemo(
+    () => allEntries.filter((e) => e.date === today),
+    [allEntries, today],
+  );
 
   const [text, setText] = useState('');
   const [recorderState, setRecorderState] = useState<RecorderState>('idle');
