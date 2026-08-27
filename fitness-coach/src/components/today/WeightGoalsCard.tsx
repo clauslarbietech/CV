@@ -269,8 +269,9 @@ export function WeightGoalsCard({
 
       <Text style={styles.section}>Body guide</Text>
       <Text style={styles.body}>
-        Pick Men or Women — the preview uses a human figure that gets wider or
-        leaner as you change frames.
+        Pick Men or Women — full-body physique guides (top-off style) that get
+        wider or leaner as you change frames. Set Now and Goal to different
+        sizes so Progress shows a clear transformation.
       </Text>
       <View style={styles.chips}>
         <OptionChip
@@ -305,14 +306,14 @@ export function WeightGoalsCard({
       {currentFrame && goalFrame ? (
         <>
           <Text style={styles.previewHint}>
-            Now vs Goal — same person guide, different size
+            Now vs Goal — full-body physique, different sizes
           </Text>
           <View style={styles.previewRow}>
             <View style={styles.previewCol}>
-              <BodySilhouette sex={sex} frame={currentFrame} label="Now" compact />
+              <BodySilhouette sex={sex} frame={currentFrame} label="Now" compact forceSvg />
             </View>
             <View style={styles.previewCol}>
-              <BodySilhouette sex={sex} frame={goalFrame} label="Goal" compact />
+              <BodySilhouette sex={sex} frame={goalFrame} label="Goal" compact forceSvg />
             </View>
           </View>
         </>

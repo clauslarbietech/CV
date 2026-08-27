@@ -183,6 +183,7 @@ export function BodyVisionSetup({
               photoUri={photoUri}
               label="Preview · Now"
               compact
+              forceSvg
             />
           </View>
           <View style={styles.previewCol}>
@@ -191,6 +192,7 @@ export function BodyVisionSetup({
               frame={goalFrame}
               label="Preview · Goal"
               compact
+              forceSvg
             />
           </View>
         </View>

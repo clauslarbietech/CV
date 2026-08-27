@@ -10,6 +10,8 @@ export type SquadBuddy = {
   joinedAt: string;
   /** Last day they checked in on the shared mission */
   lastCheckInDay?: number;
+  /** Optional phone for SMS accountability (local only). */
+  phone?: string;
 };
 
 export type SquadProfile = {
@@ -17,6 +19,10 @@ export type SquadProfile = {
   motto: string;
   status: string;
   inviteCode: string;
+  /** Friend name for text check-ins */
+  accountabilityName?: string;
+  /** E.164-ish phone for sms: deep link */
+  accountabilityPhone?: string;
 };
 
 interface SquadState {
@@ -29,12 +35,18 @@ interface SquadState {
     motto?: string;
     status?: string;
   }) => void;
+  setAccountabilityContact: (args: {
+    name: string;
+    phone: string;
+  }) => void;
+  clearAccountabilityContact: () => void;
   updateStatus: (status: string) => void;
   regenerateInviteCode: () => void;
   joinBuddy: (args: {
     callsign: string;
     inviteCode: string;
     motto?: string;
+    phone?: string;
   }) => { ok: true } | { ok: false; error: string };
   removeBuddy: (id: string) => void;
   setSharedMission: (programId: string, day: number) => void;
@@ -71,9 +83,43 @@ export const useSquadStore = create<SquadState>()(
             ),
             status: (status ?? existing?.status ?? 'Ready for PT').slice(0, 60),
             inviteCode: existing?.inviteCode ?? makeInviteCode(),
+            accountabilityName: existing?.accountabilityName,
+            accountabilityPhone: existing?.accountabilityPhone,
           },
         });
       },
+      setAccountabilityContact: ({ name, phone }) => {
+        const cleanName = name.trim().slice(0, 40);
+        const cleanPhone = phone.replace(/[^\d+]/g, '').slice(0, 20);
+        if (!cleanName || cleanPhone.length < 7) return;
+        set((state) => {
+          const base = state.profile ?? {
+            callsign: cleanName.slice(0, 24) || 'Athlete',
+            motto: 'Keep me honest.',
+            status: 'Training',
+            inviteCode: makeInviteCode(),
+          };
+          return {
+            profile: {
+              ...base,
+              accountabilityName: cleanName,
+              accountabilityPhone: cleanPhone,
+            },
+          };
+        });
+      },
+      clearAccountabilityContact: () =>
+        set((state) =>
+          state.profile
+            ? {
+                profile: {
+                  ...state.profile,
+                  accountabilityName: undefined,
+                  accountabilityPhone: undefined,
+                },
+              }
+            : state,
+        ),
       updateStatus: (status) =>
         set((state) =>
           state.profile
@@ -96,7 +142,7 @@ export const useSquadStore = create<SquadState>()(
               }
             : state,
         ),
-      joinBuddy: ({ callsign, inviteCode, motto }) => {
+      joinBuddy: ({ callsign, inviteCode, motto, phone }) => {
         const name = callsign.trim();
         const code = inviteCode.trim().toUpperCase();
         if (!name) return { ok: false, error: 'Enter their nickname.' };
@@ -110,6 +156,7 @@ export const useSquadStore = create<SquadState>()(
         if (get().buddies.some((b) => b.callsign.toLowerCase() === name.toLowerCase())) {
           return { ok: false, error: 'That nickname is already linked.' };
         }
+        const cleanPhone = phone?.replace(/[^\d+]/g, '').slice(0, 20);
         set((state) => ({
           buddies: [
             ...state.buddies,
@@ -119,6 +166,7 @@ export const useSquadStore = create<SquadState>()(
               motto: motto?.trim().slice(0, 80),
               status: 'Linked · awaiting check-in',
               joinedAt: new Date().toISOString(),
+              phone: cleanPhone && cleanPhone.length >= 7 ? cleanPhone : undefined,
             },
           ],
         }));

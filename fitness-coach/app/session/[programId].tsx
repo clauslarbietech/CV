@@ -9,6 +9,7 @@ import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Screen } from '@/components/ui/Screen';
+import { BODY_FRAME_LABELS } from '@/constants/bodyVision';
 import { getActiveProgram } from '@/constants/programs';
 import {
   ExpressBudget,
@@ -20,8 +21,14 @@ import {
   phaseLabel,
   resolvedCurrentExercise,
 } from '@/features/workouts/sessionEngine';
+import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useSessionStore } from '@/store/sessionStore';
+import { useSquadStore } from '@/store/squadStore';
+import {
+  buildProgramProgressMessage,
+  textOrShareProgress,
+} from '@/utils/accountabilityShare';
 import { formatDuration, formatRest } from '@/utils/format';
 import { getProgramDay, resolveExercise } from '@/utils/workout';
 import { useTheme, spacing, typography } from '@/theme';
@@ -240,6 +247,34 @@ export default function WorkoutSessionScreen() {
             {challengeDone ? 'CHALLENGE BADGE unlocked' : `Day ${nextDay} unlocked`}
           </Text>
         </Card>
+        <AppButton
+          label="Text buddy this win"
+          variant="action"
+          onPress={async () => {
+            const squad = useSquadStore.getState().profile;
+            const profile = useProfileStore.getState().profile;
+            const message = buildProgramProgressMessage({
+              userName: profile?.firstName ?? 'Athlete',
+              buddyName: squad?.accountabilityName,
+              programName: program.name,
+              day: day.day,
+              totalDays: program.durationDays,
+              completedDays: completedCount,
+              currentFrame: profile?.bodyVision?.currentFrame
+                ? BODY_FRAME_LABELS[profile.bodyVision.currentFrame]
+                : undefined,
+              goalFrame: profile?.bodyVision?.goalFrame
+                ? BODY_FRAME_LABELS[profile.bodyVision.goalFrame]
+                : undefined,
+              currentWeightKg: profile?.currentWeightKg,
+              goalWeightKg: profile?.goalWeightKg,
+            });
+            await textOrShareProgress({
+              phone: squad?.accountabilityPhone,
+              message,
+            });
+          }}
+        />
         {!challengeDone && nextDay > day.day ? (
           <AppButton
             label={`Start Day ${nextDay}`}

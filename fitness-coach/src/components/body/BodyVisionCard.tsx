@@ -54,6 +54,7 @@ export function BodyVisionCard({
     journey.progress,
   );
   const journeyFrame = nearestFrameFromTorso(journeyTorso);
+  const sameFrame = currentFrame === goalFrame;
 
   const styles = useMemo(
     () =>
@@ -68,6 +69,12 @@ export function BodyVisionCard({
           ...typography.caption,
           color: colors.textSecondary,
           marginVertical: spacing.sm,
+        },
+        warn: {
+          ...typography.caption,
+          color: colors.warning,
+          marginBottom: spacing.sm,
+          fontWeight: '700',
         },
         row: {
           flexDirection: 'row',
@@ -122,6 +129,11 @@ export function BodyVisionCard({
           color: colors.textMuted,
           fontSize: 11,
         },
+        photoNote: {
+          ...typography.caption,
+          color: colors.textMuted,
+          marginTop: spacing.sm,
+        },
       }),
     [colors],
   );
@@ -134,22 +146,27 @@ export function BodyVisionCard({
   return (
     <Card accentBorder>
       <Text style={styles.kicker}>BODY VISION</Text>
-      <Text style={styles.title}>Now → Goal</Text>
+      <Text style={styles.title}>Now → Goal · full-body physique</Text>
       <Text style={styles.body}>
-        Dedicated frame graphics for Small–Plus, plus your photo when uploaded.
-        Journey blends program days
-        {weightPct != null ? ' and scale movement' : ''}
-        {programLabel ? ` on ${programLabel}` : ''}.
+        Head-to-toe guides (top-off style) so you can see the body you’re
+        building toward — pick different frames on My Stuff for Now vs Goal.
+        {programLabel ? ` Journey tracks ${programLabel}.` : ''}
       </Text>
+      {sameFrame ? (
+        <Text style={styles.warn}>
+          Now and Goal are both {BODY_FRAME_LABELS[currentFrame]}. Change Goal
+          (or Now) on My Stuff so the transformation is obvious.
+        </Text>
+      ) : null}
 
       <View style={styles.row}>
         <View style={styles.col}>
           <BodySilhouette
             sex={sex}
             frame={currentFrame}
-            photoUri={currentPhotoUri}
             label="Now"
             compact
+            forceSvg
           />
         </View>
         <View style={styles.col}>
@@ -158,9 +175,16 @@ export function BodyVisionCard({
             frame={goalFrame}
             label="Goal"
             compact
+            forceSvg
           />
         </View>
       </View>
+      {currentPhotoUri ? (
+        <Text style={styles.photoNote}>
+          Your check-in photo is saved in the timeline below — guides stay
+          full-body so size change stays clear.
+        </Text>
+      ) : null}
 
       {(currentWeightKg != null || goalWeightKg != null || startWeightKg != null) && (
         <View style={styles.weightRow}>

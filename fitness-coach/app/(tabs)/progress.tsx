@@ -7,6 +7,7 @@ import { BodyVisionCard } from '@/components/body/BodyVisionCard';
 import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
 import { ProgressPhotoTimeline } from '@/components/body/ProgressPhotoTimeline';
 import { ResearchMilestonesCard } from '@/components/progress/ResearchMilestonesCard';
+import { AccountabilityBuddyCard } from '@/components/squad/AccountabilityBuddyCard';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import { getActiveProgram } from '@/constants/programs';
@@ -84,6 +85,8 @@ export default function ProgressScreen() {
           programName={program.name}
         />
       )}
+
+      <AccountabilityBuddyCard />
 
       {bodyVision ? (
         <ProgressPhotoTimeline photos={bodyVision.photoTimeline ?? []} />
