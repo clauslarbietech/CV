@@ -122,7 +122,10 @@ export function BodyWelcome({
         {
           key: option,
           type: 'button',
-          onClick: onPick,
+          onClick: (e: { stopPropagation?: () => void }) => {
+            e?.stopPropagation?.();
+            onPick();
+          },
           'aria-pressed': active,
           'aria-label': label,
           style: {
@@ -137,6 +140,9 @@ export function BodyWelcome({
             fontWeight: 700,
             fontSize: 16,
             cursor: 'pointer',
+            position: 'relative',
+            zIndex: 5,
+            pointerEvents: 'auto',
           },
         },
         label,
@@ -183,7 +189,7 @@ export function BodyWelcome({
         ) : null}
       </View>
 
-      <View style={styles.sexRow}>
+      <View style={[styles.sexRow, Platform.OS === 'web' ? { zIndex: 5 } : null]}>
         {(['male', 'female'] as IntroBodySex[]).map(renderSexButton)}
       </View>
 

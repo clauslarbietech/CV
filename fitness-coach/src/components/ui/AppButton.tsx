@@ -105,7 +105,12 @@ export function AppButton({
       {
         type: 'button',
         disabled,
-        onClick: disabled ? undefined : onPress,
+        onClick: disabled
+          ? undefined
+          : (e: { stopPropagation?: () => void }) => {
+              e?.stopPropagation?.();
+              onPress();
+            },
         'aria-label': label,
         'aria-disabled': disabled,
         title: accessibilityHint,
@@ -127,8 +132,11 @@ export function AppButton({
           fontSize: 16,
           cursor: disabled ? 'default' : 'pointer',
           opacity: disabled ? 0.45 : 1,
-          width: style?.alignSelf === 'stretch' ? '100%' : undefined,
+          width: '100%',
           marginTop: typeof style?.marginTop === 'number' ? style.marginTop : undefined,
+          position: 'relative',
+          zIndex: 5,
+          pointerEvents: 'auto',
         },
       },
       label,

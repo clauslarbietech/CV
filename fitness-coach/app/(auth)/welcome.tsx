@@ -72,7 +72,7 @@ export default function WelcomeScreen() {
   const goToToday = () => {
     finishProfile();
     enrollInProgram('operation-iron-30', 'recruit');
-    router.replace('/(tabs)/today');
+    router.replace('/today');
   };
 
   const goToSelectedSession = () => {

@@ -188,7 +188,8 @@ export function IntroQuestions({
     [colors],
   );
 
-  const ready = Boolean(firstName.trim() && goal && experience && minutes);
+  // Name is optional — finishProfile defaults to "Athlete".
+  const ready = Boolean(goal && experience && minutes);
 
   return (
     <View style={styles.wrap}>
@@ -205,12 +206,15 @@ export function IntroQuestions({
       <TextInput
         value={firstName}
         onChangeText={onChangeName}
-        placeholder="Your first name"
+        placeholder="Your first name (optional)"
         placeholderTextColor={colors.textMuted}
         autoCapitalize="words"
         style={styles.input}
         accessibilityLabel="Your name"
       />
+      <Text style={styles.choiceHint}>
+        Leave blank and we will call you Athlete.
+      </Text>
 
       <Text style={styles.label}>Main goal</Text>
       <View style={styles.stack}>
