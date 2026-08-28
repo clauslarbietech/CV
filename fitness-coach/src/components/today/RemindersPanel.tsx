@@ -7,10 +7,29 @@ import {
   View,
 } from 'react-native';
 
+import { OptionChip } from '@/components/onboarding/OptionChip';
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
-import { useNotesStore } from '@/store/notesStore';
+import {
+  MED_CATEGORIES,
+  MED_CATEGORY_LABELS,
+  type MedCategory,
+} from '@/constants/medCategories';
+import { type MedItem, useNotesStore } from '@/store/notesStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
+
+function groupMedsByCategory(meds: MedItem[]): Record<MedCategory, MedItem[]> {
+  const grouped = Object.fromEntries(
+    MED_CATEGORIES.map((category) => [category, [] as MedItem[]]),
+  ) as Record<MedCategory, MedItem[]>;
+
+  for (const med of meds) {
+    const bucket = grouped[med.category] ?? grouped.morning;
+    bucket.push(med);
+  }
+
+  return grouped;
+}
 
 /**
  * Locked daily panel: meds checklist + work notes.
@@ -53,6 +72,32 @@ export function RemindersPanel() {
           ...typography.caption,
           color: colors.textMuted,
           marginBottom: spacing.sm,
+        },
+        categoryBlock: {
+          marginBottom: spacing.sm,
+        },
+        categoryHeader: {
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: spacing.xs,
+          marginTop: spacing.xs,
+        },
+        categoryTitle: {
+          ...typography.bodyBold,
+          color: colors.textPrimary,
+        },
+        categoryCount: {
+          ...typography.caption,
+          color: colors.textMuted,
+          fontWeight: '700',
+        },
+        emptyCategory: {
+          ...typography.caption,
+          color: colors.textMuted,
+          fontStyle: 'italic',
+          marginBottom: spacing.xs,
+          paddingLeft: spacing.xs,
         },
         medRow: {
           flexDirection: 'row',
@@ -100,10 +145,26 @@ export function RemindersPanel() {
           ...typography.caption,
           color: colors.textSecondary,
         },
+        addSection: {
+          marginTop: spacing.md,
+          gap: spacing.sm,
+          paddingTop: spacing.sm,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+        },
+        addLabel: {
+          ...typography.caption,
+          color: colors.textSecondary,
+          fontWeight: '700',
+        },
+        chips: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.xs,
+        },
         addRow: {
           flexDirection: 'row',
           gap: spacing.xs,
-          marginTop: spacing.sm,
           alignItems: 'center',
         },
         input: {
@@ -117,6 +178,9 @@ export function RemindersPanel() {
           paddingVertical: spacing.sm,
           minHeight: 48,
           ...typography.body,
+        },
+        doseInput: {
+          minHeight: 48,
         },
         addBtn: {
           minHeight: 48,
@@ -140,8 +204,18 @@ export function RemindersPanel() {
   const setWorkNotes = useNotesStore((s) => s.setWorkNotes);
   const setPersonalNotes = useNotesStore((s) => s.setPersonalNotes);
   const [newMed, setNewMed] = useState('');
+  const [newDose, setNewDose] = useState('');
+  const [newCategory, setNewCategory] = useState<MedCategory>('morning');
 
   const takenCount = meds.filter((m) => isMedTakenToday(m.id)).length;
+  const groupedMeds = useMemo(() => groupMedsByCategory(meds), [meds]);
+
+  const handleAddMed = () => {
+    if (!newMed.trim()) return;
+    addMed(newMed, newCategory, newDose || undefined);
+    setNewMed('');
+    setNewDose('');
+  };
 
   return (
     <View style={styles.wrap}>
@@ -158,46 +232,86 @@ export function RemindersPanel() {
           Reminder checklist only — do not change doses without your clinician.
         </Text>
 
-        {meds.map((med) => {
-          const taken = isMedTakenToday(med.id);
+        {MED_CATEGORIES.map((category) => {
+          const items = groupedMeds[category];
+          const done = items.filter((m) => isMedTakenToday(m.id)).length;
+          if (items.length === 0) return null;
+
           return (
-            <Pressable
-              key={med.id}
-              accessibilityRole="checkbox"
-              accessibilityState={{ checked: taken }}
-              onPress={() => toggleMedTaken(med.id)}
-              style={[styles.medRow, taken && styles.medRowDone]}
-            >
-              <View style={[styles.check, taken && styles.checkOn]}>
-                <Text style={styles.checkMark}>{taken ? '✓' : ''}</Text>
-              </View>
-              <View style={styles.medText}>
-                <Text style={styles.medName}>{med.name}</Text>
-                <Text style={styles.medMeta}>
-                  {[med.timeLabel, med.dose].filter(Boolean).join(' · ')}
+            <View key={category} style={styles.categoryBlock}>
+              <View style={styles.categoryHeader}>
+                <Text style={styles.categoryTitle}>
+                  {MED_CATEGORY_LABELS[category]}
+                </Text>
+                <Text style={styles.categoryCount}>
+                  {done}/{items.length}
                 </Text>
               </View>
-            </Pressable>
+
+              {items.map((med) => {
+                const taken = isMedTakenToday(med.id);
+                return (
+                  <Pressable
+                    key={med.id}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: taken }}
+                    onPress={() => toggleMedTaken(med.id)}
+                    style={[styles.medRow, taken && styles.medRowDone]}
+                  >
+                    <View style={[styles.check, taken && styles.checkOn]}>
+                      <Text style={styles.checkMark}>{taken ? '✓' : ''}</Text>
+                    </View>
+                    <View style={styles.medText}>
+                      <Text style={styles.medName}>{med.name}</Text>
+                      {med.dose ? (
+                        <Text style={styles.medMeta}>{med.dose}</Text>
+                      ) : null}
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
           );
         })}
 
-        <View style={styles.addRow}>
-          <TextInput
-            value={newMed}
-            onChangeText={setNewMed}
-            placeholder="Add med / supplement name"
-            placeholderTextColor={colors.textMuted}
-            style={styles.input}
-          />
-          <AppButton
-            label="Add"
-            variant="secondary"
-            onPress={() => {
-              addMed(newMed);
-              setNewMed('');
-            }}
-            style={styles.addBtn}
-          />
+        <View style={styles.addSection}>
+          <Text style={styles.addLabel}>Add to category</Text>
+          <View style={styles.chips}>
+            {MED_CATEGORIES.map((category) => (
+              <OptionChip
+                key={category}
+                label={MED_CATEGORY_LABELS[category]}
+                selected={newCategory === category}
+                onPress={() => setNewCategory(category)}
+              />
+            ))}
+          </View>
+
+          <View style={styles.addRow}>
+            <TextInput
+              value={newMed}
+              onChangeText={setNewMed}
+              placeholder="Med or supplement name"
+              placeholderTextColor={colors.textMuted}
+              style={styles.input}
+            />
+          </View>
+
+          <View style={styles.addRow}>
+            <TextInput
+              value={newDose}
+              onChangeText={setNewDose}
+              placeholder="Dose note (optional)"
+              placeholderTextColor={colors.textMuted}
+              style={[styles.input, styles.doseInput]}
+            />
+            <AppButton
+              label="Add"
+              variant="secondary"
+              onPress={handleAddMed}
+              style={styles.addBtn}
+            />
+          </View>
         </View>
       </Card>
 
