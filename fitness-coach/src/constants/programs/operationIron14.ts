@@ -213,6 +213,8 @@ export const OPERATION_IRON_14: WorkoutProgram = {
           recruit: { reps: 6 },
           soldier: { reps: 10 },
           elite: { reps: 12 },
+          notes:
+            'Easy tier: swap for extra squats if jumping bothers knees or you are new to plyometrics.',
         },
         {
           id: 'd4-wallsit',
@@ -514,6 +516,8 @@ export const OPERATION_IRON_14: WorkoutProgram = {
           recruit: { reps: 8 },
           soldier: { reps: 12 },
           elite: { reps: 15 },
+          notes:
+            'Easy tier: swap for extra squats if jumping bothers knees or you are new to plyometrics.',
         },
         {
           id: 'd11-wallsit',

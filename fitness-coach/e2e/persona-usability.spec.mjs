@@ -100,15 +100,15 @@ test.describe('Persona usability', () => {
     });
     await shot(page, 'persona_alex_my_stuff');
 
-    await expect(page.getByText(/Bodyweight Basics|PICKED FOR YOU/i).first()).toBeVisible({
+    await expect(page.getByText(/Long Train|PICKED FOR YOU/i).first()).toBeVisible({
       timeout: 10000,
     });
-    await expect(page.getByText(/Challenging|skills, strength/i).first()).toBeVisible();
+    await expect(page.getByText(/Challenging|12-week strength/i).first()).toBeVisible();
 
-    // Discover — calisthenics path visible
+    // Discover — programs visible
     await page.getByRole('tab', { name: /Discover/i }).click();
     await page.waitForTimeout(600);
-    await expect(page.getByText(/Calisthenics|Bodyweight Basics/i).first()).toBeVisible();
+    await expect(page.getByText(/Long Train|12-Week|Bodyweight/i).first()).toBeVisible();
     await shot(page, 'persona_alex_discover');
 
     // Start workout — challenging tier available on program detail

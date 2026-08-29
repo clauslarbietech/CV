@@ -15,6 +15,7 @@ import {
   SARDINE_EGG_ELECTROLYTE_5DAY_LESSON,
   VIRAL_MILITARY_DIET_DAYS,
 } from '@/constants/nutrition/militaryFuel';
+import { NUTRITION_REVISION_QUEUE } from '@/constants/research/programEvidence';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
@@ -235,6 +236,24 @@ export default function NutritionScreen() {
           • {note}
         </Text>
       ))}
+
+      <Text style={styles.section}>Revision queue — not core programming</Text>
+      <Card accentBorder>
+        <Text style={[styles.verdict, { color: colors.danger }]}>
+          Flagged in evidence audit
+        </Text>
+        <Text style={styles.note}>
+          These sections are kept for transparency but are not backed by strong
+          clinical evidence. Prefer the fuel tracks above on training days.
+        </Text>
+        {NUTRITION_REVISION_QUEUE.filter((item) => item.verdict === 'needs-revision').map(
+          (item) => (
+            <Text key={item.id} style={styles.item}>
+              · {item.label}: {item.revisionAction}
+            </Text>
+          ),
+        )}
+      </Card>
 
       <Text style={styles.section}>Lesson: 5-day sardine + egg + electrolytes</Text>
       <Card accentBorder>

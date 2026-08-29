@@ -14,6 +14,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Screen } from '@/components/ui/Screen';
 import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
 import { ProgramMonthGrid } from '@/components/workout/ProgramMonthGrid';
+import { ProgramEvidenceCard } from '@/components/workout/ProgramEvidenceCard';
 import { ProgramStartSteps } from '@/components/workout/ProgramStartSteps';
 import { difficultyLabel } from '@/constants/displayLabels';
 import { getProgramById } from '@/constants/programs';
@@ -205,6 +206,8 @@ export default function ProgramDetailScreen() {
         <Text style={styles.meta}>{program.equipment}</Text>
         <Text style={styles.meta}>{program.averageWorkout}</Text>
       </View>
+
+      <ProgramEvidenceCard programId={program.id} />
 
       <Text style={styles.section}>Get set up</Text>
       <ProgramStartSteps

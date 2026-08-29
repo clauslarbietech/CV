@@ -97,7 +97,10 @@ const TEMPLATES: DayTemplate[] = [
       ex('squats', 'Squats', 15, 20, 25),
       ex('lunges', 'Lunges', 8, 12, 15, { perSide: true }),
       ex('bridges', 'Glute Bridges', 12, 15, 20),
-      ex('jumpsquats', 'Jump Squats', 6, 10, 12),
+      ex('jumpsquats', 'Jump Squats', 6, 10, 12, {
+        notes:
+          'Easy tier: do extra bodyweight squats instead if jumping bothers knees or you are new to plyometrics.',
+      }),
       ex('wallsit', 'Wall Sit', 20, 30, 45, { timed: true }),
     ],
   },
@@ -285,10 +288,10 @@ export const OPERATION_IRON_30: WorkoutProgram = {
   averageWorkout: '20-45 minutes',
   difficulty: 'Beginner to Advanced',
   goals: [
-    'Feel lighter and more energetic',
     'Build everyday strength',
     'Get fitter without a gym',
     'Make working out a daily habit',
+    'Improve work capacity week by week',
   ],
   featured: true,
   militaryThemed: false,

@@ -26,9 +26,9 @@ export const DIGESTION_FOODS: DigestionFood[] = [
   {
     id: 'salmon',
     name: 'Salmon',
-    timeLabel: '45 minutes',
+    timeLabel: '45–90 minutes',
     hoursMin: 0.75,
-    hoursMax: 0.75,
+    hoursMax: 1.5,
     category: 'fast',
     tip: 'Great post-mission protein when you need fuel that clears quickly.',
     image: require('../../../assets/digestion/salmon.png'),

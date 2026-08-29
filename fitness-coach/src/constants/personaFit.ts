@@ -13,10 +13,18 @@ export function recommendEnrollment(
         reason: 'Long Train · Challenging — built for serious endurance work.',
       };
     }
+    if (goal === 'build_muscle') {
+      return {
+        programId: 'operation-long-train',
+        difficulty: 'elite',
+        reason: 'Long Train · Challenging — 12-week strength and density progression.',
+      };
+    }
     return {
       programId: 'operation-calisthenics',
       difficulty: 'elite',
-      reason: 'Bodyweight Basics · Challenging — skills, strength, and control.',
+      reason:
+        'Bodyweight Basics · Challenging — foundation reps (not wall/skill moves yet).',
     };
   }
 
