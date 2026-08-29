@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import {
   Pressable,
@@ -202,9 +203,16 @@ export function SquadChat() {
       </View>
 
       {channel === 'buddy' && !buddyCallsign ? (
-        <Text style={styles.hint}>
-          Link a buddy on Squad to unlock peer check-ins.
-        </Text>
+        <>
+          <Text style={styles.hint}>
+            Link a training buddy to unlock peer check-ins.
+          </Text>
+          <AppButton
+            label="Set up buddy"
+            variant="secondary"
+            onPress={() => router.push('/(tabs)/coach')}
+          />
+        </>
       ) : null}
 
       <Card style={styles.thread}>

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Tabs, router } from 'expo-router';
-import { Pressable, StyleSheet } from 'react-native';
+import { Tabs } from 'expo-router';
 
+import { TabSettingsButton } from '@/components/navigation/TabSettingsButton';
 import { useTheme } from '@/theme';
 
 export default function TabsLayout() {
@@ -9,30 +9,16 @@ export default function TabsLayout() {
 
   return (
     <Tabs
+      detachInactiveScreens
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.background,
         },
-        headerTintColor: colors.textPrimary,
         headerTitleStyle: {
           fontWeight: '700',
         },
+        headerTintColor: colors.textPrimary,
         headerShadowVisible: false,
-        headerRight: () => (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Open settings"
-            onPress={() => router.push('/profile')}
-            style={styles.profileBtn}
-            hitSlop={12}
-          >
-            <Ionicons
-              name="settings-outline"
-              size={24}
-              color={colors.textPrimary}
-            />
-          </Pressable>
-        ),
         tabBarStyle: {
           backgroundColor: colors.tabBar,
           borderTopColor: colors.border,
@@ -52,6 +38,7 @@ export default function TabsLayout() {
         name="today"
         options={{
           title: 'My Stuff',
+          headerRight: () => <TabSettingsButton segment="today" />,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" color={color} size={size} />
           ),
@@ -61,6 +48,7 @@ export default function TabsLayout() {
         name="workouts"
         options={{
           title: 'Discover',
+          headerRight: () => <TabSettingsButton segment="workouts" />,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="barbell" color={color} size={size} />
           ),
@@ -70,6 +58,7 @@ export default function TabsLayout() {
         name="notes"
         options={{
           title: 'Notes',
+          headerRight: () => <TabSettingsButton segment="notes" />,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbubble-ellipses" color={color} size={size} />
           ),
@@ -79,6 +68,7 @@ export default function TabsLayout() {
         name="nutrition"
         options={{
           title: 'Nutrition',
+          headerRight: () => <TabSettingsButton segment="nutrition" />,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="nutrition" color={color} size={size} />
           ),
@@ -88,25 +78,19 @@ export default function TabsLayout() {
         name="progress"
         options={{
           title: 'Progress',
+          headerRight: () => <TabSettingsButton segment="progress" />,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="stats-chart" color={color} size={size} />
           ),
         }}
       />
-      {/* Squad profiles kept as a route; opened from Notes */}
       <Tabs.Screen
         name="coach"
         options={{
           href: null,
-          title: 'Squad',
+          title: 'Buddies',
         }}
       />
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  profileBtn: {
-    marginRight: 12,
-  },
-});

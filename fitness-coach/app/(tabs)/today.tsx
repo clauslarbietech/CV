@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 import { DailyMissionCard } from '@/components/today/DailyMissionCard';
 import { EnergyRouteCard } from '@/components/today/EnergyRouteCard';
@@ -47,9 +46,7 @@ export default function MyStuffScreen() {
           color: colors.textPrimary,
           letterSpacing: 1,
           textTransform: 'uppercase',
-          flex: 1,
         },
-        iconBtn: { padding: spacing.xxs },
         greeting: {
           ...typography.caption,
           color: colors.textMuted,
@@ -129,27 +126,12 @@ export default function MyStuffScreen() {
   if (!enrollment) {
     return (
       <Screen>
-        <View style={styles.headerRow}>
-          <Text style={styles.title}>My Stuff</Text>
-          <Pressable
-            style={styles.iconBtn}
-            onPress={() => router.push('/profile')}
-            accessibilityLabel="Settings"
-          >
-            <Ionicons
-              name="settings-outline"
-              size={24}
-              color={colors.textPrimary}
-            />
-          </Pressable>
-        </View>
-
         <Text style={styles.greeting}>
           Welcome{profile?.firstName ? `, ${profile.firstName}` : ''}
         </Text>
         <Text style={styles.name}>Pick your transformation</Text>
         <Text style={styles.body}>
-          Choose a track to start. Notes, chat, and meds live in the Notes tab.
+          Choose a track to start. Meds and chat are in Notes.
         </Text>
 
         <WeightGoalsCard programId={OPERATION_IRON_30.id} />
@@ -216,21 +198,6 @@ export default function MyStuffScreen() {
 
   return (
     <Screen>
-      <View style={styles.headerRow}>
-        <Text style={styles.title}>My Stuff</Text>
-        <Pressable
-          style={styles.iconBtn}
-          onPress={() => router.push('/profile')}
-          accessibilityLabel="Settings"
-        >
-          <Ionicons
-            name="settings-outline"
-            size={24}
-            color={colors.textPrimary}
-          />
-        </Pressable>
-      </View>
-
       <Text style={styles.greeting}>
         {profile?.firstName ?? 'Hey there'} · {displayRank(profile?.rank)}
       </Text>
@@ -317,8 +284,17 @@ export default function MyStuffScreen() {
           style={styles.quickChip}
           onPress={() => router.push('/(tabs)/notes')}
         >
+          <Text style={styles.quickLabel}>MEDS</Text>
+          <Text style={styles.quickValue}>
+            {medsDone}/{meds.length} today
+          </Text>
+        </Pressable>
+        <Pressable
+          style={styles.quickChip}
+          onPress={() => router.push('/(tabs)/notes')}
+        >
           <Text style={styles.quickLabel}>NOTES</Text>
-          <Text style={styles.quickValue}>Chat · meds · log</Text>
+          <Text style={styles.quickValue}>Chat · log</Text>
         </Pressable>
         <Pressable
           style={styles.quickChip}

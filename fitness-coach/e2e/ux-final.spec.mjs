@@ -128,7 +128,7 @@ test.describe('FitLife final UX suite', () => {
 
     const tabs = [
       { name: /Discover/i, shot: 'ux_08_discover', expect: /plan|program|Home|Starter|Calisthenics|Horizon|30-Day/i },
-      { name: /Notes/i, shot: 'ux_09_notes', expect: /NOTES|Meds|Chat|Day log|Open squad/i },
+      { name: /Notes/i, shot: 'ux_09_notes', expect: /NOTES|Meds|Take your meds|Chat|Day log/i },
       { name: /Nutrition/i, shot: 'ux_10_nutrition', expect: /fuel|meal|fast|food|scan|protein/i },
       { name: /Progress/i, shot: 'ux_11_progress', expect: /body|vision|journey|day|progress|frame/i },
     ];

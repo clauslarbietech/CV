@@ -43,7 +43,7 @@ export function WeightGoalsCard({
       profile?.bodyVision?.currentFrame,
   );
 
-  const [editing, setEditing] = useState(defaultEditing || !hasSetup);
+  const [editing, setEditing] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
 
   const [currentFrame, setCurrentFrame] = useState<BodyFrameSize | null>(
@@ -163,6 +163,21 @@ export function WeightGoalsCard({
     setEditing(false);
     setTimeout(() => setSavedFlash(false), 2000);
   };
+
+  if (!editing && !hasSetup) {
+    return (
+      <Card accentBorder>
+        <Text style={styles.kicker}>YOUR GOALS</Text>
+        <Text style={styles.title}>Weight & body guide</Text>
+        <Text style={styles.body}>
+          Optional — add weight and a Now → Goal frame when you are ready.
+        </Text>
+        <Pressable onPress={() => setEditing(true)}>
+          <Text style={styles.link}>Set up weight & goals →</Text>
+        </Pressable>
+      </Card>
+    );
+  }
 
   if (!editing) {
     return (

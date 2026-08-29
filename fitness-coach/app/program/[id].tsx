@@ -215,7 +215,7 @@ export default function ProgramDetailScreen() {
             actions: [
               {
                 id: 'squad',
-                label: 'Open Coach · buddy profiles',
+                label: 'Notes → Buddies',
                 icon: 'people',
                 onPress: () => router.push('/(tabs)/coach'),
               },

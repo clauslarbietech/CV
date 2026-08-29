@@ -1,58 +1,62 @@
 import { router } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AudioDayLog } from '@/components/squad/AudioDayLog';
 import { SquadChat } from '@/components/squad/SquadChat';
-import { RemindersPanel } from '@/components/today/RemindersPanel';
-import { AppButton } from '@/components/ui/AppButton';
+import { SegmentToggle } from '@/components/charts/SegmentToggle';
+import { MedsChecklist } from '@/components/today/MedsChecklist';
+import { NotesLogPanel } from '@/components/today/NotesLogPanel';
 import { Screen } from '@/components/ui/Screen';
 import { useTheme, spacing, typography } from '@/theme';
 
+type NotesSection = 'meds' | 'chat' | 'log';
+
 /**
- * Notes hub: meds/work notes + motivational chat + audio day log.
- * Keeps My Stuff short by owning the long reminder forms.
+ * Notes hub with sub-sections: Meds · Chat · Log.
  */
 export default function NotesScreen() {
   const { colors } = useTheme();
+  const [section, setSection] = useState<NotesSection>('meds');
+
   const styles = useMemo(
     () =>
       StyleSheet.create({
         kicker: { ...typography.overline, color: colors.accentText },
-        title: { ...typography.title, color: colors.textPrimary },
         subtitle: {
           ...typography.body,
           color: colors.textSecondary,
           marginBottom: spacing.sm,
         },
-        stack: { gap: spacing.xl },
-        section: {
-          ...typography.heading,
-          color: colors.textPrimary,
-        },
+        stack: { gap: spacing.lg, marginTop: spacing.md },
       }),
     [colors],
   );
 
   return (
     <Screen>
-      <Text style={styles.kicker}>NOTES · CHAT</Text>
-      <Text style={styles.title}>Notes</Text>
-      <Text style={styles.subtitle}>
-        Meds, notes, and coaching chat.
-      </Text>
+      <Text style={styles.kicker}>NOTES</Text>
+      <Text style={styles.subtitle}>Meds, chat, and daily logs.</Text>
 
-      <AppButton
-        label="Open squad profiles"
-        variant="secondary"
-        onPress={() => router.push('/(tabs)/coach')}
+      <SegmentToggle
+        options={[
+          { id: 'meds', label: 'Meds' },
+          { id: 'chat', label: 'Chat' },
+          { id: 'log', label: 'Log' },
+        ]}
+        value={section}
+        onChange={setSection}
       />
 
       <View style={styles.stack}>
-        <RemindersPanel />
-        <Text style={styles.section}>Chat</Text>
-        <SquadChat />
-        <AudioDayLog />
+        {section === 'meds' ? <MedsChecklist /> : null}
+        {section === 'chat' ? <SquadChat /> : null}
+        {section === 'log' ? (
+          <>
+            <NotesLogPanel />
+            <AudioDayLog />
+          </>
+        ) : null}
       </View>
     </Screen>
   );

@@ -94,24 +94,19 @@ export default function WorkoutsScreen() {
         Short · Standard · <Text style={styles.accent}>Long</Text>
       </Text>
       <Text style={styles.subtitle}>
-        Simple bodyweight plans for busy days. Match meals in Nutrition, and
-        invite a buddy in Coach if you like company.
+        Bodyweight plans for busy days. Match meals in Nutrition; link a buddy
+        in Notes → Chat.
       </Text>
 
       <Card accentBorder style={styles.trackCard}>
-        <Text style={styles.sectionTitle}>Choose your horizon</Text>
+        <Text style={styles.sectionTitle}>Pick a plan length</Text>
         {TRAINING_TRACKS.map((track) => (
           <View key={track.id} style={styles.trackBlock}>
             <Text style={styles.trackLabel}>
               {track.label} · {track.horizon}
             </Text>
             <Text style={styles.trackMeta}>{track.programHint}</Text>
-            <Text style={styles.trackMeta}>Fuel: {track.fuelHint}</Text>
-            {track.outcomes.map((line) => (
-              <Text key={line} style={styles.outcome}>
-                • {line}
-              </Text>
-            ))}
+            <Text style={styles.outcome}>• {track.outcomes[0]}</Text>
           </View>
         ))}
       </Card>

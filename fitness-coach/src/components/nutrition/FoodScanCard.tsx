@@ -95,10 +95,11 @@ export function FoodScanCard({ onApplyProtein }: FoodScanCardProps) {
 
   return (
     <Card accentBorder>
-      <Text style={styles.kicker}>FOOD SCAN</Text>
-      <Text style={styles.title}>Snap a meal · get a fuel read</Text>
+      <Text style={styles.kicker}>FOOD SCAN · BETA</Text>
+      <Text style={styles.title}>Quick meal estimate</Text>
       <Text style={styles.body}>
-        Upload a meal photo for a quick macro estimate.
+        Beta: rough macro guess from your photo filename — not medical advice.
+        Real vision AI coming later.
       </Text>
 
       {Platform.OS === 'web'

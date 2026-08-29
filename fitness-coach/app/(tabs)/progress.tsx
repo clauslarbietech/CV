@@ -4,13 +4,14 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { DayCompletionStrip } from '@/components/charts/DayCompletionStrip';
 import { MissionDashboard } from '@/components/charts/MissionDashboard';
 import { BodyVisionCard } from '@/components/body/BodyVisionCard';
-import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
+import { BodyVisionPromptCard } from '@/components/body/BodyVisionPromptCard';
 import { ProgressPhotoTimeline } from '@/components/body/ProgressPhotoTimeline';
 import { ResearchMilestonesCard } from '@/components/progress/ResearchMilestonesCard';
 import { AccountabilityBuddyCard } from '@/components/squad/AccountabilityBuddyCard';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import { getActiveProgram } from '@/constants/programs';
+import { useNotesStore } from '@/store/notesStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useTheme, spacing, typography } from '@/theme';
@@ -49,6 +50,8 @@ export default function ProgressScreen() {
   const sessions = useProgramStore((s) => s.sessions);
   const streaks = useProgramStore((s) => s.streaks);
   const daily = useProgramStore((s) => s.daily);
+  const meds = useNotesStore((s) => s.meds);
+  const isMedTakenToday = useNotesStore((s) => s.isMedTakenToday);
   const program = getActiveProgram(enrollment?.programId);
 
   const completed = enrollment?.completedDayIds.length ?? 0;
@@ -59,6 +62,7 @@ export default function ProgressScreen() {
     program.durationDays > 0 ? completed / program.durationDays : 0;
 
   const bodyVision = profile?.bodyVision;
+  const medsDone = meds.filter((m) => isMedTakenToday(m.id)).length;
 
   return (
     <Screen>
@@ -80,10 +84,7 @@ export default function ProgressScreen() {
           programLabel={program.name}
         />
       ) : (
-        <BodyVisionSetup
-          programId={program.id}
-          programName={program.name}
-        />
+        <BodyVisionPromptCard />
       )}
 
       <AccountabilityBuddyCard />
@@ -100,8 +101,8 @@ export default function ProgressScreen() {
         totalDays={program.durationDays}
         streakDays={streaks.workoutStreak}
         longestStreak={streaks.longestWorkoutStreak}
-        medsDone={daily.medicationsLogged ? 1 : 0}
-        medsTotal={1}
+        medsDone={medsDone}
+        medsTotal={meds.length}
         sessionsCount={sessions.length}
         totalMinutes={totalMinutes}
         daily={daily}

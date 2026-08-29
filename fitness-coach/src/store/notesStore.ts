@@ -49,7 +49,7 @@ export const useNotesStore = create<NotesState>()(
       meds: [
         {
           id: 'med-default-1',
-          name: 'Daily prescription',
+          name: 'Morning Rx',
           category: 'morning',
           dose: 'As prescribed',
           timeLabel: 'Morning',
@@ -57,7 +57,7 @@ export const useNotesStore = create<NotesState>()(
         },
         {
           id: 'med-default-2',
-          name: 'Daily prescription',
+          name: 'Evening Rx',
           category: 'evening',
           dose: 'As prescribed',
           timeLabel: 'Evening',

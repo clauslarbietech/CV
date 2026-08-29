@@ -32,7 +32,8 @@ export function Screen({
         },
         content: {
           paddingHorizontal: spacing.lg,
-          paddingBottom: spacing.huge,
+          // Clear fixed tab bar (68px) on web/mobile tabs
+          paddingBottom: spacing.huge + 72,
           gap: spacing.md,
         },
       }),
