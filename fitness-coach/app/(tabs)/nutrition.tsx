@@ -3,6 +3,11 @@ import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { DigestionGuide } from '@/components/nutrition/DigestionGuide';
 import { FoodScanCard } from '@/components/nutrition/FoodScanCard';
+import {
+  NutritionExperimentalGate,
+  SARDINE_PROTOCOL_WARNING,
+  VIRAL_MILITARY_DIET_WARNING,
+} from '@/components/nutrition/NutritionExperimentalGate';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import {
@@ -255,55 +260,68 @@ export default function NutritionScreen() {
         )}
       </Card>
 
-      <Text style={styles.section}>Lesson: 5-day sardine + egg + electrolytes</Text>
-      <Card accentBorder>
-        <Text style={styles.planLabel}>{SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.label}</Text>
-        <Text style={styles.verdict}>
-          Verdict: {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.verdict}
-        </Text>
-        <Text style={styles.item}>{SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.scope}</Text>
-        <Text style={styles.mealName}>How people run it</Text>
-        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.protocol.map((line) => (
-          <Text key={line} style={styles.item}>
-            • {line}
+      <NutritionExperimentalGate
+        sectionTitle="Lesson: 5-day sardine + egg + electrolytes"
+        warningTitle={SARDINE_PROTOCOL_WARNING.warningTitle}
+        warningLines={[...SARDINE_PROTOCOL_WARNING.warningLines]}
+        acknowledgeLabel="I understand the risks — show sardine protocol"
+      >
+        <Card accentBorder>
+          <Text style={styles.planLabel}>{SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.label}</Text>
+          <Text style={[styles.verdict, { color: colors.danger }]}>
+            Verdict: {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.verdict}
           </Text>
-        ))}
-        <Text style={styles.mealName}>Why it may feel effective</Text>
-        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.whyItMayWork.map((line) => (
-          <Text key={line} style={styles.item}>
-            • {line}
-          </Text>
-        ))}
-        <Text style={styles.mealName}>Risks & limits</Text>
-        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.risksAndLimits.map((line) => (
-          <Text key={line} style={styles.item}>
-            • {line}
-          </Text>
-        ))}
-        <Text style={styles.mealName}>Stop rules</Text>
-        {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.stopRules.map((line) => (
-          <Text key={line} style={styles.item}>
-            • {line}
-          </Text>
-        ))}
-      </Card>
-
-      <Text style={styles.section}>Optional 3-day viral low-calorie diet</Text>
-      <Text style={styles.subtitle}>
-        Short low-calorie internet plan (not a recommended training diet). Use
-        sparingly — prefer Short-Block or Everyday 16:8 on hard training days.
-      </Text>
-      {VIRAL_MILITARY_DIET_DAYS.map((day) => (
-        <Card key={day.id} style={styles.viralCard}>
-          <Text style={styles.mealName}>{day.label}</Text>
-          {day.meals.map((meal) => (
-            <View key={meal.name} style={styles.viralMeal}>
-              <Text style={styles.cal}>{meal.name}</Text>
-              <Text style={styles.item}>{meal.items.join(' · ')}</Text>
-            </View>
+          <Text style={styles.item}>{SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.scope}</Text>
+          <Text style={styles.mealName}>How people run it</Text>
+          {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.protocol.map((line) => (
+            <Text key={line} style={styles.item}>
+              • {line}
+            </Text>
+          ))}
+          <Text style={styles.mealName}>Why it may feel effective</Text>
+          {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.whyItMayWork.map((line) => (
+            <Text key={line} style={styles.item}>
+              • {line}
+            </Text>
+          ))}
+          <Text style={styles.mealName}>Risks & limits</Text>
+          {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.risksAndLimits.map((line) => (
+            <Text key={line} style={styles.item}>
+              • {line}
+            </Text>
+          ))}
+          <Text style={styles.mealName}>Stop rules</Text>
+          {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.stopRules.map((line) => (
+            <Text key={line} style={styles.item}>
+              • {line}
+            </Text>
           ))}
         </Card>
-      ))}
+      </NutritionExperimentalGate>
+
+      <NutritionExperimentalGate
+        sectionTitle="Optional 3-day viral low-calorie diet"
+        warningTitle={VIRAL_MILITARY_DIET_WARNING.warningTitle}
+        warningLines={[...VIRAL_MILITARY_DIET_WARNING.warningLines]}
+        acknowledgeLabel="I understand — show viral diet menu"
+      >
+        {VIRAL_MILITARY_DIET_DAYS.map((day) => (
+          <Card key={day.id} style={styles.viralCard}>
+            <Text style={styles.mealName}>{day.label}</Text>
+            {day.meals.map((meal) => (
+              <View key={meal.name} style={styles.viralMeal}>
+                <Text style={styles.cal}>{meal.name}</Text>
+                <Text style={styles.item}>{meal.items.join(' · ')}</Text>
+              </View>
+            ))}
+            {day.notes.map((note) => (
+              <Text key={note} style={styles.note}>
+                • {note}
+              </Text>
+            ))}
+          </Card>
+        ))}
+      </NutritionExperimentalGate>
 
       <Text style={styles.section}>Best sources</Text>
       {NUTRITION_SOURCES.map((source) => (

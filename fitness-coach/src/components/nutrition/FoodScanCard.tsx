@@ -8,6 +8,9 @@ import {
 } from 'react-native';
 import { createElement } from 'react';
 
+import {
+  FOOD_SCAN_WARNING,
+} from '@/components/nutrition/NutritionExperimentalGate';
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import {
@@ -35,6 +38,17 @@ export function FoodScanCard({ onApplyProtein }: FoodScanCardProps) {
           ...typography.subheading,
           color: colors.textPrimary,
           marginTop: spacing.xs,
+        },
+        warn: {
+          ...typography.caption,
+          color: colors.danger,
+          fontWeight: '700',
+          marginBottom: spacing.sm,
+          padding: spacing.sm,
+          borderRadius: radii.md,
+          borderWidth: 1,
+          borderColor: colors.danger,
+          backgroundColor: colors.surface,
         },
         body: {
           ...typography.body,
@@ -97,8 +111,9 @@ export function FoodScanCard({ onApplyProtein }: FoodScanCardProps) {
     <Card accentBorder>
       <Text style={styles.kicker}>FOOD SCAN · BETA</Text>
       <Text style={styles.title}>Quick meal estimate</Text>
+      <Text style={styles.warn}>⚠ {FOOD_SCAN_WARNING}</Text>
       <Text style={styles.body}>
-        Beta: rough macro guess from your photo filename — not medical advice.
+        Beta only — rough macro guess from your photo filename, not medical advice.
         Real vision AI coming later.
       </Text>
 
