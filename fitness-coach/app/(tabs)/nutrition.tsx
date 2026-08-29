@@ -6,11 +6,16 @@ import { FoodScanCard } from '@/components/nutrition/FoodScanCard';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import {
+  defaultFuelTrackForGoal,
+  nutritionHeadline,
+} from '@/constants/personaFit';
+import {
   FUEL_TRACKS,
   NUTRITION_SOURCES,
   SARDINE_EGG_ELECTROLYTE_5DAY_LESSON,
   VIRAL_MILITARY_DIET_DAYS,
 } from '@/constants/nutrition/militaryFuel';
+import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
@@ -130,7 +135,11 @@ export default function NutritionScreen() {
     [colors],
   );
 
-  const [trackId, setTrackId] = useState<TrackId>('short');
+  const profile = useProfileStore((s) => s.profile);
+  const fuelHeadline = nutritionHeadline(profile?.primaryGoal);
+  const [trackId, setTrackId] = useState<TrackId>(
+    defaultFuelTrackForGoal(profile?.primaryGoal),
+  );
   const track = FUEL_TRACKS.find((t) => t.id === trackId) ?? FUEL_TRACKS[0];
   const plan = track.plan;
   const updateDailyMetrics = useProgramStore((s) => s.updateDailyMetrics);
@@ -140,11 +149,10 @@ export default function NutritionScreen() {
     <Screen>
       <Text style={styles.kicker}>FUEL + FASTING</Text>
       <Text style={styles.title}>
-        Eat to <Text style={styles.accent}>Shred</Text>
+        {fuelHeadline.title}{' '}
+        <Text style={styles.accent}>{fuelHeadline.accent}</Text>
       </Text>
-      <Text style={styles.subtitle}>
-        Meal plans for training weeks. Each workout also gets a fuel list.
-      </Text>
+      <Text style={styles.subtitle}>{fuelHeadline.subtitle}</Text>
 
       <Card accentBorder>
         <Text style={styles.kicker}>WITH EACH WORKOUT</Text>

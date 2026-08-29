@@ -14,7 +14,7 @@ export const INTRO_LOGO = require('../../assets/intro/fitlife-logo.png');
 export const INTRO_GOALS: Array<{ id: FitnessGoal; label: string; hint: string }> = [
   { id: 'lose_fat', label: 'Lose fat', hint: 'Lean out and feel lighter' },
   { id: 'general_fitness', label: 'Feel healthier', hint: 'Energy, strength, consistency' },
-  { id: 'build_muscle', label: 'Get stronger', hint: 'Build muscle with bodyweight' },
+  { id: 'build_muscle', label: 'Build muscle', hint: 'Strength & size at any weight' },
   { id: 'endurance', label: 'Build stamina', hint: 'Last longer in every session' },
 ];
 
@@ -36,7 +36,7 @@ export const INTRO_EXPERIENCE: Array<{
   {
     id: 'advanced',
     label: 'Train regularly',
-    hint: 'Ready for longer or harder sessions',
+    hint: 'Calisthenics & long blocks · Challenging tier',
   },
 ];
 

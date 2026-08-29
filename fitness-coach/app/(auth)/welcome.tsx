@@ -12,6 +12,7 @@ import {
 } from '@/constants/intro';
 import { useAuthStore } from '@/store/authStore';
 import { useProfileStore } from '@/store/profileStore';
+import { recommendEnrollment } from '@/constants/personaFit';
 import { useProgramStore } from '@/store/programStore';
 import { ExperienceLevel, FitnessGoal } from '@/types';
 import { useTheme, spacing } from '@/theme';
@@ -71,14 +72,28 @@ export default function WelcomeScreen() {
 
   const goToToday = () => {
     finishProfile();
-    enrollInProgram('operation-iron-30', 'recruit');
+    const rec = recommendEnrollment(
+      goal ?? 'general_fitness',
+      experience ?? 'beginner',
+    );
+    enrollInProgram(rec.programId, rec.difficulty);
     router.replace('/today');
   };
 
   const goToSelectedSession = () => {
     if (!selectedSession) return;
     finishProfile({ name: firstName || 'Athlete' });
-    enrollInProgram(selectedSession.programId, 'recruit');
+    const rec = recommendEnrollment(
+      goal ?? 'general_fitness',
+      experience ?? 'beginner',
+    );
+    const difficulty =
+      selectedSession.programId === rec.programId
+        ? rec.difficulty
+        : experience === 'advanced'
+          ? 'elite'
+          : 'recruit';
+    enrollInProgram(selectedSession.programId, difficulty);
     router.replace({
       pathname: '/session/[programId]',
       params: {

@@ -10,6 +10,12 @@ import { BODY_FRAME_LABELS, defaultGoalFrame } from '@/constants/bodyVision';
 import { INTRO_GOALS } from '@/constants/intro';
 import { useProfileStore } from '@/store/profileStore';
 import { BodyFrameSize, FitnessGoal, Sex } from '@/types';
+import {
+  formatWeightDual,
+  suggestBodyFrameFromKg,
+  suggestGoalWeightKg,
+  weightPlaceholder,
+} from '@/utils/weightUnits';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
 type WeightGoalsCardProps = {
@@ -149,6 +155,7 @@ export function WeightGoalsCard({
 
   const save = () => {
     if (!currentFrame || !goalFrame) return;
+    const nowKg = parseWeight(currentWeight);
     setSex(sex);
     setPrimaryGoal(goal);
     setBodyVision({
@@ -156,13 +163,34 @@ export function WeightGoalsCard({
       goalFrame,
       currentPhotoUri: profile?.bodyVision?.currentPhotoUri,
       linkedProgramId: programId,
-      currentWeightKg: parseWeight(currentWeight),
-      goalWeightKg: parseWeight(goalWeight),
+      currentWeightKg: nowKg,
+      goalWeightKg: parseWeight(goalWeight) ?? suggestGoalWeightKg(nowKg ?? 0, goal),
     });
     setSavedFlash(true);
     setEditing(false);
     setTimeout(() => setSavedFlash(false), 2000);
   };
+
+  const applyWeightAssist = (raw: string) => {
+    const kg = parseWeight(raw);
+    if (kg == null) return;
+    const suggested = suggestBodyFrameFromKg(kg);
+    setCurrentFrame(suggested);
+    setGoalFrame(defaultGoalFrame(suggested, goal));
+    if (!goalWeight.trim() && goal === 'build_muscle') {
+      const target = suggestGoalWeightKg(kg, goal);
+      if (target != null) setGoalWeight(String(target));
+    }
+  };
+
+  const placeholders = weightPlaceholder(goal);
+  const parsedNow = parseWeight(currentWeight);
+  const weightHint =
+    parsedNow != null && parsedNow >= 90
+      ? formatWeightDual(parsedNow)
+      : goal === 'build_muscle'
+        ? 'Any starting weight works — focus on strength and protein.'
+        : null;
 
   if (!editing && !hasSetup) {
     return (
@@ -171,6 +199,9 @@ export function WeightGoalsCard({
         <Text style={styles.title}>Weight & body guide</Text>
         <Text style={styles.body}>
           Optional — add weight and a Now → Goal frame when you are ready.
+          {profile?.primaryGoal === 'build_muscle'
+            ? ' Great at any size — we track strength, not just scale loss.'
+            : ''}
         </Text>
         <Pressable onPress={() => setEditing(true)}>
           <Text style={styles.link}>Set up weight & goals →</Text>
@@ -252,6 +283,9 @@ export function WeightGoalsCard({
       </View>
 
       <Text style={styles.section}>Weight (kg)</Text>
+      {weightHint ? (
+        <Text style={styles.body}>{weightHint}</Text>
+      ) : null}
       <View style={styles.row}>
         <View style={styles.cell}>
           <Text style={styles.label}>Now</Text>
@@ -259,10 +293,11 @@ export function WeightGoalsCard({
             style={styles.input}
             value={currentWeight}
             onChangeText={setCurrentWeight}
-            placeholder="e.g. 82"
+            onBlur={() => applyWeightAssist(currentWeight)}
+            placeholder={placeholders.now}
             placeholderTextColor={colors.textMuted}
             keyboardType="decimal-pad"
-            accessibilityLabel="Current weight"
+            accessibilityLabel="Current weight in kilograms"
           />
         </View>
         <View style={styles.cell}>
@@ -271,17 +306,19 @@ export function WeightGoalsCard({
             style={styles.input}
             value={goalWeight}
             onChangeText={setGoalWeight}
-            placeholder="e.g. 75"
+            placeholder={placeholders.goal}
             placeholderTextColor={colors.textMuted}
             keyboardType="decimal-pad"
-            accessibilityLabel="Goal weight"
+            accessibilityLabel="Goal weight in kilograms"
           />
         </View>
       </View>
 
       <Text style={styles.section}>Body guide</Text>
       <Text style={styles.body}>
-        Choose Men or Women, then set different Now and Goal sizes.
+        {goal === 'build_muscle'
+          ? 'Pick your frame today — goal can be the same size with more strength.'
+          : 'Choose Men or Women, then set different Now and Goal sizes.'}
       </Text>
       <View style={styles.chips}>
         <OptionChip

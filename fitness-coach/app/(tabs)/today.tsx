@@ -6,6 +6,7 @@ import { DailyMissionCard } from '@/components/today/DailyMissionCard';
 import { EnergyRouteCard } from '@/components/today/EnergyRouteCard';
 import { ExpressTimeCard } from '@/components/today/ExpressTimeCard';
 import { HomeStatsGraphs } from '@/components/today/HomeStatsGraphs';
+import { PersonaPlanCard } from '@/components/today/PersonaPlanCard';
 import { ProgramSwitcher } from '@/components/today/ProgramSwitcher';
 import { MotivationalCoachCard } from '@/components/today/MotivationalCoachCard';
 import { personalityLabel } from '@/constants/coach/voiceCoach';
@@ -271,6 +272,8 @@ export default function MyStuffScreen() {
       ) : null}
 
       <ExpressTimeCard onSelect={(mins) => startMission(mins)} />
+
+      <PersonaPlanCard onOpenProgram={openProgram} />
 
       <ProgramSwitcher
         activeProgramId={program.id}
