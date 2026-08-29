@@ -69,12 +69,10 @@ test.describe('FitLife final UX suite', () => {
     await fresh(page);
     await completeOnboarding(page, { sex: 'Male' });
 
-    // Edit goals card
-    const edit = page.getByText(/Edit weight & goals|SET UP|Weight & goals|Weight, goals/i).first();
-    await edit.scrollIntoViewIfNeeded();
-    if (await page.getByText(/Edit weight & goals/i).count()) {
-      await page.getByText(/Edit weight & goals/i).click();
-    }
+    // Open goals card (collapsed until user taps setup/edit)
+    const setup = page.getByText(/Set up weight & goals|Edit weight & goals/i).first();
+    await setup.scrollIntoViewIfNeeded();
+    await setup.click();
 
     await expect(page.getByText(/Body guide|Men|Women|Weight/i).first()).toBeVisible();
     await page.getByRole('button', { name: 'Women', exact: true }).click();
