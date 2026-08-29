@@ -204,6 +204,8 @@ export default function MyStuffScreen() {
       </Text>
       <Text style={styles.name}>Today&apos;s workout</Text>
 
+      <PersonaPlanCard onOpenProgram={openProgram} />
+
       <WeightGoalsCard programId={program.id} />
 
       <HeroProgramCard
@@ -272,8 +274,6 @@ export default function MyStuffScreen() {
       ) : null}
 
       <ExpressTimeCard onSelect={(mins) => startMission(mins)} />
-
-      <PersonaPlanCard onOpenProgram={openProgram} />
 
       <ProgramSwitcher
         activeProgramId={program.id}

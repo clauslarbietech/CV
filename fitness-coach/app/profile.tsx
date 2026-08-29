@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { OptionChip } from '@/components/onboarding/OptionChip';
 import { AppearanceToggle } from '@/components/settings/AppearanceToggle';
+import { WeightUnitToggle } from '@/components/settings/WeightUnitToggle';
 import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
@@ -16,6 +17,7 @@ import { useLaunchSplashStore } from '@/store/launchSplashStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { CoachPersonality, Sex } from '@/types';
+import { formatWeight } from '@/utils/weightUnits';
 import { useTheme, spacing, typography } from '@/theme';
 
 export default function ProfileScreen() {
@@ -71,6 +73,9 @@ export default function ProfileScreen() {
       <Text style={styles.section}>Appearance</Text>
       <AppearanceToggle />
 
+      <Text style={styles.section}>Units</Text>
+      <WeightUnitToggle />
+
       <Text style={styles.section}>Body · form guide</Text>
       <Text style={styles.subtitle}>
         Workout graphics switch to a male or female anatomical model.
@@ -100,8 +105,13 @@ export default function ProfileScreen() {
           Location: {profile?.workoutLocation ?? '—'}
         </Text>
         <Text style={styles.row}>
-          Weight: {profile?.currentWeightKg != null ? `${profile.currentWeightKg} kg` : '—'}
-          {profile?.goalWeightKg != null ? ` → ${profile.goalWeightKg} kg` : ''}
+          Weight:{' '}
+          {profile?.currentWeightKg != null
+            ? formatWeight(profile.currentWeightKg, profile.weightUnit ?? 'kg')
+            : '—'}
+          {profile?.goalWeightKg != null
+            ? ` → ${formatWeight(profile.goalWeightKg, profile.weightUnit ?? 'kg')}`
+            : ''}
         </Text>
       </Card>
 

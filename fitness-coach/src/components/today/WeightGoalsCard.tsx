@@ -4,16 +4,22 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { BodyFramePicker } from '@/components/body/BodyFramePicker';
 import { BodySilhouette } from '@/components/body/BodySilhouette';
 import { OptionChip } from '@/components/onboarding/OptionChip';
+import { WeightUnitToggle } from '@/components/settings/WeightUnitToggle';
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import { BODY_FRAME_LABELS, defaultGoalFrame } from '@/constants/bodyVision';
 import { INTRO_GOALS } from '@/constants/intro';
 import { useProfileStore } from '@/store/profileStore';
-import { BodyFrameSize, FitnessGoal, Sex } from '@/types';
+import { BodyFrameSize, FitnessGoal, Sex, WeightUnit } from '@/types';
 import {
+  formatWeight,
   formatWeightDual,
+  formatWeightInputValue,
+  goalWeightInputLabel,
+  parseWeightInput,
   suggestBodyFrameFromKg,
   suggestGoalWeightKg,
+  weightInputLabel,
   weightPlaceholder,
 } from '@/utils/weightUnits';
 import { useTheme, radii, spacing, typography } from '@/theme';
@@ -24,9 +30,8 @@ type WeightGoalsCardProps = {
   defaultEditing?: boolean;
 };
 
-function parseWeight(text: string): number | undefined {
-  const n = Number(text.replace(/[^\d.]/g, ''));
-  return Number.isFinite(n) && n > 0 ? Math.round(n * 10) / 10 : undefined;
+function parseWeight(text: string, unit: WeightUnit): number | undefined {
+  return parseWeightInput(text, unit);
 }
 
 function goalLabel(goal?: string): string {
@@ -42,6 +47,45 @@ export function WeightGoalsCard({
   const setBodyVision = useProfileStore((s) => s.setBodyVision);
   const setPrimaryGoal = useProfileStore((s) => s.setPrimaryGoal);
   const setSex = useProfileStore((s) => s.setSex);
+  const setWeightUnit = useProfileStore((s) => s.setWeightUnit);
+  const weightUnit = profile?.weightUnit ?? 'kg';
+
+  const syncFormFromProfile = () => {
+    setCurrentFrame(profile?.bodyVision?.currentFrame ?? 'large');
+    setGoalFrame(
+      profile?.bodyVision?.goalFrame ??
+        defaultGoalFrame(
+          profile?.bodyVision?.currentFrame ?? 'large',
+          profile?.primaryGoal,
+        ),
+    );
+    setCurrentWeight(
+      profile?.currentWeightKg != null
+        ? formatWeightInputValue(profile.currentWeightKg, weightUnit)
+        : '',
+    );
+    setGoalWeight(
+      profile?.goalWeightKg != null
+        ? formatWeightInputValue(profile.goalWeightKg, weightUnit)
+        : '',
+    );
+    setGoal(profile?.primaryGoal ?? 'general_fitness');
+    setSexLocal(profile?.sex === 'female' ? 'female' : 'male');
+  };
+
+  const openEditing = () => {
+    syncFormFromProfile();
+    setEditing(true);
+  };
+
+  const onWeightUnitChange = (unit: WeightUnit) => {
+    if (unit === weightUnit) return;
+    const nowKg = parseWeight(currentWeight, weightUnit);
+    const goalKg = parseWeight(goalWeight, weightUnit);
+    setWeightUnit(unit);
+    setCurrentWeight(nowKg != null ? formatWeightInputValue(nowKg, unit) : '');
+    setGoalWeight(goalKg != null ? formatWeightInputValue(goalKg, unit) : '');
+  };
 
   const hasSetup = Boolean(
     profile?.currentWeightKg != null ||
@@ -155,7 +199,7 @@ export function WeightGoalsCard({
 
   const save = () => {
     if (!currentFrame || !goalFrame) return;
-    const nowKg = parseWeight(currentWeight);
+    const nowKg = parseWeight(currentWeight, weightUnit);
     setSex(sex);
     setPrimaryGoal(goal);
     setBodyVision({
@@ -164,7 +208,9 @@ export function WeightGoalsCard({
       currentPhotoUri: profile?.bodyVision?.currentPhotoUri,
       linkedProgramId: programId,
       currentWeightKg: nowKg,
-      goalWeightKg: parseWeight(goalWeight) ?? suggestGoalWeightKg(nowKg ?? 0, goal),
+      goalWeightKg:
+        parseWeight(goalWeight, weightUnit) ??
+        suggestGoalWeightKg(nowKg ?? 0, goal),
     });
     setSavedFlash(true);
     setEditing(false);
@@ -172,19 +218,21 @@ export function WeightGoalsCard({
   };
 
   const applyWeightAssist = (raw: string) => {
-    const kg = parseWeight(raw);
+    const kg = parseWeight(raw, weightUnit);
     if (kg == null) return;
     const suggested = suggestBodyFrameFromKg(kg);
     setCurrentFrame(suggested);
     setGoalFrame(defaultGoalFrame(suggested, goal));
     if (!goalWeight.trim() && goal === 'build_muscle') {
       const target = suggestGoalWeightKg(kg, goal);
-      if (target != null) setGoalWeight(String(target));
+      if (target != null) {
+        setGoalWeight(formatWeightInputValue(target, weightUnit));
+      }
     }
   };
 
-  const placeholders = weightPlaceholder(goal);
-  const parsedNow = parseWeight(currentWeight);
+  const placeholders = weightPlaceholder(goal, weightUnit);
+  const parsedNow = parseWeight(currentWeight, weightUnit);
   const weightHint =
     parsedNow != null && parsedNow >= 90
       ? formatWeightDual(parsedNow)
@@ -203,7 +251,7 @@ export function WeightGoalsCard({
             ? ' Great at any size — we track strength, not just scale loss.'
             : ''}
         </Text>
-        <Pressable onPress={() => setEditing(true)}>
+        <Pressable onPress={openEditing}>
           <Text style={styles.link}>Set up weight & goals →</Text>
         </Pressable>
       </Card>
@@ -220,7 +268,7 @@ export function WeightGoalsCard({
             <Text style={styles.label}>Weight now</Text>
             <Text style={styles.value}>
               {profile?.currentWeightKg != null
-                ? `${profile.currentWeightKg} kg`
+                ? formatWeight(profile.currentWeightKg, weightUnit)
                 : '—'}
             </Text>
           </View>
@@ -228,7 +276,7 @@ export function WeightGoalsCard({
             <Text style={styles.label}>Goal weight</Text>
             <Text style={styles.value}>
               {profile?.goalWeightKg != null
-                ? `${profile.goalWeightKg} kg`
+                ? formatWeight(profile.goalWeightKg, weightUnit)
                 : '—'}
             </Text>
           </View>
@@ -252,7 +300,7 @@ export function WeightGoalsCard({
           </View>
         </View>
         {savedFlash ? <Text style={styles.flash}>Saved on your dashboard</Text> : null}
-        <Pressable onPress={() => setEditing(true)}>
+        <Pressable onPress={openEditing}>
           <Text style={styles.link}>Edit weight & goals →</Text>
         </Pressable>
       </Card>
@@ -282,13 +330,14 @@ export function WeightGoalsCard({
         ))}
       </View>
 
-      <Text style={styles.section}>Weight (kg)</Text>
+      <Text style={styles.section}>Weight</Text>
+      <WeightUnitToggle compact onUnitChange={onWeightUnitChange} />
       {weightHint ? (
         <Text style={styles.body}>{weightHint}</Text>
       ) : null}
       <View style={styles.row}>
         <View style={styles.cell}>
-          <Text style={styles.label}>Now</Text>
+          <Text style={styles.label}>Now ({weightUnit})</Text>
           <TextInput
             style={styles.input}
             value={currentWeight}
@@ -297,11 +346,11 @@ export function WeightGoalsCard({
             placeholder={placeholders.now}
             placeholderTextColor={colors.textMuted}
             keyboardType="decimal-pad"
-            accessibilityLabel="Current weight in kilograms"
+            accessibilityLabel={weightInputLabel(weightUnit)}
           />
         </View>
         <View style={styles.cell}>
-          <Text style={styles.label}>Goal</Text>
+          <Text style={styles.label}>Goal ({weightUnit})</Text>
           <TextInput
             style={styles.input}
             value={goalWeight}
@@ -309,7 +358,7 @@ export function WeightGoalsCard({
             placeholder={placeholders.goal}
             placeholderTextColor={colors.textMuted}
             keyboardType="decimal-pad"
-            accessibilityLabel="Goal weight in kilograms"
+            accessibilityLabel={goalWeightInputLabel(weightUnit)}
           />
         </View>
       </View>

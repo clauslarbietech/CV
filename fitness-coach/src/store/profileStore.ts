@@ -12,6 +12,7 @@ import {
   ProgressPhotoEntry,
   Sex,
   UserProfile,
+  WeightUnit,
 } from '@/types';
 
 interface ProfileState {
@@ -34,6 +35,7 @@ interface ProfileState {
   setCoachPersonality: (personality: CoachPersonality) => void;
   setSex: (sex: Sex) => void;
   setPrimaryGoal: (goal: FitnessGoal) => void;
+  setWeightUnit: (unit: WeightUnit) => void;
   setBodyVision: (args: {
     currentFrame: BodyFrameSize;
     goalFrame: BodyFrameSize;
@@ -132,6 +134,18 @@ export const useProfileStore = create<ProfileState>()(
                 profile: {
                   ...state.profile,
                   primaryGoal: goal,
+                  updatedAt: new Date().toISOString(),
+                },
+              }
+            : state,
+        ),
+      setWeightUnit: (unit) =>
+        set((state) =>
+          state.profile
+            ? {
+                profile: {
+                  ...state.profile,
+                  weightUnit: unit,
                   updatedAt: new Date().toISOString(),
                 },
               }

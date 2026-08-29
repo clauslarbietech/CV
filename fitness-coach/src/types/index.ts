@@ -98,6 +98,8 @@ export interface BodyVisionState {
   updatedAt: string;
 }
 
+export type WeightUnit = 'kg' | 'lb';
+
 export interface UserProfile {
   id: string;
   firstName: string;
@@ -107,6 +109,8 @@ export interface UserProfile {
   heightCm?: number;
   currentWeightKg?: number;
   goalWeightKg?: number;
+  /** Preferred display unit for weight inputs and summaries. */
+  weightUnit?: WeightUnit;
   bodyVision?: BodyVisionState;
   primaryGoal?: FitnessGoal;
   experienceLevel?: ExperienceLevel;

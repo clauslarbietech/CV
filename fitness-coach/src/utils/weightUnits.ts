@@ -1,5 +1,5 @@
 import { BODY_FRAME_SIZES } from '@/constants/bodyVision';
-import { BodyFrameSize } from '@/types';
+import { BodyFrameSize, WeightUnit } from '@/types';
 
 const LB_PER_KG = 2.20462;
 
@@ -13,6 +13,37 @@ export function lbFromKg(kg: number): number {
 
 export function formatWeightDual(kg: number): string {
   return `${kg} kg · ${lbFromKg(kg)} lb`;
+}
+
+export function formatWeight(kg: number, unit: WeightUnit = 'kg'): string {
+  if (unit === 'lb') return `${lbFromKg(kg)} lb`;
+  return `${kg} kg`;
+}
+
+export function formatWeightInputValue(
+  kg: number,
+  unit: WeightUnit = 'kg',
+): string {
+  if (unit === 'lb') return String(lbFromKg(kg));
+  return String(kg);
+}
+
+export function parseWeightInput(
+  text: string,
+  unit: WeightUnit = 'kg',
+): number | undefined {
+  const n = Number(text.replace(/[^\d.]/g, ''));
+  if (!Number.isFinite(n) || n <= 0) return undefined;
+  if (unit === 'lb') return kgFromLb(n);
+  return Math.round(n * 10) / 10;
+}
+
+export function weightInputLabel(unit: WeightUnit): string {
+  return unit === 'lb' ? 'Current weight in pounds' : 'Current weight in kilograms';
+}
+
+export function goalWeightInputLabel(unit: WeightUnit): string {
+  return unit === 'lb' ? 'Goal weight in pounds' : 'Goal weight in kilograms';
 }
 
 /** Suggest body frame from current weight (any size athlete). */
@@ -41,10 +72,26 @@ export function suggestGoalWeightKg(
   return currentKg;
 }
 
-export function weightPlaceholder(primaryGoal?: string): {
+export function weightPlaceholder(
+  primaryGoal?: string,
+  unit: WeightUnit = 'kg',
+): {
   now: string;
   goal: string;
 } {
+  if (unit === 'lb') {
+    if (primaryGoal === 'build_muscle') {
+      return {
+        now: 'e.g. 300',
+        goal: 'e.g. 304 — maintain or gain',
+      };
+    }
+    return {
+      now: 'e.g. 180',
+      goal: 'e.g. 165',
+    };
+  }
+
   if (primaryGoal === 'build_muscle') {
     return {
       now: 'e.g. 136 (300 lb)',

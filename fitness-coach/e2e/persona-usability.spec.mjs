@@ -59,13 +59,14 @@ test.describe('Persona usability', () => {
     });
     await shot(page, 'persona_marcus_my_stuff');
 
-    // Goals setup for ~300 lb (136 kg)
+    // Goals setup for ~300 lb using lb toggle
     await page.getByText(/Set up weight & goals/i).click();
-    await page.getByLabel(/Current weight in kilograms/i).fill('136');
-    await page.getByLabel(/Current weight in kilograms/i).blur();
+    await page.getByRole('button', { name: 'LB', exact: true }).click();
+    await page.getByLabel(/Current weight in pounds/i).fill('300');
+    await page.getByLabel(/Current weight in pounds/i).blur();
     await page.waitForTimeout(400);
     await page.getByRole('button', { name: /Save to dashboard/i }).click();
-    await expect(page.getByText(/136|300 lb|Build muscle/i).first()).toBeVisible({
+    await expect(page.getByText(/300 lb|136|Build muscle/i).first()).toBeVisible({
       timeout: 8000,
     });
     await shot(page, 'persona_marcus_goals_saved');
@@ -77,9 +78,16 @@ test.describe('Persona usability', () => {
     await expect(page.getByText(/Protein-forward/i).first()).toBeVisible();
     await shot(page, 'persona_marcus_nutrition');
 
-    // Program fit — Long Train for intermediate muscle goal
+    // Program fit — Long Train for intermediate muscle goal (near top of My Stuff)
     await page.getByRole('tab', { name: /My Stuff/i }).click();
     await expect(page.getByText(/Long Train|PICKED FOR YOU/i).first()).toBeVisible();
+    const picked = page.getByText(/PICKED FOR YOU/i);
+    const goals = page.getByText(/YOUR GOALS/i);
+    const pickedBox = await picked.boundingBox();
+    const goalsBox = await goals.boundingBox();
+    if (pickedBox && goalsBox) {
+      expect(pickedBox.y).toBeLessThan(goalsBox.y);
+    }
     await shot(page, 'persona_marcus_program_fit');
   });
 

@@ -8,7 +8,13 @@ import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import { defaultGoalFrame } from '@/constants/bodyVision';
 import { useProfileStore } from '@/store/profileStore';
-import { BodyFrameSize } from '@/types';
+import { BodyFrameSize, WeightUnit } from '@/types';
+import {
+  formatWeightInputValue,
+  goalWeightInputLabel,
+  parseWeightInput,
+  weightInputLabel,
+} from '@/utils/weightUnits';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
 type BodyVisionSetupProps = {
@@ -19,9 +25,8 @@ type BodyVisionSetupProps = {
   continueLabel?: string;
 };
 
-function parseWeight(text: string): number | undefined {
-  const n = Number(text.replace(/[^\d.]/g, ''));
-  return Number.isFinite(n) && n > 0 ? Math.round(n * 10) / 10 : undefined;
+function parseWeight(text: string, unit: WeightUnit): number | undefined {
+  return parseWeightInput(text, unit);
 }
 
 export function BodyVisionSetup({
@@ -34,6 +39,7 @@ export function BodyVisionSetup({
   const { colors } = useTheme();
   const profile = useProfileStore((s) => s.profile);
   const setBodyVision = useProfileStore((s) => s.setBodyVision);
+  const weightUnit = profile?.weightUnit ?? 'kg';
 
   const [currentFrame, setCurrentFrame] = useState<BodyFrameSize | null>(
     profile?.bodyVision?.currentFrame ?? 'large',
@@ -45,10 +51,14 @@ export function BodyVisionSetup({
         : 'medium'),
   );
   const [currentWeight, setCurrentWeight] = useState(
-    profile?.currentWeightKg != null ? String(profile.currentWeightKg) : '',
+    profile?.currentWeightKg != null
+      ? formatWeightInputValue(profile.currentWeightKg, weightUnit)
+      : '',
   );
   const [goalWeight, setGoalWeight] = useState(
-    profile?.goalWeightKg != null ? String(profile.goalWeightKg) : '',
+    profile?.goalWeightKg != null
+      ? formatWeightInputValue(profile.goalWeightKg, weightUnit)
+      : '',
   );
   const [photoUri, setPhotoUri] = useState<string | null>(
     profile?.bodyVision?.currentPhotoUri ?? null,
@@ -105,8 +115,8 @@ export function BodyVisionSetup({
 
   const save = () => {
     if (!currentFrame || !goalFrame) return;
-    const currentWeightKg = parseWeight(currentWeight);
-    const goalWeightKg = parseWeight(goalWeight);
+    const currentWeightKg = parseWeight(currentWeight, weightUnit);
+    const goalWeightKg = parseWeight(goalWeight, weightUnit);
     setBodyVision({
       currentFrame,
       goalFrame,
@@ -128,25 +138,25 @@ export function BodyVisionSetup({
         Set Now and Goal frames. Optional photo. Journey updates as you train.
       </Text>
 
-      <Text style={styles.section}>Current weight (kg)</Text>
+      <Text style={styles.section}>Current weight ({weightUnit})</Text>
       <View style={styles.weightRow}>
         <TextInput
           style={styles.input}
           value={currentWeight}
           onChangeText={setCurrentWeight}
-          placeholder="e.g. 82"
+          placeholder={weightUnit === 'lb' ? 'e.g. 180' : 'e.g. 82'}
           placeholderTextColor={colors.textMuted}
           keyboardType="decimal-pad"
-          accessibilityLabel="Current weight in kilograms"
+          accessibilityLabel={weightInputLabel(weightUnit)}
         />
         <TextInput
           style={styles.input}
           value={goalWeight}
           onChangeText={setGoalWeight}
-          placeholder="Goal kg"
+          placeholder={weightUnit === 'lb' ? 'Goal lb' : 'Goal kg'}
           placeholderTextColor={colors.textMuted}
           keyboardType="decimal-pad"
-          accessibilityLabel="Goal weight in kilograms"
+          accessibilityLabel={goalWeightInputLabel(weightUnit)}
         />
       </View>
 
