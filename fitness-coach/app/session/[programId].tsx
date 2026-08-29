@@ -42,6 +42,7 @@ function parseExpressBudget(value?: string): ExpressBudget | undefined {
 
 export default function WorkoutSessionScreen() {
   const { colors } = useTheme();
+  const profile = useProfileStore((s) => s.profile);
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -334,7 +335,11 @@ export default function WorkoutSessionScreen() {
           <Text style={styles.body}>
             {expressMinutes
               ? 'Quick bodyweight session to keep your streak.'
-              : 'Bodyweight — fat loss, tone, and fitness.'}
+              : profile?.primaryGoal === 'build_muscle'
+                ? 'Bodyweight — strength, control, and muscle density.'
+                : profile?.primaryGoal === 'endurance'
+                  ? 'Bodyweight — stamina, control, and work capacity.'
+                  : 'Bodyweight — fat loss, tone, and fitness.'}
           </Text>
         </Card>
 

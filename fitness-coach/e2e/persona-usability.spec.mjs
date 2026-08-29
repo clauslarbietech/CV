@@ -112,6 +112,7 @@ test.describe('Persona usability', () => {
     await expect(
       page.getByRole('button', { name: /START MISSION|Begin|Start session/i }).first(),
     ).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/strength, control, and muscle/i).first()).toBeVisible();
     await shot(page, 'persona_alex_workout');
   });
 });
