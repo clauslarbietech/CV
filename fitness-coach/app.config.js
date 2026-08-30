@@ -19,12 +19,27 @@ const config = {
     supportsTablet: true,
     bundleIdentifier: 'com.fitlife.aicoach',
     buildNumber: '1',
+    deploymentTarget: '15.1',
     infoPlist: {
       NSCameraUsageDescription:
         'FitLife uses the camera to capture food photos for beta meal estimates.',
       NSPhotoLibraryUsageDescription:
         'FitLife uses photos you select for beta meal estimates.',
       ITSAppUsesNonExemptEncryption: false,
+    },
+    privacyManifests: {
+      NSPrivacyTracking: false,
+      NSPrivacyTrackingDomains: [],
+      NSPrivacyAccessedAPITypes: [
+        {
+          NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
+          NSPrivacyAccessedAPITypeReasons: ['CA92.1'],
+        },
+        {
+          NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryFileTimestamp',
+          NSPrivacyAccessedAPITypeReasons: ['C617.1'],
+        },
+      ],
     },
   },
   android: {

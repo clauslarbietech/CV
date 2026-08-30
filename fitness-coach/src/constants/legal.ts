@@ -5,6 +5,7 @@ export const LEGAL_BASE =
 
 export const PRIVACY_POLICY_URL = `${LEGAL_BASE}/privacy.html`;
 export const TERMS_OF_USE_URL = `${LEGAL_BASE}/terms.html`;
+export const SUPPORT_URL = `${LEGAL_BASE}/support.html`;
 
 export const APP_VERSION = '1.0.0';
 export const SUPPORT_EMAIL = 'support@fitlife.app';

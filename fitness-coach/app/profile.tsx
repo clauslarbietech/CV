@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { OptionChip } from '@/components/onboarding/OptionChip';
 import { AppearanceToggle } from '@/components/settings/AppearanceToggle';
+import { DeleteMyDataCard } from '@/components/settings/DeleteMyDataCard';
 import { HealthDisclaimerCard } from '@/components/settings/HealthDisclaimerCard';
 import { LegalLinksCard } from '@/components/settings/LegalLinksCard';
 import { WeightUnitToggle } from '@/components/settings/WeightUnitToggle';
@@ -142,6 +143,7 @@ export default function ProfileScreen() {
       <Text style={styles.section}>Health & legal</Text>
       <HealthDisclaimerCard compact />
       <LegalLinksCard />
+      <DeleteMyDataCard />
 
       <AppButton
         label="Replay intro"
