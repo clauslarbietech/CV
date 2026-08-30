@@ -1,4 +1,4 @@
-import { createElement, useMemo } from 'react';
+import { createElement, useMemo, useState } from 'react';
 import {
   Platform,
   Pressable,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
+import { HealthTermsAcceptance } from '@/components/settings/HealthTermsAcceptance';
 import {
   INTRO_EXPERIENCE,
   INTRO_GOALS,
@@ -125,6 +126,7 @@ export function IntroQuestions({
   onSkipToSessions,
 }: IntroQuestionsProps) {
   const { colors } = useTheme();
+  const [healthAccepted, setHealthAccepted] = useState(false);
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -189,7 +191,7 @@ export function IntroQuestions({
   );
 
   // Name is optional — finishProfile defaults to "Athlete".
-  const ready = Boolean(goal && experience && minutes);
+  const ready = Boolean(goal && experience && minutes && healthAccepted);
 
   return (
     <View style={styles.wrap}>
@@ -259,6 +261,11 @@ export function IntroQuestions({
           />
         ))}
       </View>
+
+      <HealthTermsAcceptance
+        accepted={healthAccepted}
+        onChange={setHealthAccepted}
+      />
 
       <AppButton
         label="Start my coaching plan"

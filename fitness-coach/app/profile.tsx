@@ -4,6 +4,8 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { OptionChip } from '@/components/onboarding/OptionChip';
 import { AppearanceToggle } from '@/components/settings/AppearanceToggle';
+import { HealthDisclaimerCard } from '@/components/settings/HealthDisclaimerCard';
+import { LegalLinksCard } from '@/components/settings/LegalLinksCard';
 import { WeightUnitToggle } from '@/components/settings/WeightUnitToggle';
 import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
 import { AppButton } from '@/components/ui/AppButton';
@@ -136,6 +138,10 @@ export default function ProfileScreen() {
           />
         ))}
       </View>
+
+      <Text style={styles.section}>Health & legal</Text>
+      <HealthDisclaimerCard compact />
+      <LegalLinksCard />
 
       <AppButton
         label="Replay intro"

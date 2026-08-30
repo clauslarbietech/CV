@@ -18,6 +18,14 @@ const config = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.fitlife.aicoach',
+    buildNumber: '1',
+    infoPlist: {
+      NSCameraUsageDescription:
+        'FitLife uses the camera to capture food photos for beta meal estimates.',
+      NSPhotoLibraryUsageDescription:
+        'FitLife uses photos you select for beta meal estimates.',
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     adaptiveIcon: {

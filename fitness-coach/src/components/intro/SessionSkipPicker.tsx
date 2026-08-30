@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
+import { HealthTermsAcceptance } from '@/components/settings/HealthTermsAcceptance';
 import { SKIP_SESSIONS, SkipSessionOption } from '@/constants/intro';
 import { useTheme, spacing, typography } from '@/theme';
 
@@ -19,6 +20,7 @@ export function SessionSkipPicker({
   onBack,
 }: SessionSkipPickerProps) {
   const { colors } = useTheme();
+  const [healthAccepted, setHealthAccepted] = useState(false);
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -99,9 +101,14 @@ export function SessionSkipPicker({
         })}
       </View>
 
+      <HealthTermsAcceptance
+        accepted={healthAccepted}
+        onChange={setHealthAccepted}
+      />
+
       <AppButton
         label="Start selected workout"
-        disabled={!selectedId}
+        disabled={!selectedId || !healthAccepted}
         onPress={onStart}
       />
       <AppButton label="Back" variant="ghost" onPress={onBack} />

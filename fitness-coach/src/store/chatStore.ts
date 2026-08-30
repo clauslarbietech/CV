@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { CoachPersonality } from '@/types';
+import { COACH_BETA_DISCLAIMER, LIVE_TRAINER_DISCLAIMER } from '@/constants/legal';
 
 /** AI Coach = in-app motivational coach. Live Trainer = human trainer inbox. */
 export type ChatChannel = 'coach' | 'live_trainer' | 'buddy';
@@ -136,14 +137,14 @@ export const useChatStore = create<ChatState>()(
           id: 'seed-coach-1',
           channel: 'coach',
           from: 'coach',
-          text: 'AI Coach — ask for a pep talk anytime.',
+          text: `Coach (beta) — scripted pep talks only. ${COACH_BETA_DISCLAIMER}`,
           createdAt: new Date().toISOString(),
         },
         {
           id: 'seed-live-1',
           channel: 'live_trainer',
-          from: 'live_trainer',
-          text: 'Live Trainer inbox. Ask about form, plan, or recovery.',
+          from: 'system',
+          text: LIVE_TRAINER_DISCLAIMER,
           createdAt: new Date().toISOString(),
         },
         {
@@ -172,7 +173,7 @@ export const useChatStore = create<ChatState>()(
           createdAt: now,
           deliveryNote:
             channel === 'live_trainer' && from === 'me'
-              ? 'Sent · awaiting trainer'
+              ? 'Saved locally · no trainer connected in v1.0'
               : undefined,
         };
         const replies: ChatMessage[] = [];

@@ -30,6 +30,7 @@ async function onboard(page) {
   await page.getByRole('button', { name: /New to working out/i }).first().click();
   const timeBtn = page.getByRole('button', { name: /25.35 minutes|About 10 minutes|15.20 minutes/i }).first();
   await timeBtn.click();
+  await page.getByText(/I understand this is not medical advice/i).click();
   await page.getByRole('button', { name: /Start my coaching plan/i }).click();
   await expect(page.getByText(/My Stuff|START MISSION|YOUR GOALS/i).first()).toBeVisible({
     timeout: 20000,

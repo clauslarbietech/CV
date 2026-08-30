@@ -48,6 +48,8 @@ const SPA_ROUTES = [
   'session/operation-iron-14',
   'session/operation-iron-30',
   'session/operation-long-train',
+  'legal/privacy',
+  'legal/terms',
 ];
 
 if (!existsSync(join(dist, 'index.html'))) {
@@ -79,6 +81,12 @@ for (const route of SPA_ROUTES) {
   writeFileSync(out, shellHtml);
 }
 console.log(`Wrote ${SPA_ROUTES.length} SPA route shells under dist/`);
+
+const legalSrc = join(process.cwd(), 'legal');
+if (existsSync(legalSrc)) {
+  cpSync(legalSrc, join(dist, 'legal'), { recursive: true });
+  console.log('Copied legal/ static pages to dist/legal/');
+}
 
 const worktree = mkdtempSync(join(tmpdir(), 'fitlife-gh-pages-'));
 

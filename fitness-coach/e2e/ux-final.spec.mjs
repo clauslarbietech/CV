@@ -46,6 +46,8 @@ async function completeOnboarding(page, { sex = 'Female', name = 'Sam' } = {}) {
   await timeBtn.scrollIntoViewIfNeeded();
   await timeBtn.click();
 
+  await page.getByText(/I understand this is not medical advice/i).click();
+
   const start = page.getByRole('button', { name: /Start my coaching plan/i });
   await start.scrollIntoViewIfNeeded();
   await expect(start).toBeEnabled({ timeout: 5000 });
@@ -145,7 +147,7 @@ test.describe('FitLife final UX suite', () => {
       await page.waitForTimeout(800);
       await shot(page, 'ux_12_settings');
       await expect(
-        page.getByText(/Sign out|Replay intro|Appearance|Day\/Night|Coach personality/i).first(),
+        page.getByText(/Sign out|Replay intro|SETTINGS|Privacy Policy|Weight units|Coach personality/i).first(),
       ).toBeVisible({ timeout: 10000 });
     }
   });

@@ -62,6 +62,7 @@ function RootNavigator() {
             presentation: 'modal',
           }}
         />
+        <Stack.Screen name="legal" options={{ headerShown: false }} />
       </Stack>
       <LaunchSplashOverlay />
     </>

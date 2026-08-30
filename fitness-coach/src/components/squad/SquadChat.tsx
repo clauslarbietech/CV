@@ -11,6 +11,10 @@ import {
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import {
+  COACH_BETA_DISCLAIMER,
+  LIVE_TRAINER_DISCLAIMER,
+} from '@/constants/legal';
+import {
   ChatChannel,
   LIVE_TRAINER_PROMPTS,
   MOTIVATION_PROMPTS,
@@ -21,8 +25,8 @@ import { useSquadStore } from '@/store/squadStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
 const CHANNELS: Array<{ id: ChatChannel; label: string }> = [
-  { id: 'coach', label: 'AI Coach' },
-  { id: 'live_trainer', label: 'Live Trainer' },
+  { id: 'coach', label: 'Coach (beta)' },
+  { id: 'live_trainer', label: 'Trainer inbox' },
   { id: 'buddy', label: 'Buddy' },
 ];
 
@@ -160,17 +164,16 @@ export function SquadChat() {
 
       {channel === 'live_trainer' ? (
         <View style={styles.banner}>
-          <Text style={styles.bannerTitle}>LIVE TRAINER</Text>
-          <Text style={styles.bannerBody}>
-            Real trainer inbox — ask about form, plan, or recovery.
-          </Text>
+          <Text style={styles.bannerTitle}>TRAINER INBOX · BETA</Text>
+          <Text style={styles.bannerBody}>{LIVE_TRAINER_DISCLAIMER}</Text>
         </View>
       ) : null}
 
       {channel === 'coach' ? (
-        <Text style={styles.hint}>
-          Text coaching. Switch to Live Trainer for a person.
-        </Text>
+        <View style={styles.banner}>
+          <Text style={styles.bannerTitle}>COACH · BETA</Text>
+          <Text style={styles.bannerBody}>{COACH_BETA_DISCLAIMER}</Text>
+        </View>
       ) : null}
 
       <View style={styles.tabs}>
@@ -252,9 +255,9 @@ export function SquadChat() {
         onChangeText={setDraft}
         placeholder={
           channel === 'coach'
-            ? 'Ask AI Coach for a motivational push…'
+            ? 'Ask Coach (beta) for a motivational push…'
             : channel === 'live_trainer'
-              ? 'Message your live trainer…'
+              ? 'Save a note for your trainer (no human connected yet)…'
               : 'Message your buddy…'
         }
         placeholderTextColor={colors.textMuted}
@@ -263,7 +266,7 @@ export function SquadChat() {
       />
       <AppButton
         label={
-          channel === 'live_trainer' ? 'Send to Live Trainer' : 'Send'
+          channel === 'live_trainer' ? 'Save trainer note' : 'Send'
         }
         variant={channel === 'live_trainer' ? 'action' : 'military'}
         onPress={() => send(draft)}

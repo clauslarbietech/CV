@@ -43,6 +43,8 @@ async function onboard(page, { goal, experience, name = 'Tester' } = {}) {
     .first();
   await timeBtn.click();
 
+  await page.getByText(/I understand this is not medical advice/i).click();
+
   await page.getByRole('button', { name: /Start my coaching plan/i }).click();
   await expect(
     page.getByText(/My Stuff|START MISSION|YOUR GOALS|PICKED FOR YOU/i).first(),

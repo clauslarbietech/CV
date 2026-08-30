@@ -8,6 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
+    "test:e2e": "FITLIFE_BASE_URL=http://127.0.0.1:4173 npx playwright test --config=playwright.ux.config.mjs",
     "verify:iron14": "node scripts/verify-iron14-flow.mjs",
     "export:web": "EXPO_PUBLIC_BASE_URL=/CV/fitlife expo export --platform web --output-dir dist",
     "export:web:vercel": "EXPO_PUBLIC_BASE_URL= expo export --platform web --output-dir dist",
