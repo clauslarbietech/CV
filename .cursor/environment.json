@@ -1,0 +1,17 @@
+{
+  "name": "FitLife gym app",
+  "install": "cd fitness-coach && npm install --legacy-peer-deps",
+  "terminals": [
+    {
+      "name": "FitLife web",
+      "description": "Expo web preview for the gym app (fitness-coach). Open the FitLife Gym port — not the portfolio index.html at repo root.",
+      "command": "cd fitness-coach && npx expo start --web --port 8081 --non-interactive"
+    }
+  ],
+  "ports": [
+    {
+      "name": "FitLife Gym",
+      "port": 8081
+    }
+  ]
+}
