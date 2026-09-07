@@ -10,16 +10,35 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { WorkoutProgram } from '@/types';
+import { useProfileStore } from '@/store/profileStore';
+import { Sex, WorkoutProgram } from '@/types';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
 const HERO_IMAGES: Record<string, ImageSourcePropType> = {
   'operation-iron-30': require('../../../assets/exercises/burpee.png'),
   'operation-iron-14': require('../../../assets/exercises/pushup.png'),
   'operation-long-train': require('../../../assets/exercises/squat.png'),
-  'operation-military-calisthenics': require('../../../assets/exercises/high-knees.png'),
   'operation-calisthenics': require('../../../assets/exercises/pike.png'),
 };
+
+const MILITARY_HERO_BY_SEX = {
+  male: require('../../../assets/programs/military-calisthenics-male.png'),
+  female: require('../../../assets/programs/military-calisthenics-female.png'),
+} as const;
+
+function heroForProgram(
+  programId: string,
+  sex?: Sex | null,
+): ImageSourcePropType {
+  if (programId === 'operation-military-calisthenics') {
+    return sex === 'female'
+      ? MILITARY_HERO_BY_SEX.female
+      : MILITARY_HERO_BY_SEX.male;
+  }
+  return (
+    HERO_IMAGES[programId] ?? require('../../../assets/exercises/generic.png')
+  );
+}
 
 interface HeroProgramCardProps {
   program: WorkoutProgram;
@@ -39,14 +58,15 @@ export function HeroProgramCard({
   onPlay,
 }: HeroProgramCardProps) {
   const { colors, isDay } = useTheme();
-  const image =
-    HERO_IMAGES[program.id] ?? require('../../../assets/exercises/generic.png');
+  const sex = useProfileStore((s) => s.profile?.sex);
+  const image = heroForProgram(program.id, sex);
+  const isMilitary = program.id === 'operation-military-calisthenics';
 
   const styles = useMemo(
     () =>
       StyleSheet.create({
         card: {
-          height: 200,
+          height: isMilitary ? 240 : 200,
           borderRadius: radii.xl,
           overflow: 'hidden',
           borderWidth: 1,
@@ -103,7 +123,7 @@ export function HeroProgramCard({
           justifyContent: 'center',
         },
       }),
-    [colors, isDay],
+    [colors, isDay, isMilitary],
   );
 
   return (

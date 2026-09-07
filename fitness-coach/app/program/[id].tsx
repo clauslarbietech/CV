@@ -28,8 +28,13 @@ const HERO_BY_ID: Record<string, number> = {
   'operation-iron-14': require('../../assets/exercises/pushup.png'),
   'operation-long-train': require('../../assets/exercises/squat.png'),
   'operation-calisthenics': require('../../assets/exercises/pike.png'),
-  'operation-military-calisthenics': require('../../assets/exercises/high-knees.png'),
+  'operation-military-calisthenics': require('../../assets/programs/military-calisthenics-male.png'),
 };
+
+const MILITARY_HERO_BY_SEX = {
+  male: require('../../assets/programs/military-calisthenics-male.png'),
+  female: require('../../assets/programs/military-calisthenics-female.png'),
+} as const;
 
 export default function ProgramDetailScreen() {
   const { colors, isDay } = useTheme();
@@ -145,8 +150,11 @@ export default function ProgramDetailScreen() {
   const tier = enrollment?.difficulty ?? 'recruit';
   const isEnrolled = enrollment?.programId === program.id;
   const currentDay = isEnrolled ? enrollment?.currentDay ?? 1 : undefined;
+  const sex = useProfileStore((s) => s.profile?.sex);
   const heroSource =
-    HERO_BY_ID[program.id] ?? require('../../assets/exercises/generic.png');
+    program.id === 'operation-military-calisthenics'
+      ? MILITARY_HERO_BY_SEX[sex === 'female' ? 'female' : 'male']
+      : (HERO_BY_ID[program.id] ?? require('../../assets/exercises/generic.png'));
 
   const openDay = (day: number) => {
     if (!isEnrolled) enrollInProgram(program.id, tier);
