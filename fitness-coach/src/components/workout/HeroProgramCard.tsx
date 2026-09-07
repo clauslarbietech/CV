@@ -17,6 +17,8 @@ const HERO_IMAGES: Record<string, ImageSourcePropType> = {
   'operation-iron-30': require('../../../assets/exercises/burpee.png'),
   'operation-iron-14': require('../../../assets/exercises/pushup.png'),
   'operation-long-train': require('../../../assets/exercises/squat.png'),
+  'operation-military-calisthenics': require('../../../assets/exercises/high-knees.png'),
+  'operation-calisthenics': require('../../../assets/exercises/pike.png'),
 };
 
 interface HeroProgramCardProps {

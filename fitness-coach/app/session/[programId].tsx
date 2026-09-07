@@ -14,6 +14,8 @@ import { BODY_FRAME_LABELS } from '@/constants/bodyVision';
 import { getActiveProgram } from '@/constants/programs';
 import {
   ExpressBudget,
+  SessionSlot,
+  isExpressBudget,
   toExpressMission,
 } from '@/constants/programs/expressMissions';
 import {
@@ -36,8 +38,11 @@ import { useTheme, spacing, typography } from '@/theme';
 
 function parseExpressBudget(value?: string): ExpressBudget | undefined {
   const n = Number(value);
-  if (n === 8 || n === 10 || n === 15) return n;
-  return undefined;
+  return isExpressBudget(n) ? n : undefined;
+}
+
+function parseSessionSlot(value?: string): SessionSlot {
+  return value === 'evening' ? 'evening' : 'morning';
 }
 
 export default function WorkoutSessionScreen() {
@@ -111,10 +116,12 @@ export default function WorkoutSessionScreen() {
     programId,
     day: dayParam,
     express: expressParam,
+    slot: slotParam,
   } = useLocalSearchParams<{
     programId: string;
     day?: string;
     express?: string;
+    slot?: string;
   }>();
 
   const enrollment = useProgramStore((s) => s.enrollment);
@@ -135,13 +142,14 @@ export default function WorkoutSessionScreen() {
   const program = getActiveProgram(programId);
   const dayNumber = Number(dayParam ?? enrollment?.currentDay ?? 1);
   const expressMinutes = parseExpressBudget(expressParam);
+  const sessionSlot = parseSessionSlot(slotParam);
   const baseDay = getProgramDay(program, dayNumber);
   const day = useMemo(() => {
     if (!baseDay) return undefined;
     return expressMinutes
-      ? toExpressMission(baseDay, expressMinutes)
+      ? toExpressMission(baseDay, expressMinutes, sessionSlot)
       : baseDay;
-  }, [baseDay, expressMinutes]);
+  }, [baseDay, expressMinutes, sessionSlot]);
   const tier = enrollment?.difficulty ?? 'recruit';
   const [savedNextDay, setSavedNextDay] = useState<number | null>(null);
 
@@ -152,8 +160,9 @@ export default function WorkoutSessionScreen() {
       day,
       difficulty: tier,
       expressMinutes,
+      sessionSlot: expressMinutes ? sessionSlot : undefined,
     });
-  }, [dayNumber, programId, tier, program.id, expressMinutes]);
+  }, [dayNumber, programId, tier, program.id, expressMinutes, sessionSlot]);
 
   useEffect(() => {
     if (!day || !active) return;
@@ -166,7 +175,7 @@ export default function WorkoutSessionScreen() {
     }
     const id = setInterval(() => tick(day), 1000);
     return () => clearInterval(id);
-  }, [active?.phase, dayNumber, expressMinutes]);
+  }, [active?.phase, dayNumber, expressMinutes, sessionSlot]);
 
   const resolved = useMemo(() => {
     if (!day || !active) return undefined;
@@ -314,7 +323,9 @@ export default function WorkoutSessionScreen() {
       <Screen>
         <Text style={styles.kicker}>
           {program.name} · {tier.toUpperCase()}
-          {expressMinutes ? ` · ${expressMinutes} MIN EXPRESS` : ''}
+          {expressMinutes
+            ? ` · ${expressMinutes} MIN ${sessionSlot === 'evening' ? 'NIGHT' : 'MORNING'}`
+            : ''}
         </Text>
         <Text style={styles.title}>
           DAY {day.day} — {day.title}

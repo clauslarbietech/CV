@@ -4,10 +4,13 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { DailyMissionCard } from '@/components/today/DailyMissionCard';
 import { EnergyRouteCard } from '@/components/today/EnergyRouteCard';
-import { ExpressTimeCard } from '@/components/today/ExpressTimeCard';
 import { HomeStatsGraphs } from '@/components/today/HomeStatsGraphs';
 import { PersonaPlanCard } from '@/components/today/PersonaPlanCard';
 import { ProgramSwitcher } from '@/components/today/ProgramSwitcher';
+import {
+  SessionWindowCard,
+  TimedSessionPick,
+} from '@/components/today/SessionWindowCard';
 import { MotivationalCoachCard } from '@/components/today/MotivationalCoachCard';
 import { personalityLabel } from '@/constants/coach/voiceCoach';
 import { WeightGoalsCard } from '@/components/today/WeightGoalsCard';
@@ -15,13 +18,14 @@ import { AppButton } from '@/components/ui/AppButton';
 import { Screen } from '@/components/ui/Screen';
 import { HeroProgramCard } from '@/components/workout/HeroProgramCard';
 import { EnergyLevel, EnergyRoute } from '@/constants/programs/energyRoutes';
-import { ExpressBudget } from '@/constants/programs/expressMissions';
+import { ExpressBudget, SessionSlot } from '@/constants/programs/expressMissions';
 import { displayRank } from '@/constants/displayLabels';
 import {
   OPERATION_CALISTHENICS,
   OPERATION_IRON_14,
   OPERATION_IRON_30,
   OPERATION_LONG_TRAIN,
+  OPERATION_MILITARY_CALISTHENICS,
   getActiveProgram,
   WORKOUT_PROGRAMS,
 } from '@/constants/programs';
@@ -118,6 +122,7 @@ export default function MyStuffScreen() {
   };
 
   const catalog = [
+    OPERATION_MILITARY_CALISTHENICS,
     OPERATION_LONG_TRAIN,
     OPERATION_IRON_30,
     OPERATION_IRON_14,
@@ -143,13 +148,15 @@ export default function MyStuffScreen() {
               key={program.id}
               program={program}
               locationLabel={
-                program.id === 'operation-calisthenics'
-                  ? '21-day skill block · Home'
-                  : program.durationDays >= 60
-                    ? '12-week long train · Home'
-                    : program.durationDays <= 14
-                      ? 'Short block · Home'
-                      : '30-day home plan · Home'
+                program.id === 'operation-military-calisthenics'
+                  ? '28-day military PT · Home'
+                  : program.id === 'operation-calisthenics'
+                    ? '21-day skill block · Home'
+                    : program.durationDays >= 60
+                      ? '12-week long train · Home'
+                      : program.durationDays <= 14
+                        ? 'Short block · Home'
+                        : '30-day home plan · Home'
               }
               onGetStarted={() => openProgram(program.id)}
               onPlay={() => playProgram(program.id)}
@@ -172,13 +179,18 @@ export default function MyStuffScreen() {
         program.durationDays
       : 0;
 
-  const startMission = (express?: ExpressBudget) => {
+  const startMission = (
+    express?: ExpressBudget,
+    slot: SessionSlot = 'morning',
+  ) => {
     router.push({
       pathname: '/session/[programId]',
       params: {
         programId: program.id,
         day: String(enrollment.currentDay),
-        ...(express ? { express: String(express) } : {}),
+        ...(express
+          ? { express: String(express), slot }
+          : {}),
       },
     });
   };
@@ -189,7 +201,7 @@ export default function MyStuffScreen() {
 
   const onStartEnergyRoute = (route: EnergyRoute) => {
     setDifficulty(route.difficulty);
-    startMission(route.expressMinutes);
+    startMission(route.expressMinutes, 'morning');
   };
 
   const switchProgram = (programId: string) => {
@@ -273,7 +285,11 @@ export default function MyStuffScreen() {
         />
       ) : null}
 
-      <ExpressTimeCard onSelect={(mins) => startMission(mins)} />
+      <SessionWindowCard
+        onSelect={(pick: TimedSessionPick) =>
+          startMission(pick.budget, pick.slot)
+        }
+      />
 
       <ProgramSwitcher
         activeProgramId={program.id}

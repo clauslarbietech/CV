@@ -135,6 +135,45 @@ export const PROGRAM_EVIDENCE: Record<string, ProgramEvidenceProfile> = {
       },
     ],
   },
+  'operation-military-calisthenics': {
+    programId: 'operation-military-calisthenics',
+    verdict: 'evidence-supported',
+    headline:
+      'Army PRT–inspired Prep → Activity → Recovery structure with progressive bodyweight conditioning.',
+    basis: [
+      'Session shape mirrors public Army PRT elements (Preparation Drill, conditioning activities, Recovery Drill).',
+      'Push-ups, squats, sit-ups, lunges, planks, and mountain climbers are standard recruit-prep calisthenics.',
+      'Short timed windows (3–30 min) align with research showing brief dense calisthenics / HIIT still improves fitness when done consistently.',
+      'Evening recovery-biased options follow military mobility / Recovery Drill practice rather than stacking max intensity twice daily.',
+    ],
+    caveats: [
+      'Civilian home adaptation — not official Army doctrine or a substitute for unit PT or medical clearance.',
+      'Burpees and dense intervals can be high-impact; Easy tier should step-back or skip plyometrics when joints complain.',
+      'Morning + night same day is optional; recovery days matter when training twice.',
+    ],
+    revisionNotes: [
+      'Keep morning vs night duration ladders distinct so users don’t duplicate identical short sessions.',
+      'Surface Recovery Drill holds clearly on evening windows.',
+    ],
+    sources: [
+      {
+        title: 'Army PRT session elements',
+        url: 'https://www.armyprt.com/planning_considerations/session-elements.shtml/',
+      },
+      {
+        title: 'Military calisthenics basic-training prep plan',
+        url: 'https://www.operationmilitarykids.org/30-day-workout-plan-to-prep-for-basic-training/',
+      },
+      {
+        title: 'Mobility 20/20 evening-friendly protocol',
+        url: 'https://www.military.com/military-fitness/mobility-20-20-one-workout-you-need-2026-20-minutes-day-20-days-or-forever',
+      },
+      {
+        title: '15-minute calisthenics workout guidance',
+        url: 'https://welltech.com/content/15-minute-calisthenics-workout',
+      },
+    ],
+  },
 };
 
 export type NutritionEvidenceItem = {

@@ -8,6 +8,7 @@ import {
   OPERATION_IRON_14,
   OPERATION_IRON_30,
   OPERATION_LONG_TRAIN,
+  OPERATION_MILITARY_CALISTHENICS,
   WORKOUT_PROGRAMS,
 } from '@/constants/programs';
 import { WorkoutProgram } from '@/types';
@@ -21,6 +22,7 @@ type ProgramSwitcherProps = {
 };
 
 const CATALOG = [
+  OPERATION_MILITARY_CALISTHENICS,
   OPERATION_LONG_TRAIN,
   OPERATION_IRON_30,
   OPERATION_IRON_14,
@@ -77,13 +79,15 @@ export function ProgramSwitcher({
                 enrolled={active}
                 currentDay={active ? currentDay : undefined}
                 locationLabel={
-                  program.id === 'operation-calisthenics'
-                    ? '21-day skill block · Home'
-                    : program.durationDays >= 60
-                      ? '12-week long train · Home'
-                      : program.durationDays <= 14
-                        ? 'Short block · Home'
-                        : '30-day home plan · Home'
+                  program.id === 'operation-military-calisthenics'
+                    ? '28-day military PT · Home'
+                    : program.id === 'operation-calisthenics'
+                      ? '21-day skill block · Home'
+                      : program.durationDays >= 60
+                        ? '12-week long train · Home'
+                        : program.durationDays <= 14
+                          ? 'Short block · Home'
+                          : '30-day home plan · Home'
                 }
                 onGetStarted={() => onOpen(program.id)}
                 onPlay={() => (active ? onOpen(program.id) : onSwitch(program.id))}

@@ -28,6 +28,7 @@ const HERO_BY_ID: Record<string, number> = {
   'operation-iron-14': require('../../assets/exercises/pushup.png'),
   'operation-long-train': require('../../assets/exercises/squat.png'),
   'operation-calisthenics': require('../../assets/exercises/pike.png'),
+  'operation-military-calisthenics': require('../../assets/exercises/high-knees.png'),
 };
 
 export default function ProgramDetailScreen() {

@@ -13,6 +13,7 @@ import {
   tickRest,
 } from '@/features/workouts/sessionEngine';
 import { ActiveWorkoutSession, DifficultyTier, ProgramDay } from '@/types';
+import { SessionSlot } from '@/constants/programs/expressMissions';
 
 interface SessionState {
   active: ActiveWorkoutSession | null;
@@ -20,13 +21,15 @@ interface SessionState {
     programId: string;
     day: ProgramDay;
     difficulty: DifficultyTier;
-    expressMinutes?: 8 | 10 | 15;
+    expressMinutes?: number;
+    sessionSlot?: SessionSlot;
   }) => void;
   resumeOrBegin: (args: {
     programId: string;
     day: ProgramDay;
     difficulty: DifficultyTier;
-    expressMinutes?: 8 | 10 | 15;
+    expressMinutes?: number;
+    sessionSlot?: SessionSlot;
   }) => void;
   launch: (day: ProgramDay) => void;
   completeExercise: (day: ProgramDay, opts?: { modified?: boolean; completedReps?: number }) => void;
@@ -42,23 +45,25 @@ export const useSessionStore = create<SessionState>()(
   persist(
     (set, get) => ({
       active: null,
-      begin: ({ programId, day, difficulty, expressMinutes }) => {
+      begin: ({ programId, day, difficulty, expressMinutes, sessionSlot }) => {
         set({
           active: createActiveSession({
             programId,
             day,
             difficulty,
             expressMinutes,
+            sessionSlot,
           }),
         });
       },
-      resumeOrBegin: ({ programId, day, difficulty, expressMinutes }) => {
+      resumeOrBegin: ({ programId, day, difficulty, expressMinutes, sessionSlot }) => {
         const current = get().active;
         if (
           current &&
           current.programId === programId &&
           current.day === day.day &&
           current.expressMinutes === expressMinutes &&
+          current.sessionSlot === sessionSlot &&
           current.phase !== 'complete'
         ) {
           return;
@@ -69,6 +74,7 @@ export const useSessionStore = create<SessionState>()(
             day,
             difficulty,
             expressMinutes,
+            sessionSlot,
           }),
         });
       },

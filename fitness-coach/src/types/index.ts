@@ -228,8 +228,10 @@ export interface ActiveWorkoutSession {
   programId: string;
   day: number;
   difficulty: DifficultyTier;
-  /** Present when mission was converted to an 8/10/15-min express strategy. */
-  expressMinutes?: 8 | 10 | 15;
+  /** Present when mission was converted to a timed morning/night window. */
+  expressMinutes?: number;
+  /** Morning activation vs night recovery-biased window. */
+  sessionSlot?: 'morning' | 'evening';
   startedAt: string;
   elapsedSec: number;
   currentRound: number;

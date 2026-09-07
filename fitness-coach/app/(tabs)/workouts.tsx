@@ -13,6 +13,7 @@ import {
   OPERATION_IRON_14,
   OPERATION_IRON_30,
   OPERATION_LONG_TRAIN,
+  OPERATION_MILITARY_CALISTHENICS,
 } from '@/constants/programs';
 import { LONG_TRAIN_PHASES } from '@/constants/programs/operationLongTrain';
 import { TRAINING_TRACKS } from '@/constants/research/militaryTimeline';
@@ -143,6 +144,32 @@ export default function WorkoutsScreen() {
           }}
         />
       </View>
+
+      <Text style={styles.section}>Military Calisthenics · 28 days</Text>
+      <ProgramCard
+        program={OPERATION_MILITARY_CALISTHENICS}
+        featured
+        onPress={() =>
+          router.push({
+            pathname: '/program/[id]',
+            params: { id: OPERATION_MILITARY_CALISTHENICS.id },
+          })
+        }
+      />
+      <AppButton
+        label="Start Military Calisthenics"
+        variant="military"
+        onPress={() => {
+          enrollInProgram(OPERATION_MILITARY_CALISTHENICS.id, 'recruit');
+          router.push({
+            pathname: '/session/[programId]',
+            params: {
+              programId: OPERATION_MILITARY_CALISTHENICS.id,
+              day: '1',
+            },
+          });
+        }}
+      />
 
       <Text style={styles.section}>Calisthenics · 21 days</Text>
       <ProgramCard

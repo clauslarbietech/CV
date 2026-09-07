@@ -2,10 +2,12 @@ import { OPERATION_IRON_14 } from './operationIron14';
 import { OPERATION_IRON_30 } from './operationIron30';
 import { OPERATION_LONG_TRAIN } from './operationLongTrain';
 import { OPERATION_CALISTHENICS } from './operationCalisthenics';
+import { OPERATION_MILITARY_CALISTHENICS } from './operationMilitaryCalisthenics';
 import { WorkoutProgram } from '@/types';
 
 /** Featured first: 30-day no-equipment bodyweight plan. */
 export const WORKOUT_PROGRAMS: WorkoutProgram[] = [
+  OPERATION_MILITARY_CALISTHENICS,
   OPERATION_IRON_30,
   OPERATION_IRON_14,
   OPERATION_CALISTHENICS,
@@ -25,4 +27,5 @@ export {
   OPERATION_IRON_30,
   OPERATION_LONG_TRAIN,
   OPERATION_CALISTHENICS,
+  OPERATION_MILITARY_CALISTHENICS,
 };

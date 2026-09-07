@@ -24,7 +24,8 @@ export function createActiveSession(args: {
   programId: string;
   day: ProgramDay;
   difficulty: DifficultyTier;
-  expressMinutes?: 8 | 10 | 15;
+  expressMinutes?: number;
+  sessionSlot?: 'morning' | 'evening';
 }): ActiveWorkoutSession {
   const { day } = args;
   const totalRounds = Math.max(1, day.rounds ?? 1);
@@ -35,6 +36,7 @@ export function createActiveSession(args: {
     day: day.day,
     difficulty: args.difficulty,
     expressMinutes: args.expressMinutes,
+    sessionSlot: args.sessionSlot,
     startedAt: new Date().toISOString(),
     elapsedSec: 0,
     currentRound: 1,

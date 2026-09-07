@@ -22,8 +22,8 @@ export const ENERGY_ROUTES: EnergyRoute[] = [
     status: 'low',
     description: 'Protect recovery. Mobility + easy volume only.',
     difficulty: 'recruit',
-    expressMinutes: 8,
-    routeLabel: 'Recovery · 8 min',
+    expressMinutes: 5,
+    routeLabel: 'Recovery · 5 min',
   },
   {
     level: 2,
