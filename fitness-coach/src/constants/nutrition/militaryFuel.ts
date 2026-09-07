@@ -267,6 +267,7 @@ export const FUEL_TRACKS: FuelTrack[] = [
       'Sprint fuel for Iron 14 and rapid blocks. Keep training energy high; avoid crash diets on mission days.',
     whenToUse: [
       'OPERATION IRON 14',
+      'Military Calisthenics short morning windows (3–15 min)',
       'Express missions stacked in a busy week',
       '2-week condensed PRT-style push',
     ],
@@ -286,6 +287,7 @@ export const FUEL_TRACKS: FuelTrack[] = [
       'Intermittent fasting window plus tactical plates — best everyday default for fat loss with training.',
     whenToUse: [
       'OPERATION IRON 30',
+      'Military Calisthenics 28-day block (pair with Calisthenics Fuel card)',
       'Fat-loss focus with daily missions',
       'When you prefer a clear eating window',
     ],

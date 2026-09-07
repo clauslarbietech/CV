@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { DigestionGuide } from '@/components/nutrition/DigestionGuide';
+import { CalisthenicsFuelCard } from '@/components/nutrition/CalisthenicsFuelCard';
 import { FoodScanCard } from '@/components/nutrition/FoodScanCard';
 import {
   NutritionExperimentalGate,
@@ -14,6 +15,7 @@ import {
   defaultFuelTrackForGoal,
   nutritionHeadline,
 } from '@/constants/personaFit';
+import { isCalisthenicsProgram } from '@/constants/nutrition/calisthenicsFuel';
 import {
   FUEL_TRACKS,
   NUTRITION_SOURCES,
@@ -143,6 +145,8 @@ export default function NutritionScreen() {
 
   const profile = useProfileStore((s) => s.profile);
   const fuelHeadline = nutritionHeadline(profile?.primaryGoal);
+  const enrollment = useProgramStore((s) => s.enrollment);
+  const calisthenicsFuelActive = isCalisthenicsProgram(enrollment?.programId);
   const [trackId, setTrackId] = useState<TrackId>(
     defaultFuelTrackForGoal(profile?.primaryGoal),
   );
@@ -159,6 +163,16 @@ export default function NutritionScreen() {
         <Text style={styles.accent}>{fuelHeadline.accent}</Text>
       </Text>
       <Text style={styles.subtitle}>{fuelHeadline.subtitle}</Text>
+
+      <CalisthenicsFuelCard
+        highlighted={calisthenicsFuelActive}
+        weightKg={profile?.currentWeightKg}
+        weightUnit={profile?.weightUnit ?? 'lb'}
+        currentProteinTarget={daily.proteinTarget}
+        onApplyProteinTarget={(grams) =>
+          updateDailyMetrics({ proteinTarget: grams })
+        }
+      />
 
       <Card accentBorder>
         <Text style={styles.kicker}>WITH EACH WORKOUT</Text>
