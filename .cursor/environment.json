@@ -1,7 +1,12 @@
 {
-  "name": "FitLife gym app",
-  "install": "cd fitness-coach && npm install --legacy-peer-deps",
+  "name": "CV multi-app",
+  "install": "cd fitness-coach && npm install --legacy-peer-deps; cd ../relatii && npm install --legacy-peer-deps",
   "terminals": [
+    {
+      "name": "Relatii web",
+      "description": "Expo web preview for Relatii (relatii/). Open the Relatii port — not the portfolio index.html at repo root.",
+      "command": "cd relatii && npx expo start --web --port 8082 --non-interactive"
+    },
     {
       "name": "FitLife web",
       "description": "Expo web preview for the gym app (fitness-coach). Open the FitLife Gym port — not the portfolio index.html at repo root.",
@@ -9,6 +14,10 @@
     }
   ],
   "ports": [
+    {
+      "name": "Relatii",
+      "port": 8082
+    },
     {
       "name": "FitLife Gym",
       "port": 8081
