@@ -122,6 +122,9 @@ export function AppButton({
           opacity: disabled ? 0.45 : 1,
           width: '100%',
           marginTop: typeof style?.marginTop === 'number' ? style.marginTop : undefined,
+          position: 'relative',
+          zIndex: 5,
+          pointerEvents: 'auto',
         },
       },
       label,
@@ -148,6 +151,7 @@ export function AppButton({
           colors={[colors.primary, colors.primaryEnd]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
+          pointerEvents="none"
           style={StyleSheet.absoluteFill}
         />
         <Text style={styles.label}>{label}</Text>

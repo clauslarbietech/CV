@@ -47,6 +47,7 @@ export function Screen({
       <LinearGradient
         colors={[colors.gradientStart, colors.gradientMid, colors.gradientEnd]}
         locations={[0, 0.55, 1]}
+        pointerEvents="none"
         style={StyleSheet.absoluteFill}
       />
       <SafeAreaView style={styles.safe} edges={edges}>

@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { createElement, useMemo } from 'react';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useTheme, radii, spacing, typography } from '@/theme';
 
@@ -56,6 +56,87 @@ export function OptionChip({
       }),
     [colors, selected],
   );
+
+  if (Platform.OS === 'web') {
+    return createElement(
+      'button',
+      {
+        type: 'button',
+        onClick: (e: { stopPropagation?: () => void }) => {
+          e?.stopPropagation?.();
+          onPress();
+        },
+        'aria-label': accessibilityLabel ?? label,
+        'aria-checked': selected,
+        role: 'checkbox',
+        style: {
+          minHeight: 52,
+          borderRadius: radii.lg,
+          paddingLeft: spacing.lg,
+          paddingRight: spacing.lg,
+          paddingTop: spacing.sm,
+          paddingBottom: spacing.sm,
+          borderWidth: 1.5,
+          borderStyle: 'solid',
+          borderColor: selected ? colors.primary : colors.border,
+          backgroundColor: selected ? colors.primarySoft : colors.surfaceSoft,
+          marginBottom: spacing.sm,
+          width: '100%',
+          textAlign: 'left',
+          cursor: 'pointer',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: spacing.sm,
+          position: 'relative',
+          zIndex: 5,
+          pointerEvents: 'auto',
+        },
+      },
+      createElement(
+        'div',
+        { style: { flex: 1 } },
+        createElement(
+          'div',
+          {
+            style: {
+              fontFamily: typography.bodyBold.fontFamily,
+              fontWeight: 700,
+              fontSize: typography.bodyBold.fontSize,
+              color: colors.textPrimary,
+            },
+          },
+          label,
+        ),
+        hint
+          ? createElement(
+              'div',
+              {
+                style: {
+                  fontFamily: typography.caption.fontFamily,
+                  fontSize: typography.caption.fontSize,
+                  color: colors.textMuted,
+                  marginTop: 2,
+                },
+              },
+              hint,
+            )
+          : null,
+      ),
+      createElement(
+        'span',
+        {
+          style: {
+            fontFamily: typography.bodyBold.fontFamily,
+            fontSize: typography.caption.fontSize,
+            color: selected ? colors.primary : colors.textMuted,
+          },
+        },
+        selected ? 'Selected' : 'Tap',
+      ),
+    );
+  }
 
   return (
     <Pressable
