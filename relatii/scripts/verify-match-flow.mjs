@@ -41,7 +41,9 @@ async function clickCheckbox(page, label) {
       JSON.stringify({ state: { preference: 'night' }, version: 0 }),
     );
   });
+  // Reload so Zustand re-hydrates from the cleared storage (avoids stale guest state).
   await page.goto(`${BASE}/welcome`, { waitUntil: 'networkidle' });
+  await page.reload({ waitUntil: 'networkidle' });
   await page.getByText('Relatii', { exact: true }).first().waitFor({ timeout: 20000 });
   await sleep(900);
   await page.screenshot({ path: path.join(OUT, 'relatii-01-welcome.png'), fullPage: true });
