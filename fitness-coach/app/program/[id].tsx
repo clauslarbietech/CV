@@ -16,12 +16,14 @@ import { BodyVisionSetup } from '@/components/body/BodyVisionSetup';
 import { ProgramMonthGrid } from '@/components/workout/ProgramMonthGrid';
 import { ProgramEvidenceCard } from '@/components/workout/ProgramEvidenceCard';
 import { ProgramStartSteps } from '@/components/workout/ProgramStartSteps';
+import { WorkoutShortsPreview } from '@/components/workout/WorkoutShortsPreview';
 import { difficultyLabel } from '@/constants/displayLabels';
 import { getProgramById } from '@/constants/programs';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
 import { DifficultyTier } from '@/types';
+import { getProgramDay } from '@/utils/workout';
 
 const HERO_BY_ID: Record<string, number> = {
   'operation-iron-30': require('../../assets/exercises/burpee.png'),
@@ -177,6 +179,8 @@ export default function ProgramDetailScreen() {
     bodyVision?.goalFrame &&
     bodyVision.linkedProgramId === program.id;
 
+  const previewDay = getProgramDay(program, currentDay ?? 1);
+
   return (
     <Screen>
       <View style={styles.hero}>
@@ -215,6 +219,24 @@ export default function ProgramDetailScreen() {
         <Text style={styles.meta}>{program.equipment}</Text>
         <Text style={styles.meta}>{program.averageWorkout}</Text>
       </View>
+
+      {previewDay ? (
+        <WorkoutShortsPreview
+          program={program}
+          day={previewDay}
+          tier={tier}
+          onOpen={() =>
+            router.push({
+              pathname: '/shorts/[programId]',
+              params: {
+                programId: program.id,
+                day: String(previewDay.day),
+              },
+            })
+          }
+          onStart={playToday}
+        />
+      ) : null}
 
       <ProgramEvidenceCard programId={program.id} />
 

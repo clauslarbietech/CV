@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ExerciseGraphic } from '@/components/workout/ExerciseGraphic';
 import { ExerciseStep } from '@/components/workout/ExerciseStep';
 import { RestTimer } from '@/components/workout/RestTimer';
+import { WorkoutShortsPreview } from '@/components/workout/WorkoutShortsPreview';
 import { WorkoutFuelCard } from '@/components/nutrition/WorkoutFuelCard';
 import { AppButton } from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
@@ -369,6 +370,28 @@ export default function WorkoutSessionScreen() {
         {day.coachMessage ? (
           <Text style={styles.coach}>{day.coachMessage}</Text>
         ) : null}
+
+        <Text style={styles.sectionLabel}>Workout Short preview</Text>
+        <WorkoutShortsPreview
+          program={program}
+          day={day}
+          tier={tier}
+          slot={sessionSlot}
+          minutes={expressMinutes}
+          onOpen={() =>
+            router.push({
+              pathname: '/shorts/[programId]',
+              params: {
+                programId: program.id,
+                day: String(day.day),
+                ...(expressMinutes
+                  ? { express: String(expressMinutes), slot: sessionSlot }
+                  : {}),
+              },
+            })
+          }
+          onStart={() => launch(day)}
+        />
 
         <Text style={styles.sectionLabel}>Today&apos;s movements</Text>
         {day.exercises[0] ? (

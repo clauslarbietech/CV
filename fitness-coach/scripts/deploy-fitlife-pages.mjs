@@ -51,6 +51,9 @@ const SPA_ROUTES = [
   'session/operation-calisthenics',
   'session/operation-military-calisthenics',
   'program/operation-military-calisthenics',
+  'shorts/operation-military-calisthenics',
+  'shorts/operation-calisthenics',
+  'shorts/operation-iron-30',
   'legal/privacy',
   'legal/terms',
 ];

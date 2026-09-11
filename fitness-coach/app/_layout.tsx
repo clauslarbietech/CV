@@ -55,6 +55,14 @@ function RootNavigator() {
           }}
         />
         <Stack.Screen
+          name="shorts/[programId]"
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+            animation: 'fade',
+          }}
+        />
+        <Stack.Screen
           name="profile"
           options={{
             ...headerOptions,

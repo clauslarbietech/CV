@@ -17,6 +17,7 @@ import { WeightGoalsCard } from '@/components/today/WeightGoalsCard';
 import { AppButton } from '@/components/ui/AppButton';
 import { Screen } from '@/components/ui/Screen';
 import { HeroProgramCard } from '@/components/workout/HeroProgramCard';
+import { WorkoutShortsPreview } from '@/components/workout/WorkoutShortsPreview';
 import { EnergyLevel, EnergyRoute } from '@/constants/programs/energyRoutes';
 import { ExpressBudget, SessionSlot } from '@/constants/programs/expressMissions';
 import { displayRank } from '@/constants/displayLabels';
@@ -228,6 +229,24 @@ export default function MyStuffScreen() {
         onGetStarted={() => openProgram(program.id)}
         onPlay={() => startMission()}
       />
+
+      {dayPlan ? (
+        <WorkoutShortsPreview
+          program={program}
+          day={dayPlan}
+          tier={enrollment.difficulty}
+          onOpen={() =>
+            router.push({
+              pathname: '/shorts/[programId]',
+              params: {
+                programId: program.id,
+                day: String(enrollment.currentDay),
+              },
+            })
+          }
+          onStart={() => startMission()}
+        />
+      ) : null}
 
       {active ? (
         <AppButton
