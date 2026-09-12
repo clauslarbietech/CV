@@ -89,9 +89,6 @@ function SketchPanel({
       />
       <View style={styles.inkWash} pointerEvents="none" />
       <Text style={styles.badge}>{panel.badge}</Text>
-      <Text style={styles.panelName} numberOfLines={1}>
-        {panel.name}
-      </Text>
     </Animated.View>
   );
 }
@@ -281,17 +278,6 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-  panelName: {
-    position: 'absolute',
-    left: 6,
-    right: 6,
-    bottom: 6,
-    color: 'rgba(220, 240, 255, 0.92)',
-    fontSize: 9,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.3,
-  },
   vignette: {
     ...StyleSheet.absoluteFill,
   },
@@ -323,20 +309,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: spacing.md,
     right: spacing.md,
-    top: '34%',
-    paddingHorizontal: spacing.xs,
+    top: '28%',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    backgroundColor: 'rgba(2, 10, 22, 0.45)',
   },
   headline: {
     color: '#FFFFFF',
     fontWeight: '900',
-    fontSize: 18,
-    lineHeight: 24,
+    fontSize: 16,
+    lineHeight: 22,
     textAlign: 'center',
-    letterSpacing: 0.2,
+    letterSpacing: 0.3,
     textTransform: 'uppercase',
-    textShadowColor: 'rgba(0,0,0,0.9)',
+    textShadowColor: 'rgba(0,0,0,0.95)',
     textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 6,
+    textShadowRadius: 8,
   },
   bottomBar: {
     position: 'absolute',
