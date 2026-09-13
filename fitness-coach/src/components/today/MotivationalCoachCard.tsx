@@ -16,8 +16,8 @@ type MotivationalCoachCardProps = {
 };
 
 /**
- * Written AI coach pep talks — no robotic TTS voice playback.
- * Full conversation lives under Notes → AI Coach.
+ * Scripted coach pep talks (beta) — not a live AI model.
+ * Full conversation lives under Notes → Coach (beta).
  */
 export function MotivationalCoachCard({
   personality,
@@ -67,7 +67,9 @@ export function MotivationalCoachCard({
 
   return (
     <Card accentBorder>
-      <Text style={styles.kicker}>AI COACH · {personalityLabel.toUpperCase()}</Text>
+      <Text style={styles.kicker}>
+        COACH (BETA) · {personalityLabel.toUpperCase()}
+      </Text>
       <Text style={styles.title}>Today’s pep talk</Text>
       <Text style={styles.body}>“{line}”</Text>
       <AppButton
@@ -84,7 +86,9 @@ export function MotivationalCoachCard({
           )
         }
       />
-      <Text style={styles.hint}>Chat in Notes · Live Trainer for a person</Text>
+      <Text style={styles.hint}>
+        Scripted replies · Chat in Notes · Trainer inbox is local-only
+      </Text>
     </Card>
   );
 }

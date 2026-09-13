@@ -21,10 +21,8 @@ const config = {
     buildNumber: '1',
     deploymentTarget: '15.1',
     infoPlist: {
-      NSCameraUsageDescription:
-        'FitLife uses the camera to capture food photos for beta meal estimates.',
       NSPhotoLibraryUsageDescription:
-        'FitLife uses photos you select for beta meal estimates.',
+        'FitLife uses photos you select for beta meal estimates and optional progress photos. Photos stay on your device in v1.0.',
       ITSAppUsesNonExemptEncryption: false,
     },
     privacyManifests: {
@@ -57,7 +55,19 @@ const config = {
     favicon: './assets/favicon.png',
     bundler: 'metro',
   },
-  plugins: ['expo-router', 'expo-font', 'expo-secure-store'],
+  plugins: [
+    'expo-router',
+    'expo-font',
+    'expo-secure-store',
+    [
+      'expo-image-picker',
+      {
+        photosPermission:
+          'FitLife uses photos you select for beta meal estimates and optional progress photos. Photos stay on your device in v1.0.',
+        cameraPermission: false,
+      },
+    ],
+  ],
   experiments: {
     typedRoutes: true,
     ...(baseUrl ? { baseUrl } : {}),

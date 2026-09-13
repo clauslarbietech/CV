@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
+import { pickImageFromLibrary } from '@/utils/pickImage';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
 type BodyPhotoUploadProps = {
@@ -19,6 +20,7 @@ export function BodyPhotoUpload({ photoUri, onPhotoChange }: BodyPhotoUploadProp
   const { colors } = useTheme();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const styles = useMemo(
     () =>
@@ -49,13 +51,23 @@ export function BodyPhotoUpload({ photoUri, onPhotoChange }: BodyPhotoUploadProp
     [colors],
   );
 
-  const openPicker = () => {
+  const openPicker = async () => {
     setError(null);
     if (Platform.OS === 'web') {
       inputRef.current?.click();
       return;
     }
-    setError('Full-body photo upload on native ships with the camera module.');
+
+    setBusy(true);
+    try {
+      const picked = await pickImageFromLibrary({ allowsEditing: true });
+      if (!picked) return;
+      onPhotoChange(picked.uri);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not open photo library.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const onFile = (file?: File | null) => {
@@ -81,7 +93,6 @@ export function BodyPhotoUpload({ photoUri, onPhotoChange }: BodyPhotoUploadProp
             },
             type: 'file',
             accept: 'image/*',
-            capture: 'environment',
             style: { display: 'none' },
             onChange: (e: { target: HTMLInputElement }) =>
               onFile(e.target.files?.[0]),
@@ -94,10 +105,17 @@ export function BodyPhotoUpload({ photoUri, onPhotoChange }: BodyPhotoUploadProp
 
       <View style={styles.row}>
         <AppButton
-          label={photoUri ? 'Replace photo' : 'Upload full-body photo'}
+          label={
+            busy
+              ? 'Opening photos…'
+              : photoUri
+                ? 'Replace photo'
+                : 'Choose full-body photo'
+          }
           variant="secondary"
           onPress={openPicker}
           style={styles.flex}
+          disabled={busy}
         />
         {photoUri ? (
           <AppButton

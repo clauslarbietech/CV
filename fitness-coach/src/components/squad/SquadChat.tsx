@@ -30,10 +30,10 @@ const CHANNELS: Array<{ id: ChatChannel; label: string }> = [
   { id: 'buddy', label: 'Buddy' },
 ];
 
-function senderLabel(from: string, channel: ChatChannel): string {
+function senderLabel(from: string, _channel: ChatChannel): string {
   if (from === 'me') return 'You';
-  if (from === 'coach') return 'AI Coach';
-  if (from === 'live_trainer') return 'Live Trainer';
+  if (from === 'coach') return 'Coach (beta)';
+  if (from === 'live_trainer') return 'Trainer inbox';
   if (from === 'system') return 'System';
   return from;
 }

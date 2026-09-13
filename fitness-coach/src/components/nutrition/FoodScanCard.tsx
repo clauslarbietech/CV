@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { createElement, useMemo, useRef, useState } from 'react';
 import {
   Image,
   Platform,
@@ -6,7 +6,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import { createElement } from 'react';
 
 import {
   FOOD_SCAN_WARNING,
@@ -17,6 +16,7 @@ import {
   analyzeFoodFromFilename,
   FoodScanResult,
 } from '@/constants/nutrition/foodScan';
+import { pickImageFromLibrary } from '@/utils/pickImage';
 import { useTheme, radii, spacing, typography } from '@/theme';
 
 type FoodScanCardProps = {
@@ -29,6 +29,7 @@ export function FoodScanCard({ onApplyProtein }: FoodScanCardProps) {
   const [previewUri, setPreviewUri] = useState<string | null>(null);
   const [result, setResult] = useState<FoodScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const styles = useMemo(
     () =>
@@ -86,13 +87,29 @@ export function FoodScanCard({ onApplyProtein }: FoodScanCardProps) {
     [colors],
   );
 
-  const openPicker = () => {
+  const applyGuess = (fileName: string, sizeBytes: number, uri: string) => {
+    setPreviewUri(uri);
+    setResult(analyzeFoodFromFilename(fileName, sizeBytes));
+  };
+
+  const openPicker = async () => {
     setError(null);
     if (Platform.OS === 'web') {
       inputRef.current?.click();
       return;
     }
-    setError('Photo capture on native ships with the camera module in the next build.');
+
+    setBusy(true);
+    try {
+      const picked = await pickImageFromLibrary({ allowsEditing: true });
+      if (!picked) return;
+      const name = picked.fileName || 'meal-photo.jpg';
+      applyGuess(name, picked.fileSize ?? 0, picked.uri);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not open photo library.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const onFile = (file?: File | null) => {
@@ -101,10 +118,7 @@ export function FoodScanCard({ onApplyProtein }: FoodScanCardProps) {
       setError('Choose a photo of your meal.');
       return;
     }
-    const uri = URL.createObjectURL(file);
-    setPreviewUri(uri);
-    const analysis = analyzeFoodFromFilename(file.name, file.size);
-    setResult(analysis);
+    applyGuess(file.name, file.size, URL.createObjectURL(file));
   };
 
   return (
@@ -113,8 +127,8 @@ export function FoodScanCard({ onApplyProtein }: FoodScanCardProps) {
       <Text style={styles.title}>Quick meal estimate</Text>
       <Text style={styles.warn}>⚠ {FOOD_SCAN_WARNING}</Text>
       <Text style={styles.body}>
-        Beta only — rough macro guess from your photo filename, not medical advice.
-        Real vision AI coming later.
+        Beta only — rough macro guess from your photo filename, not medical advice
+        and not vision AI. Real food recognition comes later.
       </Text>
 
       {Platform.OS === 'web'
@@ -124,7 +138,6 @@ export function FoodScanCard({ onApplyProtein }: FoodScanCardProps) {
             },
             type: 'file',
             accept: 'image/*',
-            capture: 'environment',
             style: { display: 'none' },
             onChange: (e: { target: HTMLInputElement }) =>
               onFile(e.target.files?.[0]),
@@ -135,7 +148,12 @@ export function FoodScanCard({ onApplyProtein }: FoodScanCardProps) {
         <Image source={{ uri: previewUri }} style={styles.preview} resizeMode="cover" />
       ) : null}
 
-      <AppButton label="Take / upload food photo" variant="action" onPress={openPicker} />
+      <AppButton
+        label={busy ? 'Opening photos…' : 'Choose food photo'}
+        variant="action"
+        onPress={openPicker}
+        disabled={busy}
+      />
 
       {result ? (
         <View style={styles.resultBox}>

@@ -1,49 +1,70 @@
-# FitLife — App Store Readiness (v1.0 free launch)
+# FitLife — App Store launch checklist (v1.0 free)
 
-Use this checklist before submitting **FitLife AI Coach** to App Store Connect.
+**Goal:** Submit a free, honest home-workout app to Apple.
 
-**Privacy Policy URL (App Store Connect):**  
-https://clauslarbietech.github.io/CV/fitlife/legal/privacy.html
+**Bundle ID:** `com.fitlife.aicoach`  
+**Version:** `1.0.0` · **Build:** auto-increment via EAS production  
 
-**Support URL (App Store Connect):**  
-https://clauslarbietech.github.io/CV/fitlife/legal/support.html
-
-**Terms of Use URL:**  
-https://clauslarbietech.github.io/CV/fitlife/legal/terms.html
+**Privacy:** https://clauslarbietech.github.io/CV/fitlife/legal/privacy.html  
+**Terms:** https://clauslarbietech.github.io/CV/fitlife/legal/terms.html  
+**Support:** https://clauslarbietech.github.io/CV/fitlife/legal/support.html  
 
 ---
 
-## Done in codebase
+## Codebase status (ready)
 
-| Item | Status |
-|------|--------|
-| Privacy Policy (in-app + web) | ✅ |
-| Terms of Use (in-app + web) | ✅ |
-| Health disclaimer (onboarding checkbox + Settings) | ✅ |
-| Coach / Live Trainer labeled beta (no false AI claims) | ✅ |
-| Food Scan beta warning | ✅ |
-| iOS camera/photo usage strings | ✅ |
-| Export compliance flag (`ITSAppUsesNonExemptEncryption: false`) | ✅ |
-| EAS Build config (`eas.json`) | ✅ |
-| Bundle ID `com.fitlife.aicoach` | ✅ |
-| Apple Privacy Manifest (`ios.privacyManifests`) | ✅ |
-| Support URL (hosted) | ✅ |
-| Delete my data (Settings) | ✅ |
-| App Store listing copy (`docs/APP_STORE_LISTING.md`) | ✅ |
-| Privacy Nutrition Labels guide | ✅ |
+| Requirement | Status |
+|-------------|--------|
+| Privacy + Terms in-app and hosted | ✅ |
+| Support URL hosted | ✅ |
+| Health disclaimer + onboarding checkbox | ✅ |
+| Coach / Trainer inbox labeled **beta** (scripted, no live AI/human) | ✅ |
+| Food Scan beta + photo library picker (`expo-image-picker`) | ✅ |
+| Delete all data on device (Settings) | ✅ |
+| `ITSAppUsesNonExemptEncryption: false` | ✅ |
+| Apple Privacy Manifest (UserDefaults + FileTimestamp) | ✅ |
+| Photo library usage string (no unused camera permission) | ✅ |
+| EAS profiles (development / preview / production) | ✅ |
+| Listing + Privacy Nutrition Label docs | ✅ |
+| No StoreKit / IAP in v1.0 | ✅ (by design) |
 
 ---
 
-## You must do in App Store Connect
+## Your Apple-side steps (blocking)
 
-1. **Apple Developer account** — enroll at developer.apple.com  
-2. **Create app** — FitLife AI Coach, bundle ID `com.fitlife.aicoach`  
-3. **Privacy Policy URL** — paste link above  
-4. **Support URL** — paste support link above  
-5. **Age rating** — likely 4+ or 12+ (fitness, no mature content)  
-6. **Privacy Nutrition Labels** — see `docs/PRIVACY_NUTRITION_LABELS.md`  
-7. **Screenshots** — 6.7" and 6.5" iPhone required (ideas in `docs/APP_STORE_LISTING.md`)  
-8. **App Review notes:**
+Do these in order:
+
+1. **Apple Developer Program** — active enrollment  
+2. **App Store Connect → New App**  
+   - Name: FitLife AI Coach  
+   - Bundle ID: `com.fitlife.aicoach`  
+   - Primary language: English  
+   - Category: Health & Fitness  
+3. **Copy listing text** from `docs/APP_STORE_LISTING.md`  
+4. **Paste Privacy / Support / Terms URLs** above  
+5. **App Privacy (Nutrition Labels)** — follow `docs/PRIVACY_NUTRITION_LABELS.md`  
+6. **Age rating questionnaire** — expect 4+ or 12+  
+7. **Screenshots** — at least 6.7" and 6.5" iPhone (see listing doc ideas)  
+8. **Configure `support@fitlife.app`** inbox (or update email everywhere before submit)  
+9. **EAS project link**
+
+```bash
+cd fitness-coach
+npm install --legacy-peer-deps
+npx eas-cli login
+npx eas init          # writes projectId into app config
+# Paste App Store Connect App ID into eas.json → submit.production.ios.ascAppId
+```
+
+10. **Build + TestFlight**
+
+```bash
+npx eas build --platform ios --profile preview
+npx eas build --platform ios --profile production
+npx eas submit --platform ios --profile production
+```
+
+11. **App Review notes** (paste into Connect):
 
 ```text
 FitLife AI Coach v1.0 — free home workout app.
@@ -51,8 +72,8 @@ FitLife AI Coach v1.0 — free home workout app.
 Demo: complete onboarding (accept health checkbox) → My Stuff → Start workout.
 
 Coach chat uses scripted beta replies, not live AI.
-Live Trainer saves notes locally only — no human connected.
-Food Scan is beta (filename-based estimates).
+Trainer inbox saves notes locally only — no human connected.
+Food Scan is beta (filename-based estimates from a photo you pick).
 
 Privacy: https://clauslarbietech.github.io/CV/fitlife/legal/privacy.html
 Terms: https://clauslarbietech.github.io/CV/fitlife/legal/terms.html
@@ -62,43 +83,25 @@ Delete data: Settings → Delete all data on this device
 
 ---
 
-## Build & submit (TestFlight)
-
-```bash
-cd fitness-coach
-npm install --legacy-peer-deps
-npx eas-cli login
-npx eas build --platform ios --profile preview   # TestFlight internal
-npx eas build --platform ios --profile production # App Store
-npx eas submit --platform ios --profile production
-```
-
-First time: run `eas init` and link the Expo project. Replace `ascAppId` in `eas.json`.
-
----
-
-## Not in v1.0 (do not advertise)
-
-- Live AI / LLM coach  
-- Human live trainer connection  
-- Subscriptions / StoreKit (see `APPLE_SUBSCRIPTION_APPROVAL_CHECKLIST.md` for paid launch)  
-- Cloud buddy sync (local-only unless Supabase configured)  
-- Real food vision AI  
-
----
-
-## Pre-submit device smoke
+## Device smoke (before Submit for Review)
 
 - [ ] Fresh install → onboarding → accept health terms → My Stuff  
 - [ ] Start and complete one workout set  
-- [ ] Settings → Privacy Policy + Terms + Support open  
-- [ ] Settings → Delete my data (optional smoke — use test device)  
+- [ ] Nutrition → Food Scan → pick a photo (library)  
+- [ ] Settings → Privacy / Terms / Support open  
+- [ ] Settings → Delete all data (test device only)  
 - [ ] Notes → Coach (beta) shows disclaimer  
-- [ ] Kill app → relaunch → still on My Stuff (not welcome)  
-- [ ] No crash on airplane mode  
+- [ ] Kill app → relaunch → still on My Stuff  
+- [ ] Airplane mode does not crash  
 
 ---
 
-## Support
+## Do not advertise in v1.0
 
-Email: support@fitlife.app (configure inbox before launch)
+- Live LLM / “real AI coach”  
+- Human live trainer  
+- Subscriptions / paywall  
+- Cloud buddy sync (unless Supabase is intentionally enabled)  
+- Medical claims or guaranteed results  
+
+See `APPLE_SUBSCRIPTION_APPROVAL_CHECKLIST.md` when you add paid plans later.

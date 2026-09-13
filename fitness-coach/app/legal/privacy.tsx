@@ -23,7 +23,12 @@ export default function PrivacyPolicyScreen() {
         {
           heading: 'Photos (Food Scan beta)',
           body:
-            'Food photos you pick are processed on-device for beta macro estimates. We do not upload food images to a server in this version unless you later enable cloud features.',
+            'Food and progress photos you pick are processed on-device for beta estimates. We do not upload those images to a server in this version unless you later enable cloud features.',
+        },
+        {
+          heading: 'Your choices / delete data',
+          body:
+            'In the app, open Settings → Delete all data on this device to wipe workouts, notes, chat, and profile stored locally. This cannot be undone. If cloud sync is enabled later, email support@fitlife.app to request deletion of server copies.',
         },
         {
           heading: 'Children',
