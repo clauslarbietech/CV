@@ -2,7 +2,7 @@ const baseUrl = process.env.EXPO_PUBLIC_BASE_URL || '';
 
 /** @type {import('expo/config').ExpoConfig} */
 const config = {
-  name: 'FitLife AI Coach',
+  name: 'FitLife',
   slug: 'fitlife-ai-coach',
   version: '1.0.0',
   orientation: 'portrait',
@@ -22,7 +22,7 @@ const config = {
     deploymentTarget: '15.1',
     infoPlist: {
       NSPhotoLibraryUsageDescription:
-        'FitLife uses photos you select for beta meal estimates and optional progress photos. Photos stay on your device in v1.0.',
+        'FitLife uses photos you select for optional progress check-ins. Photos stay on your device in v1.0.',
       ITSAppUsesNonExemptEncryption: false,
     },
     privacyManifests: {
@@ -63,7 +63,7 @@ const config = {
       'expo-image-picker',
       {
         photosPermission:
-          'FitLife uses photos you select for beta meal estimates and optional progress photos. Photos stay on your device in v1.0.',
+          'FitLife uses photos you select for optional progress check-ins. Photos stay on your device in v1.0.',
         cameraPermission: false,
       },
     ],

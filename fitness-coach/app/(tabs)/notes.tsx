@@ -36,12 +36,12 @@ export default function NotesScreen() {
   return (
     <Screen>
       <Text style={styles.kicker}>NOTES</Text>
-      <Text style={styles.subtitle}>Meds, chat, and daily logs.</Text>
+      <Text style={styles.subtitle}>Meds, coach tips, and daily logs.</Text>
 
       <SegmentToggle
         options={[
           { id: 'meds', label: 'Meds' },
-          { id: 'chat', label: 'Chat' },
+          { id: 'chat', label: 'Tips' },
           { id: 'log', label: 'Log' },
         ]}
         value={section}

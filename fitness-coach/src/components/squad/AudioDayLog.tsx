@@ -184,25 +184,35 @@ export function AudioDayLog() {
         style={styles.input}
       />
 
-      <View style={styles.row}>
-        {recorderState === 'idle' || recorderState === 'ready' ? (
-          <AppButton
-            label={canRecord ? 'Record audio' : 'Audio (web only)'}
-            variant="secondary"
-            onPress={startRecording}
-            disabled={!canRecord || recorderState === 'ready'}
-          />
-        ) : (
-          <AppButton
-            label={`Stop · ${audioSeconds}s`}
-            variant="danger"
-            onPress={stopRecording}
-          />
-        )}
-        {recorderState === 'ready' ? (
-          <AppButton label="Discard audio" variant="ghost" onPress={discardAudio} />
-        ) : null}
-      </View>
+      {canRecord ? (
+        <View style={styles.row}>
+          {recorderState === 'idle' || recorderState === 'ready' ? (
+            <AppButton
+              label="Record audio"
+              variant="secondary"
+              onPress={startRecording}
+              disabled={recorderState === 'ready'}
+            />
+          ) : (
+            <AppButton
+              label={`Stop · ${audioSeconds}s`}
+              variant="danger"
+              onPress={stopRecording}
+            />
+          )}
+          {recorderState === 'ready' ? (
+            <AppButton
+              label="Discard audio"
+              variant="ghost"
+              onPress={discardAudio}
+            />
+          ) : null}
+        </View>
+      ) : (
+        <Text style={styles.hint}>
+          On iPhone, use the text log below. Audio notes are available on web.
+        </Text>
+      )}
 
       {pendingUrl ? (
         <Text style={styles.audioReady}>

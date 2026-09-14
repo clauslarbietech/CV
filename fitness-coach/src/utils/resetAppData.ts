@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { COACH_BETA_DISCLAIMER, LIVE_TRAINER_DISCLAIMER } from '@/constants/legal';
+import { COACH_BETA_DISCLAIMER } from '@/constants/legal';
 import { getSupabase, isSupabaseConfigured } from '@/services/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { useChatStore } from '@/store/chatStore';
@@ -31,24 +31,10 @@ function defaultChatMessages() {
       id: 'seed-coach-1',
       channel: 'coach' as const,
       from: 'coach',
-      text: `Coach (beta) — scripted pep talks only. ${COACH_BETA_DISCLAIMER}`,
+      text: `Coach (tips) — scripted motivational tips only. ${COACH_BETA_DISCLAIMER}`,
       createdAt: now,
     },
-    {
-      id: 'seed-live-1',
-      channel: 'live_trainer' as const,
-      from: 'system',
-      text: LIVE_TRAINER_DISCLAIMER,
-      createdAt: now,
-    },
-    {
-      id: 'seed-buddy-1',
-      channel: 'buddy' as const,
-      from: 'system',
-      text: 'Link a buddy on Squad, then chat here.',
-      createdAt: now,
-    },
-  ];
+    ];
 }
 
 function defaultNotesState() {

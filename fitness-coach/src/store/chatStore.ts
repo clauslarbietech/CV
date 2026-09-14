@@ -3,19 +3,19 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { CoachPersonality } from '@/types';
-import { COACH_BETA_DISCLAIMER, LIVE_TRAINER_DISCLAIMER } from '@/constants/legal';
+import { COACH_BETA_DISCLAIMER } from '@/constants/legal';
 
-/** AI Coach = in-app motivational coach. Live Trainer = human trainer inbox. */
-export type ChatChannel = 'coach' | 'live_trainer' | 'buddy';
+/** Scripted motivational tips only — not live AI or a human trainer. */
+export type ChatChannel = 'coach';
 
 export type ChatMessage = {
   id: string;
   channel: ChatChannel;
-  /** 'me' | 'coach' | 'live_trainer' | 'system' | buddy nickname */
+  /** 'me' | 'coach' | 'system' */
   from: string;
   text: string;
   createdAt: string;
-  /** Shown under Live Trainer sends */
+  /** Shown under day log sends */
   deliveryNote?: string;
 };
 
@@ -25,7 +25,6 @@ interface ChatState {
     channel: ChatChannel;
     text: string;
     from?: string;
-    buddyCallsign?: string;
     coachPersonality?: CoachPersonality;
   }) => void;
   clearChannel: (channel: ChatChannel) => void;
@@ -38,12 +37,6 @@ const MOTIVATION_PROMPTS = [
   'Quick check: energy, sleep, and meals?',
 ];
 
-const LIVE_TRAINER_PROMPTS = [
-  'Can we adjust today’s workout?',
-  'I’m sore — what should I change?',
-  'Form check: how should I do squats?',
-  'Help me plan this week’s sessions.',
-];
 
 function coachReply(
   personality: CoachPersonality,
@@ -84,7 +77,7 @@ function coachReply(
         return "Feeling drained is real — and you’re still here. Even an 8–10 min express keeps the streak alive. I’ve got you.";
       }
       if (proud) {
-        return 'That’s the energy. Celebrate the reps, then tell your buddy or Live Trainer — shared wins hit different.';
+        return 'That’s the energy. Celebrate the reps, then tell your buddy — shared wins hit different.';
       }
       if (motivate) {
         return 'Here’s your speech: you already chose the hard path by opening this app. Take one round. Momentum does the rest.';
@@ -98,7 +91,7 @@ function coachReply(
         return 'Solid execution. Note how hard it felt and fuel within ~2 hours — that data improves the next block.';
       }
       if (motivate) {
-        return 'Motivational brief: consistency compounds. Hit today’s programmed day, then message your Live Trainer if form or load needs eyes.';
+        return 'Motivational brief: consistency compounds. Hit today’s programmed day, then keep form notes in your day log.';
       }
       return 'Acknowledged. Align today’s session with your enrolled program day and refuel after training.';
     case 'calm_coach':
@@ -111,22 +104,8 @@ function coachReply(
       if (motivate) {
         return 'Soft pep talk: you don’t need perfect energy — just one honest session. Start when you’re ready; I’ll stay in your corner.';
       }
-      return 'Thanks for sharing. What would feel supportive next — movement, rest, or a note to your Live Trainer?';
+      return 'Thanks for sharing. What would feel supportive next — movement or rest?';
   }
-}
-
-function buddyReply(callsign: string, userText: string): string {
-  const lower = userText.toLowerCase();
-  if (lower.includes('motivate') || lower.includes('push')) {
-    return `${callsign} here — we started this together. Lace up. I’ll match your check-in today.`;
-  }
-  if (lower.includes('tired') || lower.includes('hard')) {
-    return `Same boat sometimes. Split it: warm-up + one hard round. Text me when you’re done. — ${callsign}`;
-  }
-  if (lower.includes('done') || lower.includes('finished')) {
-    return `That’s what I’m talking about. Proud of you. My turn next. — ${callsign}`;
-  }
-  return `I’m with you. Shared workout still on — see you on the check-in. — ${callsign}`;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -137,21 +116,7 @@ export const useChatStore = create<ChatState>()(
           id: 'seed-coach-1',
           channel: 'coach',
           from: 'coach',
-          text: `Coach (beta) — scripted pep talks only. ${COACH_BETA_DISCLAIMER}`,
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: 'seed-live-1',
-          channel: 'live_trainer',
-          from: 'system',
-          text: LIVE_TRAINER_DISCLAIMER,
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: 'seed-buddy-1',
-          channel: 'buddy',
-          from: 'system',
-          text: 'Link a buddy on Squad, then chat here.',
+          text: `Coach (tips) — scripted motivational tips only. ${COACH_BETA_DISCLAIMER}`,
           createdAt: new Date().toISOString(),
         },
       ],
@@ -159,7 +124,6 @@ export const useChatStore = create<ChatState>()(
         channel,
         text,
         from = 'me',
-        buddyCallsign,
         coachPersonality = 'calm_coach',
       }) => {
         const trimmed = text.trim();
@@ -171,10 +135,6 @@ export const useChatStore = create<ChatState>()(
           from,
           text: trimmed,
           createdAt: now,
-          deliveryNote:
-            channel === 'live_trainer' && from === 'me'
-              ? 'Saved locally · no trainer connected in v1.0'
-              : undefined,
         };
         const replies: ChatMessage[] = [];
         if (channel === 'coach' && from === 'me') {
@@ -186,16 +146,6 @@ export const useChatStore = create<ChatState>()(
             createdAt: new Date(Date.now() + 1).toISOString(),
           });
         }
-        if (channel === 'buddy' && from === 'me' && buddyCallsign) {
-          replies.push({
-            id: `msg-${Date.now()}-buddy`,
-            channel: 'buddy',
-            from: buddyCallsign,
-            text: buddyReply(buddyCallsign, trimmed),
-            createdAt: new Date(Date.now() + 1).toISOString(),
-          });
-        }
-        // live_trainer: no auto AI reply — human inbox only
         set({ messages: [...get().messages, mine, ...replies].slice(-200) });
       },
       clearChannel: (channel) =>
@@ -210,4 +160,4 @@ export const useChatStore = create<ChatState>()(
   ),
 );
 
-export { MOTIVATION_PROMPTS, LIVE_TRAINER_PROMPTS };
+export { MOTIVATION_PROMPTS };

@@ -8,12 +8,12 @@ export default function PrivacyPolicyScreen() {
         {
           heading: 'Overview',
           body:
-            'FitLife AI Coach (“FitLife”) helps you track home workouts, nutrition notes, and wellness habits. This policy describes what we collect and how we use it.',
+            'FitLife helps you track home workouts, nutrition notes, and wellness habits. This policy describes what we collect and how we use it.',
         },
         {
           heading: 'Data we store',
           body:
-            'Profile info you enter (name, goals, weight, sex), workout progress, notes, med checklists, and chat messages are stored on your device (AsyncStorage). If you sign in with Supabase when configured, account data may sync to our database.',
+            'Profile info you enter (name, goals, weight, sex), workout progress, notes, med checklists, and optional coach tip messages are stored on your device. If you sign in with Supabase when configured, account data may sync to our database.',
         },
         {
           heading: 'Data we do not sell',
@@ -21,14 +21,14 @@ export default function PrivacyPolicyScreen() {
             'We do not sell your personal information. We do not use third-party ad tracking in v1.0.',
         },
         {
-          heading: 'Photos (Food Scan beta)',
+          heading: 'Photos',
           body:
-            'Food and progress photos you pick are processed on-device for beta estimates. We do not upload those images to a server in this version unless you later enable cloud features.',
+            'Optional progress photos you pick stay on your device for your own check-ins. We do not upload those images to a server in this version unless you later enable cloud features.',
         },
         {
           heading: 'Your choices / delete data',
           body:
-            'In the app, open Settings → Delete all data on this device to wipe workouts, notes, chat, and profile stored locally. This cannot be undone. If cloud sync is enabled later, email support@fitlife.app to request deletion of server copies.',
+            'In the app, open Settings → Delete all data on this device to wipe workouts, notes, chat tips, and profile stored locally. This cannot be undone. If cloud sync is enabled later, email support@fitlife.app to request deletion of server copies.',
         },
         {
           heading: 'Children',

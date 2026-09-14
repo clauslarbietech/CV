@@ -3,12 +3,6 @@ import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { DigestionGuide } from '@/components/nutrition/DigestionGuide';
 import { CalisthenicsFuelCard } from '@/components/nutrition/CalisthenicsFuelCard';
-import { FoodScanCard } from '@/components/nutrition/FoodScanCard';
-import {
-  NutritionExperimentalGate,
-  SARDINE_PROTOCOL_WARNING,
-  VIRAL_MILITARY_DIET_WARNING,
-} from '@/components/nutrition/NutritionExperimentalGate';
 import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import {
@@ -19,10 +13,7 @@ import { isCalisthenicsProgram } from '@/constants/nutrition/calisthenicsFuel';
 import {
   FUEL_TRACKS,
   NUTRITION_SOURCES,
-  SARDINE_EGG_ELECTROLYTE_5DAY_LESSON,
-  VIRAL_MILITARY_DIET_DAYS,
 } from '@/constants/nutrition/militaryFuel';
-import { NUTRITION_REVISION_QUEUE } from '@/constants/research/programEvidence';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgramStore } from '@/store/programStore';
 import { useTheme, radii, spacing, typography } from '@/theme';
@@ -183,17 +174,6 @@ export default function NutritionScreen() {
         </Text>
       </Card>
 
-      <FoodScanCard
-        onApplyProtein={(proteinG) =>
-          updateDailyMetrics({
-            proteinG: Math.min(
-              daily.proteinTarget + 40,
-              daily.proteinG + proteinG,
-            ),
-          })
-        }
-      />
-
       <View style={styles.trackRow}>
         {FUEL_TRACKS.map((item) => (
           <Pressable
@@ -256,86 +236,6 @@ export default function NutritionScreen() {
         </Text>
       ))}
 
-      <Text style={styles.section}>Revision queue — not core programming</Text>
-      <Card accentBorder>
-        <Text style={[styles.verdict, { color: colors.danger }]}>
-          Flagged in evidence audit
-        </Text>
-        <Text style={styles.note}>
-          These sections are kept for transparency but are not backed by strong
-          clinical evidence. Prefer the fuel tracks above on training days.
-        </Text>
-        {NUTRITION_REVISION_QUEUE.filter((item) => item.verdict === 'needs-revision').map(
-          (item) => (
-            <Text key={item.id} style={styles.item}>
-              · {item.label}: {item.revisionAction}
-            </Text>
-          ),
-        )}
-      </Card>
-
-      <NutritionExperimentalGate
-        sectionTitle="Lesson: 5-day sardine + egg + electrolytes"
-        warningTitle={SARDINE_PROTOCOL_WARNING.warningTitle}
-        warningLines={[...SARDINE_PROTOCOL_WARNING.warningLines]}
-        acknowledgeLabel="I understand the risks — show sardine protocol"
-      >
-        <Card accentBorder>
-          <Text style={styles.planLabel}>{SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.label}</Text>
-          <Text style={[styles.verdict, { color: colors.danger }]}>
-            Verdict: {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.verdict}
-          </Text>
-          <Text style={styles.item}>{SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.scope}</Text>
-          <Text style={styles.mealName}>How people run it</Text>
-          {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.protocol.map((line) => (
-            <Text key={line} style={styles.item}>
-              • {line}
-            </Text>
-          ))}
-          <Text style={styles.mealName}>Why it may feel effective</Text>
-          {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.whyItMayWork.map((line) => (
-            <Text key={line} style={styles.item}>
-              • {line}
-            </Text>
-          ))}
-          <Text style={styles.mealName}>Risks & limits</Text>
-          {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.risksAndLimits.map((line) => (
-            <Text key={line} style={styles.item}>
-              • {line}
-            </Text>
-          ))}
-          <Text style={styles.mealName}>Stop rules</Text>
-          {SARDINE_EGG_ELECTROLYTE_5DAY_LESSON.stopRules.map((line) => (
-            <Text key={line} style={styles.item}>
-              • {line}
-            </Text>
-          ))}
-        </Card>
-      </NutritionExperimentalGate>
-
-      <NutritionExperimentalGate
-        sectionTitle="Optional 3-day viral low-calorie diet"
-        warningTitle={VIRAL_MILITARY_DIET_WARNING.warningTitle}
-        warningLines={[...VIRAL_MILITARY_DIET_WARNING.warningLines]}
-        acknowledgeLabel="I understand — show viral diet menu"
-      >
-        {VIRAL_MILITARY_DIET_DAYS.map((day) => (
-          <Card key={day.id} style={styles.viralCard}>
-            <Text style={styles.mealName}>{day.label}</Text>
-            {day.meals.map((meal) => (
-              <View key={meal.name} style={styles.viralMeal}>
-                <Text style={styles.cal}>{meal.name}</Text>
-                <Text style={styles.item}>{meal.items.join(' · ')}</Text>
-              </View>
-            ))}
-            {day.notes.map((note) => (
-              <Text key={note} style={styles.note}>
-                • {note}
-              </Text>
-            ))}
-          </Card>
-        ))}
-      </NutritionExperimentalGate>
 
       <Text style={styles.section}>Best sources</Text>
       {NUTRITION_SOURCES.map((source) => (

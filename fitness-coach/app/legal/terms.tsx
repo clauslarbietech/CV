@@ -8,7 +8,7 @@ export default function TermsOfUseScreen() {
         {
           heading: 'Agreement',
           body:
-            'By using FitLife AI Coach you agree to these Terms. If you do not agree, do not use the app.',
+            'By using FitLife you agree to these Terms. If you do not agree, do not use the app.',
         },
         {
           heading: 'Not medical advice',
@@ -21,14 +21,14 @@ export default function TermsOfUseScreen() {
             'Physical exercise involves inherent risk. You assume full responsibility for your participation and for stopping if you experience pain, dizziness, or distress.',
         },
         {
-          heading: 'Beta features',
+          heading: 'Coach tips',
           body:
-            'Coach chat uses scripted responses in v1.0 — not a live AI model. Food Scan uses filename heuristics, not clinical nutrition analysis. Live Trainer does not connect to a human in this version.',
+            'Coach tips use scripted motivational replies — not a live AI model and not a human coach. Do not use the app for emergencies.',
         },
         {
           heading: 'Acceptable use',
           body:
-            'Do not misuse the app for emergencies. Do not rely on med tracking for prescription dosing. Do not harass others in buddy chat.',
+            'Do not misuse the app for emergencies. Do not rely on med tracking for prescription dosing.',
         },
         {
           heading: 'Disclaimer of warranties',

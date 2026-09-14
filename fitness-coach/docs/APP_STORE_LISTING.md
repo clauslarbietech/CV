@@ -1,25 +1,24 @@
 # App Store Connect — Listing Copy
 
-Paste these fields into App Store Connect for **FitLife AI Coach** (v1.0 free).
+Paste these fields into App Store Connect for **FitLife** (v1.0 free).
 
 ---
 
 ## App name
-FitLife AI Coach
+FitLife
 
 ## Subtitle (30 chars max)
 Home workouts & nutrition
 
 ## Promotional text (170 chars, optional)
-Train at home with guided workouts, nutrition notes, and a beta coach chat. No gym required. Free v1.0 — progress stays on your device.
+Train at home with guided workouts, simple nutrition tracks, and daily check-ins. Free v1.0 — progress stays on your device.
 
 ## Description
 
-FitLife AI Coach helps you train at home with structured workout programs, simple nutrition tracking, and daily check-ins — built for real life, not a perfect gym schedule.
+FitLife helps you train at home with structured workout programs, simple nutrition tracking, and daily check-ins — built for real life, not a perfect gym schedule.
 
 **Workouts**
-• Operation Iron 14 & 30 — progressive calisthenics missions
-• Long Train — longer sessions for experienced athletes
+• Progressive calisthenics and home strength programs
 • Easy, Standard, and Challenging tiers
 • Form guides and rest timers built in
 
@@ -29,13 +28,13 @@ FitLife AI Coach helps you train at home with structured workout programs, simpl
 • Med and supplement checklists for personal tracking only
 
 **Nutrition**
-• Meal timing and digestion guides
-• Beta Food Scan for rough macro estimates (not medical advice)
+• Practical fuel tracks for training days
+• Meal timing and digestion guidance
+• Educational only — not medical advice
 
-**Notes & Coach**
-• Coach chat (beta) — scripted motivational replies
-• Live Trainer inbox saves notes locally (no human connected in v1.0)
-• Squad buddy check-ins
+**Notes**
+• Scripted coach tips for motivation (not live AI)
+• Text day log and personal notes
 
 **Privacy**
 • Data stored on your device by default
@@ -47,7 +46,7 @@ FitLife is for general fitness and wellness only — not medical advice. Consult
 Support: https://clauslarbietech.github.io/CV/fitlife/legal/support.html
 
 ## Keywords (100 chars max, comma-separated)
-workout,home fitness,calisthenics,bodyweight,strength,nutrition,coach,training,exercise,health
+workout,home fitness,calisthenics,bodyweight,strength,nutrition,training,exercise,health,coach
 
 ## Support URL
 https://clauslarbietech.github.io/CV/fitlife/legal/support.html
@@ -75,11 +74,11 @@ Free (no in-app purchases in v1.0)
 
 ## Screenshot ideas (6.7" iPhone)
 
-1. Welcome / onboarding with health disclaimer
-2. My Stuff — today’s workout + Picked for you
-3. Active workout session with form guide
-4. Nutrition tab with meal timing
-5. Notes — Coach (beta) with disclaimer visible
-6. Settings — Privacy Policy + Delete my data
+1. Welcome / onboarding with health disclaimer  
+2. My Stuff — today’s workout  
+3. Active workout session with form guide  
+4. Nutrition — fuel track (no Food Scan)  
+5. Notes — Coach tips with “scripted / not live AI” banner  
+6. Settings — Privacy Policy + Delete my data  
 
-Capture on device or iOS Simulator (iPhone 15 Pro Max / 16 Pro Max for 6.7").
+Do **not** screenshot Food Scan, Live Trainer, or viral diet menus (removed from v1.0).

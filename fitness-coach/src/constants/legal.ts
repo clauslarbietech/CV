@@ -17,15 +17,10 @@ export const HEALTH_DISCLAIMER_FULL = [
   HEALTH_DISCLAIMER_SHORT,
   'Stop exercising and seek medical care if you feel chest pain, severe dizziness, or unusual shortness of breath.',
   'Med and supplement checklists are for personal tracking only — not dosing instructions.',
-  'Nutrition estimates (including Food Scan beta) are approximate and not for allergy or prescription decisions.',
+  'Nutrition guidance is educational and approximate — not for allergy or prescription decisions.',
   'Results vary. Nothing in FitLife guarantees weight loss, muscle gain, or health outcomes.',
 ].join('\n\n');
 
+/** Honest labeling for scripted motivational tips (not a live model). */
 export const COACH_BETA_DISCLAIMER =
-  'Coach replies in this version use scripted prompts — not a live AI model. Full AI coaching is coming in a future update.';
-
-export const LIVE_TRAINER_DISCLAIMER =
-  'Live Trainer messages are saved on your device only. No human trainer is connected in this version — do not use for emergencies.';
-
-export const FOOD_SCAN_BETA_LABEL =
-  'Food Scan beta — filename-based estimates only, not vision AI or medical nutrition analysis.';
+  'Coach tips in this version are scripted motivational replies — not a live AI model and not a human coach.';

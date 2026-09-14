@@ -133,13 +133,33 @@ export function ProgressPhotoTimeline({ photos }: ProgressPhotoTimelineProps) {
     [colors],
   );
 
-  const openPicker = () => {
+  const openPicker = async () => {
     setError(null);
     if (Platform.OS === 'web') {
       inputRef.current?.click();
       return;
     }
-    setError('Camera upload on native ships with the next build.');
+    try {
+      const { pickImageFromLibrary } = await import('@/utils/pickImage');
+      const picked = await pickImageFromLibrary({ allowsEditing: true });
+      if (!picked) return;
+      const weight = Number(weightText.replace(/[^\d.]/g, ''));
+      const entry = addProgressPhoto({
+        uri: picked.uri,
+        weightKg: Number.isFinite(weight) && weight > 0 ? weight : undefined,
+        note: 'Progress check-in',
+      });
+      if (entry) {
+        setCompareB(entry.id);
+        if (!compareA && photos.length) {
+          setCompareA(photos[photos.length - 1]?.id ?? entry.id);
+        }
+      }
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : 'Could not open the photo library.',
+      );
+    }
   };
 
   const onFile = (file?: File | null) => {

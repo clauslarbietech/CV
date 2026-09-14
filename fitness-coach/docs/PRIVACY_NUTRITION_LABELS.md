@@ -1,76 +1,33 @@
-# App Privacy — Nutrition Labels (App Store Connect)
+# App Privacy (Nutrition Labels) — FitLife v1.0
 
-Use this when filling out **App Privacy** in App Store Connect for FitLife AI Coach v1.0.
+Use this when filling out **App Privacy** in App Store Connect.
 
----
+## Data collection summary (v1.0 default)
 
-## Data collection summary
+By default FitLife stores data **on device**. Declare only what you actually collect.
 
-| Question | Answer |
-|----------|--------|
-| Do you or third-party partners collect data from this app? | **Yes** (user-entered, on-device) |
-| Is data used to track users? | **No** |
-| Is data linked to the user? | **Yes** (profile they enter) |
-| Is data used for third-party advertising? | **No** |
+### If cloud sync / Supabase is **not** enabled (recommended for first submit)
 
----
+- **Data Not Collected** from the app for analytics/tracking, OR  
+- Collect only **Health & Fitness** / **Other User Content** as **linked to user** only if you sync accounts.
 
-## Data types to declare
+For a local-only first submit, Apple’s questionnaire can often be answered as collecting data that stays on device and is not used for tracking.
 
-### Contact info
-| Type | Collected | Linked | Tracking | Purpose |
-|------|-----------|--------|----------|---------|
-| Name | Yes | Yes | No | App functionality |
-| Email address | Optional | Yes | No | App functionality (if user signs in when cloud sync enabled) |
+### Photos
+- Optional progress photos selected by the user  
+- Purpose: App Functionality (progress check-ins)  
+- Not used for tracking  
+- Not uploaded in v1.0
 
-### Health & fitness
-| Type | Collected | Linked | Tracking | Purpose |
-|------|-----------|--------|----------|---------|
-| Fitness | Yes | Yes | No | App functionality |
-| Health | Yes | Yes | No | App functionality |
+### Contact info / identifiers
+- Only if the user creates an account (email) when cloud auth is enabled  
+- Otherwise omit
 
-Notes: weight, goals, workout logs, med checklists (user-entered tracking only).
+### Tracking
+- **No** — FitLife does not track users across apps/websites in v1.0
 
-### User content
-| Type | Collected | Linked | Tracking | Purpose |
-|------|-----------|--------|----------|---------|
-| Photos or videos | Optional | Yes | No | App functionality |
-
-Notes: Food Scan beta — user-selected photos processed on-device; not uploaded in v1.0 unless cloud features are later enabled.
-
-### Identifiers
-| Type | Collected | Linked | Tracking | Purpose |
-|------|-----------|--------|----------|---------|
-| User ID | Optional | Yes | No | App functionality |
-
-Notes: local guest ID or Supabase user ID when configured.
-
----
-
-## Do NOT declare (v1.0)
-
-- Precise location
-- Contacts (unless you add contact-picker features later)
-- Browsing history
-- Search history (beyond in-app)
-- Purchases (no IAP in v1.0)
-- Diagnostics / crash data (unless you add Sentry/Firebase later)
-
----
-
-## Privacy manifest (codebase)
-
-Configured in `app.config.js` under `ios.privacyManifests`:
-
-- `NSPrivacyTracking`: false
-- UserDefaults (AsyncStorage): CA92.1
-- File timestamp APIs: C617.1
-
----
-
-## Account & data deletion
-
-- In-app: **Settings → Delete all data on this device**
-- Cloud: email support@fitlife.app (when Supabase sync is enabled)
-
-Document this in App Review notes.
+## Do not declare
+- Food Scan / vision AI (removed)
+- Health Research from Food Scan
+- Precise Location
+- Advertising data

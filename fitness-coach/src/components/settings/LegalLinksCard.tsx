@@ -57,7 +57,7 @@ export function LegalLinksCard() {
       <Pressable onPress={() => open(`mailto:${SUPPORT_EMAIL}`)} accessibilityRole="link">
         <Text style={styles.link}>Contact: {SUPPORT_EMAIL}</Text>
       </Pressable>
-      <Text style={styles.meta}>FitLife AI Coach v{APP_VERSION}</Text>
+      <Text style={styles.meta}>FitLife v{APP_VERSION}</Text>
     </Card>
   );
 }

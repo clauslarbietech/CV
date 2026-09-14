@@ -68,7 +68,7 @@ export function MotivationalCoachCard({
   return (
     <Card accentBorder>
       <Text style={styles.kicker}>
-        COACH (BETA) · {personalityLabel.toUpperCase()}
+        COACH (TIPS) · {personalityLabel.toUpperCase()}
       </Text>
       <Text style={styles.title}>Today’s pep talk</Text>
       <Text style={styles.body}>“{line}”</Text>
