@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
@@ -31,6 +31,7 @@ export function ExerciseStep({
   onModify,
 }: ExerciseStepProps) {
   const { colors } = useTheme();
+  const [setStarted, setSetStarted] = useState(false);
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -84,7 +85,8 @@ export function ExerciseStep({
       <Text style={styles.name}>{exercise.name}</Text>
       <Text style={styles.target}>{target}</Text>
       <Text style={styles.setLine}>
-        Current set · Round {round}/{totalRounds}
+        {setStarted ? 'Set in progress' : 'Ready to start'} · Round {round}/
+        {totalRounds}
       </Text>
 
       {exercise.perSide ? (
@@ -92,7 +94,15 @@ export function ExerciseStep({
       ) : null}
       {exercise.notes ? <Text style={styles.note}>{exercise.notes}</Text> : null}
 
-      <AppButton label="Complete set" variant="action" onPress={onComplete} />
+      {setStarted ? (
+        <AppButton label="Finish set" variant="action" onPress={onComplete} />
+      ) : (
+        <AppButton
+          label="Start set"
+          variant="action"
+          onPress={() => setSetStarted(true)}
+        />
+      )}
       <View style={styles.row}>
         <AppButton
           label="Modify"
