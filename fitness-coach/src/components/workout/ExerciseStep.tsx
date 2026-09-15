@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/ui/AppButton';
@@ -32,6 +32,11 @@ export function ExerciseStep({
 }: ExerciseStepProps) {
   const { colors } = useTheme();
   const [setStarted, setSetStarted] = useState(false);
+
+  useEffect(() => {
+    setSetStarted(false);
+  }, [exercise.id, round, index]);
+
   const styles = useMemo(
     () =>
       StyleSheet.create({
